@@ -53,9 +53,11 @@ const YoutubeVideosPage = () => {
     prev_page: 0, // 前ページがあるかどうか
   });
 
-  const handleTitleClick = (id: number) => {
-    // クリックされた動画のIDに基づいてURLを生成
-    router.push(`/youtube_videos/${id}`); // 指定したURLに遷移
+  const handleTitleClick = async (id: number) => {
+    console.log("遷移前のID:", id); // 遷移前のIDをログに出力
+    const cleanUrl = `/youtube_videos/${id}`;
+    await router.push(cleanUrl); // 指定したURLに遷移
+    console.log("遷移後のURL:", cleanUrl); // 遷移後のURLをログに出力
   };
 
   // コンポーネントがマウントされたらデータをフェッチ
