@@ -1,4 +1,5 @@
 import React from 'react';
+import { YoutubeVideo } from '../types/youtubeVideo';
 
 // サーバーサイドでデータをフェッチする非同期関数
 async function fetchYoutubeVideos() {
@@ -31,7 +32,7 @@ const YoutubeVideosPage = async () => {
     <div className="container">
       <h1>Youtube一覧</h1>
       {youtube_videos.length > 0 ? (
-        youtube_videos.map((video) => (
+        youtube_videos.map((video: YoutubeVideo) => (
           <div key={video.id} className="mb-6 text-left w-full">
             <h2>{video.title}</h2>
             <div className="video-wrapper">
