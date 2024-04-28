@@ -19,10 +19,10 @@ async function fetchYoutubeVideos() {
 
     const data = await res.json();
     if (Array.isArray(data)) {
-      return data; // 成功時はデータを返す
+      return data; // データが配列であれば、成功と見なす
     } else {
       console.error('Invalid data format');
-      return null; // データ形式が不正の場合
+      return null; // データ形式が不正な場合
     }
   } catch (error) {
     console.error('Fetch exception:', error);
@@ -35,39 +35,25 @@ const YoutubeVideosPage = () => {
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // ポーリングの間隔を設定（例：30秒）
-  const POLLING_INTERVAL_MS = 30000;
-
   useEffect(() => {
-    let isMounted = true; // コンポーネントがマウントされているかどうかを確認
-    const fetchVideosWithPolling = async () => {
-      while (isMounted) {
-        const data = await fetchYoutubeVideos();
+    const fetchData = async () => {
+      const data = await fetchYoutubeVideos();
 
-        if (data) {
-          setYoutubeVideos(data);
-          setError(null); // エラーがない場合、エラーメッセージをクリア
-        } else {
-          setError('データを取得できませんでした'); // エラー時
-        }
-
-        await new Promise((resolve) =>
-          setTimeout(resolve, POLLING_INTERVAL_MS)
-        ); // ポーリングの間隔
+      if (data) {
+        setYoutubeVideos(data); // フェッチ成功時に状態を更新
+        setError(null); // エラーメッセージをクリア
+      } else {
+        setError('YouTube動画を取得できませんでした'); // エラー時
       }
     };
 
-    fetchVideosWithPolling(); // ポーリングを開始
-
-    return () => {
-      isMounted = false; // クリーンアップでポーリングを停止
-    };
-  }, []); // 空の依存配列は、コンポーネントのマウント時にのみ実行
+    fetchData(); // データフェッチを開始
+  }, []); // コンポーネントがマウントされたときに一度だけ実行
 
   if (error) {
     return (
       <div className="container">
-        <h1>Youtube一覧</h1>
+        <h1>YouTube一覧</h1>
         <p>{error}</p>
       </div>
     );
@@ -75,7 +61,7 @@ const YoutubeVideosPage = () => {
 
   return (
     <div className="container">
-      <h1>Youtube一覧</h1>
+      <h1>YouTube一覧</h1>
       {youtubeVideos.length > 0 ? (
         youtubeVideos.map((video: YoutubeVideo) => (
           <div key={video.id} className="mb-6 text-left w-full">
@@ -94,7 +80,7 @@ const YoutubeVideosPage = () => {
           </div>
         ))
       ) : (
-        <p>動画がありません。</p>
+        <p>動画がありません。</p> // データがない場合のメッセージ
       )}
     </div>
   );
