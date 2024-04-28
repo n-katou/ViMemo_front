@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { YoutubeVideo } from '../types/youtubeVideo';
 
@@ -36,6 +37,7 @@ async function fetchYoutubeVideos(page = 1) {
 }
 
 const YoutubeVideosPage = () => {
+  const router = useRouter(); // ルーターを取得
   // フェッチした動画データとページネーション情報、エラー状態を管理
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -50,6 +52,11 @@ const YoutubeVideosPage = () => {
     next_page: 2, // 次ページがあるかどうか
     prev_page: 0, // 前ページがあるかどうか
   });
+
+  const handleTitleClick = (id: number) => {
+    // クリックされた動画のIDに基づいてURLを生成
+    router.push(`/youtube_videos/${id}`); // 指定したURLに遷移
+  };
 
   // コンポーネントがマウントされたらデータをフェッチ
   useEffect(() => {
@@ -85,7 +92,9 @@ const YoutubeVideosPage = () => {
         <>
           {youtubeVideos.map((video) => (
             <div key={video.id} className="mb-6 text-left w-full">
-              <h2>{video.title}</h2>
+              <h2 onClick={() => handleTitleClick(video.id)} style={{ cursor: 'pointer' }}>
+                {video.title}
+              </h2>
               <div className="video-wrapper">
                 <iframe
                   className="aspect-video"

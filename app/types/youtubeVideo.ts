@@ -1,5 +1,5 @@
 export interface YoutubeVideo {
-  id: string;
+  id: number;
   title: string;
   youtube_id: string;
   published_at: Date;
