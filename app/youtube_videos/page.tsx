@@ -3,7 +3,8 @@ import React from 'react';
 // サーバーサイドでデータをフェッチする非同期関数
 async function fetchYoutubeVideos() {
   try {
-    const res = await fetch('http://back:3000/youtube_videos', {
+    // const res = await fetch('http://back:3000/youtube_videos', {
+    const res = await fetch('https://vimemo.fly.dev//youtube_videos', {
       headers: {
         'Accept': 'application/json',
       },
