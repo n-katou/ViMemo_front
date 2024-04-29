@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation'; // クエリパラメータ用フック
+import { usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 
-// 動画の詳細情報を取得する非同期関数
 async function fetchYoutubeVideo(id: number) {
   const res = await fetch(`https://vimemo.fly.dev/youtube_videos/${id}`, {
     headers: {
@@ -16,44 +15,43 @@ async function fetchYoutubeVideo(id: number) {
     throw new Error(`Error fetching video with ID ${id}`);
   }
 
-  return res.json(); // データを取得
+  const data = await res.json();
+  console.log(data);  // レスポンスデータのログ出力
+  return data;
 }
 
 const YoutubeVideoShowPage = () => {
-  const searchParams = useSearchParams(); // クエリパラメータを取得
   const [video, setVideo] = useState<YoutubeVideo | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
-    const id = searchParams.get("id"); // クエリからIDを取得
-    console.log("ID:", id);
-    if (id) {
-      const videoId = parseInt(id, 10); // IDを数値に変換
-      if (!isNaN(videoId)) {
-        fetchYoutubeVideo(videoId)
-          .then(setVideo)
-          .catch((error) => {
-            console.error("Error fetching video:", error); // エラーログ
-            setVideo(null); // エラー時はnullに設定
-          });
-      }
+    const pathSegments = pathname.split('/');
+    const videoId = parseInt(pathSegments[pathSegments.length - 1], 10);
+
+    if (!isNaN(videoId)) {
+      fetchYoutubeVideo(videoId)
+        .then(videoData => {
+          setVideo(videoData.youtube_video);  // 期待するキーに注意
+        })
+        .catch(error => console.error('Error loading the video:', error));
     }
-  }, [searchParams]); // クエリパラメータが変わるたびに実行
+  }, [pathname]);
 
   if (!video) {
-    return <div>Loading...</div>; // データ読み込み中
+    return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <h1>{video.title || "タイトル不明"}</h1> {/* タイトルがあるか確認 */}
+      <h1>{video.title || "タイトル不明"}</h1>
       <iframe
-        src={`https://www.youtube.com/embed/${video.youtube_id || ""}`} // YouTube ID があるか確認
+        src={`https://www.youtube.com/embed/${video.youtube_id}`}
         frameBorder="0"
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
       />
-      <p>公開日: {new Date(video.published_at || Date.now()).toLocaleDateString()}</p> {/* 公開日 */}
-      <p>動画時間: {video.duration || 0}分</p> {/* 動画時間 */}
+      <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+      <p>動画時間: {video.duration}分</p>
     </div>
   );
 };
