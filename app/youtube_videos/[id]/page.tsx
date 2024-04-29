@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 
 async function fetchYoutubeVideo(id: number) {
@@ -15,23 +15,23 @@ async function fetchYoutubeVideo(id: number) {
     throw new Error(`Error fetching video with ID ${id}`);
   }
 
-  return res.json();
+  const data = await res.json();
+  console.log(data);  // レスポンスデータのログ出力
+  return data;
 }
 
 const YoutubeVideoShowPage = () => {
   const [video, setVideo] = useState<YoutubeVideo | null>(null);
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
-    // pathnameからIDを抽出する
     const pathSegments = pathname.split('/');
     const videoId = parseInt(pathSegments[pathSegments.length - 1], 10);
 
     if (!isNaN(videoId)) {
       fetchYoutubeVideo(videoId)
         .then(videoData => {
-          setVideo(videoData);
+          setVideo(videoData.youtube_video);  // 期待するキーに注意
         })
         .catch(error => console.error('Error loading the video:', error));
     }
