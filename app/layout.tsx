@@ -1,6 +1,9 @@
+// components/RootLayout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Header from "../components/Header"; // Header コンポーネントをインポート
+import { NextAuthProvider } from "@/lib/NextAuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +19,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <NextAuthProvider>
+        <body className={inter.className}>
+          <Header />  {/* ヘッダーを追加 */}
+          {children}
+        </body>
+      </NextAuthProvider>
     </html>
   );
 }
