@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/Prisma";
 
+
 const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
