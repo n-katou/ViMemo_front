@@ -1,0 +1,6 @@
+/* styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 追加のスタイルが必要な場合ここに記述 */
