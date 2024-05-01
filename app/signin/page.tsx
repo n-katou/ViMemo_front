@@ -29,6 +29,11 @@ const Page = () => {
   useEffect(() => {
     if (session) {
       router.push('/');
+    } else {
+      // CSRFトークンを初期化
+      fetch('/api/csrf').then(res => res.json()).then(data => {
+        console.log('CSRF token initialized:', data.token);
+      });
     }
   }, [session, router]);
 
