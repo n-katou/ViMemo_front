@@ -4,7 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/Prisma";
-
+import bcrypt from "bcrypt";
 
 const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -17,16 +17,20 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        let user = null; // `try`ブロックの外で`user`を宣言
+        if (!credentials) return null;  // credentials が undefined の場合は早期に null を返す
+        const { email, password } = credentials;
         try {
-          // メールアドレス存在チェック
-          user = await prisma.user.findUnique({
-            where: { email: credentials?.email },
+          const user = await prisma.user.findUnique({
+            where: { email },
           });
+          if (user && await bcrypt.compare(password, user.password)) {
+            return user;  // パスワードが一致した場合、ユーザー情報を返す
+          }
         } catch (error) {
-          return null; // エラーが発生した場合はnullを返す
+          console.error('Authentication error:', error);
+          return null;
         }
-        return user;
+        return null;  // ユーザーが見つからないか、パスワードが一致しない場合はnullを返す
       },
     }),
     GithubProvider({
@@ -46,7 +50,7 @@ const handler = NextAuth({
   },
   callbacks: {
     async redirect({ url, baseUrl }) {
-      return "/";
+      return url.startsWith(baseUrl) ? url : baseUrl;
     },
   },
 });
