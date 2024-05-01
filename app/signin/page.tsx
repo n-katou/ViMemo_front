@@ -78,9 +78,9 @@ const Page = () => {
         </form>
         <hr className="my-4 border-gray-300 w-[300px]" />
         <div className="flex flex-col items-center">
-          <button onClick={() => signIn("github")} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2">
+          {/* <button onClick={() => signIn("github")} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2">
             Githubでログイン
-          </button>
+          </button> */}
           <button onClick={() => signIn("google")} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2">
             Googleでログイン
           </button>

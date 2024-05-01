@@ -23,7 +23,7 @@ const handler = NextAuth({
           const user = await prisma.user.findUnique({
             where: { email },
           });
-          if (user && await bcrypt.compare(password, user.password)) {
+          if (user && await bcrypt.compare(password, user.cryptedPassword)) {  // パスワードのフィールド名を修正
             return user;  // パスワードが一致した場合、ユーザー情報を返す
           }
         } catch (error) {
