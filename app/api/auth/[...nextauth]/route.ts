@@ -17,7 +17,7 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
       authorization: {
         params: {
-          redirect_uri: "https://vimemo.fly.dev/oauth/callback?provider=google",
+          redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/google`, // 環境変数 NEXTAUTH_URL を使用
           scope: 'openid profile email',
           code_challenge_method: 'S256'
         },
@@ -37,7 +37,7 @@ const handler = NextAuth({
       const uid = user?.id;
       try {
         const response = await axios.post(
-          `${apiUrl}/oauth/callback`,
+          `${apiUrl}/oauth/callback?provider=${provider}`, // プロバイダーを動的に追加
           {
             provider,
             uid,
