@@ -14,7 +14,14 @@ const handler = NextAuth({
     // }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string, // 'as string' で TypeScript に string 型であることを強制
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          redirect_uri: "https://vimemo.fly.dev/oauth/callback?provider=google",
+          scope: 'openid profile email',
+          code_challenge_method: 'S256'
+        },
+      },
     }),
   ],
   pages: {
