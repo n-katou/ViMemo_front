@@ -28,7 +28,7 @@ const Page = () => {
 
   useEffect(() => {
     if (session) {
-      router.push('/');
+      router.push('/logout');
     }
   }, [session, router]);
 
