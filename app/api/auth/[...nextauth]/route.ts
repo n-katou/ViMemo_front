@@ -1,25 +1,21 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import GithubProvider from "next-auth/providers/github";
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const handler = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET || "secret_for_local_development", // ローカル開発用のデフォルト値
+  secret: process.env.NEXTAUTH_SECRET || "secret_for_local_development",
   providers: [
-    // GithubProvider({
-    //   clientId: process.env.GITHUB_CLIENT_ID || "default_github_client_id",
-    //   clientSecret: process.env.GITHUB_CLIENT_SECRET || "default_github_client_secret"
-    // }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string, // 'as string' で TypeScript に string 型であることを強制
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      clientId: process.env.GOOGLE_CLIENT_ID || "your_google_client_id",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "your_google_client_secret",
       authorization: {
         params: {
-          redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/google`, // 環境変数 NEXTAUTH_URL を使用
+          redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/google`,
           scope: 'openid profile email',
-          code_challenge_method: 'S256'
+          access_type: 'offline',
+          prompt: 'consent'
         },
       },
     }),
@@ -32,27 +28,26 @@ const handler = NextAuth({
   },
   callbacks: {
     async signIn({ user, account }) {
-      const email = user?.email;
-      const provider = account?.provider;
-      const uid = user?.id;
-      try {
-        const response = await axios.post(
-          `${apiUrl}/oauth/callback?provider=${provider}`, // プロバイダーを動的に追加
-          {
-            provider,
-            uid,
-            email
+      if (account && account.provider === "google") {
+        try {
+          const response = await axios.post(`${apiUrl}/oauth/callback?provider=google`, {
+            provider: account.provider,
+            accessToken: account.accessToken,
+            refreshToken: account.refreshToken,
+            user
+          });
+          return response.status === 200;
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            console.error('エラーステータス: ', error.response?.status);
+            console.error('エラーレスポンス: ', error.response?.data);
+          } else {
+            console.error('未知のエラー: ', error);
           }
-        );
-        if (response.status === 200) {
-          return true;
-        } else {
           return false;
         }
-      } catch (error) {
-        console.log('エラー', error);
-        return false;
       }
+      return false;
     },
   },
 });
