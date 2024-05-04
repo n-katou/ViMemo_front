@@ -7,32 +7,38 @@ import { YoutubeVideo } from '../types/youtubeVideo';
 // YouTube動画をフェッチする非同期関数
 async function fetchYoutubeVideos(page = 1) {
   try {
-    // ページ番号をパラメーターに渡してデータを取得
-    const res = await fetch(`https://vimemo.fly.dev/youtube_videos?page=${page}`, {
-      headers: {
-        'Accept': 'application/json',
-      },
-    });
+    const authToken = localStorage.getItem('authToken'); // ローカルストレージから認証トークンを取得
+    const headers: Record<string, string> = {
+      'Accept': 'application/json',
+    };
 
-    // レスポンスが成功しているか確認
-    if (!res.ok) {
-      console.error('Fetch error:', res.status, res.statusText);
-      return null; // エラー時はnullを返す
+    // 認証トークンがある場合、認証ヘッダーを追加
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`;
     }
 
-    // レスポンスをJSON形式で取得
-    const data = await res.json();
+    const res = await fetch(`https://vimemo.fly.dev/youtube_videos?page=${page}`, {
+      // const res = await fetch(`http://localhost:3000/youtube_videos?page=${page}`, {
+      method: 'GET',
+      headers: headers,
+      credentials: 'include', // クッキーを送信するための設定
+    });
 
-    // データが配列であり、ページネーション情報が含まれているか確認
+    if (!res.ok) {
+      console.error('Fetch error:', res.status, res.statusText);
+      return null;
+    }
+
+    const data = await res.json();
     if (data && Array.isArray(data.videos)) {
-      return { videos: data.videos, pagination: data.pagination }; // データとページネーション情報を返す
+      return { videos: data.videos, pagination: data.pagination };
     } else {
       console.error('Invalid data format');
-      return null; // データ形式が不正な場合
+      return null;
     }
   } catch (error) {
     console.error('Fetch exception:', error);
-    return null; // 例外発生時
+    return null;
   }
 }
 
