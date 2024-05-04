@@ -29,14 +29,20 @@ const handler = NextAuth({
   callbacks: {
     async signIn({ user, account }) {
       if (account && account.provider === "google") {
+        const url = `${apiUrl}/oauth/callback?provider=google`;
         try {
-          const response = await axios.post(`${apiUrl}/oauth/callback?provider=google`, {
+          const response = await axios.post(url, {
             provider: account.provider,
             accessToken: account.accessToken,
             refreshToken: account.refreshToken,
             user
+          }, {
+            withCredentials: true  // クッキーを含める設定
           });
-          return response.status === 200;
+          if (response.status === 200) {
+            console.log('Logged in successfully');
+            return true;  // NextAuthのセッションを設定
+          }
         } catch (error) {
           if (error instanceof AxiosError) {
             console.error('エラーステータス: ', error.response?.status);
