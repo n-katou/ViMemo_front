@@ -17,6 +17,9 @@ const Header = () => {
             <li>
               <Link href="/youtube_videos" className="hover:text-gray-300">Youtube</Link>
             </li>
+            <li>
+              <Link href="/mypage" className="hover:text-gray-300">マイページ</Link>
+            </li>
           </ul>
         </nav>
       </div>
