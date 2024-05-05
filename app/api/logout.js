@@ -2,13 +2,13 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       // ここでバックエンドのログアウトAPIを呼び出す
-      const backendRes = await fetch('https://vimemo.fly.dev//logout', {
+      const backendRes = await fetch('https://vimemo.fly.dev/logout', {
         method: 'DELETE', // バックエンドの要求に合わせてメソッドを変更
         headers: {
           'Content-Type': 'application/json',
           // 必要に応じて認証トークンなどを送る
         },
-        // credentials: 'include' // クッキーを使う場合
+        credentials: 'include' // クッキーを使う場合
       });
       if (!backendRes.ok) throw new Error('Failed to log out');
 
