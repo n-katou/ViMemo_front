@@ -60,48 +60,6 @@ const handler = NextAuth({
       return false;
     },
   },
-  // callbacks: {
-  //   jwt: async ({ token, user, account }) => {
-  //     // アカウントとユーザー情報が存在する場合に処理
-  //     if (account && user) {
-  //       // `accessToken`と`refreshToken`が正しく存在するか確認してから割り当てる
-  //       if (typeof account.accessToken === 'string') {
-  //         token.accessToken = account.accessToken;
-  //       }
-  //       if (typeof account.refreshToken === 'string') {
-  //         token.refreshToken = account.refreshToken;
-  //       }
-  //       // バックエンドに必要な情報をPOST
-  //       try {
-  //         const response = await axios.post(`${apiUrl}/oauth/callback`, {
-  //           accessToken: token.accessToken,
-  //           refreshToken: token.refreshToken,
-  //           user
-  //         }, { withCredentials: true });
-  //         // レスポンスから得られたセッションIDをトークンに保存
-  //         if (response.data.sessionId) {
-  //           token.backendSessionId = response.data.sessionId;
-  //         }
-  //       } catch (error) {
-  //         console.error("Error posting to backend:", error);
-  //       }
-  //     }
-  //     return token;
-  //   },
-  //   session: async ({ session, token }) => {
-  //     // セッションにアクセストークン、リフレッシュトークン、バックエンドセッションIDを反映
-  //     if (token.accessToken) {
-  //       session.user.accessToken = token.accessToken;
-  //     }
-  //     if (token.refreshToken) {
-  //       session.user.refreshToken = token.refreshToken;
-  //     }
-  //     if (token.backendSessionId) {
-  //       session.user.backendSessionId = token.backendSessionId;
-  //     }
-  //     return session;
-  //   },
-  // }
 });
 
 export { handler as GET, handler as POST };
