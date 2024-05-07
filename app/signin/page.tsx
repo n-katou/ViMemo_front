@@ -100,8 +100,8 @@ const Page = () => {
           {/* <button onClick={() => signIn("github")} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2">
             Githubでログイン
           </button> */}
-          <button onClick={handleGoogleLogin} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2">
-            {/* <button onClick={() => signIn("google")} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2"> */}
+          {/* <button onClick={handleGoogleLogin} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2"> */}
+          <button onClick={() => signIn("google")} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2">
             Googleでログイン
           </button>
           <Link href="/signup" className="mt-2">
