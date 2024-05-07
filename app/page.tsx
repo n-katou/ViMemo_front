@@ -13,13 +13,13 @@ import {
 } from '@firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA1nZ7W6TxTCKcqkogtpRS5q_TJDsxcBmY",
-  authDomain: "runteq-417906.firebaseapp.com",
-  projectId: "runteq-417906",
-  storageBucket: "runteq-417906.appspot.com",
-  messagingSenderId: "976355655065",
-  appId: "1:976355655065:web:82b9e08c717939f404e708",
-  measurementId: "G-K8S07YXGZ5"
+  apiKey: "AIzaSyCBTeINHuytWKsQdYLQn9WNqRwHKzwTUFA",
+  authDomain: "vimemo-63237.firebaseapp.com",
+  projectId: "vimemo-63237",
+  storageBucket: "vimemo-63237.appspot.com",
+  messagingSenderId: "658482743555",
+  appId: "1:658482743555:web:1e03f3a90b97f560db0136",
+  measurementId: "G-BSTSJJB3RF"
 };
 
 // Firebaseアプリの初期化（すでに存在する場合はそれを使用）
