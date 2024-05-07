@@ -50,6 +50,25 @@ const Page = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const response = await fetch('https://vimemo.fly.dev/oauth/google', {
+        method: 'GET',
+        headers: {
+          'Frontend-Request': 'true'
+        }
+      });
+      const data = await response.json();
+      if (response.ok) {
+        window.location.href = data.oauthUrl;
+      } else {
+        console.error('Failed to get OAuth URL:', data);
+      }
+    } catch (error) {
+      console.error('Error fetching OAuth URL:', error);
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-screen text-sm items-center justify-center">
       <div className="flex flex-col items-center justify-center p-10 border-2 rounded-2xl">
@@ -81,6 +100,7 @@ const Page = () => {
           {/* <button onClick={() => signIn("github")} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2">
             Githubでログイン
           </button> */}
+          {/* <button onClick={handleGoogleLogin} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2"> */}
           <button onClick={() => signIn("google")} className="bg-white text-black border-2 w-[300px] h-[35px] mb-2">
             Googleでログイン
           </button>
