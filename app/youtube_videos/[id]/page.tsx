@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 
 async function fetchYoutubeVideo(id: number) {
-  const res = await fetch(`https://vimemo.fly.dev/youtube_videos/${id}`, {
+  const res = await fetch(`https://vimemo.fly.dev/api/youtube_videos/${id}`, {
     headers: {
       'Accept': 'application/json',
     },

@@ -12,9 +12,6 @@ const Header = () => {
               <Link href="/" className="hover:text-gray-300">Home</Link>
             </li>
             <li>
-              <Link href="/signin" className="hover:text-gray-300">ログイン</Link>
-            </li>
-            <li>
               <Link href="/youtube_videos" className="hover:text-gray-300">Youtube</Link>
             </li>
             <li>
