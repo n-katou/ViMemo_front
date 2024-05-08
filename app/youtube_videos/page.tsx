@@ -3,39 +3,23 @@
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { YoutubeVideo } from '../types/youtubeVideo';
+import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 
-// YouTube動画をフェッチする非同期関数
-async function fetchYoutubeVideos(page = 1) {
+async function fetchYoutubeVideos(page = 1, token: string) {
   try {
-    const authToken = localStorage.getItem('authToken'); // ローカルストレージから認証トークンを取得
-    const headers: Record<string, string> = {
+    const headers = {
       'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`
     };
-
-    // 認証トークンがある場合、認証ヘッダーを追加
-    if (authToken) {
-      headers['Authorization'] = `Bearer ${authToken}`;
-    }
-
-    const res = await fetch(`https://vimemo.fly.dev/youtube_videos?page=${page}`, {
-      // const res = await fetch(`http://localhost:3000/youtube_videos?page=${page}`, {
+    const res = await fetch(`https://vimemo.fly.dev/api/youtube_videos?page=${page}`, {
       method: 'GET',
       headers: headers,
-      credentials: 'include', // クッキーを送信するための設定
+      credentials: 'include',
     });
-
     if (!res.ok) {
-      console.error('Fetch error:', res.status, res.statusText);
-      return null;
+      throw new Error('Failed to fetch');
     }
-
-    const data = await res.json();
-    if (data && Array.isArray(data.videos)) {
-      return { videos: data.videos, pagination: data.pagination };
-    } else {
-      console.error('Invalid data format');
-      return null;
-    }
+    return await res.json();
   } catch (error) {
     console.error('Fetch exception:', error);
     return null;
@@ -43,52 +27,45 @@ async function fetchYoutubeVideos(page = 1) {
 }
 
 const YoutubeVideosPage = () => {
-  const router = useRouter(); // ルーターを取得
-  // フェッチした動画データとページネーション情報、エラー状態を管理
+  const router = useRouter();
+  const { user } = useFirebaseAuth();
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<{
-    current_page: number;
-    total_pages: number;
-    next_page: number;
-    prev_page: number;
-  }>({
-    current_page: 1, // 初期ページ
-    total_pages: 1, // 全ページ数
-    next_page: 2, // 次ページがあるかどうか
-    prev_page: 0, // 前ページがあるかどうか
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total_pages: 1,
+    next_page: 2,
+    prev_page: 0,
   });
 
-  const handleTitleClick = async (id: number) => {
-    console.log("遷移前のID:", id); // 遷移前のIDをログに出力
-    const cleanUrl = `/youtube_videos/${id}`;
-    await router.push(cleanUrl); // 指定したURLに遷移
-    console.log("遷移後のURL:", cleanUrl); // 遷移後のURLをログに出力
-  };
-
-  // コンポーネントがマウントされたらデータをフェッチ
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetchYoutubeVideos(pagination.current_page); // 現在のページをフェッチ
-
+      if (!user) {
+        setError('ログインが必要です');
+        return;
+      }
+      const token = await user.getIdToken();
+      const result = await fetchYoutubeVideos(pagination.current_page, token);
       if (result) {
-        setYoutubeVideos(result.videos); // 動画データを更新
-        setPagination(result.pagination); // ページネーション情報を更新
-        setError(null); // エラーメッセージをクリア
+        setYoutubeVideos(result.videos);
+        setPagination(result.pagination);
+        setError(null);
       } else {
-        setError('YouTube動画を取得できませんでした'); // エラー時
+        setError('YouTube動画を取得できませんでした');
       }
     };
+    fetchData();
+  }, [pagination.current_page, user]);
 
-    fetchData(); // データをフェッチ
-  }, [pagination.current_page]); // 現在のページが変わるたびにフェッチ
+  const handleTitleClick = async (id: number) => {
+    await router.push(`/youtube_videos/${id}`);
+  };
 
-  // エラーが発生した場合
-  if (error) {
+  if (!user) {
     return (
       <div className="container">
         <h1>YouTube一覧</h1>
-        <p>{error}</p> {/* エラーメッセージを表示 */}
+        <p>ログインしてください。</p>
       </div>
     );
   }
@@ -116,8 +93,6 @@ const YoutubeVideosPage = () => {
               <p>動画時間: {video.duration}分</p>
             </div>
           ))}
-
-          {/* ページネーション */}
           <div className="pagination">
             {pagination.prev_page && (
               <button onClick={() => setPagination({ ...pagination, current_page: pagination.prev_page })}>前ページ</button>
