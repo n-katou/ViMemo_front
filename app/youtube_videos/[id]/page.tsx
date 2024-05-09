@@ -6,7 +6,7 @@ import { YoutubeVideo } from '../../types/youtubeVideo';
 import { useFirebaseAuth } from '../../hooks/useFirebaseAuth'; // 認証用カスタムフックをインポート
 
 async function fetchYoutubeVideo(id: number, token: string) {
-  const res = await fetch(`https://vimemo.fly.dev/api/youtube_videos/${id}`, {
+  const res = await fetch(`https://vimemo.fly.dev/api/v1/youtube_videos/${id}`, {
     headers: {
       'Accept': 'application/json',
       'Authorization': `Bearer ${token}`,  // 認証トークンをヘッダーに追加

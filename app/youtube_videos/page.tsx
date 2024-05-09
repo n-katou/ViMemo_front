@@ -11,7 +11,7 @@ async function fetchYoutubeVideos(page = 1, token: string) {
       'Accept': 'application/json',
       'Authorization': `Bearer ${token}`
     };
-    const res = await fetch(`https://vimemo.fly.dev/api/youtube_videos?page=${page}`, {
+    const res = await fetch(`https://vimemo.fly.dev/api/v1/youtube_videos?page=${page}`, {
       method: 'GET',
       headers: headers,
       credentials: 'include',

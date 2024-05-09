@@ -16,7 +16,7 @@ export const Login = () => {
       const token = await result.user.getIdToken(); // IDトークンを取得
       const config = { headers: { Authorization: `Bearer ${token}` } };
       // バックエンドエンドポイントにリクエストを送信
-      const response = await axios.post("実際のバックエンドのURLをここに入力", {}, config);
+      const response = await axios.post("https://vimemo.fly.dev/api/v1/users", {}, config);
       console.log('Login success:', response);
     } catch (error) {
       console.error('Login failed:', error);
