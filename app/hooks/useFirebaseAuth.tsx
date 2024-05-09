@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { initializeApp, getApps, getApp } from '@firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, User } from '@firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from '@firebase/auth';
+import { User } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCBTeINHuytWKsQdYLQn9WNqRwHKzwTUFA",
@@ -12,9 +13,9 @@ const firebaseConfig = {
   measurementId: "G-BSTSJJB3RF"
 };
 
+// Firebaseアプリの初期化
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 
 export const useFirebaseAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -22,6 +23,7 @@ export const useFirebaseAuth = () => {
   const [idToken, setIdToken] = useState<string | null>(null);
 
   const login = useCallback(async () => {
+    const provider = new GoogleAuthProvider(); // Googleプロバイダーをインスタンス化
     try {
       const result = await signInWithPopup(auth, provider);
       setUser(result.user);
@@ -49,10 +51,10 @@ export const useFirebaseAuth = () => {
         setError(error.message);
       }
     }
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async firebaseUser => {
+    const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
       setUser(firebaseUser);
       if (firebaseUser) {
         const token = await firebaseUser.getIdToken();
@@ -63,9 +65,9 @@ export const useFirebaseAuth = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
-  return { user, idToken, login, logout, error };
+  return { user, idToken, login, logout, error, auth };
 };
 
 const AuthComponent = () => {

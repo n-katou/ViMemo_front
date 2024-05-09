@@ -10,22 +10,31 @@ interface Profile {
 }
 
 const MyPage = () => {
-  const { user } = useFirebaseAuth();
+  const { user, idToken, login, logout } = useFirebaseAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (user) {
-        const idToken = await user.getIdToken();
-        const response = await axios.post('https://vimemo.fly.dev/api/authenticate', {
-          id_token: idToken
-        });
-        setProfile(response.data);
-      }
-    };
-
-    fetchUserData();
-  }, [user]);
+    if (user && user.email) { // ユーザーがログインしており、メールアドレスがnullでないことを確認
+      const fetchData = async () => {
+        try {
+          const response = await axios.post(`https://vimemo.fly.dev/api/userdata`, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${idToken}`
+            }
+          });
+          setProfile(response.data);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
+      fetchData();
+    } else {
+      // メールアドレスがnullの場合の処理
+      console.log('User is not logged in or email is null');
+      setProfile(null);
+    }
+  }, [user, idToken]);
 
   if (!profile) {
     return <div>Loading...</div>;
@@ -33,8 +42,10 @@ const MyPage = () => {
 
   return (
     <div>
-      <h1>Welcome, {profile.name}</h1>
-      <p>Email: {profile.email}</p>
+      <h1>Welcome, {profile?.name}</h1>
+      <p>Email: {profile?.email}</p>
+      <button onClick={login}>Login</button>
+      <button onClick={logout}>Logout</button>
     </div>
   );
 };
