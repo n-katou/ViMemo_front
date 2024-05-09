@@ -51,7 +51,7 @@ export const useFirebaseAuth = () => {
         setError(error.message);
       }
     }
-  }, [auth]);
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
@@ -65,7 +65,7 @@ export const useFirebaseAuth = () => {
     });
 
     return () => unsubscribe();
-  }, [auth]);
+  }, []);
 
   return { user, idToken, login, logout, error, auth };
 };
