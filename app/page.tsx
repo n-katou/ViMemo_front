@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useFirebaseAuth } from './hooks/useFirebaseAuth'; // Firebase Auth フックをインポート
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-export const Login = () => {
+export const AuthPage = () => {
   const { user, logout, idToken, auth } = useFirebaseAuth(); // `auth` を追加
 
   // Google ログインの処理
@@ -47,4 +47,4 @@ export const Login = () => {
   );
 };
 
-export default Login;
+export default AuthPage;
