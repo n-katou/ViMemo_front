@@ -1,31 +1,50 @@
 "use client";
 
-import React from 'react';
-import { useFirebaseAuth } from './hooks/useFirebaseAuth';
+import { Button } from '@mui/material';
+import axios from 'axios';
+import { useFirebaseAuth } from './hooks/useFirebaseAuth'; // Firebase Auth フックをインポート
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-const AuthPage = () => {
-  const { user, login, logout, error, idToken } = useFirebaseAuth();
+export const Login = () => {
+  const { user, logout, idToken, auth } = useFirebaseAuth(); // `auth` を追加
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  // Google ログインの処理
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider(); // Googleプロバイダーをインスタンス化
+    try {
+      const result = await signInWithPopup(auth, provider); // ポップアップでログイン実行
+      const token = await result.user.getIdToken(); // IDトークンを取得
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      // バックエンドエンドポイントにリクエストを送信
+      const response = await axios.post("実際のバックエンドのURLをここに入力", {}, config);
+      console.log('Login success:', response);
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  };
 
-  if (!user) {
-    return (
-      <div>
-        <button onClick={login}>ログイン</button>
-      </div>
-    );
-  }
+  // ログアウトの処理
+  const handleLogout = async () => {
+    try {
+      await logout(); // ログアウト実行
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   return (
     <div>
-      <div>User: {user.displayName}</div>
-      <div>Email: {user.email}</div>
-      <div>ID Token: {idToken}</div> {/* IDトークンを表示 */}
-      <button onClick={logout}>ログアウト</button>
+      {!user ? (
+        <Button onClick={handleGoogleLogin} variant="contained" color="primary">
+          Googleログイン
+        </Button>
+      ) : (
+        <Button onClick={handleLogout} variant="contained" color="secondary">
+          ログアウト
+        </Button>
+      )}
     </div>
   );
 };
 
-export default AuthPage;
+export default Login;
