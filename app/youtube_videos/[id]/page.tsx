@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
@@ -11,7 +10,7 @@ async function fetchYoutubeVideo(id: number, token: string) {
   const res = await fetch(`https://vimemo.fly.dev/api/v1/youtube_videos/${id}`, {
     headers: {
       'Accept': 'application/json',
-      'Authorization': `Bearer ${token}`,  // 認証トークンをヘッダーに追加
+      'Authorization': `Bearer ${token}`,
     },
   });
 
@@ -26,9 +25,9 @@ async function fetchYoutubeVideo(id: number, token: string) {
 const YoutubeVideoShowPage = () => {
   const [video, setVideo] = useState<YoutubeVideo | null>(null);
   const pathname = usePathname();
-  const { user } = useFirebaseAuth(); // 認証状態を取得
+  const { user } = useFirebaseAuth();
 
-  const [notes, setNotes] = useState<string[]>([]);
+  const [notes, setNotes] = useState<any[]>([]);  // ノートオブジェクトを保存するための型を `any[]` に変更
   const addNote = async (newNoteContent: string): Promise<void> => {
     if (!user || !video) {
       console.error('User or video is not defined');
@@ -48,7 +47,7 @@ const YoutubeVideoShowPage = () => {
         }
       );
 
-      setNotes(prevNotes => [...prevNotes, response.data]);
+      setNotes(prevNotes => [...prevNotes, response.data]);  // レスポンスデータを配列に追加
     } catch (error) {
       console.error('Failed to add note:', error);
     }
@@ -70,11 +69,11 @@ const YoutubeVideoShowPage = () => {
   }, [pathname, user]);
 
   if (!user) {
-    return <div>Please log in to view this video.</div>; // ログインしていない場合の表示
+    return <div>Please log in to view this video.</div>;
   }
 
   if (!video) {
-    return <div>Loading...</div>; // ビデオ情報がまだない場合の表示
+    return <div>Loading...</div>;
   }
 
   return (
@@ -95,7 +94,7 @@ const YoutubeVideoShowPage = () => {
         <NoteForm addNote={addNote} />
         <div>
           {notes.map((note, index) => (
-            <p key={index}>{note}</p> // note がオブジェクトの場合は 'note.content' など正しいプロパティを使用
+            <p key={index}>{note.content}</p> // `note.content` を表示するように修正
           ))}
         </div>
       </div>

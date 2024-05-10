@@ -17,8 +17,8 @@ const AuthPage = () => {
       const userData = {
         email: result.user.email,
         name: result.user.displayName,
-        password: '生成またはユーザーに入力させたパスワード',  // 必要な場合
-        password_confirmation: '同上'  // 必要な場合
+        password: 'test',  // 必要な場合
+        password_confirmation: 'test'  // 必要な場合
       };
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await axios.post("https://vimemo.fly.dev/api/v1/users", { user: userData }, config);
@@ -30,10 +30,20 @@ const AuthPage = () => {
 
   // ログアウトの処理
   const handleLogout = async () => {
-    try {
-      await logout(); // ログアウト実行
-    } catch (error) {
-      console.error('Logout failed:', error);
+    if (user) {
+      try {
+        // Firebase からログアウト
+        await logout();
+        // バックエンドでトークンをクリア
+        const token = await user.getIdToken();  // 現在のユーザートークンを取得
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        await axios.delete("https://vimemo.fly.dev/api/v1/users/logout", config);
+        console.log('Logout successful');
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    } else {
+      console.error('No user to log out.');
     }
   };
 
