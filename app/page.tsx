@@ -14,9 +14,14 @@ const AuthPage = () => {
     try {
       const result = await signInWithPopup(auth, provider); // ポップアップでログイン実行
       const token = await result.user.getIdToken(); // IDトークンを取得
+      const userData = {
+        email: result.user.email,
+        name: result.user.displayName,
+        password: '生成またはユーザーに入力させたパスワード',  // 必要な場合
+        password_confirmation: '同上'  // 必要な場合
+      };
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      // バックエンドエンドポイントにリクエストを送信
-      const response = await axios.post("https://vimemo.fly.dev/api/v1/users", {}, config);
+      const response = await axios.post("https://vimemo.fly.dev/api/v1/users", { user: userData }, config);
       console.log('Login success:', response);
     } catch (error) {
       console.error('Login failed:', error);

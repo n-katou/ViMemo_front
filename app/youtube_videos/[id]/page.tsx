@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
-import { useFirebaseAuth } from '../../hooks/useFirebaseAuth'; // 認証用カスタムフックをインポート
+import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
+import NoteForm from '../../../components/NoteForm';
+import axios from 'axios';
 
 async function fetchYoutubeVideo(id: number, token: string) {
   const res = await fetch(`https://vimemo.fly.dev/api/v1/youtube_videos/${id}`, {
@@ -25,6 +27,32 @@ const YoutubeVideoShowPage = () => {
   const [video, setVideo] = useState<YoutubeVideo | null>(null);
   const pathname = usePathname();
   const { user } = useFirebaseAuth(); // 認証状態を取得
+
+  const [notes, setNotes] = useState<string[]>([]);
+  const addNote = async (newNoteContent: string): Promise<void> => {
+    if (!user || !video) {
+      console.error('User or video is not defined');
+      return;
+    }
+
+    try {
+      const token = await user.getIdToken();
+      const response = await axios.post(
+        `https://vimemo.fly.dev/api/v1/youtube_videos/${video.id}/notes`,
+        { content: newNoteContent },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      setNotes(prevNotes => [...prevNotes, response.data]);
+    } catch (error) {
+      console.error('Failed to add note:', error);
+    }
+  };
 
   useEffect(() => {
     const pathSegments = pathname.split('/');
@@ -50,19 +78,28 @@ const YoutubeVideoShowPage = () => {
   }
 
   return (
-    <div>
-      <h1>{video.title || "タイトル不明"}</h1>
-      <iframe
-        width="560"
-        height="315"
-        src={`https://www.youtube.com/embed/${video.youtube_id}`}
-        frameBorder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
-      <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-      <p>動画時間: {video.duration}分</p>
-    </div>
+    <>
+      <div>
+        <h1>{video.title || "タイトル不明"}</h1>
+        <iframe
+          width="560"
+          height="315"
+          src={`https://www.youtube.com/embed/${video.youtube_id}`}
+          frameBorder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen />
+        <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+        <p>動画時間: {video.duration}分</p>
+      </div>
+      <div>
+        <NoteForm addNote={addNote} />
+        <div>
+          {notes.map((note, index) => (
+            <p key={index}>{note}</p> // note がオブジェクトの場合は 'note.content' など正しいプロパティを使用
+          ))}
+        </div>
+      </div>
+    </>
   );
 };
 
