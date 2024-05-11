@@ -1,60 +1,40 @@
 "use client";
 import React from 'react';
 import { Button } from '@mui/material';
-import axios from 'axios';
-import { useFirebaseAuth } from './hooks/useFirebaseAuth'; // Firebase Auth フックをインポート
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import useFirebaseAuth from "../hooks/useFirebaseAuth";
+import axios from "axios";
 
 const AuthPage = () => {
-  const { user, logout, idToken, auth } = useFirebaseAuth(); // `auth` を追加
+  const { currentUser, logout, loginWithGoogle } = useFirebaseAuth();
 
-  // Google ログインの処理
   const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider(); // Googleプロバイダーをインスタンス化
     try {
-      const result = await signInWithPopup(auth, provider); // ポップアップでログイン実行
-      const token = await result.user.getIdToken(); // IDトークンを取得
-      const userData = {
-        email: result.user.email,
-        name: result.user.displayName,
-        password: 'test',  // 必要な場合
-        password_confirmation: 'test'  // 必要な場合
-      };
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      const response = await axios.post("https://vimemo.fly.dev/api/v1/users", { user: userData }, config);
-      console.log('Login success:', response);
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
-  };
-
-  // ログアウトの処理
-  const handleLogout = async () => {
-    if (user) {
-      try {
-        // Firebase からログアウト
-        await logout();
-        // バックエンドでトークンをクリア
-        const token = await user.getIdToken();  // 現在のユーザートークンを取得
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-        await axios.delete("https://vimemo.fly.dev/api/v1/users/logout", config);
-        console.log('Logout successful');
-      } catch (error) {
-        console.error('Logout failed:', error);
+      const user = await loginWithGoogle();
+      if (user) {
+        const token = await user.getIdToken();
+        const config = {
+          headers: { authorization: `Bearer ${token}` },
+        };
+        await axios.post("https://vimemo.fly.dev/api/v1/users", null, config);
       }
-    } else {
-      console.error('No user to log out.');
+    } catch (err) {
+      let message = "An error occurred during the login process.";
+      if (axios.isAxiosError(err) && err.response) {
+        console.error(err.response.data.message);
+      } else {
+        console.error(message);
+      }
     }
   };
 
   return (
     <div>
-      {!user ? (
+      {!currentUser ? (
         <Button onClick={handleGoogleLogin} variant="contained" color="primary">
           Googleログイン
         </Button>
       ) : (
-        <Button onClick={handleLogout} variant="contained" color="secondary">
+        <Button onClick={logout} variant="contained" color="secondary">
           ログアウト
         </Button>
       )}
