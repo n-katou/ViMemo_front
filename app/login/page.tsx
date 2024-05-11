@@ -1,9 +1,10 @@
 "use client";
 import axios from "axios";
+import { Button } from '@mui/material';
 import useFirebaseAuth from '../../hooks/useFirebaseAuth';
 
 const LoginPage = () => {
-  const { loginWithGoogle } = useFirebaseAuth();
+  const { currentUser, logout, loginWithGoogle } = useFirebaseAuth();
 
   const handleGoogleLogin = async () => {
     try {
@@ -41,9 +42,15 @@ const LoginPage = () => {
 
   return (
     <div>
-      <button onClick={handleGoogleLogin}>
-        <span>Sign in with Google</span>
-      </button>
+      {!currentUser ? (
+        <Button onClick={handleGoogleLogin} variant="contained" color="primary">
+          Googleログイン
+        </Button>
+      ) : (
+        <Button onClick={logout} variant="contained" color="secondary">
+          ログアウト
+        </Button>
+      )}
     </div>
   );
 }
