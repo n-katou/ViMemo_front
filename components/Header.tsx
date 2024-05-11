@@ -12,7 +12,7 @@ const Header = () => {
               <Link href="/" className="hover:text-gray-300">Home</Link>
             </li>
             <li>
-              <Link href="/auth" className="hover:text-gray-300">ログインページ</Link>
+              <Link href="/login" className="hover:text-gray-300">ログインページ</Link>
             </li>
             <li>
               <Link href="/youtube_videos" className="hover:text-gray-300">Youtube</Link>
