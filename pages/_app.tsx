@@ -7,11 +7,11 @@ import { AuthProvider } from "../context/AuthContext";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <>
-      <Header />
+    <div className="app-layout">
       <AuthProvider>
+        <Header />
         <Component {...pageProps} />
       </AuthProvider>
-    </>
+    </div>
   );
 }

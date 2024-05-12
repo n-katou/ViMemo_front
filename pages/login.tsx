@@ -3,56 +3,31 @@
 import axios from 'axios';
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router'; // 'next/navigation' は正しくは 'next/router' を使用
 import { Button, TextField, Card, Typography, Snackbar, Alert } from '@mui/material';
-import { useAuth } from '../context/AuthContext'; // 正しいパスに修正
+import { useAuth } from '../context/AuthContext'; // パスが正しく、コンテキストから currentUser, setCurrentUser を取得
 
 const LoginPage = () => {
   const router = useRouter();
-  const { updateAuthState } = useAuth(); // 認証状態を更新する関数をコンテキストから取得
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const { setCurrentUser } = useAuth(); // コンテキストから setCurrentUser 関数を取得
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
-    setError('');
     try {
       const response = await axios.post('https://vimemo.fly.dev/api/v1/login', { email, password });
       console.log('Login successful:', response.data);
-      localStorage.setItem('token', response.data.token); // 仮にトークンがレスポンスに含まれる場合
-      updateAuthState(response.data.user); // 認証状態を更新
-      router.push('/'); // ユーザーをダッシュボードにリダイレクト
+      setCurrentUser(response.data.user); // ログイン成功後、ユーザー情報を更新
+      router.push('/'); // ダッシュボードへリダイレクト
     } catch (error: any) {
       console.error('Login failed:', error.response?.data || error.message);
       setError(error.response?.data.error || 'ログインに失敗しました。');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const response = await axios.get('https://vimemo.fly.dev/api/v1/oauth/google', {
-        headers: {
-          'Frontend-Request': 'true',
-        },
-      });
-      // OAuth URLにリダイレクトする前に、ここでstateや他の必要な情報を保存することを検討してください。
-      window.location.href = response.data.oauthUrl; // OAuth URLにリダイレクト
-    } catch (error: any) {
-      console.error('Error initiating OAuth:', error);
-      setError(error.response?.data.error || error.message);
-    } finally {
-      setLoading(false);
-      // OAuthフロー完了後にフロントエンドのルートに自動でリダイレクトされるようにする場合、
-      // バックエンドでのリダイレクト先URLを調整する必要があります。
-      // ここではバックエンドからのリダイレクトを想定し、router.push('/')をコメントアウトしています。
-      // router.push('/');
     }
   };
 
@@ -92,11 +67,6 @@ const LoginPage = () => {
             {loading ? 'ローディング...' : 'ログイン'}
           </Button>
         </form>
-        <div className="flex justify-center">
-          <button onClick={handleGoogleLogin} disabled={loading}>
-            {loading ? 'ローディング...' : 'Googleでログイン'}
-          </button>
-        </div>
         <div className="text-center mt-4">
           <Link href="/register">登録ページへ</Link>
         </div>

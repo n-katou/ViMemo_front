@@ -1,15 +1,14 @@
 // context/AuthContext.tsx
-import React, { createContext, useContext, ReactNode, useEffect, useState } from "react";
+import React, { createContext, useContext, ReactNode, useState } from "react";
 import useFirebaseAuth from "hooks/useFirebaseAuth";
 import { User } from "firebase/auth";
 
 interface AuthContextType {
   currentUser: User | null;
+  setCurrentUser: (user: User | null) => void; // 現在のユーザーを設定する関数
   loading: boolean;
   loginWithGoogle: () => Promise<User | undefined>;
   logout: () => Promise<void>;
-  updateAuthState: (user: User | null) => void; // ユーザー情報を更新する関数を追加
-  setUser: (user: User | null) => void;
 }
 
 const AuthCtx = createContext<AuthContextType | undefined>(undefined);
@@ -19,14 +18,14 @@ type AuthProviderProps = {
 };
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const { currentUser, loading, loginWithGoogle, logout, setUser } = useFirebaseAuth();
+  const { currentUser, setUser, loading, loginWithGoogle, logout } = useFirebaseAuth();
 
-  const updateAuthState = (user: User | null) => {
-    setUser(user);
+  const setCurrentUser = (user: User | null) => {
+    setUser(user); // useFirebaseAuth から setUser を呼び出し
   };
 
   return (
-    <AuthCtx.Provider value={{ currentUser, loading, loginWithGoogle, logout, updateAuthState, setUser }}>
+    <AuthCtx.Provider value={{ currentUser, setCurrentUser, loading, loginWithGoogle, logout }}>
       {children}
     </AuthCtx.Provider>
   );
@@ -35,7 +34,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 // カスタムフックを提供してコンテキストを使用しやすくする
 export function useAuth() {
   const context = useContext(AuthCtx);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
