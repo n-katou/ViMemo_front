@@ -1,15 +1,19 @@
 "use client";
+
 import axios from 'axios';
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Button, TextField, Card, Typography, Snackbar, Alert } from '@mui/material';
+import { useAuth } from '../context/AuthContext'; // 正しいパスに修正
 
 const LoginPage = () => {
   const router = useRouter();
+  const { updateAuthState } = useAuth(); // 認証状態を更新する関数をコンテキストから取得
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string>('');
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -18,10 +22,12 @@ const LoginPage = () => {
     try {
       const response = await axios.post('https://vimemo.fly.dev/api/v1/login', { email, password });
       console.log('Login successful:', response.data);
-      router.push('/'); // Next.jsのルーターを使用してリダイレクト
+      localStorage.setItem('token', response.data.token); // 仮にトークンがレスポンスに含まれる場合
+      updateAuthState(response.data.user); // 認証状態を更新
+      router.push('/'); // ユーザーをダッシュボードにリダイレクト
     } catch (error: any) {
       console.error('Login failed:', error.response?.data || error.message);
-      setError(error.response?.data.error || error.message);
+      setError(error.response?.data.error || 'ログインに失敗しました。');
     } finally {
       setLoading(false);
     }
@@ -52,32 +58,39 @@ const LoginPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-lg mx-auto my-10 bg-white shadow-lg rounded-lg">
-        <h1 className="text-4xl font-bold text-center text-blue-800 py-6">ログイン</h1>
+      <Card style={{ padding: '20px', maxWidth: 400, width: '100%', marginBottom: '20px' }}>
+        <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
+          ログイン
+        </Typography>
         <form onSubmit={handleSubmit} className="space-y-4 px-8 pb-8">
-          <div>
-            <label htmlFor="email" className="block text-lg font-medium text-gray-700">メールアドレス</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-700"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-lg font-medium text-gray-700">パスワード</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-700"
-            />
-          </div>
-          <button type="submit" disabled={loading} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <TextField
+            label="メールアドレス"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="パスワード"
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <Button
+            type="submit"
+            disabled={loading}
+            variant="contained"
+            color="primary"
+            fullWidth
+            style={{ marginTop: '20px' }}
+          >
             {loading ? 'ローディング...' : 'ログイン'}
-          </button>
+          </Button>
         </form>
         <div className="flex justify-center">
           <button onClick={handleGoogleLogin} disabled={loading}>
@@ -87,7 +100,14 @@ const LoginPage = () => {
         <div className="text-center mt-4">
           <Link href="/register">登録ページへ</Link>
         </div>
-      </div>
+      </Card>
+      {error && (
+        <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError('')}>
+          <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
+            {error}
+          </Alert>
+        </Snackbar>
+      )}
     </div>
   );
 };

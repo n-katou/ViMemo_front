@@ -1,7 +1,7 @@
 "use client";
 import axios, { AxiosError } from 'axios';
 import { Button, TextField, Card, Typography, Snackbar, Alert } from '@mui/material';
-import useFirebaseAuth from '../../hooks/useFirebaseAuth';
+import useFirebaseAuth from '../hooks/useFirebaseAuth';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
