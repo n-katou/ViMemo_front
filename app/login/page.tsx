@@ -2,20 +2,51 @@
 import axios from 'axios';
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
+  const router = useRouter();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
+    setError('');
     try {
       const response = await axios.post('https://vimemo.fly.dev/api/v1/login', { email, password });
       console.log('Login successful:', response.data);
-      window.location.href = '/';
-      // Redirect or do something after login
+      router.push('/'); // Next.jsのルーターを使用してリダイレクト
     } catch (error: any) {
       console.error('Login failed:', error.response?.data || error.message);
+      setError(error.response?.data.error || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await axios.get('https://vimemo.fly.dev/api/v1/oauth/google', {
+        headers: {
+          'Frontend-Request': 'true',
+        },
+      });
+      // OAuth URLにリダイレクトする前に、ここでstateや他の必要な情報を保存することを検討してください。
+      window.location.href = response.data.oauthUrl; // OAuth URLにリダイレクト
+    } catch (error: any) {
+      console.error('Error initiating OAuth:', error);
+      setError(error.response?.data.error || error.message);
+    } finally {
+      setLoading(false);
+      // OAuthフロー完了後にフロントエンドのルートに自動でリダイレクトされるようにする場合、
+      // バックエンドでのリダイレクト先URLを調整する必要があります。
+      // ここではバックエンドからのリダイレクトを想定し、router.push('/')をコメントアウトしています。
+      // router.push('/');
     }
   };
 
@@ -44,23 +75,17 @@ const LoginPage = () => {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-700"
             />
           </div>
-          <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            ログイン
+          <button type="submit" disabled={loading} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            {loading ? 'ローディング...' : 'ログイン'}
           </button>
         </form>
         <div className="flex justify-center">
-          <Link href="/auth/google" className="btn btn-accent">
-            Googleでログイン
-          </Link>
+          <button onClick={handleGoogleLogin} disabled={loading}>
+            {loading ? 'ローディング...' : 'Googleでログイン'}
+          </button>
         </div>
         <div className="text-center mt-4">
-          <Link href="/register" className="text-blue-600 hover:text-blue-800">
-            登録ページへ
-          </Link>
-          {/* <br />
-          <Link href="/password-reset" className="text-blue-600 hover:text-blue-800">
-            パスワードを忘れた方
-          </Link> */}
+          <Link href="/register">登録ページへ</Link>
         </div>
       </div>
     </div>

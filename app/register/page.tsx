@@ -39,32 +39,32 @@ const RegisterPage = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      const user = await loginWithGoogle();
-      if (user) {
-        const token = await user.getIdToken();
-        const userData = {
-          user: {
-            name: user.displayName,
-            email: user.email,
-            password: 'test',
-            password_confirmation: 'test'
-          }
-        };
-        const config = {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        };
-        await axios.post("https://vimemo.fly.dev/api/v1/users/auth_create", userData, config);
-        console.log('User registered successfully');
-      }
-    } catch (error) {
-      setError('Google アカウントでの登録に失敗しました。');
-    }
-  };
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     const user = await loginWithGoogle();
+  //     if (user) {
+  //       const token = await user.getIdToken();
+  //       const userData = {
+  //         user: {
+  //           name: user.displayName,
+  //           email: user.email,
+  //           password: 'test',
+  //           password_confirmation: 'test'
+  //         }
+  //       };
+  //       const config = {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${token}`
+  //         }
+  //       };
+  //       await axios.post("https://vimemo.fly.dev/api/v1/users/auth_create", userData, config);
+  //       console.log('User registered successfully');
+  //     }
+  //   } catch (error) {
+  //     setError('Google アカウントでの登録に失敗しました。');
+  //   }
+  // };
 
   const handleCloseSnackbar = () => {
     setError('');
@@ -89,9 +89,9 @@ const RegisterPage = () => {
           {error}
         </Alert>
       </Snackbar>
-      <Button onClick={handleGoogleLogin} variant="contained" color="primary">
+      {/* <Button onClick={handleGoogleLogin} variant="contained" color="primary">
         Googleで登録
-      </Button>
+      </Button> */}
     </div>
   );
 }
