@@ -7,7 +7,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";  // 'next/navigation' から 'next/router' に修正
 
 import { auth } from "lib/initFirebase";
 
@@ -19,10 +19,8 @@ export default function useFirebaseAuth() {
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
-
     if (result) {
       const user = result.user;
-
       router.push("/");
       return user;
     }
@@ -35,19 +33,15 @@ export default function useFirebaseAuth() {
 
   const logout = () => signOut(auth).then(clear);
 
-  const nextOrObserver = async (user: User | null) => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    setCurrentUser(user);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, nextOrObserver);
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      if (!user) {
+        setLoading(false);
+      } else {
+        setCurrentUser(user);
+        setLoading(false);
+      }
+    });
     return unsubscribe;
   }, []);
 
@@ -56,5 +50,6 @@ export default function useFirebaseAuth() {
     loading,
     loginWithGoogle,
     logout,
+    setUser: setCurrentUser  // setUser 関数として setCurrentUser を公開
   };
 }

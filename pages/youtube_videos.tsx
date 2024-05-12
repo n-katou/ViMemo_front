@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { YoutubeVideo } from '../types/youtubeVideo';
+import useFirebaseAuth from '../hooks/useFirebaseAuth';
 
 // YouTube動画をフェッチする非同期関数
 async function fetchYoutubeVideos(page = 1) {
@@ -44,6 +45,7 @@ async function fetchYoutubeVideos(page = 1) {
 
 const YoutubeVideosPage = () => {
   const router = useRouter(); // ルーターを取得
+  const { currentUser } = useFirebaseAuth();
   // フェッチした動画データとページネーション情報、エラー状態を管理
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -68,6 +70,10 @@ const YoutubeVideosPage = () => {
 
   // コンポーネントがマウントされたらデータをフェッチ
   useEffect(() => {
+    if (!currentUser) {
+      router.push('/login'); // ユーザーがログインしていない場合、ログインページにリダイレクト
+      return;
+    }
     const fetchData = async () => {
       const result = await fetchYoutubeVideos(pagination.current_page); // 現在のページをフェッチ
 
@@ -81,7 +87,7 @@ const YoutubeVideosPage = () => {
     };
 
     fetchData(); // データをフェッチ
-  }, [pagination.current_page]); // 現在のページが変わるたびにフェッチ
+  }, [pagination.current_page, currentUser, router]); // 現在のページが変わるたびにフェッチ
 
   // エラーが発生した場合
   if (error) {
