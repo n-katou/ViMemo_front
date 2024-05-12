@@ -1,15 +1,14 @@
 "use client";
-
 import axios from 'axios';
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router'; // 'next/navigation' は正しくは 'next/router' を使用
+import { useRouter } from 'next/navigation';
 import { Button, TextField, Card, Typography, Snackbar, Alert } from '@mui/material';
-import { useAuth } from '../context/AuthContext'; // パスが正しく、コンテキストから currentUser, setCurrentUser を取得
+import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
   const router = useRouter();
-  const { setCurrentUser } = useAuth(); // コンテキストから setCurrentUser 関数を取得
+  const { setCurrentUser, loginWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,14 +17,22 @@ const LoginPage = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
+    setError('');
     try {
       const response = await axios.post('https://vimemo.fly.dev/api/v1/login', { email, password });
-      console.log('Login successful:', response.data);
-      setCurrentUser(response.data.user); // ログイン成功後、ユーザー情報を更新
-      router.push('/'); // ダッシュボードへリダイレクト
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.token); // トークンをローカルストレージに保存
+        setCurrentUser(response.data.user); // ユーザー情報をContextにセット
+        router.push('/dashboard'); // ダッシュボードへリダイレクト
+      } else {
+        setError(response.data.error);
+      }
     } catch (error: any) {
-      console.error('Login failed:', error.response?.data || error.message);
-      setError(error.response?.data.error || 'ログインに失敗しました。');
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data.error || 'ログインに失敗しました。');
+      } else {
+        setError('ログインに失敗しました。');
+      }
     } finally {
       setLoading(false);
     }
@@ -47,10 +54,6 @@ const LoginPage = () => {
       setError(error.response?.data.error || error.message);
     } finally {
       setLoading(false);
-      // OAuthフロー完了後にフロントエンドのルートに自動でリダイレクトされるようにする場合、
-      // バックエンドでのリダイレクト先URLを調整する必要があります。
-      // ここではバックエンドからのリダイレクトを想定し、router.push('/')をコメントアウトしています。
-      // router.push('/');
     }
   };
 
@@ -65,7 +68,7 @@ const LoginPage = () => {
             label="メールアドレス"
             type="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             variant="outlined"
             fullWidth
             margin="normal"
@@ -74,7 +77,7 @@ const LoginPage = () => {
             label="パスワード"
             type="password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             variant="outlined"
             fullWidth
             margin="normal"

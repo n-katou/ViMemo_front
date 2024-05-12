@@ -1,4 +1,4 @@
-"use client";
+// Assuming the correct import path for Firebase configuration and initialization
 import { useState, useEffect } from "react";
 import {
   User,
@@ -7,49 +7,53 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
-import { useRouter } from "next/router";  // 'next/navigation' から 'next/router' に修正
+import { useRouter } from "next/navigation";
 
-import { auth } from "lib/initFirebase";
+import { auth } from "../lib/initFirebase"; // Ensure this path is correct
 
-export default function useFirebaseAuth() {
+const useFirebaseAuth = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const loginWithGoogle = async () => {
+  // Handle Google sign-in
+  const loginWithGoogle = async (): Promise<User | undefined> => {
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    if (result) {
-      const user = result.user;
-      router.push("/");
-      return user;
+    try {
+      const result = await signInWithPopup(auth, provider);
+      if (result.user) {
+        setCurrentUser(result.user);
+        router.push("/"); // ログイン後のリダイレクト
+        return result.user; // ユーザー情報を返す
+      }
+    } catch (error) {
+      console.error("Google login failed:", error);
     }
   };
 
-  const clear = () => {
-    setCurrentUser(null);
-    setLoading(false);
+  // Handle logout
+  const logout = async () => {
+    await signOut(auth);
+    setCurrentUser(null); // ユーザー情報をクリア
+    setLoading(false); // ローディング状態を解除
   };
 
-  const logout = () => signOut(auth).then(clear);
-
+  // Monitor auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
-      if (!user) {
-        setLoading(false);
-      } else {
-        setCurrentUser(user);
-        setLoading(false);
-      }
+      setCurrentUser(user);
+      setLoading(false);
     });
-    return unsubscribe;
+    return () => unsubscribe();  // Unsubscribe on cleanup
   }, []);
 
   return {
     currentUser,
+    setCurrentUser,
     loading,
     loginWithGoogle,
     logout,
-    setUser: setCurrentUser  // setUser 関数として setCurrentUser を公開
   };
-}
+};
+
+export default useFirebaseAuth;
