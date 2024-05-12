@@ -1,15 +1,31 @@
 "use client";
-import React from 'react';
-import { Button } from '@mui/material';
-import useFirebaseAuth from "../hooks/useFirebaseAuth";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { Button, Snackbar, Alert } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
-const AuthPage = () => {
+const RootPage = () => {
+  const router = useRouter();
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
   return (
     <div>
       ルートページ
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          登録が成功しました！
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
 
-export default AuthPage;
+export default RootPage;
