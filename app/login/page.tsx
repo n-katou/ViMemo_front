@@ -40,6 +40,24 @@ const LoginPage = () => {
     }
   };
 
+  const handleLogout = async () => {
+    if (currentUser) {
+      try {
+        // Firebase からログアウト
+        await logout();
+        // バックエンドでトークンをクリア
+        const token = await currentUser.getIdToken();  // 現在のユーザートークンを取得
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        await axios.delete("https://vimemo.fly.dev/api/v1/users/logout", config);
+        console.log('Logout successful');
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    } else {
+      console.error('No user to log out.');
+    }
+  };
+
   return (
     <div>
       {!currentUser ? (
@@ -47,7 +65,7 @@ const LoginPage = () => {
           Googleログイン
         </Button>
       ) : (
-        <Button onClick={logout} variant="contained" color="secondary">
+        <Button onClick={handleLogout} variant="contained" color="secondary">
           ログアウト
         </Button>
       )}
