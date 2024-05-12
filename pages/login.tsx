@@ -31,6 +31,29 @@ const LoginPage = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await axios.get('https://vimemo.fly.dev/api/v1/oauth/google', {
+        headers: {
+          'Frontend-Request': 'true',
+        },
+      });
+      // OAuth URLにリダイレクトする前に、ここでstateや他の必要な情報を保存することを検討してください。
+      window.location.href = response.data.oauthUrl; // OAuth URLにリダイレクト
+    } catch (error: any) {
+      console.error('Error initiating OAuth:', error);
+      setError(error.response?.data.error || error.message);
+    } finally {
+      setLoading(false);
+      // OAuthフロー完了後にフロントエンドのルートに自動でリダイレクトされるようにする場合、
+      // バックエンドでのリダイレクト先URLを調整する必要があります。
+      // ここではバックエンドからのリダイレクトを想定し、router.push('/')をコメントアウトしています。
+      // router.push('/');
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card style={{ padding: '20px', maxWidth: 400, width: '100%', marginBottom: '20px' }}>
@@ -67,6 +90,11 @@ const LoginPage = () => {
             {loading ? 'ローディング...' : 'ログイン'}
           </Button>
         </form>
+        <div className="flex justify-center">
+          <button onClick={handleGoogleLogin} disabled={loading}>
+            {loading ? 'ローディング...' : 'Googleでログイン'}
+          </button>
+        </div>
         <div className="text-center mt-4">
           <Link href="/register">登録ページへ</Link>
         </div>
