@@ -21,13 +21,13 @@ const LoginPage = () => {
     try {
       const response = await axios.post('https://vimemo.fly.dev/api/v1/login', { email, password });
       if (response.data.success) {
-        localStorage.setItem('token', response.data.token); // トークンをローカルストレージに保存
+        sessionStorage.setItem('token', response.data.token); // トークンをセッションストレージに保存
         setCurrentUser(response.data.user); // ユーザー情報をContextにセット
         router.push('/dashboard'); // ダッシュボードへリダイレクト
       } else {
         setError(response.data.error);
       }
-    } catch (error: any) {
+    } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data.error || 'ログインに失敗しました。');
       } else {
