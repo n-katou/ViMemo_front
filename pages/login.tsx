@@ -28,7 +28,7 @@ const LoginPage = () => {
     try {
       const response = await axios.post('https://vimemo.fly.dev/api/v1/login', { email, password });
       if (response.data.success) {
-        sessionStorage.setItem('token', response.data.token);
+        localStorage.setItem('token', response.data.token);
         setCurrentUser(response.data.user);
         router.push('/dashboard');
       } else {
