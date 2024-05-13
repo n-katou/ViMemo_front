@@ -1,6 +1,6 @@
 "use client";
 import axios from 'axios';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button, TextField, Card, Typography, Snackbar, Alert } from '@mui/material';
@@ -8,11 +8,18 @@ import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
   const router = useRouter();
-  const { setCurrentUser, loginWithGoogle } = useAuth();
+  const { currentUser, setCurrentUser, logout } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    // ログインしていたらダッシュボードへリダイレクト
+    if (currentUser) {
+      router.push('/dashboard');
+    }
+  }, [currentUser, router]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,9 +28,9 @@ const LoginPage = () => {
     try {
       const response = await axios.post('https://vimemo.fly.dev/api/v1/login', { email, password });
       if (response.data.success) {
-        sessionStorage.setItem('token', response.data.token); // トークンをセッションストレージに保存
-        setCurrentUser(response.data.user); // ユーザー情報をContextにセット
-        router.push('/dashboard'); // ダッシュボードへリダイレクト
+        sessionStorage.setItem('token', response.data.token);
+        setCurrentUser(response.data.user);
+        router.push('/dashboard');
       } else {
         setError(response.data.error);
       }
@@ -56,7 +63,6 @@ const LoginPage = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <Card style={{ padding: '20px', maxWidth: 400, width: '100%', marginBottom: '20px' }}>
