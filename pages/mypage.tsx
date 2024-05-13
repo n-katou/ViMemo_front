@@ -5,7 +5,7 @@ import useOAuthCallback from '../hooks/useOAuthCallback';
 const MyPage = () => {
   useOAuthCallback();
   return (
-    <div>Loading...</div>
+    <div>ルートページ</div>
   );
 };
 
