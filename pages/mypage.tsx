@@ -1,12 +1,12 @@
 "use client";
 import React from 'react';
-const LoginPage = () => {
 
+import useOAuthCallback from '../hooks/useOAuthCallback';
+const MyPage = () => {
+  useOAuthCallback();
   return (
-    <div>
-      マイページ
-    </div>
+    <div>ルートページ</div>
   );
 };
 
-export default LoginPage;
+export default MyPage;
