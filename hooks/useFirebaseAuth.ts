@@ -17,14 +17,13 @@ const useFirebaseAuth = () => {
   const router = useRouter();
 
   // Handle Google sign-in
-  const loginWithGoogle = async (): Promise<User | undefined> => {
+  const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
         setCurrentUser(result.user);
         router.push("/"); // ログイン後のリダイレクト
-        return result.user; // ユーザー情報を返す
       }
     } catch (error) {
       console.error("Google login failed:", error);
