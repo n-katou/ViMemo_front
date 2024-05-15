@@ -6,13 +6,12 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
-import { useRouter } from "next/navigation";
 import { auth } from "../lib/initFirebase"; // Ensure this path is correct
 
 const useFirebaseAuth = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+
 
   // Handle Google sign-in
   const loginWithGoogle = async () => {
@@ -22,7 +21,6 @@ const useFirebaseAuth = () => {
       if (result.user) {
         setCurrentUser(result.user);
         console.log("Google login successful:", result.user);  // デバッグ用ログ
-        router.push("/"); // Redirect after login
       }
     } catch (error) {
       console.error("Google login failed:", error);

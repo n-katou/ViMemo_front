@@ -11,13 +11,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-const AuthCtx = createContext<AuthContextType>({
-  currentUser: null,
-  setCurrentUser: () => { },
-  loading: false,
-  loginWithGoogle: async () => { },
-  logout: async () => { },
-});
+const AuthCtx = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { currentUser, setCurrentUser, loading, loginWithGoogle, logout } = useFirebaseAuth();
@@ -31,7 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthCtx);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
