@@ -15,7 +15,7 @@ async function fetchYoutubeVideo(id: number, token?: string) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`https://vimemo.fly.dev/api/v1/youtube_videos/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}`, {
     headers: headers,
   });
 
@@ -42,7 +42,7 @@ const YoutubeVideoShowPage = () => {
     try {
       const token = await currentUser.getIdToken();
       const response = await axios.post(
-        `https://vimemo.fly.dev/api/v1/youtube_videos/${video.id}/notes`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes`,
         { content: newNoteContent },
         {
           headers: {
@@ -120,10 +120,10 @@ const YoutubeVideoShowPage = () => {
         )}
         <div>
           {notes.length > 0 ? (
-            notes.map((note, index) => (
+            notes.map((note) => (
               <div key={note.id}>
                 <p>{note.content}</p>
-                <p>{note.created_at}</p>
+                <p>{new Date(note.created_at).toLocaleDateString()}</p>
               </div>
             ))
           ) : (

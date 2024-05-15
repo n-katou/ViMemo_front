@@ -27,7 +27,7 @@ const RegisterPage = () => {
       const config = {
         headers: { 'Content-Type': 'application/json' }
       };
-      const response = await axios.post("https://vimemo.fly.dev/api/v1/users", userData, config);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`, userData, config);
       console.log('Registration successful', response.data);
       router.push('/?registered=true');
     } catch (error) {
@@ -58,7 +58,7 @@ const RegisterPage = () => {
   //           'Authorization': `Bearer ${token}`
   //         }
   //       };
-  //       await axios.post("https://vimemo.fly.dev/api/v1/users/auth_create", userData, config);
+  //       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/auth_create`, userData, config);
   //       console.log('User registered successfully');
   //     }
   //   } catch (error) {

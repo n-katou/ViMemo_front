@@ -25,7 +25,7 @@ const LoginPage = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.post('https://vimemo.fly.dev/api/v1/login', { email, password });
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/login`, { email, password });
       if (response.data.success) {
         localStorage.setItem('token', response.data.token);
         setCurrentUser(response.data.user);
@@ -50,7 +50,7 @@ const LoginPage = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get('https://vimemo.fly.dev/api/v1/oauth/google', {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/google`, {
         headers: {
           'Frontend-Request': 'true',
         },
