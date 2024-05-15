@@ -62,6 +62,11 @@ const YoutubeVideoShowPage = () => {
       return;
     }
 
+    if (!pathname) {
+      console.error('Pathname is null');
+      return;
+    }
+
     const pathSegments = pathname.split('/');
     const videoId = parseInt(pathSegments[pathSegments.length - 1], 10);
 

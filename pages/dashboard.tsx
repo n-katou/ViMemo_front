@@ -1,16 +1,7 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
   const { currentUser, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && !currentUser) {
-      router.push('/login');
-    }
-  }, [currentUser, loading, router]);
 
   if (loading) {
     return <div>Loading...</div>;
