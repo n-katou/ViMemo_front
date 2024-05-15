@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 const useOAuthCallback = () => {
   const router = useRouter();
-  const { setCurrentUser } = useAuth();
+  const { setAuthState } = useAuth();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -15,7 +16,7 @@ const useOAuthCallback = () => {
 
       // バックエンドからユーザーデータをフェッチ
       fetchUserData(token).then(userData => {
-        setCurrentUser(userData); // 取得したユーザーデータをセット
+        setAuthState({ currentUser: userData, jwtToken: token });
         router.push('/dashboard'); // ダッシュボードへリダイレクト
       }).catch(error => {
         console.error(error);
@@ -24,22 +25,21 @@ const useOAuthCallback = () => {
     } else {
       router.push('/login');
     }
-  }, [router, setCurrentUser]);
+  }, [router, setAuthState]);
 };
 
 async function fetchUserData(token: string) {
-  // ユーザー固有のIDを含めずにリクエスト
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`, {  // IDを除外し、'user'エンドポイントに変更
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
   });
 
-  if (!response.ok) {
+  if (response.status !== 200) {
     throw new Error(`Failed to fetch user data: ${response.status}`);
   }
 
-  return await response.json();
+  return response.data;
 }
 
 export default useOAuthCallback;

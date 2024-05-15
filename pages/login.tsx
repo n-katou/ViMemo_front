@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
   const router = useRouter();
-  const { currentUser, setCurrentUser, logout } = useAuth();
+  const { currentUser, setAuthState, logout } = useAuth();  // setCurrentUserをsetAuthStateに変更
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ const LoginPage = () => {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/login`, { email, password });
       if (response.data.success) {
         localStorage.setItem('token', response.data.token);
-        setCurrentUser(response.data.user);
+        setAuthState({ currentUser: response.data.user, jwtToken: response.data.token });
         router.push('/');
       } else {
         setError(response.data.error);
