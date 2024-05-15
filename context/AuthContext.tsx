@@ -1,29 +1,29 @@
-// context/AuthContext.tsx
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode } from "react";
 import useFirebaseAuth from "../hooks/useFirebaseAuth";
 import { User } from "firebase/auth";
+import { AuthState } from "../types/AuthState";
 
-interface AuthContextType {
-  currentUser: User | null;
-  setCurrentUser: (user: User | null) => void;
+interface AuthContextType extends AuthState {
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  setAuthState: (state: AuthState) => void; // setAuthStateを追加
 }
 
 const AuthCtx = createContext<AuthContextType>({
   currentUser: null,
-  setCurrentUser: () => { },
+  jwtToken: null,
   loading: false,
   loginWithGoogle: async () => { },
   logout: async () => { },
+  setAuthState: () => { }, // デフォルトのsetAuthState
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { currentUser, setCurrentUser, loading, loginWithGoogle, logout } = useFirebaseAuth();
+  const auth = useFirebaseAuth();
 
   return (
-    <AuthCtx.Provider value={{ currentUser, setCurrentUser, loading, loginWithGoogle, logout }}>
+    <AuthCtx.Provider value={auth}>
       {children}
     </AuthCtx.Provider>
   );

@@ -1,19 +1,17 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
-import useFirebaseAuth from '../../hooks/useFirebaseAuth';
+import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/NoteForm';
 import axios from 'axios';
 
-async function fetchYoutubeVideo(id: number, token?: string) {
+async function fetchYoutubeVideo(id: number, jwtToken: string) {
   const headers: { [key: string]: string } = {
-    'Accept': 'application/json'
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${jwtToken}`,
   };
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}`, {
     headers: headers,
@@ -31,22 +29,22 @@ const YoutubeVideoShowPage = () => {
   const [video, setVideo] = useState<YoutubeVideo | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const pathname = usePathname();
-  const { currentUser, loading } = useFirebaseAuth();
+  const router = useRouter();
+  const { currentUser, jwtToken, loading } = useAuth();
 
   const addNote = async (newNoteContent: string): Promise<void> => {
-    if (!currentUser || !video) {
-      console.error('User or video is not defined');
+    if (!jwtToken || !video) {
+      console.error('JWT token or video is not defined');
       return;
     }
 
     try {
-      const token = await currentUser.getIdToken();
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes`,
         { content: newNoteContent },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${jwtToken}`,
             'Content-Type': 'application/json'
           }
         }
@@ -59,33 +57,25 @@ const YoutubeVideoShowPage = () => {
   };
 
   useEffect(() => {
+    if (!currentUser && !loading) {
+      router.push('/login');
+      return;
+    }
+
     const pathSegments = pathname.split('/');
     const videoId = parseInt(pathSegments[pathSegments.length - 1], 10);
 
-    if (!isNaN(videoId)) {
-      const fetchVideo = async () => {
-        let token;
-        if (currentUser) {
-          token = await currentUser.getIdToken();
-        }
-        fetchYoutubeVideo(videoId, token)
-          .then(videoData => {
-            setVideo(videoData.youtube_video);
-            setNotes(videoData.notes); // ここでノートをセット
-            console.log('Video data loaded', videoData);
-            console.log('Notes data:', videoData.notes); // ノートデータを詳細にログ出力
-          })
-          .catch(error => console.error('Error loading the video:', error));
-      };
-      fetchVideo();
+    if (!isNaN(videoId) && jwtToken) {
+      fetchYoutubeVideo(videoId, jwtToken)
+        .then(videoData => {
+          setVideo(videoData.youtube_video);
+          setNotes(videoData.notes);
+          console.log('Video data loaded', videoData);
+          console.log('Notes data:', videoData.notes);
+        })
+        .catch(error => console.error('Error loading the video:', error));
     }
-  }, [pathname, currentUser]);
-
-  useEffect(() => {
-    console.log('Current User:', currentUser);
-    console.log('Video:', video);
-    console.log('Notes:', notes); // デバッグ用にノートを表示
-  }, [currentUser, video, notes]);
+  }, [pathname, jwtToken, currentUser, loading]);
 
   if (loading) {
     return <div>Loading...</div>;

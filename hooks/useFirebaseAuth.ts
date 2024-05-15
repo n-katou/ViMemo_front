@@ -1,63 +1,48 @@
-import { useState, useEffect } from "react";
-import {
-  User,
-  onAuthStateChanged,
-  signOut,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from "firebase/auth";
-import { useRouter } from "next/navigation";
-import { auth } from "../lib/initFirebase"; // Ensure this path is correct
+import { useState, useEffect } from 'react';
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from 'firebase/auth';
+import { auth } from '../lib/initFirebase';
+import axios from 'axios';
+import { AuthState } from "../types/AuthState";
 
 const useFirebaseAuth = () => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authState, setAuthState] = useState<AuthState>({ currentUser: null, jwtToken: null });
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
-  // Handle Google sign-in
-  const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      if (result.user) {
-        setCurrentUser(result.user);
-        console.log("Google login successful:", result.user);  // デバッグ用ログ
-        router.push("/"); // Redirect after login
-      }
-    } catch (error) {
-      console.error("Google login failed:", error);
-    }
-  };
-
-  // Handle logout
-  const logout = async () => {
-    try {
-      await signOut(auth);
-      setCurrentUser(null); // Clear user info
-      console.log("User logged out");  // デバッグ用ログ
-    } catch (error) {
-      console.error("Logout failed:", error);
-    } finally {
-      setLoading(false); // Ensure loading is false after logout
-    }
-  };
-
-  // Monitor auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('Auth state changed:', user);  // デバッグ用ログ
-      setCurrentUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
+      if (user) {
+        try {
+          const token = await user.getIdToken();
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/firebase`, { token });
+          setAuthState({ currentUser: user, jwtToken: response.data.jwtToken });
+        } catch (error) {
+          console.error('Error fetching JWT token from backend:', error);
+        }
+      } else {
+        setAuthState({ currentUser: null, jwtToken: null });
+      }
       setLoading(false);
     });
-    return () => unsubscribe(); // Unsubscribe on cleanup
+
+    return () => unsubscribe();
   }, []);
 
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  };
+
+  const logout = async () => {
+    await signOut(auth);
+    setAuthState({ currentUser: null, jwtToken: null });
+  };
+
   return {
-    currentUser,
-    setCurrentUser,
+    ...authState,
     loading,
     loginWithGoogle,
     logout,
+    setAuthState, // setAuthStateを返す
   };
 };
 
