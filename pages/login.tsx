@@ -15,7 +15,6 @@ const LoginPage = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // ログインしていたらダッシュボードへリダイレクト
     if (currentUser) {
       router.push('/dashboard');
     }
@@ -37,8 +36,10 @@ const LoginPage = () => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data.error || 'ログインに失敗しました。');
+        console.error('Axios error:', error.response);
       } else {
         setError('ログインに失敗しました。');
+        console.error('General error:', error);
       }
     } finally {
       setLoading(false);
@@ -54,8 +55,7 @@ const LoginPage = () => {
           'Frontend-Request': 'true',
         },
       });
-      // OAuth URLにリダイレクトする前に、ここでstateや他の必要な情報を保存することを検討してください。
-      window.location.href = response.data.oauthUrl; // OAuth URLにリダイレクト
+      window.location.href = response.data.oauthUrl;
     } catch (error: any) {
       console.error('Error initiating OAuth:', error);
       setError(error.response?.data.error || error.message);
@@ -63,6 +63,7 @@ const LoginPage = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card style={{ padding: '20px', maxWidth: 400, width: '100%', marginBottom: '20px' }}>

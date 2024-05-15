@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
+import { Note } from '../../types/note';
 import useFirebaseAuth from '../../hooks/useFirebaseAuth';
 import NoteForm from '../../components/NoteForm';
 import axios from 'axios';
@@ -28,10 +29,10 @@ async function fetchYoutubeVideo(id: number, token?: string) {
 
 const YoutubeVideoShowPage = () => {
   const [video, setVideo] = useState<YoutubeVideo | null>(null);
+  const [notes, setNotes] = useState<Note[]>([]);
   const pathname = usePathname();
   const { currentUser, loading } = useFirebaseAuth();
 
-  const [notes, setNotes] = useState<any[]>([]);
   const addNote = async (newNoteContent: string): Promise<void> => {
     if (!currentUser || !video) {
       console.error('User or video is not defined');
@@ -70,7 +71,9 @@ const YoutubeVideoShowPage = () => {
         fetchYoutubeVideo(videoId, token)
           .then(videoData => {
             setVideo(videoData.youtube_video);
+            setNotes(videoData.notes); // ここでノートをセット
             console.log('Video data loaded', videoData);
+            console.log('Notes data:', videoData.notes); // ノートデータを詳細にログ出力
           })
           .catch(error => console.error('Error loading the video:', error));
       };
@@ -81,7 +84,8 @@ const YoutubeVideoShowPage = () => {
   useEffect(() => {
     console.log('Current User:', currentUser);
     console.log('Video:', video);
-  }, [currentUser, video]);
+    console.log('Notes:', notes); // デバッグ用にノートを表示
+  }, [currentUser, video, notes]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -115,9 +119,16 @@ const YoutubeVideoShowPage = () => {
           <p>No user is logged in.</p>
         )}
         <div>
-          {notes.map((note, index) => (
-            <p key={index}>{note.content}</p>
-          ))}
+          {notes.length > 0 ? (
+            notes.map((note, index) => (
+              <div key={note.id}>
+                <p>{note.content}</p>
+                <p>{note.created_at}</p>
+              </div>
+            ))
+          ) : (
+            <p>No notes available.</p>
+          )}
         </div>
       </div>
     </>
