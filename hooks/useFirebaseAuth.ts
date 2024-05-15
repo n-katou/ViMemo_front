@@ -2,39 +2,50 @@ import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from 'firebase/auth';
 import { auth } from '../lib/initFirebase';
 import axios from 'axios';
-import { AuthState } from "../types/AuthState";
+import { AuthState } from '../types/AuthState';
 
 const useFirebaseAuth = () => {
   const [authState, setAuthState] = useState<AuthState>({ currentUser: null, jwtToken: null });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
-      if (user) {
-        try {
-          const token = await user.getIdToken();
-          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/firebase`, { token });
-          setAuthState({ currentUser: user, jwtToken: response.data.jwtToken });
-        } catch (error) {
-          console.error('Error fetching JWT token from backend:', error);
-        }
-      } else {
-        setAuthState({ currentUser: null, jwtToken: null });
-      }
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+        .then(response => {
+          setAuthState({ currentUser: response.data, jwtToken: token });
+        })
+        .catch(error => {
+          console.error('Error fetching user:', error);
+          setAuthState({ currentUser: null, jwtToken: null });
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
       setLoading(false);
-    });
-
-    return () => unsubscribe();
+    }
   }, []);
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+    const token = await result.user.getIdToken();
+
+    localStorage.setItem('token', token);
+
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/firebase`, { token });
+    setAuthState({ currentUser: result.user, jwtToken: response.data.jwtToken });
   };
 
   const logout = async () => {
     await signOut(auth);
     setAuthState({ currentUser: null, jwtToken: null });
+    localStorage.removeItem('token');
   };
 
   return {
@@ -42,7 +53,7 @@ const useFirebaseAuth = () => {
     loading,
     loginWithGoogle,
     logout,
-    setAuthState, // setAuthStateを返す
+    setAuthState,
   };
 };
 
