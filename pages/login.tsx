@@ -29,7 +29,7 @@ const LoginPage = () => {
       if (response.data.success) {
         localStorage.setItem('token', response.data.token);
         setCurrentUser(response.data.user);
-        router.push('/dashboard');
+        router.push('/');
       } else {
         setError(response.data.error);
       }
