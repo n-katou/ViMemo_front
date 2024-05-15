@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 
@@ -29,7 +29,7 @@ const useOAuthCallback = () => {
 
 async function fetchUserData(token: string) {
   // ユーザー固有のIDを含めずにリクエスト
-  const response = await fetch('https://vimemo.fly.dev/api/v1/users', {  // IDを除外し、'user'エンドポイントに変更
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`, {  // IDを除外し、'user'エンドポイントに変更
     headers: {
       'Authorization': `Bearer ${token}`
     }

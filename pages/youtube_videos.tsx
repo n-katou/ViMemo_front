@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useAuth } from '../context/AuthContext';
 
-// YouTube動画をフェッチする非同期関数
 async function fetchYoutubeVideos(page = 1) {
   try {
     const authToken = localStorage.getItem('authToken'); // ローカルストレージから認証トークンを取得
@@ -18,8 +17,7 @@ async function fetchYoutubeVideos(page = 1) {
       headers['Authorization'] = `Bearer ${authToken}`;
     }
 
-    const res = await fetch(`https://vimemo.fly.dev/api/v1/youtube_videos?page=${page}`, {
-      // const res = await fetch(`http://localhost:3000/youtube_videos?page=${page}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos?page=${page}`, {
       method: 'GET',
       headers: headers,
       credentials: 'include', // クッキーを送信するための設定
