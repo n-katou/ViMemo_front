@@ -1,4 +1,3 @@
-// Assuming the correct import path for Firebase configuration and initialization
 import { useState, useEffect } from "react";
 import {
   User,
@@ -8,7 +7,6 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
-
 import { auth } from "../lib/initFirebase"; // Ensure this path is correct
 
 const useFirebaseAuth = () => {
@@ -23,7 +21,8 @@ const useFirebaseAuth = () => {
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
         setCurrentUser(result.user);
-        router.push("/"); // ログイン後のリダイレクト
+        console.log("Google login successful:", result.user);  // デバッグ用ログ
+        router.push("/"); // Redirect after login
       }
     } catch (error) {
       console.error("Google login failed:", error);
@@ -32,18 +31,25 @@ const useFirebaseAuth = () => {
 
   // Handle logout
   const logout = async () => {
-    await signOut(auth);
-    setCurrentUser(null); // ユーザー情報をクリア
-    setLoading(false); // ローディング状態を解除
+    try {
+      await signOut(auth);
+      setCurrentUser(null); // Clear user info
+      console.log("User logged out");  // デバッグ用ログ
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setLoading(false); // Ensure loading is false after logout
+    }
   };
 
   // Monitor auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, user => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('Auth state changed:', user);  // デバッグ用ログ
       setCurrentUser(user);
       setLoading(false);
     });
-    return () => unsubscribe();  // Unsubscribe on cleanup
+    return () => unsubscribe(); // Unsubscribe on cleanup
   }, []);
 
   return {

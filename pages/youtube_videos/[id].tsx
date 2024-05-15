@@ -29,7 +29,7 @@ async function fetchYoutubeVideo(id: number, token?: string) {
 const YoutubeVideoShowPage = () => {
   const [video, setVideo] = useState<YoutubeVideo | null>(null);
   const pathname = usePathname();
-  const { currentUser } = useFirebaseAuth();
+  const { currentUser, loading } = useFirebaseAuth();
 
   const [notes, setNotes] = useState<any[]>([]);
   const addNote = async (newNoteContent: string): Promise<void> => {
@@ -70,7 +70,7 @@ const YoutubeVideoShowPage = () => {
         fetchYoutubeVideo(videoId, token)
           .then(videoData => {
             setVideo(videoData.youtube_video);
-            console.log('Video data loaded', videoData);  // ビデオデータがロードされた後にログ出力
+            console.log('Video data loaded', videoData);
           })
           .catch(error => console.error('Error loading the video:', error));
       };
@@ -78,8 +78,17 @@ const YoutubeVideoShowPage = () => {
     }
   }, [pathname, currentUser]);
 
-  if (!video) {
+  useEffect(() => {
+    console.log('Current User:', currentUser);
+    console.log('Video:', video);
+  }, [currentUser, video]);
+
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (!video) {
+    return <div>Video not found</div>;
   }
 
   return (
@@ -97,7 +106,14 @@ const YoutubeVideoShowPage = () => {
         <p>動画時間: {video.duration}分</p>
       </div>
       <div>
-        {currentUser && <NoteForm addNote={addNote} />}
+        {currentUser ? (
+          <>
+            <p>Current User: {currentUser.email}</p>
+            <NoteForm addNote={addNote} />
+          </>
+        ) : (
+          <p>No user is logged in.</p>
+        )}
         <div>
           {notes.map((note, index) => (
             <p key={index}>{note.content}</p>
