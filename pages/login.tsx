@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
   const router = useRouter();
-  const { currentUser, setAuthState, logout } = useAuth();  // setCurrentUserをsetAuthStateに変更
+  const { currentUser, setAuthState, logout } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

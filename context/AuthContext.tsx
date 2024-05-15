@@ -3,11 +3,13 @@ import useFirebaseAuth from "../hooks/useFirebaseAuth";
 import { User } from "firebase/auth";
 import { AuthState } from "../types/AuthState";
 
-interface AuthContextType extends AuthState {
+interface AuthContextType {
+  currentUser: User | null;
+  jwtToken: string | null;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
-  setAuthState: (state: AuthState) => void; // setAuthStateを追加
+  setAuthState: (state: AuthState) => void;
 }
 
 const AuthCtx = createContext<AuthContextType>({
@@ -16,7 +18,7 @@ const AuthCtx = createContext<AuthContextType>({
   loading: false,
   loginWithGoogle: async () => { },
   logout: async () => { },
-  setAuthState: () => { }, // デフォルトのsetAuthState
+  setAuthState: () => { },
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
