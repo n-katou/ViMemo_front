@@ -8,9 +8,10 @@ interface NoteListProps {
   videoTimestampToSeconds: (timestamp: string) => number;
   playFromTimestamp: (seconds: number) => void;
   videoId: string;
+  onDelete: (noteId: number) => void; // onDeleteプロパティを追加
 }
 
-const NoteList: React.FC<NoteListProps> = ({ notes, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId }) => {
+const NoteList: React.FC<NoteListProps> = ({ notes, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete }) => {
   return (
     <div id="notes_list">
       <h2 style={{ marginTop: '20px' }}>メモ一覧</h2>
@@ -18,12 +19,13 @@ const NoteList: React.FC<NoteListProps> = ({ notes, currentUser, videoTimestampT
         <div className="flex flex-wrap">
           {notes.map((note) => (
             <div key={note.id} className="p-2 flex-1 lg:max-w-1/3">
-              <NoteItem 
-                note={note} 
-                currentUser={currentUser} 
-                videoTimestampToSeconds={videoTimestampToSeconds} 
+              <NoteItem
+                note={note}
+                currentUser={currentUser}
+                videoTimestampToSeconds={videoTimestampToSeconds}
                 playFromTimestamp={playFromTimestamp}
                 videoId={videoId}
+                onDelete={onDelete} // onDeleteを渡す
               />
             </div>
           ))}

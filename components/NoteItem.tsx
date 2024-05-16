@@ -7,12 +7,19 @@ interface NoteItemProps {
   videoTimestampToSeconds: (timestamp: string) => number;
   playFromTimestamp: (seconds: number) => void;
   videoId: string;
+  onDelete: (noteId: number) => void; // Note削除時のコールバック関数を追加
 }
 
-const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId }) => {
+const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete }) => {
   const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL;
   const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl;
   console.log('Avatar URL:', avatarUrl);
+
+  const handleDelete = () => {
+    if (confirm('このメモを削除しますか？')) {
+      onDelete(note.id); // 親コンポーネントに削除を通知
+    }
+  };
 
   return (
     <div className="card mx-auto w-full bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 mb-3">
@@ -59,8 +66,8 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
               <button className="btn btn-outline btn-info">
                 編集 {/* 編集ボタンの実装をここに追加 */}
               </button>
-              <button className="btn btn-outline btn-error">
-                削除 {/* 削除ボタンの実装をここに追加 */}
+              <button onClick={handleDelete} className="btn btn-outline btn-error">
+                削除 {/* 削除ボタンの実装 */}
               </button>
             </>
           )}
