@@ -5,7 +5,7 @@ import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/NoteForm';
-import NoteItem from '../../components/NoteItem'; // NoteItemをインポート
+import NoteItem from '../../components/NoteItem';
 import YoutubeVideoDetails from '../../components/YoutubeVideoDetails';
 import axios from 'axios';
 import { fetchYoutubeVideo, handleLike, handleUnlike } from '../../src/api';
@@ -17,6 +17,22 @@ const YoutubeVideoShowPage: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { currentUser, jwtToken, loading } = useAuth();
+
+  const fetchNotes = async (videoId: number, jwtToken: string) => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${jwtToken}`,
+          }
+        }
+      );
+      setNotes(response.data.notes);
+    } catch (error) {
+      console.error('Failed to fetch notes:', error);
+    }
+  };
 
   const addNote = async (newNoteContent: string, timestampMinutes: number, timestampSeconds: number): Promise<void> => {
     if (!jwtToken || !video) {
@@ -36,7 +52,8 @@ const YoutubeVideoShowPage: React.FC = () => {
         }
       );
 
-      setNotes(prevNotes => [...prevNotes, response.data]);
+      await fetchNotes(video.id, jwtToken); // ノートを追加後に再fetch
+
     } catch (error) {
       console.error('Failed to add note:', error);
     }
@@ -55,7 +72,8 @@ const YoutubeVideoShowPage: React.FC = () => {
         }
       });
 
-      setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+      await fetchNotes(video.id, jwtToken); // ノートを削除後に再fetch
+
     } catch (error) {
       console.error('Failed to delete note:', error);
     }
@@ -87,53 +105,51 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
   }, [pathname, jwtToken, currentUser, loading]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!video) {
-    return <div>Video not found</div>;
-  }
-
   return (
     <div className="container">
-      <YoutubeVideoDetails
-        video={video}
-        handleLike={() => handleLike(video.id, jwtToken)}
-        handleUnlike={() => handleUnlike(video.id, jwtToken)}
-        currentUser={currentUser}
-      />
-      {currentUser ? (
+      {loading && <div>Loading...</div>}
+      {!loading && !video && <div>Video not found</div>}
+      {!loading && video && (
         <>
-          <NoteForm addNote={addNote} />
+          <YoutubeVideoDetails
+            video={video}
+            handleLike={() => handleLike(video.id, jwtToken)}
+            handleUnlike={() => handleUnlike(video.id, jwtToken)}
+            currentUser={currentUser}
+          />
+          {currentUser ? (
+            <>
+              <NoteForm addNote={addNote} />
+            </>
+          ) : (
+            <p>No user is logged in.</p>
+          )}
+          <div>
+            {notes.length > 0 ? (
+              notes.map((note) => (
+                <NoteItem
+                  key={note.id}
+                  note={note}
+                  currentUser={currentUser}
+                  videoTimestampToSeconds={videoTimestampToSeconds}
+                  playFromTimestamp={playFromTimestamp}
+                  videoId={video.youtube_id}
+                  onDelete={handleDeleteNote}
+                />
+              ))
+            ) : (
+              <p>No notes available.</p>
+            )}
+          </div>
+          <button
+            className="btn btn-outline btn-info"
+            style={{ marginTop: '20px' }}
+            onClick={() => router.push('/youtube_videos')}
+          >
+            戻る
+          </button>
         </>
-      ) : (
-        <p>No user is logged in.</p>
       )}
-      <div>
-        {notes.length > 0 ? (
-          notes.map((note) => (
-            <NoteItem
-              key={note.id}
-              note={note}
-              currentUser={currentUser}
-              videoTimestampToSeconds={videoTimestampToSeconds}
-              playFromTimestamp={playFromTimestamp}
-              videoId={video.youtube_id}
-              onDelete={handleDeleteNote} // 削除時のコールバック関数を渡す
-            />
-          ))
-        ) : (
-          <p>No notes available.</p>
-        )}
-      </div>
-      <button
-        className="btn btn-outline btn-info"
-        style={{ marginTop: '20px' }}
-        onClick={() => router.push('/youtube_videos')}
-      >
-        戻る
-      </button>
     </div>
   );
 };
