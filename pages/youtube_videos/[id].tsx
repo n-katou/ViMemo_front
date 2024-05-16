@@ -5,7 +5,7 @@ import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/NoteForm';
-import NoteList from '../../components/NoteList';
+import NoteItem from '../../components/NoteItem'; // NoteItemをインポート
 import YoutubeVideoDetails from '../../components/YoutubeVideoDetails';
 import axios from 'axios';
 import { fetchYoutubeVideo, handleLike, handleUnlike } from '../../src/api';
@@ -39,6 +39,25 @@ const YoutubeVideoShowPage: React.FC = () => {
       setNotes(prevNotes => [...prevNotes, response.data]);
     } catch (error) {
       console.error('Failed to add note:', error);
+    }
+  };
+
+  const handleDeleteNote = async (noteId: number) => {
+    if (!jwtToken || !video) {
+      console.error('JWT token or video is not defined');
+      return;
+    }
+
+    try {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes/${noteId}`, {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`
+        }
+      });
+
+      setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+    } catch (error) {
+      console.error('Failed to delete note:', error);
     }
   };
 
@@ -92,13 +111,23 @@ const YoutubeVideoShowPage: React.FC = () => {
       ) : (
         <p>No user is logged in.</p>
       )}
-      <NoteList
-        notes={notes}
-        currentUser={currentUser}
-        videoTimestampToSeconds={videoTimestampToSeconds}
-        playFromTimestamp={(seconds) => playFromTimestamp(video.youtube_id, seconds)}
-        videoId={video.youtube_id}
-      />
+      <div>
+        {notes.length > 0 ? (
+          notes.map((note) => (
+            <NoteItem
+              key={note.id}
+              note={note}
+              currentUser={currentUser}
+              videoTimestampToSeconds={videoTimestampToSeconds}
+              playFromTimestamp={playFromTimestamp}
+              videoId={video.youtube_id}
+              onDelete={handleDeleteNote} // 削除時のコールバック関数を渡す
+            />
+          ))
+        ) : (
+          <p>No notes available.</p>
+        )}
+      </div>
       <button
         className="btn btn-outline btn-info"
         style={{ marginTop: '20px' }}
