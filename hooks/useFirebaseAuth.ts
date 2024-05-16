@@ -3,6 +3,7 @@ import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signO
 import { auth } from '../lib/initFirebase';
 import axios from 'axios';
 import { AuthState } from '../types/AuthState';
+import { CustomUser } from '../types/user';
 
 const useFirebaseAuth = () => {
   const [authState, setAuthState] = useState<AuthState>({ currentUser: null, jwtToken: null });
@@ -39,7 +40,18 @@ const useFirebaseAuth = () => {
     localStorage.setItem('token', token);
 
     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/firebase`, { token });
-    setAuthState({ currentUser: result.user, jwtToken: response.data.jwtToken });
+
+    const customUser: CustomUser = {
+      ...result.user,
+      id: result.user.uid,
+      name: result.user.displayName || "",
+      email: result.user.email || "",
+      avatar: {
+        url: result.user.photoURL || "",
+      },
+    };
+
+    setAuthState({ currentUser: customUser, jwtToken: response.data.jwtToken});
   };
 
   const logout = async () => {
