@@ -10,7 +10,8 @@ interface NoteItemProps {
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId }) => {
-  const avatarUrl = note.user?.avatar ? `${note.user.avatar}` : `https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/default-avatar.jpg`;
+  const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL;
+  const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl;
   console.log('Avatar URL:', avatarUrl);
 
   return (
