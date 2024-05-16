@@ -10,13 +10,14 @@ interface NoteItemProps {
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId }) => {
-  console.log('Avatar URL:', note.user?.avatar_url);
+  const avatarUrl = note.user?.avatar ? `${note.user.avatar}` : null;
+  console.log('Avatar URL:', avatarUrl);
 
   return (
     <div className="card mx-auto w-full bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 mb-3">
       <div className="card-body">
-        {note.user?.avatar_url ? (
-          <img src={note.user.avatar_url} alt="User Avatar" width="100" height="100" />
+        {avatarUrl ? (
+          <img src={avatarUrl} alt="User Avatar" width="100" height="100" />
         ) : (
           <div>No Avatar</div>
         )}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { auth } from '../lib/initFirebase';
 import axios from 'axios';
 import { AuthState } from '../types/AuthState';
@@ -46,9 +46,7 @@ const useFirebaseAuth = () => {
       id: result.user.uid,
       name: result.user.displayName || "",
       email: result.user.email || "",
-      avatar: {
-        url: result.user.photoURL || "",
-      },
+      avatar: result.user.photoURL || "",  // avatar を string 型に設定
     };
 
     setAuthState({ currentUser: customUser, jwtToken: response.data.jwtToken});
