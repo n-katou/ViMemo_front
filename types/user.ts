@@ -1,10 +1,9 @@
 import { User as FirebaseUser } from "firebase/auth";
 
 export interface CustomUser extends FirebaseUser {
-  id: string;
+  id: number;
   name: string;
   email: string;
-  avatar: {
-    url: string;
-  };
+  avatar: string;
+  avatar_url?: string;
 }
