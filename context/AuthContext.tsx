@@ -1,10 +1,10 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import useFirebaseAuth from "../hooks/useFirebaseAuth";
-import { User } from "firebase/auth";
 import { AuthState } from "../types/AuthState";
+import { CustomUser } from "@/types/user";
 
 interface AuthContextType {
-  currentUser: User | null;
+  currentUser: CustomUser | null;
   jwtToken: string | null;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;

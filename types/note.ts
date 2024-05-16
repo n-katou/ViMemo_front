@@ -1,12 +1,13 @@
+import { CustomUser } from './user';
+
 export interface Note {
-    id: number;
-    content: string;
-    is_visible: boolean;
-    video_timestamp?: string;
-    user_id: number;
-    youtube_video_id?: number;
-    created_at: string;
-    updated_at: string;
-    video_id?: number;
-    likes_count: number;
-  }
+  id: number;
+  content: string;
+  video_timestamp: string;
+  is_visible: boolean;
+  created_at: string;
+  updated_at: string;
+  user: CustomUser;  // ユーザー情報を含める
+  youtube_video_id: number;
+  likes_count: number; // いいねのカウントを追加
+}

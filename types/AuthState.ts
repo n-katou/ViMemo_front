@@ -1,6 +1,6 @@
-import { User } from 'firebase/auth';
+import { CustomUser } from "./user";
 
 export interface AuthState {
-  currentUser: User | null;
+  currentUser: CustomUser | null;
   jwtToken: string | null;
 }
