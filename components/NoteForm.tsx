@@ -27,20 +27,20 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
       />
       <div>
         <label>
-          分:
           <input
             type="number"
             value={timestampMinutes}
             onChange={(e) => setTimestampMinutes(parseInt(e.target.value, 10))}
           />
+          分
         </label>
         <label>
-          秒:
           <input
             type="number"
             value={timestampSeconds}
             onChange={(e) => setTimestampSeconds(parseInt(e.target.value, 10))}
           />
+          秒
         </label>
       </div>
       <button type="submit">メモを追加</button>
