@@ -16,7 +16,9 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
   console.log('Avatar URL:', avatarUrl);
 
   const handleDelete = () => {
-    onDelete(note.id); // 親コンポーネントに削除を通知
+    if (window.confirm('このメモを削除してもよろしいですか？')) {
+      onDelete(note.id); // 親コンポーネントに削除を通知
+    }
   };
 
   return (

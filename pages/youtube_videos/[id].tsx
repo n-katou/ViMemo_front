@@ -105,7 +105,6 @@ const YoutubeVideoShowPage: React.FC = () => {
       />
       {currentUser ? (
         <>
-          <p>Current User: {currentUser.email}</p>
           <NoteForm addNote={addNote} />
         </>
       ) : (
