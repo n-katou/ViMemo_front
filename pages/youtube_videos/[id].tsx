@@ -25,14 +25,14 @@ async function fetchYoutubeVideo(id: number, jwtToken: string) {
   return data;
 }
 
-const YoutubeVideoShowPage = () => {
+const YoutubeVideoShowPage: React.FC = () => {
   const [video, setVideo] = useState<YoutubeVideo | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const pathname = usePathname();
   const router = useRouter();
   const { currentUser, jwtToken, loading } = useAuth();
 
-  const addNote = async (newNoteContent: string): Promise<void> => {
+  const addNote = async (newNoteContent: string, timestampMinutes: number, timestampSeconds: number): Promise<void> => {
     if (!jwtToken || !video) {
       console.error('JWT token or video is not defined');
       return;
@@ -41,7 +41,7 @@ const YoutubeVideoShowPage = () => {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes`,
-        { content: newNoteContent },
+        { content: newNoteContent, video_timestamp_minutes: timestampMinutes, video_timestamp_seconds: timestampSeconds },
         {
           headers: {
             'Authorization': `Bearer ${jwtToken}`,
@@ -56,10 +56,10 @@ const YoutubeVideoShowPage = () => {
     }
   };
 
-  const handleLike = async (videoId:number) => {
+  const handleLike = async (videoId: number) => {
     // いいねを追加する処理を実装
     try {
-      const response = await axios.post(
+      await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes`,
         {},
         {
@@ -84,7 +84,7 @@ const YoutubeVideoShowPage = () => {
   const handleUnlike = async (videoId: number) => {
     // いいねを取り消す処理を実装
     try {
-      const response = await axios.delete(
+      await axios.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes`,
         {
           headers: {
@@ -160,14 +160,14 @@ const YoutubeVideoShowPage = () => {
             className="btn btn-outline btn-warning"
             onClick={() => handleLike(video.id)}
           >
-            いいね
+            いいね ({video.likes_count})
           </button>
         ) : (
           <button
             className="btn btn-outline btn-success"
             onClick={() => handleUnlike(video.id)}
           >
-            いいねを取り消す
+            いいねを取り消す ({video.likes_count})
           </button>
         )}
       </div>

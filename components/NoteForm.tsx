@@ -1,30 +1,48 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState } from 'react';
 
-interface NoteFormProps {
-  addNote: (note: string) => Promise<void>;
-}
+type NoteFormProps = {
+  addNote: (content: string, minutes: number, seconds: number) => Promise<void>;
+};
 
 const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
-  const [note, setNote] = useState<string>("");
+  const [noteContent, setNoteContent] = useState('');
+  const [timestampMinutes, setTimestampMinutes] = useState(0);
+  const [timestampSeconds, setTimestampSeconds] = useState(0);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (note.trim()) {
-      addNote(note)
-        .then(() => setNote(""))  // フォームをリセット
-        .catch(err => console.error("Error submitting the note: ", err));
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addNote(noteContent, timestampMinutes, timestampSeconds);
+    setNoteContent('');
+    setTimestampMinutes(0);
+    setTimestampSeconds(0);
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <textarea
-        value={note}
-        onChange={e => setNote(e.target.value)}
+        value={noteContent}
+        onChange={(e) => setNoteContent(e.target.value)}
         placeholder="メモを入力..."
-        rows={4}
-        cols={50}
+        required
       />
+      <div>
+        <label>
+          分:
+          <input
+            type="number"
+            value={timestampMinutes}
+            onChange={(e) => setTimestampMinutes(parseInt(e.target.value, 10))}
+          />
+        </label>
+        <label>
+          秒:
+          <input
+            type="number"
+            value={timestampSeconds}
+            onChange={(e) => setTimestampSeconds(parseInt(e.target.value, 10))}
+          />
+        </label>
+      </div>
       <button type="submit">メモを追加</button>
     </form>
   );
