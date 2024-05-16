@@ -56,6 +56,55 @@ const YoutubeVideoShowPage = () => {
     }
   };
 
+  const handleLike = async (videoId:number) => {
+    // いいねを追加する処理を実装
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${jwtToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      // 必要に応じて状態を更新
+      setVideo(prevVideo => {
+        if (prevVideo) {
+          return { ...prevVideo, likes_count: prevVideo.likes_count + 1 };
+        }
+        return prevVideo;
+      });
+    } catch (error) {
+      console.error('Failed to like the video:', error);
+    }
+  };
+
+  const handleUnlike = async (videoId: number) => {
+    // いいねを取り消す処理を実装
+    try {
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes`,
+        {
+          headers: {
+            'Authorization': `Bearer ${jwtToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      // 必要に応じて状態を更新
+      setVideo(prevVideo => {
+        if (prevVideo) {
+          return { ...prevVideo, likes_count: prevVideo.likes_count - 1 };
+        }
+        return prevVideo;
+      });
+    } catch (error) {
+      console.error('Failed to unlike the video:', error);
+    }
+  };
+
   useEffect(() => {
     if (!currentUser && !loading) {
       router.push('/login');
@@ -91,42 +140,72 @@ const YoutubeVideoShowPage = () => {
   }
 
   return (
-    <>
-      <div>
-        <h1>{video.title || "タイトル不明"}</h1>
+    <div className="container">
+      <h1 className="video-title">{video.title || "タイトル不明"}</h1>
+      <div className="video-wrapper">
         <iframe
-          width="560"
-          height="315"
-          src={`https://www.youtube.com/embed/${video.youtube_id}`}
+          className="w-full aspect-video"
+          id="youtube-video"
+          src={`https://www.youtube.com/embed/${video.youtube_id}?playsinline=1`}
           frameBorder="0"
           allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen />
-        <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-        <p>動画時間: {video.duration}分</p>
       </div>
-      <div>
+      <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+      <p>動画時間: {video.duration}分</p>
+
+      <div id={`like_button_${video.id}`}>
         {currentUser ? (
-          <>
-            <p>Current User: {currentUser.email}</p>
-            <NoteForm addNote={addNote} />
-          </>
+          <button
+            className="btn btn-outline btn-warning"
+            onClick={() => handleLike(video.id)}
+          >
+            いいね
+          </button>
         ) : (
-          <p>No user is logged in.</p>
+          <button
+            className="btn btn-outline btn-success"
+            onClick={() => handleUnlike(video.id)}
+          >
+            いいねを取り消す
+          </button>
         )}
-        <div>
-          {notes.length > 0 ? (
-            notes.map((note) => (
-              <div key={note.id}>
-                <p>{note.content}</p>
-                <p>{new Date(note.created_at).toLocaleDateString()}</p>
-              </div>
-            ))
-          ) : (
-            <p>No notes available.</p>
-          )}
-        </div>
       </div>
-    </>
+
+      {currentUser ? (
+        <>
+          <p>Current User: {currentUser.email}</p>
+          <NoteForm addNote={addNote} />
+        </>
+      ) : (
+        <p>No user is logged in.</p>
+      )}
+
+      <div id="notes_list">
+        <h2 style={{ marginTop: '20px' }}>メモ一覧</h2>
+        {notes.length > 0 ? (
+          <div className="flex flex-wrap">
+            {notes.map((note) => (
+              <div key={note.id} className="p-2 flex lg:max-w-1/3">
+                <div>
+                  <p>{note.content}</p>
+                  <p>{new Date(note.created_at).toLocaleDateString()}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p id="no_notes_message">メモがありません。</p>
+        )}
+      </div>
+      <button
+        className="btn btn-outline btn-info"
+        style={{ marginTop: '20px' }}
+        onClick={() => router.push('/youtube_videos')}
+      >
+        戻る
+      </button>
+    </div>
   );
 };
 

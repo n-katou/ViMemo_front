@@ -4,3 +4,25 @@
 @tailwind utilities;
 
 /* 追加のスタイルが必要な場合ここに記述 */
+.video-wrapper {
+    position: relative;
+    padding-top: 56.25%;
+    height: 0;
+    overflow: hidden;
+    z-index: 10;
+  }
+  
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .video-title {
+    font-size: 2.5rem; /* 40pxに相当 */
+    font-weight: bold; /* 太字にする */
+    color: #333; /* 色を暗めのグレーに設定 */
+    margin-bottom: 20px; /* 下の要素との間隔 */
+  }

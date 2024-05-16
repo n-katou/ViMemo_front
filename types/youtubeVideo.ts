@@ -4,4 +4,5 @@ export interface YoutubeVideo {
   youtube_id: string;
   published_at: Date;
   duration: number;
+  likes_count: number;
 }
