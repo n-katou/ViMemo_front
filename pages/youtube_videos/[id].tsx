@@ -5,7 +5,7 @@ import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/NoteForm';
-import NoteList from '../../components/NoteList';
+import NoteItem from '../../components/NoteItem';
 import YoutubeVideoDetails from '../../components/YoutubeVideoDetails';
 import axios from 'axios';
 import { fetchYoutubeVideo, handleLike, handleUnlike } from '../../src/api';
@@ -17,6 +17,22 @@ const YoutubeVideoShowPage: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { currentUser, jwtToken, loading } = useAuth();
+
+  const fetchNotes = async (videoId: number, jwtToken: string) => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${jwtToken}`,
+          }
+        }
+      );
+      setNotes(response.data.notes);
+    } catch (error) {
+      console.error('Failed to fetch notes:', error);
+    }
+  };
 
   const addNote = async (newNoteContent: string, timestampMinutes: number, timestampSeconds: number): Promise<void> => {
     if (!jwtToken || !video) {
@@ -36,12 +52,8 @@ const YoutubeVideoShowPage: React.FC = () => {
         }
       );
 
-      const newNote = {
-        ...response.data,
-        user: currentUser // currentUserオブジェクト全体を追加
-      };
+      await fetchNotes(video.id, jwtToken); // ノートを追加後に再fetch
 
-      setNotes(prevNotes => [...prevNotes, newNote]);
     } catch (error) {
       console.error('Failed to add note:', error);
     }
@@ -60,7 +72,8 @@ const YoutubeVideoShowPage: React.FC = () => {
         }
       });
 
-      setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+      await fetchNotes(video.id, jwtToken); // ノートを削除後に再fetch
+
     } catch (error) {
       console.error('Failed to delete note:', error);
     }
@@ -73,22 +86,27 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.put(
+      await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes/${noteId}`,
         { content: newContent },
         {
           headers: {
             'Authorization': `Bearer ${jwtToken}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         }
       );
 
-      setNotes(prevNotes => prevNotes.map(note => note.id === noteId ? { ...note, content: newContent } : note));
+      setNotes((prevNotes) =>
+        prevNotes.map((note) =>
+          note.id === noteId ? { ...note, content: newContent } : note
+        )
+      );
     } catch (error) {
       console.error('Failed to edit note:', error);
     }
   };
+
 
   useEffect(() => {
     if (!currentUser && !loading) {
@@ -135,15 +153,24 @@ const YoutubeVideoShowPage: React.FC = () => {
           ) : (
             <p>No user is logged in.</p>
           )}
-          <NoteList
-            notes={notes}
-            currentUser={currentUser}
-            videoTimestampToSeconds={videoTimestampToSeconds}
-            playFromTimestamp={playFromTimestamp}
-            videoId={video.youtube_id}
-            onDelete={handleDeleteNote}
-            onEdit={handleEditNote}
-          />
+          <div>
+            {notes.length > 0 ? (
+              notes.map((note) => (
+                <NoteItem
+                  key={note.id}
+                  note={note}
+                  currentUser={currentUser}
+                  videoTimestampToSeconds={videoTimestampToSeconds}
+                  playFromTimestamp={playFromTimestamp}
+                  videoId={video.youtube_id}
+                  onDelete={handleDeleteNote}
+                  onEdit={handleEditNote}
+                />
+              ))
+            ) : (
+              <p>No notes available.</p>
+            )}
+          </div>
           <button
             className="btn btn-outline btn-info"
             style={{ marginTop: '20px' }}
