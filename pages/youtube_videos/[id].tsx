@@ -4,9 +4,9 @@ import { useRouter, usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
 import { useAuth } from '../../context/AuthContext';
-import NoteForm from '../../components/NoteForm';
-import NoteList from '../../components/NoteList';
-import YoutubeVideoDetails from '../../components/YoutubeVideoDetails';
+import NoteForm from '../../components/Note/NoteForm';
+import NoteList from '../../components/Note/NoteList';
+import YoutubeVideoDetails from '../../components/Youtube/YoutubeVideoDetails';
 import axios from 'axios';
 import { fetchYoutubeVideo, handleLike, handleUnlike } from '../../src/api';
 import { videoTimestampToSeconds, playFromTimestamp } from '../../src/utils';
@@ -28,13 +28,14 @@ const YoutubeVideoShowPage: React.FC = () => {
           }
         }
       );
+      console.log('Fetched notes:', response.data.notes); // デバッグ情報を追加
       setNotes(response.data.notes);
     } catch (error) {
       console.error('Failed to fetch notes:', error);
     }
   };
 
-  const addNote = async (newNoteContent: string, timestampMinutes: number, timestampSeconds: number): Promise<void> => {
+  const addNote = async (newNoteContent: string, timestampMinutes: number, timestampSeconds: number, isVisible: boolean): Promise<void> => {
     if (!jwtToken || !video) {
       console.error('JWT token or video is not defined');
       return;
@@ -43,7 +44,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes`,
-        { content: newNoteContent, video_timestamp_minutes: timestampMinutes, video_timestamp_seconds: timestampSeconds },
+        { content: newNoteContent, video_timestamp_minutes: timestampMinutes, video_timestamp_seconds: timestampSeconds, is_visible: isVisible },
         {
           headers: {
             'Authorization': `Bearer ${jwtToken}`,
@@ -79,7 +80,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
   };
 
-  const handleEditNote = async (noteId: number, newContent: string) => {
+  const handleEditNote = async (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => {
     if (!jwtToken || !video) {
       console.error('JWT token or video is not defined');
       return;
@@ -88,7 +89,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     try {
       await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes/${noteId}`,
-        { content: newContent },
+        { content: newContent, video_timestamp_minutes: newMinutes, video_timestamp_seconds: newSeconds, is_visible: newIsVisible },
         {
           headers: {
             'Authorization': `Bearer ${jwtToken}`,
@@ -99,7 +100,7 @@ const YoutubeVideoShowPage: React.FC = () => {
 
       setNotes((prevNotes) =>
         prevNotes.map((note) =>
-          note.id === noteId ? { ...note, content: newContent } : note
+          note.id === noteId ? { ...note, content: newContent, video_timestamp: `${newMinutes.toString().padStart(2, '0')}:${newSeconds.toString().padStart(2, '0')}`, is_visible: newIsVisible } : note
         )
       );
     } catch (error) {
@@ -125,9 +126,9 @@ const YoutubeVideoShowPage: React.FC = () => {
       fetchYoutubeVideo(videoId, jwtToken)
         .then(videoData => {
           setVideo(videoData.youtube_video);
+          console.log('Fetched video:', videoData.youtube_video); // デバッグ情報を追加
           setNotes(videoData.notes);
-          console.log('Video data loaded', videoData);
-          console.log('Notes data:', videoData.notes);
+          console.log('Fetched notes:', videoData.notes); // デバッグ情報を追加
         })
         .catch(error => console.error('Error loading the video:', error));
     }
