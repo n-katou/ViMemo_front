@@ -13,7 +13,6 @@ interface NoteListProps {
 }
 
 const NoteList: React.FC<NoteListProps> = ({ notes, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete, onEdit }) => {
-  // 受け取ったノートはすでに作成順にソートされている
   return (
     <div id="notes_list">
       <h2 style={{ marginTop: '20px' }}>メモ一覧</h2>
