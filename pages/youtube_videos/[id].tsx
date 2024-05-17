@@ -5,7 +5,7 @@ import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/NoteForm';
-import NoteItem from '../../components/NoteItem';
+import NoteList from '../../components/NoteList';
 import YoutubeVideoDetails from '../../components/YoutubeVideoDetails';
 import axios from 'axios';
 import { fetchYoutubeVideo, handleLike, handleUnlike } from '../../src/api';
@@ -17,22 +17,6 @@ const YoutubeVideoShowPage: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { currentUser, jwtToken, loading } = useAuth();
-
-  const fetchNotes = async (videoId: number, jwtToken: string) => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${jwtToken}`,
-          }
-        }
-      );
-      setNotes(response.data.notes);
-    } catch (error) {
-      console.error('Failed to fetch notes:', error);
-    }
-  };
 
   const addNote = async (newNoteContent: string, timestampMinutes: number, timestampSeconds: number): Promise<void> => {
     if (!jwtToken || !video) {
@@ -52,8 +36,12 @@ const YoutubeVideoShowPage: React.FC = () => {
         }
       );
 
-      await fetchNotes(video.id, jwtToken); // ノートを追加後に再fetch
+      const newNote = {
+        ...response.data,
+        user: currentUser // currentUserオブジェクト全体を追加
+      };
 
+      setNotes(prevNotes => [...prevNotes, newNote]);
     } catch (error) {
       console.error('Failed to add note:', error);
     }
@@ -72,10 +60,33 @@ const YoutubeVideoShowPage: React.FC = () => {
         }
       });
 
-      await fetchNotes(video.id, jwtToken); // ノートを削除後に再fetch
-
+      setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
     } catch (error) {
       console.error('Failed to delete note:', error);
+    }
+  };
+
+  const handleEditNote = async (noteId: number, newContent: string) => {
+    if (!jwtToken || !video) {
+      console.error('JWT token or video is not defined');
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes/${noteId}`,
+        { content: newContent },
+        {
+          headers: {
+            'Authorization': `Bearer ${jwtToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      setNotes(prevNotes => prevNotes.map(note => note.id === noteId ? { ...note, content: newContent } : note));
+    } catch (error) {
+      console.error('Failed to edit note:', error);
     }
   };
 
@@ -124,23 +135,15 @@ const YoutubeVideoShowPage: React.FC = () => {
           ) : (
             <p>No user is logged in.</p>
           )}
-          <div>
-            {notes.length > 0 ? (
-              notes.map((note) => (
-                <NoteItem
-                  key={note.id}
-                  note={note}
-                  currentUser={currentUser}
-                  videoTimestampToSeconds={videoTimestampToSeconds}
-                  playFromTimestamp={playFromTimestamp}
-                  videoId={video.youtube_id}
-                  onDelete={handleDeleteNote}
-                />
-              ))
-            ) : (
-              <p>No notes available.</p>
-            )}
-          </div>
+          <NoteList
+            notes={notes}
+            currentUser={currentUser}
+            videoTimestampToSeconds={videoTimestampToSeconds}
+            playFromTimestamp={playFromTimestamp}
+            videoId={video.youtube_id}
+            onDelete={handleDeleteNote}
+            onEdit={handleEditNote}
+          />
           <button
             className="btn btn-outline btn-info"
             style={{ marginTop: '20px' }}
