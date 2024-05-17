@@ -13,14 +13,13 @@ interface NoteListProps {
 }
 
 const NoteList: React.FC<NoteListProps> = ({ notes, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete, onEdit }) => {
-  const sortedNotes = [...notes].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-
+  // 受け取ったノートはすでに作成順にソートされている
   return (
     <div id="notes_list">
       <h2 style={{ marginTop: '20px' }}>メモ一覧</h2>
-      {sortedNotes.length > 0 ? (
+      {notes.length > 0 ? (
         <div className="flex flex-wrap">
-          {sortedNotes.map((note) => (
+          {notes.map((note) => (
             <div key={note.id} className="p-2 flex-1 lg:max-w-1/3">
               <NoteItem
                 note={note}
