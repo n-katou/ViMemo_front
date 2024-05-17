@@ -19,6 +19,8 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
     setIsVisible(true);
   };
 
+  const padZero = (num: number) => num.toString().padStart(2, '0');
+
   return (
     <form onSubmit={handleSubmit}>
       <textarea
@@ -34,7 +36,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
           <div className="flex gap-2">
             <input
               type="number"
-              value={timestampMinutes}
+              value={padZero(timestampMinutes)}
               onChange={(e) => setTimestampMinutes(parseInt(e.target.value, 10))}
               min="0"
               max="59"
@@ -43,7 +45,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
             分
             <input
               type="number"
-              value={timestampSeconds}
+              value={padZero(timestampSeconds)}
               onChange={(e) => setTimestampSeconds(parseInt(e.target.value, 10))}
               min="0"
               max="59"

@@ -35,8 +35,10 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
     const seconds = videoTimestampToSeconds(note.video_timestamp);
     console.log('Timestamp clicked:', note.video_timestamp);
     console.log('Converted to seconds:', seconds);
-    playFromTimestamp(seconds); // 修正：seconds のみを渡す
+    playFromTimestamp(seconds);
   };
+
+  const padZero = (num: number) => num.toString().padStart(2, '0');
 
   return (
     <div className="card mx-auto w-full bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 mb-3">
@@ -56,7 +58,7 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
             onClick={handleTimestampClick}
             className="btn btn-outline link-hover"
           >
-            {note.video_timestamp}
+            {padZero(newMinutes)}:{padZero(newSeconds)}
           </button>
         </p>
         {isEditing ? (
@@ -67,7 +69,7 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
                 <div className="flex gap-2 mt-2">
                   <input
                     type="number"
-                    value={newMinutes}
+                    value={padZero(newMinutes)}
                     onChange={(e) => setNewMinutes(parseInt(e.target.value, 10))}
                     min="0"
                     max="59"
@@ -76,7 +78,7 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
                   分
                   <input
                     type="number"
-                    value={newSeconds}
+                    value={padZero(newSeconds)}
                     onChange={(e) => setNewSeconds(parseInt(e.target.value, 10))}
                     min="0"
                     max="59"
@@ -128,7 +130,7 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
           )}
           {currentUser?.id === note.user?.id && (
             <>
-              <a href={`https://x.com/share?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`【シェア】\nタイムスタンプ: ${note.video_timestamp} \nメモ: ${note.content} \nYouTube: https://www.youtube.com/watch?v=${videoId}&t=${videoTimestampToSeconds(note.video_timestamp)}s`)}`} target="_blank" className="btn btn-outline btn-primary">
+              <a href={`https://x.com/share?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`【シェア】\nタイムスタンプ: ${padZero(newMinutes)}:${padZero(newSeconds)} \nメモ: ${note.content} \nYouTube: https://www.youtube.com/watch?v=${videoId}&t=${videoTimestampToSeconds(note.video_timestamp)}s`)}`} target="_blank" className="btn btn-outline btn-primary">
                 Xでシェア
               </a>
               <button onClick={() => setIsEditing(true)} className="btn btn-outline btn-info">
