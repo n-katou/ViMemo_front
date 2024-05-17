@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Note } from '../types/note';
+import { Note } from '../../types/note';
 
 interface NoteItemProps {
   note: Note;
@@ -9,9 +9,10 @@ interface NoteItemProps {
   videoId: string;
   onDelete: (noteId: number) => void;
   onEdit: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void;
+  isOwner: boolean;
 }
 
-const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete, onEdit }) => {
+const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete, onEdit, isOwner }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState(note.content);
   const [newMinutes, setNewMinutes] = useState(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
@@ -39,6 +40,11 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
   };
 
   const padZero = (num: number) => num.toString().padStart(2, '0');
+
+  // 投稿主でない場合、非表示のメモを表示しない
+  if (!note.is_visible && !isOwner) {
+    return null;
+  }
 
   return (
     <div className="card mx-auto w-full bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 mb-3">
@@ -119,7 +125,7 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
         <p>
           いいね: {note.likes_count}
         </p>
-        {!note.is_visible && (
+        {!note.is_visible && isOwner && (
           <p><span className="badge badge-error">非表示中</span></p>
         )}
         <div className="card-actions">

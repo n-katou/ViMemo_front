@@ -1,5 +1,5 @@
 import React from 'react';
-import { YoutubeVideo } from '../types/youtubeVideo';
+import { YoutubeVideo } from '../../types/youtubeVideo';
 
 interface YoutubeVideoDetailsProps {
   video: YoutubeVideo;
