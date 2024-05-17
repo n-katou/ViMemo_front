@@ -5,7 +5,7 @@ import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/NoteForm';
-import NoteItem from '../../components/NoteItem';
+import NoteList from '../../components/NoteList';
 import YoutubeVideoDetails from '../../components/YoutubeVideoDetails';
 import axios from 'axios';
 import { fetchYoutubeVideo, handleLike, handleUnlike } from '../../src/api';
@@ -107,7 +107,6 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
   };
 
-
   useEffect(() => {
     if (!currentUser && !loading) {
       router.push('/login');
@@ -153,24 +152,15 @@ const YoutubeVideoShowPage: React.FC = () => {
           ) : (
             <p>No user is logged in.</p>
           )}
-          <div>
-            {notes.length > 0 ? (
-              notes.map((note) => (
-                <NoteItem
-                  key={note.id}
-                  note={note}
-                  currentUser={currentUser}
-                  videoTimestampToSeconds={videoTimestampToSeconds}
-                  playFromTimestamp={playFromTimestamp}
-                  videoId={video.youtube_id}
-                  onDelete={handleDeleteNote}
-                  onEdit={handleEditNote}
-                />
-              ))
-            ) : (
-              <p>No notes available.</p>
-            )}
-          </div>
+          <NoteList
+            notes={notes}
+            currentUser={currentUser}
+            videoTimestampToSeconds={videoTimestampToSeconds}
+            playFromTimestamp={playFromTimestamp}
+            videoId={video.youtube_id}
+            onDelete={handleDeleteNote}
+            onEdit={handleEditNote}
+          />
           <button
             className="btn btn-outline btn-info"
             style={{ marginTop: '20px' }}
