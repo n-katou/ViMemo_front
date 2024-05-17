@@ -3,6 +3,7 @@ import { Note } from '../../types/note';
 import NoteContent from './NoteContent';
 import NoteEditor from './NoteEditor';
 import NoteActions from './NoteActions';
+import Modal from './Modal';
 
 interface NoteItemProps {
   note: Note;
@@ -30,6 +31,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const [newMinutes, setNewMinutes] = useState(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
   const [newSeconds, setNewSeconds] = useState(videoTimestampToSeconds(note.video_timestamp) % 60);
   const [newIsVisible, setNewIsVisible] = useState(note.is_visible);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL;
   const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl;
 
@@ -42,6 +44,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const handleEdit = () => {
     onEdit(note.id, newContent, newMinutes, newSeconds, newIsVisible);
     setIsEditing(false);
+    setIsModalOpen(false);
   };
 
   const handleTimestampClick = () => {
@@ -56,43 +59,24 @@ const NoteItem: React.FC<NoteItemProps> = ({
   }
 
   return (
-    <div className="card mx-auto w-full bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 mb-3">
-      <div className="card-body">
-        {avatarUrl && <img src={avatarUrl} alt="User Avatar" width="100" height="100" />}
-        <p>
-          <span className="font-bold">ユーザー名:</span>
-          {note.user?.name || 'Unknown User'}
-        </p>
-        <p>
-          <span className="font-bold">タイムスタンプ:</span>
-          <button
-            onClick={handleTimestampClick}
-            className="btn btn-outline link-hover"
-          >
-            {padZero(newMinutes)}:{padZero(newSeconds)}
-          </button>
-        </p>
-        {isEditing ? (
-          <NoteEditor
-            newContent={newContent}
-            newMinutes={newMinutes}
-            newSeconds={newSeconds}
-            newIsVisible={newIsVisible}
-            setNewContent={setNewContent}
-            setNewMinutes={setNewMinutes}
-            setNewSeconds={setNewSeconds}
-            setNewIsVisible={setNewIsVisible}
-            handleEdit={handleEdit}
-            setIsEditing={setIsEditing}
-            padZero={padZero}
-          />
-        ) : (
-          <NoteContent note={note} />
-        )}
-        <p>いいね: {note.likes_count}</p>
-        {!note.is_visible && isOwner && (
-          <p><span className="badge badge-error">非表示中</span></p>
-        )}
+    <div className="card mx-auto w-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6 rounded-lg overflow-hidden">
+      <div className="card-body p-6">
+        <div className="flex items-center mb-4">
+          {avatarUrl && <img src={avatarUrl} alt="User Avatar" className="w-16 h-16 rounded-full mr-4" />}
+          <div>
+            <p className="text-xl font-bold">{note.user?.name || 'Unknown User'}</p>
+            <button onClick={handleTimestampClick} className="text-blue-500 hover:underline">
+              {padZero(newMinutes)}:{padZero(newSeconds)}
+            </button>
+          </div>
+        </div>
+        <NoteContent note={note} />
+        <div className="mt-4">
+          <p>いいね: {note.likes_count}</p>
+          {!note.is_visible && isOwner && (
+            <p><span className="badge badge-error">非表示中</span></p>
+          )}
+        </div>
         <NoteActions
           note={note}
           currentUser={currentUser}
@@ -101,9 +85,24 @@ const NoteItem: React.FC<NoteItemProps> = ({
           newSeconds={newSeconds}
           videoTimestampToSeconds={videoTimestampToSeconds}
           handleDelete={handleDelete}
-          setIsEditing={setIsEditing}
+          setIsEditing={() => setIsModalOpen(true)}
         />
       </div>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <NoteEditor
+          newContent={newContent}
+          newMinutes={newMinutes}
+          newSeconds={newSeconds}
+          newIsVisible={newIsVisible}
+          setNewContent={setNewContent}
+          setNewMinutes={setNewMinutes}
+          setNewSeconds={setNewSeconds}
+          setNewIsVisible={setNewIsVisible}
+          handleEdit={handleEdit}
+          setIsEditing={setIsEditing}
+          padZero={padZero}
+        />
+      </Modal>
     </div>
   );
 };

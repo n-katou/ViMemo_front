@@ -1,3 +1,4 @@
+// NoteEditor.tsx
 import React from 'react';
 
 interface NoteEditorProps {
@@ -26,55 +27,60 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
   handleEdit,
   setIsEditing,
   padZero
-}) => (
-  <div>
-    <div className="form-control mb-4">
-      <label className="label">
-        <span>タイムスタンプ:</span>
-        <div className="flex gap-2 mt-2">
-          <input
-            type="number"
-            value={padZero(newMinutes)}
-            onChange={(e) => setNewMinutes(parseInt(e.target.value, 10))}
-            min="0"
-            max="59"
-            className="input input-bordered"
-          />
-          分
-          <input
-            type="number"
-            value={padZero(newSeconds)}
-            onChange={(e) => setNewSeconds(parseInt(e.target.value, 10))}
-            min="0"
-            max="59"
-            className="input input-bordered"
-          />
-          秒
-        </div>
-      </label>
-    </div>
-    <div className="form-control mb-4">
-      <label className="label">メモ</label>
+}) => {
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); handleEdit(); }} className="space-y-4">
       <textarea
-        className="textarea textarea-bordered"
         value={newContent}
         onChange={(e) => setNewContent(e.target.value)}
+        placeholder="メモを編集..."
+        required
+        className="textarea textarea-bordered w-full"
       />
-    </div>
-    <div className="form-control mb-4">
-      <label className="label">表示</label>
-      <select
-        value={newIsVisible ? 'true' : 'false'}
-        onChange={(e) => setNewIsVisible(e.target.value === 'true')}
-        className="select select-bordered"
-      >
-        <option value="true">表示する</option>
-        <option value="false">表示しない</option>
-      </select>
-    </div>
-    <button onClick={handleEdit} className="btn btn-outline btn-success">保存</button>
-    <button onClick={() => setIsEditing(false)} className="btn btn-outline btn-secondary">キャンセル</button>
-  </div>
-);
+      <div className="form-control">
+        <label className="label">
+          <span>タイムスタンプ:</span>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              value={padZero(newMinutes)}
+              onChange={(e) => setNewMinutes(parseInt(e.target.value, 10))}
+              min="0"
+              max="59"
+              className="input input-bordered"
+            />
+            分
+            <input
+              type="number"
+              value={padZero(newSeconds)}
+              onChange={(e) => setNewSeconds(parseInt(e.target.value, 10))}
+              min="0"
+              max="59"
+              className="input input-bordered"
+            />
+            秒
+          </div>
+        </label>
+      </div>
+      <div className="form-control">
+        <label className="label">
+          <span>表示:</span>
+          <select
+            value={newIsVisible ? 'true' : 'false'}
+            onChange={(e) => setNewIsVisible(e.target.value === 'true')}
+            className="select select-bordered"
+          >
+            <option value="true">表示する</option>
+            <option value="false">表示しない</option>
+          </select>
+        </label>
+      </div>
+      <div className="flex justify-end space-x-4">
+        <button type="submit" className="btn btn-primary">メモを更新</button>
+        <button type="button" className="btn btn-secondary" onClick={() => setIsEditing(false)}>キャンセル</button>
+      </div>
+    </form>
+  );
+};
 
 export default NoteEditor;
