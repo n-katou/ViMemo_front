@@ -28,6 +28,13 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
     setIsEditing(false);
   };
 
+  const handleTimestampClick = () => {
+    const seconds = videoTimestampToSeconds(note.video_timestamp);
+    console.log('Timestamp clicked:', note.video_timestamp);
+    console.log('Converted to seconds:', seconds);
+    playFromTimestamp(seconds); // 修正：seconds のみを渡す
+  };
+
   return (
     <div className="card mx-auto w-full bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 mb-3">
       <div className="card-body">
@@ -43,7 +50,7 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
         <p>
           <span className="font-bold">タイムスタンプ:</span>
           <button
-            onClick={() => playFromTimestamp(videoTimestampToSeconds(note.video_timestamp))}
+            onClick={handleTimestampClick}
             className="btn btn-outline link-hover"
           >
             {note.video_timestamp}
