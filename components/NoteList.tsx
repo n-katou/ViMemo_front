@@ -9,7 +9,7 @@ interface NoteListProps {
   playFromTimestamp: (seconds: number) => void;
   videoId: string;
   onDelete: (noteId: number) => void;
-  onEdit: (noteId: number, newContent: string) => void;
+  onEdit: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void;
 }
 
 const NoteList: React.FC<NoteListProps> = ({ notes, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete, onEdit }) => {

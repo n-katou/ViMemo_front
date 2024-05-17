@@ -34,7 +34,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
   };
 
-  const addNote = async (newNoteContent: string, timestampMinutes: number, timestampSeconds: number): Promise<void> => {
+  const addNote = async (newNoteContent: string, timestampMinutes: number, timestampSeconds: number, isVisible: boolean): Promise<void> => {
     if (!jwtToken || !video) {
       console.error('JWT token or video is not defined');
       return;
@@ -43,7 +43,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes`,
-        { content: newNoteContent, video_timestamp_minutes: timestampMinutes, video_timestamp_seconds: timestampSeconds },
+        { content: newNoteContent, video_timestamp_minutes: timestampMinutes, video_timestamp_seconds: timestampSeconds, is_visible: isVisible },
         {
           headers: {
             'Authorization': `Bearer ${jwtToken}`,
@@ -79,7 +79,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
   };
 
-  const handleEditNote = async (noteId: number, newContent: string) => {
+  const handleEditNote = async (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => {
     if (!jwtToken || !video) {
       console.error('JWT token or video is not defined');
       return;
@@ -88,7 +88,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     try {
       await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes/${noteId}`,
-        { content: newContent },
+        { content: newContent, video_timestamp_minutes: newMinutes, video_timestamp_seconds: newSeconds, is_visible: newIsVisible },
         {
           headers: {
             'Authorization': `Bearer ${jwtToken}`,
@@ -99,7 +99,7 @@ const YoutubeVideoShowPage: React.FC = () => {
 
       setNotes((prevNotes) =>
         prevNotes.map((note) =>
-          note.id === noteId ? { ...note, content: newContent } : note
+          note.id === noteId ? { ...note, content: newContent, video_timestamp: `${newMinutes}:${newSeconds}`, is_visible: newIsVisible } : note
         )
       );
     } catch (error) {

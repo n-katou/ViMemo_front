@@ -8,12 +8,15 @@ interface NoteItemProps {
   playFromTimestamp: (seconds: number) => void;
   videoId: string;
   onDelete: (noteId: number) => void;
-  onEdit: (noteId: number, newContent: string) => void;
+  onEdit: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void;
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete, onEdit }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState(note.content);
+  const [newMinutes, setNewMinutes] = useState(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
+  const [newSeconds, setNewSeconds] = useState(videoTimestampToSeconds(note.video_timestamp) % 60);
+  const [newIsVisible, setNewIsVisible] = useState(note.is_visible);
   const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL;
   const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl;
 
@@ -24,7 +27,7 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
   };
 
   const handleEdit = () => {
-    onEdit(note.id, newContent);
+    onEdit(note.id, newContent, newMinutes, newSeconds, newIsVisible);
     setIsEditing(false);
   };
 
@@ -58,7 +61,50 @@ const NoteItem: React.FC<NoteItemProps> = ({ note, currentUser, videoTimestampTo
         </p>
         {isEditing ? (
           <div>
-            <textarea value={newContent} onChange={(e) => setNewContent(e.target.value)} />
+            <div className="form-control mb-4">
+              <label className="label">
+                <span>タイムスタンプ:</span>
+                <div className="flex gap-2 mt-2">
+                  <input
+                    type="number"
+                    value={newMinutes}
+                    onChange={(e) => setNewMinutes(parseInt(e.target.value, 10))}
+                    min="0"
+                    max="59"
+                    className="input input-bordered"
+                  />
+                  分
+                  <input
+                    type="number"
+                    value={newSeconds}
+                    onChange={(e) => setNewSeconds(parseInt(e.target.value, 10))}
+                    min="0"
+                    max="59"
+                    className="input input-bordered"
+                  />
+                  秒
+                </div>
+              </label>
+            </div>
+            <div className="form-control mb-4">
+              <label className="label">メモ</label>
+              <textarea
+                className="textarea textarea-bordered"
+                value={newContent}
+                onChange={(e) => setNewContent(e.target.value)}
+              />
+            </div>
+            <div className="form-control mb-4">
+              <label className="label">表示</label>
+              <select
+                value={newIsVisible ? 'true' : 'false'}
+                onChange={(e) => setNewIsVisible(e.target.value === 'true')}
+                className="select select-bordered"
+              >
+                <option value="true">表示する</option>
+                <option value="false">表示しない</option>
+              </select>
+            </div>
             <button onClick={handleEdit} className="btn btn-outline btn-success">保存</button>
             <button onClick={() => setIsEditing(false)} className="btn btn-outline btn-secondary">キャンセル</button>
           </div>
