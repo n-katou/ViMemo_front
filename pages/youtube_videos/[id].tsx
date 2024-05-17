@@ -5,7 +5,7 @@ import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/NoteForm';
-import NoteItem from '../../components/NoteItem';
+import NoteList from '../../components/NoteList';
 import YoutubeVideoDetails from '../../components/YoutubeVideoDetails';
 import axios from 'axios';
 import { fetchYoutubeVideo, handleLike, handleUnlike } from '../../src/api';
@@ -41,7 +41,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes`,
         { content: newNoteContent, video_timestamp_minutes: timestampMinutes, video_timestamp_seconds: timestampSeconds },
         {
@@ -76,6 +76,34 @@ const YoutubeVideoShowPage: React.FC = () => {
 
     } catch (error) {
       console.error('Failed to delete note:', error);
+    }
+  };
+
+  const handleEditNote = async (noteId: number, newContent: string) => {
+    if (!jwtToken || !video) {
+      console.error('JWT token or video is not defined');
+      return;
+    }
+
+    try {
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes/${noteId}`,
+        { content: newContent },
+        {
+          headers: {
+            'Authorization': `Bearer ${jwtToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      setNotes((prevNotes) =>
+        prevNotes.map((note) =>
+          note.id === noteId ? { ...note, content: newContent } : note
+        )
+      );
+    } catch (error) {
+      console.error('Failed to edit note:', error);
     }
   };
 
@@ -124,23 +152,15 @@ const YoutubeVideoShowPage: React.FC = () => {
           ) : (
             <p>No user is logged in.</p>
           )}
-          <div>
-            {notes.length > 0 ? (
-              notes.map((note) => (
-                <NoteItem
-                  key={note.id}
-                  note={note}
-                  currentUser={currentUser}
-                  videoTimestampToSeconds={videoTimestampToSeconds}
-                  playFromTimestamp={playFromTimestamp}
-                  videoId={video.youtube_id}
-                  onDelete={handleDeleteNote}
-                />
-              ))
-            ) : (
-              <p>No notes available.</p>
-            )}
-          </div>
+          <NoteList
+            notes={notes}
+            currentUser={currentUser}
+            videoTimestampToSeconds={videoTimestampToSeconds}
+            playFromTimestamp={playFromTimestamp}
+            videoId={video.youtube_id}
+            onDelete={handleDeleteNote}
+            onEdit={handleEditNote}
+          />
           <button
             className="btn btn-outline btn-info"
             style={{ marginTop: '20px' }}

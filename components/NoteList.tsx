@@ -8,10 +8,12 @@ interface NoteListProps {
   videoTimestampToSeconds: (timestamp: string) => number;
   playFromTimestamp: (seconds: number) => void;
   videoId: string;
-  onDelete: (noteId: number) => void; // onDeleteプロパティを追加
+  onDelete: (noteId: number) => void;
+  onEdit: (noteId: number, newContent: string) => void;
 }
 
-const NoteList: React.FC<NoteListProps> = ({ notes, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete }) => {
+const NoteList: React.FC<NoteListProps> = ({ notes, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete, onEdit }) => {
+  // 受け取ったノートはすでに作成順にソートされている
   return (
     <div id="notes_list">
       <h2 style={{ marginTop: '20px' }}>メモ一覧</h2>
@@ -25,7 +27,8 @@ const NoteList: React.FC<NoteListProps> = ({ notes, currentUser, videoTimestampT
                 videoTimestampToSeconds={videoTimestampToSeconds}
                 playFromTimestamp={playFromTimestamp}
                 videoId={videoId}
-                onDelete={onDelete} // onDeleteを渡す
+                onDelete={onDelete}
+                onEdit={onEdit}
               />
             </div>
           ))}
