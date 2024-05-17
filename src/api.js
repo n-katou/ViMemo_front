@@ -1,4 +1,3 @@
-// src/api.js
 import axios from 'axios';
 
 export async function fetchYoutubeVideo(id, jwtToken) {
@@ -21,9 +20,9 @@ export async function fetchYoutubeVideo(id, jwtToken) {
 
 export async function handleLike(videoId, jwtToken) {
   try {
-    await axios.post(
+    const res = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes`,
-      {},
+      { likeable_type: 'YoutubeVideo', likeable_id: videoId },
       {
         headers: {
           'Authorization': `Bearer ${jwtToken}`,
@@ -31,15 +30,18 @@ export async function handleLike(videoId, jwtToken) {
         }
       }
     );
+    console.log('handleLike response:', res);  // 追加: レスポンスをログ出力
+    return res.data;
   } catch (error) {
     console.error('Failed to like the video:', error);
+    return { success: false, error: 'Unable to like the video.' };
   }
 }
 
-export async function handleUnlike(videoId, jwtToken) {
+export async function handleUnlike(videoId, likeId, jwtToken) {
   try {
-    await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes`,
+    const res = await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes/${likeId}`,
       {
         headers: {
           'Authorization': `Bearer ${jwtToken}`,
@@ -47,7 +49,10 @@ export async function handleUnlike(videoId, jwtToken) {
         }
       }
     );
+    console.log('handleUnlike response:', res);  // 追加: レスポンスをログ出力
+    return res.data;
   } catch (error) {
     console.error('Failed to unlike the video:', error);
+    return { success: false, error: 'Unable to unlike the video.' };
   }
 }
