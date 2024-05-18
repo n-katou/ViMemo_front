@@ -163,3 +163,27 @@ export async function handleNoteUnlike(videoId, noteId, likeId, jwtToken) {
     return { success: false, error: 'Unable to unlike the note.' };
   }
 }
+
+
+export async function fetchCurrentUserLike(videoId, noteId, jwtToken) {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes/${noteId}/likes/current_user_like`,
+      {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`,
+          'Content-Type': 'application/json'
+        },
+        params: {
+          likeable_type: 'Note',
+          likeable_id: noteId // 追加
+        }
+      }
+    );
+    console.log('fetchCurrentUserLike response:', res); // レスポンスをログ出力
+    return res.data.like_id;
+  } catch (error) {
+    console.error('Failed to fetch like for current user:', error);
+    throw error;
+  }
+}
