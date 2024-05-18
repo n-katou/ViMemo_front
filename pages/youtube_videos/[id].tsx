@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
-import { CustomUser } from '../../types/user';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/Note/NoteForm';
 import NoteList from '../../components/Note/NoteList';
 import YoutubeVideoDetails from '../../components/Youtube/YoutubeVideoDetails';
-import axios from 'axios';
-import { fetchYoutubeVideo, handleLike, handleUnlike } from '../../src/api';
+import { fetchYoutubeVideo, handleLike, handleUnlike, addNoteToVideo, deleteNoteFromVideo, editNoteInVideo } from '../../src/api';
 import { videoTimestampToSeconds, playFromTimestamp } from '../../src/utils';
 
 const YoutubeVideoShowPage: React.FC = () => {
@@ -22,16 +20,8 @@ const YoutubeVideoShowPage: React.FC = () => {
 
   const fetchNotes = async (videoId: number, jwtToken: string) => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${jwtToken}`,
-          }
-        }
-      );
-      console.log('Fetched notes:', response.data.notes);
-      setNotes(response.data.notes);
+      const response = await fetchYoutubeVideo(videoId, jwtToken);
+      setNotes(response.notes);
     } catch (error) {
       console.error('Failed to fetch notes:', error);
     }
@@ -44,19 +34,8 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
 
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes`,
-        { content: newNoteContent, video_timestamp_minutes: timestampMinutes, video_timestamp_seconds: timestampSeconds, is_visible: isVisible },
-        {
-          headers: {
-            'Authorization': `Bearer ${jwtToken}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
+      await addNoteToVideo(video.id, newNoteContent, timestampMinutes, timestampSeconds, isVisible, jwtToken);
       await fetchNotes(video.id, jwtToken);
-
     } catch (error) {
       console.error('Failed to add note:', error);
     }
@@ -69,14 +48,8 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
 
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes/${noteId}`, {
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`
-        }
-      });
-
+      await deleteNoteFromVideo(video.id, noteId, jwtToken);
       await fetchNotes(video.id, jwtToken);
-
     } catch (error) {
       console.error('Failed to delete note:', error);
     }
@@ -89,17 +62,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
 
     try {
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${video.id}/notes/${noteId}`,
-        { content: newContent, video_timestamp_minutes: newMinutes, video_timestamp_seconds: newSeconds, is_visible: newIsVisible },
-        {
-          headers: {
-            'Authorization': `Bearer ${jwtToken}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
+      await editNoteInVideo(video.id, noteId, newContent, newMinutes, newSeconds, newIsVisible, jwtToken);
       setNotes((prevNotes) =>
         prevNotes.map((note) =>
           note.id === noteId ? { ...note, content: newContent, video_timestamp: `${newMinutes.toString().padStart(2, '0')}:${newSeconds.toString().padStart(2, '0')}`, is_visible: newIsVisible } : note
@@ -121,9 +84,9 @@ const YoutubeVideoShowPage: React.FC = () => {
       console.log('Like result:', result);
       if (result.success) {
         const updatedVideo = await fetchYoutubeVideo(video.id, jwtToken);
+        console.log('Updated video:', updatedVideo);
         setVideo(updatedVideo.youtube_video);
 
-        // likes プロパティが存在しない場合のデフォルト値設定
         const likes = updatedVideo.youtube_video.likes || [];
         setLiked(likes.some((like: { user_id: number }) => like.user_id === Number(currentUser?.id)));
         setLikeError(null);
@@ -136,27 +99,20 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
   };
 
-
-  const handleUnlikeVideo = async () => {
+  const handleUnlikeVideo = async (likeId: number) => {
     if (!jwtToken || !video) {
       console.error('JWT tokenやvideoが定義されていません');
       return;
     }
 
-    const userLike = video?.likes ? video.likes.find((like: { user_id: number }) => like.user_id === Number(currentUser?.id)) : null;
-    if (!userLike) {
-      setLikeError('いいねが見つかりませんでした。');
-      return;
-    }
-
     try {
-      const result = await handleUnlike(video.id, userLike.id, jwtToken);
+      const result = await handleUnlike(video.id, likeId, jwtToken);
       console.log('Unlike result:', result);
       if (result.success) {
         const updatedVideo = await fetchYoutubeVideo(video.id, jwtToken);
+        console.log('Updated video:', updatedVideo);
         setVideo(updatedVideo.youtube_video);
 
-        // likes プロパティが存在しない場合のデフォルト値設定
         const likes = updatedVideo.youtube_video.likes || [];
         setLiked(likes.some((like: { user_id: number }) => like.user_id === Number(currentUser?.id)));
         setLikeError(null);
@@ -187,13 +143,17 @@ const YoutubeVideoShowPage: React.FC = () => {
       console.log('JWT Token:', jwtToken);
       fetchYoutubeVideo(videoId, jwtToken)
         .then(videoData => {
+          console.log('Fetched videoData:', videoData);
           setVideo(videoData.youtube_video);
-          console.log('Fetched video:', videoData.youtube_video);
           setNotes(videoData.notes);
-          console.log('Fetched notes:', videoData.notes);
-          setLiked(videoData.youtube_video.likes.some((like: { user_id: number }) => like.user_id === Number(currentUser?.id)));
+
+          const likes = videoData.youtube_video.likes || [];
+          setLiked(likes.some((like: { user_id: number }) => like.user_id === Number(currentUser?.id)));
         })
-        .catch(error => console.error('Error loading the video:', error));
+        .catch(error => {
+          console.error('Error loading the video:', error);
+          setVideo(null);
+        });
     } else {
       console.error('Invalid videoId or missing jwtToken');
     }
