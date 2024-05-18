@@ -1,7 +1,15 @@
-// components/Header.client.jsx
 import Link from 'next/link';
+import { useAuth } from '../context/AuthContext';
 
 const Header = () => {
+  const { currentUser, logout } = useAuth();
+
+  const handleLogout = () => {
+    if (window.confirm('本当にログアウトしますか？')) {
+      logout();
+    }
+  };
+
   return (
     <header className="bg-gray-800 text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
@@ -11,15 +19,23 @@ const Header = () => {
             <li>
               <Link href="/" className="hover:text-gray-300">Home</Link>
             </li>
-            <li>
-              <Link href="/login" className="hover:text-gray-300">ログインページ</Link>
-            </li>
-            <li>
-              <Link href="/youtube_videos" className="hover:text-gray-300">Youtube</Link>
-            </li>
-            <li>
-              <Link href="/mypage" className="hover:text-gray-300">マイページ</Link>
-            </li>
+            {currentUser ? (
+              <>
+                <li>
+                  <Link href="/youtube_videos" className="hover:text-gray-300">Youtube</Link>
+                </li>
+                <li>
+                  <Link href="/mypage" className="hover:text-gray-300">マイページ</Link>
+                </li>
+                <li>
+                  <button onClick={handleLogout} className="hover:text-gray-300">ログアウト</button>
+                </li>
+              </>
+            ) : (
+              <li>
+                <Link href="/login" className="hover:text-gray-300">ログインページ</Link>
+              </li>
+            )}
           </ul>
         </nav>
       </div>
