@@ -122,3 +122,45 @@ export async function editNoteInVideo(videoId, noteId, content, minutes, seconds
     throw error;
   }
 }
+
+export async function handleNoteLike(videoId, noteId, jwtToken) {
+  try {
+    console.log('JWT Token in handleNoteLike:', jwtToken);  // JWTトークンをログ出力
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes/${noteId}/likes`,
+      { likeable_type: 'Note', likeable_id: noteId },
+      {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    console.log('handleNoteLike response:', res);  // レスポンスをログ出力
+    return res.data;
+  } catch (error) {
+    console.error('Failed to like the note:', error);
+    return { success: false, error: 'Unable to like the note.' };
+  }
+}
+
+export async function handleNoteUnlike(videoId, noteId, likeId, jwtToken) {
+  try {
+    console.log('JWT Token in handleNoteUnlike:', jwtToken);  // JWTトークンをログ出力
+    const res = await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes/${noteId}/likes/${likeId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: { likeable_type: 'Note', likeable_id: noteId }
+      }
+    );
+    console.log('handleNoteUnlike response:', res);  // レスポンスをログ出力
+    return res.data;
+  } catch (error) {
+    console.error('Failed to unlike the note:', error);
+    return { success: false, error: 'Unable to unlike the note.' };
+  }
+}
