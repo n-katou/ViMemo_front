@@ -192,7 +192,7 @@ const YoutubeVideoShowPage: React.FC = () => {
             currentUser={currentUser}
             videoTimestampToSeconds={videoTimestampToSeconds}
             playFromTimestamp={playFromTimestamp}
-            videoId={video.youtube_id} // ここでvideoIdを渡す
+            videoId={video.id} // ここでvideoIdを渡す
             onDelete={handleDeleteNote}
             onEdit={handleEditNote}
           />

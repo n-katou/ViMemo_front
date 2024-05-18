@@ -6,13 +6,14 @@ import NoteActions from './NoteActions';
 import Modal from './Modal';
 import { handleNoteLike, handleNoteUnlike } from '../../src/api';
 import { useAuth } from '../../context/AuthContext';
+import { Like } from '../../types/like';
 
 interface NoteItemProps {
   note: Note;
-  currentUser: any; // currentUserを追加
+  currentUser: any;
   videoTimestampToSeconds: (timestamp: string) => number;
   playFromTimestamp: (seconds: number) => void;
-  videoId: string;
+  videoId: number; // ここをstringからnumberに変更
   onDelete: (noteId: number) => void;
   onEdit: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void;
   isOwner: boolean;
@@ -20,6 +21,7 @@ interface NoteItemProps {
 
 const NoteItem: React.FC<NoteItemProps> = ({
   note,
+  currentUser,
   videoTimestampToSeconds,
   playFromTimestamp,
   videoId,
@@ -27,7 +29,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   onEdit,
   isOwner
 }) => {
-  const { currentUser, jwtToken, loading } = useAuth();
+  const { jwtToken } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState(note.content);
   const [newMinutes, setNewMinutes] = useState(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
@@ -48,7 +50,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
     }
 
     if (note.likes) {
-      setLiked(note.likes.some(like => like.user_id === Number(currentUser?.id)));
+      setLiked(note.likes.some((like: Like) => like.user_id === Number(currentUser?.id)));
     }
   }, [isEditing, note, videoTimestampToSeconds, currentUser]);
 
@@ -75,15 +77,20 @@ const NoteItem: React.FC<NoteItemProps> = ({
       return;
     }
 
-    console.log('jwtToken:', jwtToken);  // JWTトークンをログ出力
     try {
       const result = await handleNoteLike(videoId, note.id, jwtToken);
-      console.log('handleLikeNote result:', result);  // レスポンスをログ出力
       if (result.success) {
         setLiked(true);
         setLikeError(null);
+        note.likes_count += 1;
+        note.likes.push({
+          id: result.like_id,
+          user_id: currentUser.id,
+          likeable_id: note.id,
+          likeable_type: 'Note'
+        } as Like);
       } else {
-        setLikeError(result.error ?? null);
+        setLikeError(result.error ?? 'いいねに失敗しました。');
       }
     } catch (error) {
       console.error('Failed to like the note:', error);
@@ -97,21 +104,21 @@ const NoteItem: React.FC<NoteItemProps> = ({
       return;
     }
 
-    const userLike = note?.likes ? note.likes.find((like: { user_id: number }) => like.user_id === Number(currentUser?.id)) : null;
+    const userLike = note?.likes ? note.likes.find((like: Like) => like.user_id === Number(currentUser?.id)) : null;
     if (!userLike) {
       setLikeError('いいねが見つかりませんでした。');
       return;
     }
 
-    console.log('jwtToken:', jwtToken);  // JWTトークンをログ出力
     try {
       const result = await handleNoteUnlike(videoId, note.id, userLike.id, jwtToken);
-      console.log('handleUnlikeNote result:', result);  // レスポンスをログ出力
       if (result.success) {
         setLiked(false);
         setLikeError(null);
+        note.likes_count -= 1;
+        note.likes = note.likes.filter(like => like.user_id !== currentUser.id);
       } else {
-        setLikeError(result.error ?? null);
+        setLikeError(result.error ?? 'いいねの取り消しに失敗しました。');
       }
     } catch (error) {
       console.error('Failed to unlike the note:', error);

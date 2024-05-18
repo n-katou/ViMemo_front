@@ -7,7 +7,7 @@ interface NoteListProps {
   currentUser: any;
   videoTimestampToSeconds: (timestamp: string) => number;
   playFromTimestamp: (seconds: number) => void;
-  videoId: string;
+  videoId: number; // ここをstringからnumberに変更
   onDelete: (noteId: number) => void;
   onEdit: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void;
 }

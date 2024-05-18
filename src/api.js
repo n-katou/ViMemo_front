@@ -146,7 +146,6 @@ export async function handleNoteLike(videoId, noteId, jwtToken) {
 
 export async function handleNoteUnlike(videoId, noteId, likeId, jwtToken) {
   try {
-    console.log('JWT Token in handleNoteUnlike:', jwtToken);  // JWTトークンをログ出力
     const res = await axios.delete(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes/${noteId}/likes/${likeId}`,
       {
@@ -154,7 +153,7 @@ export async function handleNoteUnlike(videoId, noteId, likeId, jwtToken) {
           'Authorization': `Bearer ${jwtToken}`,
           'Content-Type': 'application/json'
         },
-        data: { likeable_type: 'Note', likeable_id: noteId }
+        data: { likeable_type: 'Note', likeable_id: noteId }  // パラメータとして `likeable_type` と `likeable_id` を追加
       }
     );
     console.log('handleNoteUnlike response:', res);  // レスポンスをログ出力
