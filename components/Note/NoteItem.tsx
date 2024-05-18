@@ -4,9 +4,9 @@ import NoteContent from './NoteContent';
 import NoteEditor from './NoteEditor';
 import NoteActions from './NoteActions';
 import Modal from './Modal';
-import { handleNoteLike, handleNoteUnlike, fetchCurrentUserLike } from '../../src/api'; // fetchCurrentUserLike をインポート
+import { handleNoteLike, handleNoteUnlike, fetchCurrentUserLike } from '../../src/api';
 import { useAuth } from '../../context/AuthContext';
-import { Like } from '../../types/like'; // Like型をインポート
+import { Like } from '../../types/like';
 
 interface NoteItemProps {
   note: Note;
@@ -29,7 +29,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   onEdit,
   isOwner
 }) => {
-  const { jwtToken } = useAuth(); // jwtTokenをuseAuthから取得
+  const { jwtToken } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState(note.content);
   const [newMinutes, setNewMinutes] = useState(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
@@ -167,7 +167,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
             <p><span className="badge badge-error">非表示中</span></p>
           )}
           <div>
-            {currentUser && (
+            {currentUser && currentUser.id !== note.user.id && ( // currentUser.idとnote.user.idが一致しない場合のみ表示
               <>
                 {!liked ? (
                   <button className="btn btn-outline btn-warning" onClick={handleLikeNote}>

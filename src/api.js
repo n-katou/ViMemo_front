@@ -187,3 +187,24 @@ export async function fetchCurrentUserLike(videoId, noteId, jwtToken) {
     throw error;
   }
 }
+
+export default async function handler(req, res) {
+  const jwtToken = req.headers.authorization?.split(' ')[1];
+
+  if (!jwtToken) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/mypage`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Error fetching mypage data:', error);
+    res.status(500).json({ message: 'Error fetching mypage data' });
+  }
+}
