@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
+import { CustomUser } from '../../types/user';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/Note/NoteForm';
 import NoteList from '../../components/Note/NoteList';
@@ -99,14 +100,20 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
   };
 
-  const handleUnlikeVideo = async (likeId: number) => {
+  const handleUnlikeVideo = async () => {
     if (!jwtToken || !video) {
       console.error('JWT tokenやvideoが定義されていません');
       return;
     }
 
+    const userLike = video?.likes ? video.likes.find((like: { user_id: number }) => like.user_id === Number(currentUser?.id)) : null;
+    if (!userLike) {
+      setLikeError('いいねが見つかりませんでした。');
+      return;
+    }
+
     try {
-      const result = await handleUnlike(video.id, likeId, jwtToken);
+      const result = await handleUnlike(video.id, userLike.id, jwtToken);
       console.log('Unlike result:', result);
       if (result.success) {
         const updatedVideo = await fetchYoutubeVideo(video.id, jwtToken);

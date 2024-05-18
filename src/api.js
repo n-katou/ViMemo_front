@@ -49,7 +49,7 @@ export async function handleUnlike(videoId, likeId, jwtToken) {
         }
       }
     );
-    console.log('handleUnlike response:', res);
+    console.log('handleUnlike response:', res);  // 追加: レスポンスをログ出力
     return res.data;
   } catch (error) {
     console.error('Failed to unlike the video:', error);
