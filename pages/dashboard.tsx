@@ -17,38 +17,6 @@ const Dashboard = () => {
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
 
-  const handleLike = async (noteId: number) => {
-    if (!jwtToken) {
-      console.error('Token is undefined');
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notes/${noteId}/likes`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        }
-      );
-
-      if (response.status === 201) {
-        // 成功した場合には、いいねの数を更新
-        setNoteLikes((prevLikes) =>
-          prevLikes.map((like) =>
-            like.likeable.id === noteId
-              ? { ...like, likeable: { ...like.likeable, likes_count: like.likeable.likes_count + 1 } }
-              : like
-          )
-        );
-      }
-    } catch (error) {
-      console.error('Error liking the note:', error);
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       console.log('Fetching data...'); // デバッグログ
