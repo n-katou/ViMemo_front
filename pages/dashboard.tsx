@@ -17,6 +17,38 @@ const Dashboard = () => {
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
 
+  const handleLike = async (noteId: number) => {
+    if (!jwtToken) {
+      console.error('Token is undefined');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notes/${noteId}/likes`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        // 成功した場合には、いいねの数を更新
+        setNoteLikes((prevLikes) =>
+          prevLikes.map((like) =>
+            like.likeable.id === noteId
+              ? { ...like, likeable: { ...like.likeable, likes_count: like.likeable.likes_count + 1 } }
+              : like
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error liking the note:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       console.log('Fetching data...'); // デバッグログ
@@ -133,9 +165,7 @@ const Dashboard = () => {
                             </>
                           )}
                           <p>メモ内容：{note.content}</p>
-                          <p>{note.likes_count}</p>
-                          {!note.is_visible && <p><span className="badge badge-error">非表示中</span></p>}
-                          {currentUser && <button>Like Button</button>}
+                          <p>いいね数：{note.likes_count}</p>
                           {note.youtube_video_id && (
                             <div className="card-actions">
                               <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
@@ -164,7 +194,7 @@ const Dashboard = () => {
           height: 0;
           overflow: hidden;
         }
-
+  
         .video-wrapper iframe {
           position: absolute;
           top: 0;
@@ -175,6 +205,5 @@ const Dashboard = () => {
       `}</style>
     </div>
   );
-};
-
+}
 export default Dashboard;
