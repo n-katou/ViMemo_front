@@ -1,4 +1,3 @@
-// NoteEditor.tsx
 import React from 'react';
 
 interface NoteEditorProps {

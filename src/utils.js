@@ -1,11 +1,17 @@
-// src/utils.js
 export function videoTimestampToSeconds(timestamp) {
-  console.log('Converting timestamp:', timestamp); // デバッグログ追加
+  if (!timestamp) {
+    console.error('Invalid timestamp: empty or null'); // エラーログ追加
+    return 0;
+  }
+
   const [minutes, seconds] = timestamp.split(':').map(Number);
   if (isNaN(minutes) || isNaN(seconds)) {
     console.error('Invalid timestamp format:', timestamp); // エラーログ追加
     return 0;
   }
+
+  // デバッグログはここに配置
+  console.log('Converting timestamp:', timestamp);
   return minutes * 60 + seconds;
 }
 
