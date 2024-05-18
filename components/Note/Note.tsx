@@ -99,7 +99,10 @@ const NoteItem: React.FC<NoteItemProps> = ({
           setNewSeconds={setNewSeconds}
           setNewIsVisible={setNewIsVisible}
           handleEdit={handleEdit}
-          setIsEditing={setIsEditing}
+          setIsEditing={(value) => {
+            setIsEditing(value);
+            setIsModalOpen(value);
+          }}
           padZero={padZero}
         />
       </Modal>
