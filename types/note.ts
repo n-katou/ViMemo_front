@@ -1,4 +1,5 @@
 import { CustomUser } from './user';
+import { Like } from './like';
 
 export interface Note {
   id: number;
@@ -10,4 +11,5 @@ export interface Note {
   user: CustomUser;  // ユーザー情報を含める
   youtube_video_id: number;
   likes_count: number; // いいねのカウントを追加
+  likes: Like[];
 }
