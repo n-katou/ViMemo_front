@@ -6,6 +6,11 @@ import { Like } from '../types/like';
 import { Note } from '../types/note';
 import { CustomUser } from '../types/user';
 
+// 型ガード関数を追加
+function isNote(likeable: any): likeable is Note {
+  return likeable !== undefined && (likeable as Note).content !== undefined;
+}
+
 const Dashboard = () => {
   const { currentUser, jwtToken, loading } = useAuth();
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
@@ -14,6 +19,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log('Fetching data...'); // デバッグログ
+
       if (!jwtToken) {
         console.error('Token is undefined');
         return;
@@ -35,6 +42,9 @@ const Dashboard = () => {
         if (currentUser) {
           (currentUser as CustomUser).avatar_url = avatar_url;
         }
+
+        // ノートのデータをログに出力して確認
+        console.log('Fetched Note Likes:', note_likes);
       } catch (error) {
         console.error('Error fetching mypage data:', error);
       }
@@ -101,40 +111,44 @@ const Dashboard = () => {
           {noteLikes.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               {noteLikes.map((like, index) => {
-                const note = like.likeable as Note;
-                return (
-                  <div key={index} className="col-span-1">
-                    <div className="card bg-base-100 shadow-xl mb-3">
-                      <div className="card-body">
-                        {note?.user && (
-                          <>
-                            {note.user.avatar_url && (
-                              <img src={note.user.avatar_url} alt="User Avatar" className="w-16 h-16 rounded-full mr-4" />
-                            )}
-                            <p>
-                              <span className="font-bold">ユーザー名:</span> {note.user.name}
-                            </p>
-                          </>
-                        )}
-                        {note && (
-                          <>
-                            <p>メモ内容：{note.content}</p>
-                            <p>{note.likes_count}</p>
-                            {!note.is_visible && <p><span className="badge badge-error">非表示中</span></p>}
-                            {currentUser && <button>Like Button</button>}
-                            {note.youtube_video_id && (
-                              <div className="card-actions">
-                                <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
-                                  <a className="btn btn-primary">この動画を見る</a>
-                                </Link>
-                              </div>
-                            )}
-                          </>
-                        )}
+                if (like.likeable && isNote(like.likeable)) {
+                  const note = like.likeable;
+                  console.log('Rendering Note:', note); // デバッグログ
+                  return (
+                    <div key={note.id} className="col-span-1">
+                      <div className="card bg-base-100 shadow-xl mb-3">
+                        <div className="card-body">
+                          {note.user && (
+                            <>
+                              {note.user.avatar_url && (
+                                <img
+                                  src={note.user.avatar_url}
+                                  alt="User Avatar"
+                                  className="w-16 h-16 rounded-full mr-4"
+                                />
+                              )}
+                              <p>
+                                <span className="font-bold">ユーザー名:</span> {note.user.name}
+                              </p>
+                            </>
+                          )}
+                          <p>メモ内容：{note.content}</p>
+                          <p>{note.likes_count}</p>
+                          {!note.is_visible && <p><span className="badge badge-error">非表示中</span></p>}
+                          {currentUser && <button>Like Button</button>}
+                          {note.youtube_video_id && (
+                            <div className="card-actions">
+                              <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
+                                <a className="btn btn-primary">この動画を見る</a>
+                              </Link>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
+                  );
+                }
+                return null;
               })}
             </div>
           ) : (
