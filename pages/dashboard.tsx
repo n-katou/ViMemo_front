@@ -26,17 +26,22 @@ const Dashboard = () => {
           },
         });
 
-        const { youtube_video_likes, note_likes, youtube_playlist_url } = response.data;
+        const { youtube_video_likes, note_likes, youtube_playlist_url, avatar_url } = response.data;
         setYoutubeVideoLikes(youtube_video_likes);
         setNoteLikes(note_likes);
         setYoutubePlaylistUrl(youtube_playlist_url);
+
+        // currentUserにavatar_urlを追加
+        if (currentUser) {
+          (currentUser as CustomUser).avatar_url = avatar_url;
+        }
       } catch (error) {
         console.error('Error fetching mypage data:', error);
       }
     };
 
     fetchData();
-  }, [jwtToken]);
+  }, [jwtToken, currentUser]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -53,7 +58,13 @@ const Dashboard = () => {
           <ul className="nav flex-col">
             <li className="nav-item mb-3">
               Avatar
-              <img src={currentUser.avatar} alt="Avatar" width="100" height="100" />
+              {(currentUser as CustomUser).avatar_url && (
+                <img
+                  src={(currentUser as CustomUser).avatar_url}
+                  alt="Avatar"
+                  className="w-16 h-16 rounded-full mr-4"
+                />
+              )}
             </li>
             <li className="nav-item mb-3">
               Name
@@ -89,15 +100,17 @@ const Dashboard = () => {
           <h1 className="text-xl font-bold mb-4">最新「いいね」したメモ一覧</h1>
           {noteLikes.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              {noteLikes.map((like) => {
+              {noteLikes.map((like, index) => {
                 const note = like.likeable as Note;
                 return (
-                  <div key={note?.id} className="col-span-1">
+                  <div key={index} className="col-span-1">
                     <div className="card bg-base-100 shadow-xl mb-3">
                       <div className="card-body">
                         {note?.user && (
                           <>
-                            <img src={note.user.avatar} alt="User Avatar" width="100" height="100" />
+                            {note.user.avatar_url && (
+                              <img src={note.user.avatar_url} alt="User Avatar" className="w-16 h-16 rounded-full mr-4" />
+                            )}
                             <p>
                               <span className="font-bold">ユーザー名:</span> {note.user.name}
                             </p>

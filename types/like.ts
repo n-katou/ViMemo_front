@@ -8,4 +8,5 @@ export interface Like {
   likeable: Note | YoutubeVideo;
   created_at: string;
   updated_at: string;
+  user_id: number;
 }
