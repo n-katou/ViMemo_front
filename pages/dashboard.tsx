@@ -1,4 +1,3 @@
-// pages/dashboard.tsx
 import { useAuth } from '../context/AuthContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -8,19 +7,22 @@ import { Note } from '../types/note';
 import { CustomUser } from '../types/user';
 
 const Dashboard = () => {
-  const { currentUser, loading } = useAuth();
+  const { currentUser, jwtToken, loading } = useAuth();
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!currentUser) return;
+      if (!jwtToken) {
+        console.error('Token is undefined');
+        return;
+      }
 
       try {
-        const response = await axios.get('/api/mypage', {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mypage`, {
           headers: {
-            Authorization: `Bearer ${(currentUser as CustomUser).token}`,
+            Authorization: `Bearer ${jwtToken}`,
           },
         });
 
@@ -34,7 +36,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [currentUser]);
+  }, [jwtToken]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -51,11 +53,11 @@ const Dashboard = () => {
           <ul className="nav flex-col">
             <li className="nav-item mb-3">
               Avatar
-              <img src={(currentUser as CustomUser).avatar} alt="Avatar" width="100" height="100" />
+              <img src={currentUser.avatar} alt="Avatar" width="100" height="100" />
             </li>
             <li className="nav-item mb-3">
               Name
-              {(currentUser as CustomUser).name}
+              {currentUser.name}
             </li>
             <li className="nav-item mb-3">
               Email
@@ -90,23 +92,31 @@ const Dashboard = () => {
               {noteLikes.map((like) => {
                 const note = like.likeable as Note;
                 return (
-                  <div key={note.id} className="col-span-1">
+                  <div key={note?.id} className="col-span-1">
                     <div className="card bg-base-100 shadow-xl mb-3">
                       <div className="card-body">
-                        <img src={note.user.avatar} alt="User Avatar" width="100" height="100" />
-                        <p>
-                          <span className="font-bold">ユーザー名:</span> {note.user.name}
-                        </p>
-                        <p>メモ内容：{note.content}</p>
-                        <p>{note.likes_count}</p>
-                        {!note.is_visible && <p><span className="badge badge-error">非表示中</span></p>}
-                        {currentUser && <button>Like Button</button>}
-                        {note.youtube_video_id && (
-                          <div className="card-actions">
-                            <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
-                              <a className="btn btn-primary">この動画を見る</a>
-                            </Link>
-                          </div>
+                        {note?.user && (
+                          <>
+                            <img src={note.user.avatar} alt="User Avatar" width="100" height="100" />
+                            <p>
+                              <span className="font-bold">ユーザー名:</span> {note.user.name}
+                            </p>
+                          </>
+                        )}
+                        {note && (
+                          <>
+                            <p>メモ内容：{note.content}</p>
+                            <p>{note.likes_count}</p>
+                            {!note.is_visible && <p><span className="badge badge-error">非表示中</span></p>}
+                            {currentUser && <button>Like Button</button>}
+                            {note.youtube_video_id && (
+                              <div className="card-actions">
+                                <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
+                                  <a className="btn btn-primary">この動画を見る</a>
+                                </Link>
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>

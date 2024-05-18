@@ -5,5 +5,5 @@ export interface CustomUser extends FirebaseUser {
   name: string;
   email: string;
   avatar: string;
-  token: string;
+  token?: string;
 }
