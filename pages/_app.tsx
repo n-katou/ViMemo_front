@@ -1,8 +1,8 @@
 // pages/_app.tsx
 import { useEffect } from 'react';
 import type { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import "../styles/globals.css";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 
@@ -34,6 +34,7 @@ export default function App({ Component, pageProps, router }: AppProps) {
       <AuthProvider>
         <Header />
         <AuthenticatedApp Component={Component} pageProps={pageProps} router={router} />
+        <Footer />
       </AuthProvider>
     </div>
   );
