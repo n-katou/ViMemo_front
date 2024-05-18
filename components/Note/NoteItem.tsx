@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Note } from '../../types/note';
 import NoteContent from './NoteContent';
 import NoteEditor from './NoteEditor';
@@ -35,6 +35,15 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL;
   const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl;
 
+  useEffect(() => {
+    if (isEditing) {
+      setNewContent(note.content);
+      setNewMinutes(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
+      setNewSeconds(videoTimestampToSeconds(note.video_timestamp) % 60);
+      setNewIsVisible(note.is_visible);
+    }
+  }, [isEditing, note, videoTimestampToSeconds]);
+
   const handleDelete = () => {
     if (confirm('このメモを削除しますか？')) {
       onDelete(note.id);
@@ -54,6 +63,15 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
   const padZero = (num: number) => num.toString().padStart(2, '0');
 
+  const startEditing = () => {
+    setNewContent(note.content);
+    setNewMinutes(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
+    setNewSeconds(videoTimestampToSeconds(note.video_timestamp) % 60);
+    setNewIsVisible(note.is_visible);
+    setIsEditing(true);
+    setIsModalOpen(true);
+  };
+
   if (!note.is_visible && !isOwner) {
     return null;
   }
@@ -66,7 +84,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
           <div>
             <p className="text-xl font-bold">{note.user?.name || 'Unknown User'}</p>
             <button onClick={handleTimestampClick} className="text-blue-500 hover:underline">
-              {padZero(newMinutes)}:{padZero(newSeconds)}
+              {padZero(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60))}:{padZero(videoTimestampToSeconds(note.video_timestamp) % 60)}
             </button>
           </div>
         </div>
@@ -85,7 +103,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
           newSeconds={newSeconds}
           videoTimestampToSeconds={videoTimestampToSeconds}
           handleDelete={handleDelete}
-          setIsEditing={() => setIsModalOpen(true)}
+          setIsEditing={startEditing}
         />
       </div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
