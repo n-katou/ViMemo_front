@@ -4,7 +4,7 @@ import { Note } from '../../types/note';
 interface NoteActionsProps {
   note: Note;
   currentUser: any;
-  videoId: string;
+  videoId: number;
   newMinutes: number;
   newSeconds: number;
   videoTimestampToSeconds: (timestamp: string) => number;

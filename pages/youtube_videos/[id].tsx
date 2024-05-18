@@ -76,7 +76,7 @@ const YoutubeVideoShowPage: React.FC = () => {
 
   const handleLikeVideo = async () => {
     if (!jwtToken || !video) {
-      console.error('JWT token or video is not defined');
+      console.error('JWT tokenやvideoが定義されていません');
       return;
     }
 
@@ -192,7 +192,7 @@ const YoutubeVideoShowPage: React.FC = () => {
             currentUser={currentUser}
             videoTimestampToSeconds={videoTimestampToSeconds}
             playFromTimestamp={playFromTimestamp}
-            videoId={video.youtube_id}
+            videoId={video.id} // ここでvideoIdを渡す
             onDelete={handleDeleteNote}
             onEdit={handleEditNote}
           />
