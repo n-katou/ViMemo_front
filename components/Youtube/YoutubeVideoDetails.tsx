@@ -1,6 +1,6 @@
 import React from 'react';
 import { YoutubeVideo } from '../../types/youtubeVideo';
-import { CustomUser } from '../../types/user'; // CustomUserをインポート
+import { CustomUser } from '../../types/user';
 
 interface YoutubeVideoDetailsProps {
   video: YoutubeVideo;

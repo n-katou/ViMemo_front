@@ -30,7 +30,7 @@ export async function handleLike(videoId, jwtToken) {
         }
       }
     );
-    console.log('handleLike response:', res);
+    console.log('handleLike response:', res);  // 追加: レスポンスをログ出力
     return res.data;
   } catch (error) {
     console.error('Failed to like the video:', error);
@@ -46,7 +46,8 @@ export async function handleUnlike(videoId, likeId, jwtToken) {
         headers: {
           'Authorization': `Bearer ${jwtToken}`,
           'Content-Type': 'application/json'
-        }
+        },
+        data: { likeable_type: 'YoutubeVideo', likeable_id: videoId }  // パラメータとして `likeable_type` と `likeable_id` を追加
       }
     );
     console.log('handleUnlike response:', res);  // 追加: レスポンスをログ出力
@@ -57,46 +58,16 @@ export async function handleUnlike(videoId, likeId, jwtToken) {
   }
 }
 
-export async function addNoteToVideo(videoId, newNoteContent, timestampMinutes, timestampSeconds, isVisible, jwtToken) {
+export async function addNoteToVideo(videoId, content, minutes, seconds, isVisible, jwtToken) {
   try {
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes`,
-      { content: newNoteContent, video_timestamp_minutes: timestampMinutes, video_timestamp_seconds: timestampSeconds, is_visible: isVisible },
       {
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-    console.log('addNoteToVideo response:', res);
-    return res.data;
-  } catch (error) {
-    console.error('Failed to add note to video:', error);
-    return { success: false, error: 'Unable to add note to video.' };
-  }
-}
-
-export async function deleteNoteFromVideo(videoId, noteId, jwtToken) {
-  try {
-    const res = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes/${noteId}`, {
-      headers: {
-        'Authorization': `Bearer ${jwtToken}`
-      }
-    });
-    console.log('deleteNoteFromVideo response:', res);
-    return res.data;
-  } catch (error) {
-    console.error('Failed to delete note from video:', error);
-    return { success: false, error: 'Unable to delete note from video.' };
-  }
-}
-
-export async function editNoteInVideo(videoId, noteId, newContent, newMinutes, newSeconds, newIsVisible, jwtToken) {
-  try {
-    const res = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes/${noteId}`,
-      { content: newContent, video_timestamp_minutes: newMinutes, video_timestamp_seconds: newSeconds, is_visible: newIsVisible },
+        content,
+        video_timestamp_minutes: minutes,
+        video_timestamp_seconds: seconds,
+        is_visible: isVisible,
+      },
       {
         headers: {
           'Authorization': `Bearer ${jwtToken}`,
@@ -104,10 +75,50 @@ export async function editNoteInVideo(videoId, noteId, newContent, newMinutes, n
         }
       }
     );
-    console.log('editNoteInVideo response:', res);
     return res.data;
   } catch (error) {
-    console.error('Failed to edit note in video:', error);
-    return { success: false, error: 'Unable to edit note in video.' };
+    console.error('Failed to add note:', error);
+    throw error;
+  }
+}
+
+export async function deleteNoteFromVideo(videoId, noteId, jwtToken) {
+  try {
+    const res = await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes/${noteId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`,
+        }
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('Failed to delete note:', error);
+    throw error;
+  }
+}
+
+export async function editNoteInVideo(videoId, noteId, content, minutes, seconds, isVisible, jwtToken) {
+  try {
+    const res = await axios.put(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes/${noteId}`,
+      {
+        content,
+        video_timestamp_minutes: minutes,
+        video_timestamp_seconds: seconds,
+        is_visible: isVisible,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`,
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('Failed to edit note:', error);
+    throw error;
   }
 }
