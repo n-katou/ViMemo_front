@@ -91,22 +91,21 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen"><p className="text-xl">Loading...</p></div>;
   }
 
   if (!currentUser) {
-    return <div>Please log in to access the dashboard.</div>;
+    return <div className="flex justify-center items-center h-screen"><p className="text-xl">Please log in to access the dashboard.</p></div>;
   }
 
   const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
   return (
-    <div className="container px-4 w-full">
+    <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row">
-        <div className="mr-10 mb-3">
-          <ul className="nav flex-col">
-            <li className="nav-item mb-3">
-              Avatar
+        <div className="w-full md:w-1/4 mb-8 md:mb-0">
+          <div className="bg-white shadow-lg rounded-lg p-4">
+            <div className="flex items-center mb-4">
               {(currentUser as CustomUser).avatar_url && (
                 <img
                   src={(currentUser as CustomUser).avatar_url}
@@ -114,107 +113,110 @@ const Dashboard = () => {
                   className="w-16 h-16 rounded-full mr-4"
                 />
               )}
-            </li>
-            <li className="nav-item mb-3">
-              Name:
-              {currentUser.name}
-            </li>
-            <li className="nav-item mb-3">
-              Email:
-              {currentUser.email}
-            </li>
-            <li className="nav-item mb-3">
-              <Link href="/mypage/edit" legacyBehavior>
-                <a className="btn btn-outline btn-success">Edit</a>
-              </Link>
-            </li>
-            {isAdmin && (
-              <li>
-                <Link href={`${process.env.NEXT_PUBLIC_API_URL}/admin/users`} legacyBehavior>
-                  <a className="btn btn-outline">会員一覧</a>
-                </Link>
-              </li>
-            )}
-          </ul>
-        </div>
-
-        <div className="flex-1 flex-auto lg:pr-4 md:pr-2 pr-1">
-          <form onSubmit={handleSearch} className="mb-4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ジャンル or キーワードで動画を取得"
-              className="input input-bordered input-lg"
-            />
-            <button type="submit" className="btn btn-outline">取得</button>
-          </form>
-
-          {youtubeVideos.length > 0 && (
-            <div className="mb-4">
-              <h1 className="text-xl font-bold mb-4">取得したYouTube動画</h1>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                {youtubeVideos.map((video, index) => (
-                  <div key={video.id} className="col-span-1">
-                    <div className="card bg-base-100 shadow-xl mb-3">
-                      <div className="card-body">
-                        <h2 className="card-title">{video.title}</h2>
-                        <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-                        <p>動画時間: {video.duration}秒</p>
-                        <iframe
-                          src={`https://www.youtube.com/embed/${video.youtube_id}`}
-                          frameBorder="0"
-                          allowFullScreen
-                          className="w-full aspect-video"
-                        ></iframe>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div>
+                <h2 className="text-xl font-bold">{currentUser.name}</h2>
+                <p className="text-gray-600">{currentUser.email}</p>
               </div>
             </div>
+            <Link href="/mypage/edit" legacyBehavior>
+              <a className="block text-center bg-green-500 text-white py-2 rounded-lg mt-4">ユーザー編集</a>
+            </Link>
+            {isAdmin && (
+              <Link href={`${process.env.NEXT_PUBLIC_API_URL}/admin/users`} legacyBehavior>
+                <a className="block text-center bg-blue-500 text-white py-2 rounded-lg mt-4">会員一覧</a>
+              </Link>
+            )}
+          </div>
+        </div>
+
+        <div className="w-full md:flex-1 md:pl-8">
+          {(currentUser as CustomUser).role === 1 && (
+            <>
+              <form onSubmit={handleSearch} className="mb-8">
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="ジャンル or キーワードで動画を取得"
+                    className="flex-1 p-2 border border-gray-300 rounded-l-lg"
+                  />
+                  <button type="submit" className="bg-blue-500 text-white p-2 rounded-r-lg">取得</button>
+                </div>
+              </form>
+
+              {youtubeVideos.length > 0 && (
+                <div className="mb-8">
+                  <h1 className="text-2xl font-bold mb-4">取得したYouTube動画</h1>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {youtubeVideos.map((video, index) => (
+                      <div key={video.id} className="col-span-1">
+                        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+                          <iframe
+                            src={`https://www.youtube.com/embed/${video.youtube_id}`}
+                            frameBorder="0"
+                            allowFullScreen
+                            className="w-full h-48"
+                          ></iframe>
+                          <div className="p-4">
+                            <h2 className="text-lg font-bold">{video.title}</h2>
+                            <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+                            <p className="text-gray-600">動画時間: {video.duration}秒</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
-          <h1 className="text-xl font-bold mb-4">「いいね」した動画プレイリスト</h1>
+          <h1 className="text-2xl font-bold mb-4">「いいね」した動画プレイリスト</h1>
           {youtubeVideoLikes.length > 0 ? (
             <div className="mb-4 video-wrapper">
-              <iframe className="aspect-video" src={youtubePlaylistUrl} frameBorder="0" allowFullScreen></iframe>
+              <iframe
+                src={youtubePlaylistUrl}
+                frameBorder="0"
+                allowFullScreen
+                className="w-full aspect-video"
+              ></iframe>
             </div>
           ) : (
             <p>いいねした動画がありません。</p>
           )}
 
-          <h1 className="text-xl font-bold mb-4">最新「いいね」したメモ一覧</h1>
+          <h1 className="text-2xl font-bold mb-4">最新「いいね」したメモ一覧</h1>
           {noteLikes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {noteLikes.map((like, index) => {
                 if (like.likeable && isNote(like.likeable)) {
                   const note = like.likeable;
                   console.log('Rendering Note:', note); // デバッグログ
                   return (
                     <div key={note.id} className="col-span-1">
-                      <div className="card bg-base-100 shadow-xl mb-3">
-                        <div className="card-body">
+                      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+                        <div className="p-4">
                           {note.user && (
-                            <>
+                            <div className="flex items-center mb-4">
                               {note.user.avatar_url && (
                                 <img
                                   src={note.user.avatar_url}
                                   alt="User Avatar"
-                                  className="w-16 h-16 rounded-full mr-4"
+                                  className="w-12 h-12 rounded-full mr-4"
                                 />
                               )}
-                              <p>
-                                <span className="font-bold">ユーザー名:</span> {note.user.name}
-                              </p>
-                            </>
+                              <div>
+                                <p className="font-bold">{note.user.name}</p>
+                              </div>
+                            </div>
                           )}
-                          <p>メモ内容：{note.content}</p>
-                          <p>いいね数：{note.likes_count}</p>
+                          <p className="text-gray-800 mb-2">メモ内容：{note.content}</p>
+                          <p className="text-gray-600">いいね数：{note.likes_count}</p>
                           {note.youtube_video_id && (
-                            <div className="card-actions">
+                            <div className="mt-4">
                               <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
-                                <a className="btn btn-primary">この動画を見る</a>
+                                <a className="text-blue-500">この動画を見る</a>
                               </Link>
                             </div>
                           )}
@@ -231,23 +233,6 @@ const Dashboard = () => {
           )}
         </div>
       </div>
-
-      <style jsx>{`
-        .video-wrapper {
-          position: relative;
-          padding-top: 56.25%;
-          height: 0;
-          overflow: hidden;
-        }
-
-        .video-wrapper iframe {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-      `}</style>
     </div>
   );
 };
