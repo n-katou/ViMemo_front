@@ -57,51 +57,49 @@ const EditProfile = () => {
   return (
     <div className="container mx-auto p-5">
       <div className="flex justify-center">
-        <div className="w-full lg:w-3/4">
-          <h1 className="text-center text-3xl font-bold mb-6">プロフィール編集</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="w-full lg:w-2/3 xl:w-1/2 bg-white shadow-md rounded-lg p-8">
+          <h1 className="text-center text-3xl font-bold mb-6 text-gray-800">プロフィール編集</h1>
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="form-control">
-              <label className="label">Avatar</label>
-              <div className="input-group">
+              <label className="label text-gray-700">アバター</label>
+              <div className="flex items-center space-x-4">
                 <input
                   type="file"
-                  className="input input-bordered"
+                  className="input input-bordered p-2 border border-gray-300 rounded-lg"
                   accept="image/*"
                   onChange={handleFileChange}
                 />
-              </div>
-              <div className="mt-3 mb-3">
                 {user?.avatar_url && (
                   <img
                     src={user.avatar_url}
-                    className="rounded-full"
+                    className="rounded-full border border-gray-300"
                     id="preview"
                     alt="Avatar"
-                    width="100"
-                    height="100"
+                    width="80"
+                    height="80"
                   />
                 )}
               </div>
             </div>
-            <div className="form-control">
-              <label className="label">Email</label>
+            {/* <div className="form-control">
+              <label className="label">Eメール</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input input-bordered"
+                className="input input-bordered w-full p-2 border border-gray-300 rounded-lg"
               />
-            </div>
+            </div> */}
             <div className="form-control">
-              <label className="label">Name</label>
+              <label className="label text-gray-700">名前</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="input input-bordered"
+                className="input input-bordered w-full p-2 border border-gray-300 rounded-lg"
               />
             </div>
-            <button type="submit" className="btn btn-primary mt-4">更新</button>
+            <button type="submit" className="btn btn-primary w-full py-2 mt-4 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200">更新</button>
           </form>
         </div>
       </div>

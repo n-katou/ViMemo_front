@@ -13,7 +13,7 @@ function isNote(likeable: any): likeable is Note {
 }
 
 const Dashboard = () => {
-  const { currentUser, jwtToken, loading } = useAuth();
+  const { currentUser, jwtToken, loading, setAuthState } = useAuth();
   const router = useRouter();
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
@@ -37,18 +37,31 @@ const Dashboard = () => {
           },
         });
 
-        const { youtube_video_likes, note_likes, youtube_playlist_url, avatar_url, role } = response.data;
+        console.log('Response data:', response.data);
+
+        const { youtube_video_likes, note_likes, youtube_playlist_url, avatar_url, role, email, name } = response.data;
         setYoutubeVideoLikes(youtube_video_likes);
         setNoteLikes(note_likes);
         setYoutubePlaylistUrl(youtube_playlist_url);
 
-        // currentUserにavatar_urlとroleを追加
+        // currentUserにavatar_url, role, email, nameを追加
         if (currentUser) {
-          (currentUser as CustomUser).avatar_url = avatar_url;
-          (currentUser as CustomUser).role = role; // roleを追加
+          const updatedUser = {
+            ...currentUser,
+            avatar_url,
+            role,
+            email,
+            name,
+          } as CustomUser;
+
+          setAuthState({
+            currentUser: updatedUser,
+            jwtToken,
+          });
+          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
         }
 
-        // ノートのデータをログに出力して確認
+        console.log('Updated currentUser:', currentUser);
         console.log('Fetched Note Likes:', note_likes);
       } catch (error) {
         console.error('Error fetching mypage data:', error);
@@ -56,7 +69,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [jwtToken, currentUser]);
+  }, [jwtToken, setAuthState]);
 
   const fetchVideosByGenre = async (genre: string) => {
     try {
@@ -98,9 +111,8 @@ const Dashboard = () => {
 
   const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
-  // ログ出力
   console.log('Current User:', currentUser);
-  console.log('Current User Role:', (currentUser as CustomUser).role);
+  console.log('Current User Role:', currentUser.role);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -108,9 +120,9 @@ const Dashboard = () => {
         <div className="w-full md:w-1/4 mb-8 md:mb-0">
           <div className="bg-white shadow-lg rounded-lg p-4">
             <div className="flex items-center mb-4">
-              {(currentUser as CustomUser).avatar_url && (
+              {currentUser.avatar_url && (
                 <img
-                  src={(currentUser as CustomUser).avatar_url}
+                  src={currentUser.avatar_url}
                   alt="Avatar"
                   className="w-16 h-16 rounded-full mr-4"
                 />
@@ -132,7 +144,7 @@ const Dashboard = () => {
         </div>
 
         <div className="w-full md:flex-1 md:pl-8">
-          {(currentUser as CustomUser).role === 'admin' && (
+          {currentUser.role === 'admin' && (
             <>
               <form onSubmit={handleSearch} className="mb-8">
                 <div className="flex items-center">
@@ -194,7 +206,7 @@ const Dashboard = () => {
               {noteLikes.map((like, index) => {
                 if (like.likeable && isNote(like.likeable)) {
                   const note = like.likeable;
-                  console.log('Rendering Note:', note); // デバッグログ
+                  console.log('Rendering Note:', note);
                   return (
                     <div key={note.id} className="col-span-1">
                       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
