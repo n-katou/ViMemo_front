@@ -2,9 +2,11 @@ import { useAuth } from '../context/AuthContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/router'; // useRouterをインポート
 import { Like } from '../types/like';
 import { Note } from '../types/note';
 import { CustomUser } from '../types/user';
+import { YoutubeVideo } from '../types/youtubeVideo'; // YouTubeVideo型をインポート
 
 // 型ガード関数を追加
 function isNote(likeable: any): likeable is Note {
@@ -13,9 +15,12 @@ function isNote(likeable: any): likeable is Note {
 
 const Dashboard = () => {
   const { currentUser, jwtToken, loading } = useAuth();
+  const router = useRouter(); // useRouterを取得
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
+  const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]); // YouTube動画の型を指定
+  const [searchQuery, setSearchQuery] = useState(''); // 検索クエリの状態を追加
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,6 +57,38 @@ const Dashboard = () => {
 
     fetchData();
   }, [jwtToken, currentUser]);
+
+  // YouTube動画を取得する関数を追加
+  const fetchVideosByGenre = async (genre: string) => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/fetch_videos_by_genre`, {
+        params: { genre },
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+
+      if (response.status === 200) {
+        const youtubeVideosData = response.data;
+        setYoutubeVideos(youtubeVideosData);
+        console.log('Fetched YouTube Videos:', youtubeVideosData);
+
+        // YouTube動画の取得が成功した後、検索クエリをURLに設定して遷移
+        router.push(`/youtube_videos?query=${encodeURIComponent(genre)}`);
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error fetching YouTube videos:', error.response?.data || error.message);
+      } else {
+        console.error('Unknown error:', error);
+      }
+    }
+  };
+
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    fetchVideosByGenre(searchQuery);
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -98,6 +135,42 @@ const Dashboard = () => {
         </div>
 
         <div className="flex-1 flex-auto lg:pr-4 md:pr-2 pr-1">
+          <form onSubmit={handleSearch} className="mb-4">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="ジャンル or キーワードで動画を取得"
+              className="input input-bordered input-lg"
+            />
+            <button type="submit" className="btn btn-outline">取得</button>
+          </form>
+
+          {youtubeVideos.length > 0 && (
+            <div className="mb-4">
+              <h1 className="text-xl font-bold mb-4">取得したYouTube動画</h1>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                {youtubeVideos.map((video, index) => (
+                  <div key={video.id} className="col-span-1">
+                    <div className="card bg-base-100 shadow-xl mb-3">
+                      <div className="card-body">
+                        <h2 className="card-title">{video.title}</h2>
+                        <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+                        <p>動画時間: {video.duration}秒</p>
+                        <iframe
+                          src={`https://www.youtube.com/embed/${video.youtube_id}`}
+                          frameBorder="0"
+                          allowFullScreen
+                          className="w-full aspect-video"
+                        ></iframe>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <h1 className="text-xl font-bold mb-4">「いいね」した動画プレイリスト</h1>
           {youtubeVideoLikes.length > 0 ? (
             <div className="mb-4 video-wrapper">
@@ -162,7 +235,7 @@ const Dashboard = () => {
           height: 0;
           overflow: hidden;
         }
-  
+
         .video-wrapper iframe {
           position: absolute;
           top: 0;
@@ -173,5 +246,6 @@ const Dashboard = () => {
       `}</style>
     </div>
   );
-}
+};
+
 export default Dashboard;
