@@ -80,3 +80,8 @@
 .duration-300 {
   transition-duration: 300ms; /* トランジションの継続時間 */
 }
+
+input[type="text"] {
+  background-color: white; /* 背景色を白に設定 */
+  color: black; /* テキスト色を黒に設定 */
+}
