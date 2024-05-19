@@ -2,6 +2,7 @@ import { useAuth } from '../context/AuthContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/router'; // useRouterをインポート
 import { Like } from '../types/like';
 import { Note } from '../types/note';
 import { CustomUser } from '../types/user';
@@ -14,6 +15,7 @@ function isNote(likeable: any): likeable is Note {
 
 const Dashboard = () => {
   const { currentUser, jwtToken, loading } = useAuth();
+  const router = useRouter(); // useRouterを取得
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
@@ -70,6 +72,9 @@ const Dashboard = () => {
         const youtubeVideosData = response.data;
         setYoutubeVideos(youtubeVideosData);
         console.log('Fetched YouTube Videos:', youtubeVideosData);
+
+        // YouTube動画の取得が成功した後、検索クエリをURLに設定して遷移
+        router.push(`/youtube_videos?query=${encodeURIComponent(genre)}`);
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
