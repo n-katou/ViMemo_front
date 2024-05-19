@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useAuth } from '../context/AuthContext';
 
-async function fetchYoutubeVideos(page = 1) {
+async function fetchYoutubeVideos(query = '', page = 1) {
   try {
     const authToken = localStorage.getItem('authToken'); // ローカルストレージから認証トークンを取得
     const headers: Record<string, string> = {
@@ -17,7 +17,7 @@ async function fetchYoutubeVideos(page = 1) {
       headers['Authorization'] = `Bearer ${authToken}`;
     }
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos?page=${page}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos?q[title_cont]=${query}&page=${page}`, {
       method: 'GET',
       headers: headers,
       credentials: 'include', // クッキーを送信するための設定
@@ -59,6 +59,8 @@ const YoutubeVideosPage = () => {
     prev_page: 0, // 前ページがあるかどうか
   });
 
+  const query = router.query.query as string || ''; // URLからクエリを取得
+
   useEffect(() => {
     if (!currentUser) {
       // ユーザーがログインしていない場合はログインページへリダイレクト
@@ -68,7 +70,8 @@ const YoutubeVideosPage = () => {
       return;
     }
     const fetchData = async () => {
-      const result = await fetchYoutubeVideos(pagination.current_page); // 現在のページをフェッチ
+      setLoading(true);
+      const result = await fetchYoutubeVideos(query, pagination.current_page); // 現在のページをフェッチ
 
       if (result) {
         setYoutubeVideos(result.videos); // 動画データを更新
@@ -77,10 +80,11 @@ const YoutubeVideosPage = () => {
       } else {
         setError('YouTube動画を取得できませんでした'); // エラー時
       }
+      setLoading(false);
     };
 
     fetchData(); // データをフェッチ
-  }, [pagination.current_page, currentUser, router]); // 現在のページが変わるたびにフェッチ
+  }, [pagination.current_page, currentUser, router, query]); // 現在のページや検索クエリが変わるたびにフェッチ
 
   const handleTitleClick = async (id: number) => {
     console.log("遷移前のID:", id); // 遷移前のIDをログに出力
@@ -94,7 +98,6 @@ const YoutubeVideosPage = () => {
 
   return (
     <div className="container">
-      <h1>YouTube一覧</h1>
       {youtubeVideos.length > 0 ? (
         <>
           {youtubeVideos.map(video => (
@@ -111,6 +114,13 @@ const YoutubeVideosPage = () => {
           </div>
         </>
       ) : <p>動画がありません。</p>}
+      <style jsx>{`
+        .pagination {
+          display: flex;
+          justify-content: center;
+          margin-top: 20px;
+        }
+      `}</style>
     </div>
   );
 };
