@@ -98,6 +98,8 @@ const Dashboard = () => {
     return <div>Please log in to access the dashboard.</div>;
   }
 
+  const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
   return (
     <div className="container px-4 w-full">
       <div className="flex flex-col md:flex-row">
@@ -114,11 +116,11 @@ const Dashboard = () => {
               )}
             </li>
             <li className="nav-item mb-3">
-              Name
+              Name:
               {currentUser.name}
             </li>
             <li className="nav-item mb-3">
-              Email
+              Email:
               {currentUser.email}
             </li>
             <li className="nav-item mb-3">
@@ -126,11 +128,13 @@ const Dashboard = () => {
                 <a className="btn btn-outline btn-success">Edit</a>
               </Link>
             </li>
-            <li>
-              <Link href="/admin/users" legacyBehavior>
-                <a className="btn btn-outline">会員一覧</a>
-              </Link>
-            </li>
+            {isAdmin && (
+              <li>
+                <Link href={`${process.env.NEXT_PUBLIC_API_URL}/admin/users`} legacyBehavior>
+                  <a className="btn btn-outline">会員一覧</a>
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
 
