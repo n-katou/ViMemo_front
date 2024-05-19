@@ -2,29 +2,28 @@ import { useAuth } from '../context/AuthContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
-import { useRouter } from 'next/router'; // useRouterをインポート
+import { useRouter } from 'next/router';
 import { Like } from '../types/like';
 import { Note } from '../types/note';
 import { CustomUser } from '../types/user';
-import { YoutubeVideo } from '../types/youtubeVideo'; // YouTubeVideo型をインポート
+import { YoutubeVideo } from '../types/youtubeVideo';
 
-// 型ガード関数を追加
 function isNote(likeable: any): likeable is Note {
   return likeable !== undefined && (likeable as Note).content !== undefined;
 }
 
 const Dashboard = () => {
   const { currentUser, jwtToken, loading } = useAuth();
-  const router = useRouter(); // useRouterを取得
+  const router = useRouter();
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
-  const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]); // YouTube動画の型を指定
-  const [searchQuery, setSearchQuery] = useState(''); // 検索クエリの状態を追加
+  const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log('Fetching data...'); // デバッグログ
+      console.log('Fetching data...');
 
       if (!jwtToken) {
         console.error('Token is undefined');
@@ -38,14 +37,15 @@ const Dashboard = () => {
           },
         });
 
-        const { youtube_video_likes, note_likes, youtube_playlist_url, avatar_url } = response.data;
+        const { youtube_video_likes, note_likes, youtube_playlist_url, avatar_url, role } = response.data;
         setYoutubeVideoLikes(youtube_video_likes);
         setNoteLikes(note_likes);
         setYoutubePlaylistUrl(youtube_playlist_url);
 
-        // currentUserにavatar_urlを追加
+        // currentUserにavatar_urlとroleを追加
         if (currentUser) {
           (currentUser as CustomUser).avatar_url = avatar_url;
+          (currentUser as CustomUser).role = role; // roleを追加
         }
 
         // ノートのデータをログに出力して確認
@@ -58,7 +58,6 @@ const Dashboard = () => {
     fetchData();
   }, [jwtToken, currentUser]);
 
-  // YouTube動画を取得する関数を追加
   const fetchVideosByGenre = async (genre: string) => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/fetch_videos_by_genre`, {
@@ -73,7 +72,6 @@ const Dashboard = () => {
         setYoutubeVideos(youtubeVideosData);
         console.log('Fetched YouTube Videos:', youtubeVideosData);
 
-        // YouTube動画の取得が成功した後、検索クエリをURLに設定して遷移
         router.push(`/youtube_videos?query=${encodeURIComponent(genre)}`);
       }
     } catch (error: unknown) {
@@ -99,6 +97,10 @@ const Dashboard = () => {
   }
 
   const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
+  // ログ出力
+  console.log('Current User:', currentUser);
+  console.log('Current User Role:', (currentUser as CustomUser).role);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -130,7 +132,7 @@ const Dashboard = () => {
         </div>
 
         <div className="w-full md:flex-1 md:pl-8">
-          {(currentUser as CustomUser).role === 1 && (
+          {(currentUser as CustomUser).role === 'admin' && (
             <>
               <form onSubmit={handleSearch} className="mb-8">
                 <div className="flex items-center">
