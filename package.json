@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
+    "@react-oauth/google": "^0.12.1",
     "@types/cookie": "^0.6.0",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.6.8",

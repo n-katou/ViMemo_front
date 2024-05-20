@@ -7,6 +7,9 @@ import { Like } from '../types/like';
 import { Note } from '../types/note';
 import { CustomUser } from '../types/user';
 import { YoutubeVideo } from '../types/youtubeVideo';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
 function isNote(likeable: any): likeable is Note {
   return likeable !== undefined && (likeable as Note).content !== undefined;
@@ -147,16 +150,18 @@ const Dashboard = () => {
           {currentUser.role === 'admin' && (
             <>
               <form onSubmit={handleSearch} className="mb-8">
-                <div className="flex items-center">
-                  <input
-                    type="text"
+                <Box display="flex" alignItems="center" mb={2}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="ジャンル or キーワードで動画を取得"
-                    className="flex-1 p-2 border border-gray-300 rounded-l-lg"
+                    placeholder="キーワードで動画を取得"
                   />
-                  <button type="submit" className="bg-blue-500 text-white p-2 rounded-r-lg">取得</button>
-                </div>
+                  <Button type="submit" variant="contained" color="primary" sx={{ ml: 2 }}>
+                    取得
+                  </Button>
+                </Box>
               </form>
 
               {youtubeVideos.length > 0 && (

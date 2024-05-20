@@ -3,12 +3,12 @@ import axios from 'axios';
 import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, TextField, Card, Typography, Snackbar, Alert } from '@mui/material';
+import { Button, TextField, Card, Typography, Snackbar, Alert, Box } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
   const router = useRouter();
-  const { currentUser, setAuthState, logout } = useAuth();
+  const { currentUser, setAuthState } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -65,12 +65,12 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card style={{ padding: '20px', maxWidth: 400, width: '100%', marginBottom: '20px' }}>
+    <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#f5f5f5">
+      <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
         <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
           ログイン
         </Typography>
-        <form onSubmit={handleSubmit} className="space-y-4 px-8 pb-8">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <TextField
             label="メールアドレス"
             type="email"
@@ -95,15 +95,38 @@ const LoginPage = () => {
             variant="contained"
             color="primary"
             fullWidth
-            style={{ marginTop: '20px' }}
+            style={{
+              marginTop: '20px',
+              backgroundColor: '#4CA',  // 通常ログインボタンの背景色を変更
+              color: '#fff'  // 通常ログインボタンのテキスト色を変更
+            }}
           >
             {loading ? 'ローディング...' : 'ログイン'}
           </Button>
         </form>
-        <div className="flex justify-center">
-          <button onClick={handleGoogleLogin} disabled={loading}>
+        <div className="flex justify-center mt-4">
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            startIcon={
+              <img
+                src="https://developers.google.com/identity/images/g-logo.png"
+                alt="Google logo"
+                style={{ width: 20, height: 20 }}
+              />
+            }
+            style={{
+              backgroundColor: '#4285F4',
+              color: 'white',
+              textTransform: 'none',
+              fontSize: '16px',
+              padding: '10px 24px',
+            }}
+          >
             {loading ? 'ローディング...' : 'Googleでログイン'}
-          </button>
+          </Button>
         </div>
         <div className="text-center mt-4">
           <Link href="/register">登録ページへ</Link>
@@ -116,7 +139,7 @@ const LoginPage = () => {
           </Alert>
         </Snackbar>
       )}
-    </div>
+    </Box>
   );
 };
 
