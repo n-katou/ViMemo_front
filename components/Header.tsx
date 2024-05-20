@@ -96,29 +96,33 @@ const Header = () => {
         <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
           Vimemo
         </Typography>
-        <div className="flex items-center">
-          <IconButton onClick={toggleSearch} color="inherit">
-            <SearchIcon />
-          </IconButton>
-          <Collapse in={searchOpen} timeout="auto" unmountOnExit>
-            <form onSubmit={handleSearch} className="flex items-center ml-4">
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="動画タイトルを検索"
-                  inputProps={{ 'aria-label': 'search' }}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-              </Search>
-            </form>
-          </Collapse>
-        </div>
-        <Button color="inherit" onClick={navigateToYoutubeVideos}>
-          Youtube
-        </Button>
+        {currentUser && (
+          <div className="flex items-center">
+            <IconButton onClick={toggleSearch} color="inherit">
+              <SearchIcon />
+            </IconButton>
+            <Collapse in={searchOpen} timeout="auto" unmountOnExit>
+              <form onSubmit={handleSearch} className="flex items-center ml-4">
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="動画タイトルを検索"
+                    inputProps={{ 'aria-label': 'search' }}
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
+                </Search>
+              </form>
+            </Collapse>
+          </div>
+        )}
+        {currentUser && (
+          <Button color="inherit" onClick={navigateToYoutubeVideos}>
+            Youtube
+          </Button>
+        )}
         <div>
           <IconButton
             size="large"

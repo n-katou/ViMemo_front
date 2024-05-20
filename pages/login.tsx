@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, TextField, Card, Typography, Snackbar, Alert } from '@mui/material';
+import { Button, TextField, Card, Typography, Snackbar, Alert, Box } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
@@ -65,12 +65,12 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card style={{ padding: '20px', maxWidth: 400, width: '100%', marginBottom: '20px' }}>
+    <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#f5f5f5">
+      <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
         <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
           ログイン
         </Typography>
-        <form onSubmit={handleSubmit} className="space-y-4 px-8 pb-8">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <TextField
             label="メールアドレス"
             type="email"
@@ -100,10 +100,10 @@ const LoginPage = () => {
             {loading ? 'ローディング...' : 'ログイン'}
           </Button>
         </form>
-        <div className="flex justify-center">
-          <button onClick={handleGoogleLogin} disabled={loading}>
+        <div className="flex justify-center mt-4">
+          <Button variant="contained" color="secondary" onClick={handleGoogleLogin} disabled={loading}>
             {loading ? 'ローディング...' : 'Googleでログイン'}
-          </button>
+          </Button>
         </div>
         <div className="text-center mt-4">
           <Link href="/register">登録ページへ</Link>
@@ -116,7 +116,7 @@ const LoginPage = () => {
           </Alert>
         </Snackbar>
       )}
-    </div>
+    </Box>
   );
 };
 
