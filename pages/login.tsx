@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
   const router = useRouter();
-  const { currentUser, setAuthState, logout } = useAuth();
+  const { currentUser, setAuthState } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -95,13 +95,36 @@ const LoginPage = () => {
             variant="contained"
             color="primary"
             fullWidth
-            style={{ marginTop: '20px' }}
+            style={{
+              marginTop: '20px',
+              backgroundColor: '#4CA',  // 通常ログインボタンの背景色を変更
+              color: '#fff'  // 通常ログインボタンのテキスト色を変更
+            }}
           >
             {loading ? 'ローディング...' : 'ログイン'}
           </Button>
         </form>
         <div className="flex justify-center mt-4">
-          <Button variant="contained" color="secondary" onClick={handleGoogleLogin} disabled={loading}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            startIcon={
+              <img
+                src="https://developers.google.com/identity/images/g-logo.png"
+                alt="Google logo"
+                style={{ width: 20, height: 20 }}
+              />
+            }
+            style={{
+              backgroundColor: '#4285F4',
+              color: 'white',
+              textTransform: 'none',
+              fontSize: '16px',
+              padding: '10px 24px',
+            }}
+          >
             {loading ? 'ローディング...' : 'Googleでログイン'}
           </Button>
         </div>
