@@ -43,8 +43,8 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    padding: theme.spacing(1),
+    paddingLeft: 0, // 左側のスペースを無くす
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('md')]: {
@@ -153,6 +153,9 @@ const Header = () => {
               [
                 <MenuItem onClick={handleClose} key="mypage">
                   <Link href="/mypage">マイページ</Link>
+                </MenuItem>,
+                <MenuItem onClick={handleClose} key="favorites">
+                  <Link href="/favorites">お気に入りの動画</Link>
                 </MenuItem>,
                 <MenuItem onClick={handleLogout} key="logout">ログアウト</MenuItem>
               ]

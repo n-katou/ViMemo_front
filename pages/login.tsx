@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, TextField, Card, Typography, Snackbar, Alert, Box } from '@mui/material';
+import { Button, TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
@@ -101,7 +101,7 @@ const LoginPage = () => {
               color: '#fff'  // 通常ログインボタンのテキスト色を変更
             }}
           >
-            {loading ? 'ローディング...' : 'ログイン'}
+            {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'ログイン'}
           </Button>
         </form>
         <div className="flex justify-center mt-4">
@@ -111,11 +111,13 @@ const LoginPage = () => {
             onClick={handleGoogleLogin}
             disabled={loading}
             startIcon={
-              <img
-                src="https://developers.google.com/identity/images/g-logo.png"
-                alt="Google logo"
-                style={{ width: 20, height: 20 }}
-              />
+              !loading && (
+                <img
+                  src="https://developers.google.com/identity/images/g-logo.png"
+                  alt="Google logo"
+                  style={{ width: 20, height: 20 }}
+                />
+              )
             }
             style={{
               backgroundColor: '#4285F4',
@@ -125,7 +127,7 @@ const LoginPage = () => {
               padding: '10px 24px',
             }}
           >
-            {loading ? 'ローディング...' : 'Googleでログイン'}
+            {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Googleでログイン'}
           </Button>
         </div>
         <div className="text-center mt-4">
