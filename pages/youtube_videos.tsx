@@ -49,7 +49,7 @@ const formatDuration = (seconds: number) => {
 };
 
 const YoutubeVideosPage = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, jwtToken } = useAuth();  // jwtTokenを追加
   const router = useRouter();
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
   const [loading, setLoading] = useState(false);
@@ -105,6 +105,40 @@ const YoutubeVideosPage = () => {
     setPagination({ ...pagination, current_page: 1 }); // ソートオプションが変更されたら最初のページに戻る
   };
 
+  const handleLike = async (id: number) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`, // localStorageではなく、useAuthから直接取得
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          likeable_type: 'YoutubeVideo',
+          likeable_id: id,
+        }),
+      });
+
+      if (!res.ok) {
+        console.error('Like error:', res.status, res.statusText);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.success) {
+        setYoutubeVideos((prevVideos) =>
+          prevVideos.map((video) =>
+            video.id === id ? { ...video, likes_count: data.likes_count } : video
+          )
+        );
+      } else {
+        console.error('Like error:', data.message);
+      }
+    } catch (error) {
+      console.error('Like exception:', error);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -145,6 +179,12 @@ const YoutubeVideosPage = () => {
                   <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
                   <p className="text-gray-600">いいね数: {video.likes_count}</p>
                   <p className="text-gray-600">メモ数: {video.notes_count}</p>
+                  <button
+                    onClick={() => handleLike(video.id)}
+                    className="mt-2 btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
+                  >
+                    いいね
+                  </button>
                 </div>
               </div>
             ))}
