@@ -150,12 +150,12 @@ const Header = () => {
             onClose={handleClose}
           >
             {currentUser ? (
-              <>
-                <MenuItem onClick={handleClose}>
+              [
+                <MenuItem onClick={handleClose} key="mypage">
                   <Link href="/mypage">マイページ</Link>
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>ログアウト</MenuItem>
-              </>
+                </MenuItem>,
+                <MenuItem onClick={handleLogout} key="logout">ログアウト</MenuItem>
+              ]
             ) : (
               <MenuItem onClick={handleClose}>
                 <Link href="/login">ログインページ</Link>
