@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { YoutubeVideo } from '../types/youtubeVideo';
+import { Like } from '../types/like';
 
 interface Pagination {
   current_page: number;
@@ -11,7 +12,7 @@ interface Pagination {
 }
 
 const FavoritesPage = () => {
-  const { jwtToken } = useAuth();
+  const { currentUser, jwtToken } = useAuth();
   const [videos, setVideos] = useState<YoutubeVideo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +33,11 @@ const FavoritesPage = () => {
       });
 
       if (res.data) {
-        setVideos(res.data.videos || []);
+        setVideos(res.data.videos.map((video: YoutubeVideo) => ({
+          ...video,
+          liked: video.likes.some((like: Like) => like.user_id === Number(currentUser?.id)),
+          likeId: video.likes.find((like: Like) => like.user_id === Number(currentUser?.id))?.id || undefined,
+        })));
         setPagination(res.data.pagination);
       }
     } catch (err) {
@@ -46,6 +51,76 @@ const FavoritesPage = () => {
   useEffect(() => {
     fetchFavorites();
   }, []);
+  const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
+
+  const handleLike = async (id: number) => {
+    setYoutubeVideos((prevVideos) =>
+      prevVideos.map((video) =>
+        video.id === id ? { ...video, likes_count: video.likes_count + 1, liked: true } : video
+      )
+    );
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`, // localStorageではなく、useAuthから直接取得
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          likeable_type: 'YoutubeVideo',
+          likeable_id: id,
+        }),
+      });
+
+      if (!res.ok) {
+        console.error('Like error:', res.status, res.statusText);
+        return;
+      }
+
+      const data = await res.json();
+      if (!data.success) {
+        console.error('Like error:', data.message);
+      }
+    } catch (error) {
+      console.error('Like exception:', error);
+    }
+  };
+
+  const handleUnlike = async (youtubeVideoId: number, likeId: number) => {
+    setYoutubeVideos((prevVideos) =>
+      prevVideos.map((video) =>
+        video.id === youtubeVideoId ? { ...video, likes_count: video.likes_count - 1, liked: false } : video
+      )
+    );
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${youtubeVideoId}/likes/${likeId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`, // localStorageではなく、useAuthから直接取得
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          likeable_type: 'YoutubeVideo', // ここに likeable_type を追加
+          likeable_id: youtubeVideoId,   // ここに likeable_id を追加
+        }),
+      });
+
+      if (!res.ok) {
+        console.error('Unlike error:', res.status, res.statusText);
+        return;
+      }
+
+      const data = await res.json();
+      if (!data.success) {
+        console.error('Unlike error:', data.message);
+      }
+    } catch (error) {
+      console.error('Unlike exception:', error);
+    }
+  };
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -71,6 +146,27 @@ const FavoritesPage = () => {
                   <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
                   <p className="text-gray-600">いいね数: {video.likes_count}</p>
                   <p className="text-gray-600">メモ数: {video.notes_count}</p>
+                  {video.liked ? (
+                    <button
+                      onClick={async () => {
+                        if (currentUser) {
+                          await handleUnlike(video.id, video.likeId!);
+                        }
+                      }}
+                      className="mt-2 btn btn-secondary py-2 px-4 rounded-lg bg-red-500 text-white hover:bg-red-600 transition duration-200"
+                    >
+                      いいね解除
+                    </button>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        await handleLike(video.id);
+                      }}
+                      className="mt-2 btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
+                    >
+                      いいね
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
