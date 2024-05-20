@@ -1,21 +1,18 @@
+// YoutubeVideoDetails.tsx
 import React from 'react';
 import { YoutubeVideo } from '../../types/youtubeVideo';
-import { CustomUser } from '../../types/user';
 
 interface YoutubeVideoDetailsProps {
-  video: YoutubeVideo;
+  video: YoutubeVideo & { formattedDuration: string };
   handleLike: () => void;
-  handleUnlike: (likeId: number) => void;
-  currentUser: CustomUser | null;
+  handleUnlike: () => void;
+  currentUser: any;
   liked: boolean;
 }
 
 const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handleLike, handleUnlike, currentUser, liked }) => {
-  const userLike = video.likes ? video.likes.find(like => like.user_id === Number(currentUser?.id)) : null;
-
   return (
-    <>
-      <h1 className="video-title">{video.title || "タイトル不明"}</h1>
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
       <div className="video-wrapper">
         <iframe
           className="w-full aspect-video"
@@ -24,31 +21,25 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handle
           src={`https://www.youtube.com/embed/${video.youtube_id}?playsinline=1`}
           frameBorder="0"
           allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen />
+          allowFullScreen
+        />
       </div>
-      <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-      <p>動画時間: {video.duration}分</p>
-
-      <div id={`like_button_${video.id}`}>
-        {currentUser ? (
-          <>
-            {!liked ? (
-              <button className="btn btn-outline btn-warning" onClick={handleLike}>
-                いいね ({video.likes_count})
-              </button>
-            ) : (
-              userLike && (
-                <button className="btn btn-outline btn-success" onClick={() => handleUnlike(userLike.id)}>
-                  いいねを取り消す ({video.likes_count})
-                </button>
-              )
-            )}
-          </>
-        ) : (
-          <p>ログインしてください</p>
+      <div className="p-4">
+        <h2 className="text-2xl font-bold mb-2">{video.title}</h2>
+        <p className="text-gray-600 mb-4">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+        <p className="text-gray-600 mb-4">動画時間: {video.formattedDuration}</p>
+        {currentUser && (
+          <div className="flex justify-between items-center">
+            <button
+              onClick={liked ? handleUnlike : handleLike}
+              className={`btn ${liked ? 'btn-danger' : 'btn-primary'}`}
+            >
+              {liked ? 'いいねを取り消す' : 'いいね'}
+            </button>
+          </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

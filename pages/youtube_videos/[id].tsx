@@ -1,8 +1,8 @@
+// YoutubeVideoShowPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
-import { CustomUser } from '../../types/user';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/Note/NoteForm';
 import NoteList from '../../components/Note/NoteList';
@@ -10,8 +10,14 @@ import YoutubeVideoDetails from '../../components/Youtube/YoutubeVideoDetails';
 import { fetchYoutubeVideo, handleLike, handleUnlike, addNoteToVideo, deleteNoteFromVideo, editNoteInVideo } from '../../src/api';
 import { videoTimestampToSeconds, playFromTimestamp } from '../../src/utils';
 
+const formatDuration = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}分${remainingSeconds}秒`;
+};
+
 const YoutubeVideoShowPage: React.FC = () => {
-  const [video, setVideo] = useState<YoutubeVideo | null>(null);
+  const [video, setVideo] = useState<YoutubeVideo & { formattedDuration?: string } | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [likeError, setLikeError] = useState<string | null>(null);
   const [liked, setLiked] = useState<boolean>(false);
@@ -86,7 +92,7 @@ const YoutubeVideoShowPage: React.FC = () => {
       if (result.success) {
         const updatedVideo = await fetchYoutubeVideo(video.id, jwtToken);
         console.log('Updated video:', updatedVideo);
-        setVideo(updatedVideo.youtube_video);
+        setVideo({ ...updatedVideo.youtube_video, formattedDuration: formatDuration(updatedVideo.youtube_video.duration) });
 
         const likes = updatedVideo.youtube_video.likes || [];
         setLiked(likes.some((like: { user_id: number }) => like.user_id === Number(currentUser?.id)));
@@ -118,7 +124,7 @@ const YoutubeVideoShowPage: React.FC = () => {
       if (result.success) {
         const updatedVideo = await fetchYoutubeVideo(video.id, jwtToken);
         console.log('Updated video:', updatedVideo);
-        setVideo(updatedVideo.youtube_video);
+        setVideo({ ...updatedVideo.youtube_video, formattedDuration: formatDuration(updatedVideo.youtube_video.duration) });
 
         const likes = updatedVideo.youtube_video.likes || [];
         setLiked(likes.some((like: { user_id: number }) => like.user_id === Number(currentUser?.id)));
@@ -151,7 +157,7 @@ const YoutubeVideoShowPage: React.FC = () => {
       fetchYoutubeVideo(videoId, jwtToken)
         .then(videoData => {
           console.log('Fetched videoData:', videoData);
-          setVideo(videoData.youtube_video);
+          setVideo({ ...videoData.youtube_video, formattedDuration: formatDuration(videoData.youtube_video.duration) }); // フォーマットされた時間を追加
           setNotes(videoData.notes);
 
           const likes = videoData.youtube_video.likes || [];
@@ -167,42 +173,43 @@ const YoutubeVideoShowPage: React.FC = () => {
   }, [pathname, jwtToken, currentUser, loading]);
 
   return (
-    <div className="container">
-      {loading && <div>Loading...</div>}
-      {!loading && !video && <div>Video not found</div>}
+    <div className="container mx-auto py-8">
+      {loading && <div className="text-center">Loading...</div>}
+      {!loading && !video && <div className="text-center">Video not found</div>}
       {!loading && video && (
         <>
-          <YoutubeVideoDetails
-            video={video}
-            handleLike={handleLikeVideo}
-            handleUnlike={handleUnlikeVideo}
-            currentUser={currentUser}
-            liked={liked}
-          />
-          {likeError && <div className="error-message">{likeError}</div>}
-          {currentUser ? (
-            <>
+          <div className="mb-8">
+            <YoutubeVideoDetails
+              video={video as YoutubeVideo & { formattedDuration: string }}
+              handleLike={handleLikeVideo}
+              handleUnlike={handleUnlikeVideo}
+              currentUser={currentUser}
+              liked={liked}
+            />
+            {likeError && <div className="text-red-500 text-center mt-4">{likeError}</div>}
+          </div>
+          {currentUser && (
+            <div className="mb-8">
               <NoteForm addNote={addNote} />
-            </>
-          ) : (
-            <p>No user is logged in.</p>
+            </div>
           )}
           <NoteList
             notes={notes}
             currentUser={currentUser}
             videoTimestampToSeconds={videoTimestampToSeconds}
             playFromTimestamp={playFromTimestamp}
-            videoId={video.id} // ここでvideoIdを渡す
+            videoId={video.id}
             onDelete={handleDeleteNote}
             onEdit={handleEditNote}
           />
-          <button
-            className="btn btn-outline btn-info"
-            style={{ marginTop: '20px' }}
-            onClick={() => router.push('/youtube_videos')}
-          >
-            戻る
-          </button>
+          <div className="text-left mt-8">
+            <button
+              className="btn btn-outline btn-info"
+              onClick={() => router.push('/youtube_videos')}
+            >
+              戻る
+            </button>
+          </div>
         </>
       )}
     </div>
