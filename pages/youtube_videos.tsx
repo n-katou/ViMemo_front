@@ -42,6 +42,12 @@ async function fetchYoutubeVideos(query = '', page = 1, itemsPerPage = ITEMS_PER
   }
 }
 
+const formatDuration = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}分${remainingSeconds}秒`;
+};
+
 const YoutubeVideosPage = () => {
   const { currentUser } = useAuth();
   const router = useRouter();
@@ -119,7 +125,7 @@ const YoutubeVideosPage = () => {
                     {video.title}
                   </h2>
                   <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-                  <p className="text-gray-600">動画時間: {video.duration}分</p>
+                  <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
                 </div>
               </div>
             ))}

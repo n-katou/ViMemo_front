@@ -5,7 +5,7 @@ export interface YoutubeVideo {
   title: string;
   published_at: string;
   youtube_id: string;
-  duration: string;
+  duration: number;
   likes_count: number;
   likes: Like[];
 }
