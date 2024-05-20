@@ -51,20 +51,13 @@ const FavoritesPage = () => {
   useEffect(() => {
     fetchFavorites();
   }, []);
-  const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
 
   const handleLike = async (id: number) => {
-    setYoutubeVideos((prevVideos) =>
-      prevVideos.map((video) =>
-        video.id === id ? { ...video, likes_count: video.likes_count + 1, liked: true } : video
-      )
-    );
-
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${jwtToken}`, // localStorageではなく、useAuthから直接取得
+          'Authorization': `Bearer ${jwtToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -79,7 +72,13 @@ const FavoritesPage = () => {
       }
 
       const data = await res.json();
-      if (!data.success) {
+      if (data.success) {
+        setVideos((prevVideos) =>
+          prevVideos.map((video) =>
+            video.id === id ? { ...video, likes_count: video.likes_count + 1, liked: true, likeId: data.like.id } : video
+          )
+        );
+      } else {
         console.error('Like error:', data.message);
       }
     } catch (error) {
@@ -88,22 +87,16 @@ const FavoritesPage = () => {
   };
 
   const handleUnlike = async (youtubeVideoId: number, likeId: number) => {
-    setYoutubeVideos((prevVideos) =>
-      prevVideos.map((video) =>
-        video.id === youtubeVideoId ? { ...video, likes_count: video.likes_count - 1, liked: false } : video
-      )
-    );
-
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${youtubeVideoId}/likes/${likeId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${jwtToken}`, // localStorageではなく、useAuthから直接取得
+          'Authorization': `Bearer ${jwtToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          likeable_type: 'YoutubeVideo', // ここに likeable_type を追加
-          likeable_id: youtubeVideoId,   // ここに likeable_id を追加
+          likeable_type: 'YoutubeVideo',
+          likeable_id: youtubeVideoId,
         }),
       });
 
@@ -113,14 +106,19 @@ const FavoritesPage = () => {
       }
 
       const data = await res.json();
-      if (!data.success) {
+      if (data.success) {
+        setVideos((prevVideos) =>
+          prevVideos.map((video) =>
+            video.id === youtubeVideoId ? { ...video, likes_count: video.likes_count - 1, liked: false, likeId: undefined } : video
+          )
+        );
+      } else {
         console.error('Unlike error:', data.message);
       }
     } catch (error) {
       console.error('Unlike exception:', error);
     }
   };
-
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
