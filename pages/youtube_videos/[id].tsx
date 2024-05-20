@@ -202,7 +202,7 @@ const YoutubeVideoShowPage: React.FC = () => {
             onDelete={handleDeleteNote}
             onEdit={handleEditNote}
           />
-          <div className="text-center mt-8">
+          <div className="text-left mt-8">
             <button
               className="btn btn-outline btn-info"
               onClick={() => router.push('/youtube_videos')}
