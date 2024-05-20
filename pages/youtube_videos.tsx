@@ -1,9 +1,8 @@
-"use client";
-
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useAuth } from '../context/AuthContext';
+import { Like } from '../types/like';
 
 const ITEMS_PER_PAGE = 9; // 1ページあたりの動画数を設定
 
@@ -81,7 +80,12 @@ const YoutubeVideosPage = () => {
       const result = await fetchYoutubeVideos(query, pagination.current_page, ITEMS_PER_PAGE, sortOption);
 
       if (result) {
-        setYoutubeVideos(result.videos);
+        // `liked` プロパティを追加して設定する
+        const updatedVideos = result.videos.map((video: YoutubeVideo) => ({
+          ...video,
+          liked: video.likes?.some((like: Like) => like.user_id === Number(currentUser.id)) || false
+        }));
+        setYoutubeVideos(updatedVideos);
         setPagination(result.pagination);
         setError(null);
       } else {
@@ -127,8 +131,8 @@ const YoutubeVideosPage = () => {
       const data = await res.json();
       if (data.success) {
         setYoutubeVideos((prevVideos) =>
-          prevVideos.map((video) =>
-            video.id === id ? { ...video, likes_count: data.likes_count } : video
+          prevVideos.map((video: YoutubeVideo) =>
+            video.id === id ? { ...video, likes_count: data.likes_count, liked: true } : video
           )
         );
       } else {
@@ -136,6 +140,40 @@ const YoutubeVideosPage = () => {
       }
     } catch (error) {
       console.error('Like exception:', error);
+    }
+  };
+
+  const handleUnlike = async (youtubeVideoId: number, likeId: number) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${youtubeVideoId}/likes/${likeId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`, // localStorageではなく、useAuthから直接取得
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          likeable_type: 'YoutubeVideo', // ここに likeable_type を追加
+          likeable_id: youtubeVideoId,   // ここに likeable_id を追加
+        }),
+      });
+
+      if (!res.ok) {
+        console.error('Unlike error:', res.status, res.statusText);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.success) {
+        setYoutubeVideos((prevVideos) =>
+          prevVideos.map((video: YoutubeVideo) =>
+            video.id === youtubeVideoId ? { ...video, likes_count: data.likes_count, liked: false } : video
+          )
+        );
+      } else {
+        console.error('Unlike error:', data.message);
+      }
+    } catch (error) {
+      console.error('Unlike exception:', error);
     }
   };
 
@@ -158,7 +196,7 @@ const YoutubeVideosPage = () => {
       {youtubeVideos.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {youtubeVideos.map(video => (
+            {youtubeVideos.map((video: YoutubeVideo) => (
               <div key={video.id} className="bg-white shadow-lg rounded-lg overflow-hidden">
                 <div className="relative pb-56.25%">
                   <iframe
@@ -179,12 +217,28 @@ const YoutubeVideosPage = () => {
                   <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
                   <p className="text-gray-600">いいね数: {video.likes_count}</p>
                   <p className="text-gray-600">メモ数: {video.notes_count}</p>
-                  <button
-                    onClick={() => handleLike(video.id)}
-                    className="mt-2 btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
-                  >
-                    いいね
-                  </button>
+                  {video.liked ? (
+                    <button
+                      onClick={() => {
+                        if (currentUser) {
+                          const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
+                          if (like) {
+                            handleUnlike(video.id, like.id);
+                          }
+                        }
+                      }}
+                      className="mt-2 btn btn-secondary py-2 px-4 rounded-lg bg-red-500 text-white hover:bg-red-600 transition duration-200"
+                    >
+                      いいね解除
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleLike(video.id)}
+                      className="mt-2 btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
+                    >
+                      いいね
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

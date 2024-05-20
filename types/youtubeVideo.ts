@@ -10,4 +10,5 @@ export interface YoutubeVideo {
   notes_count: number;
   likes: Like[];
   formattedDuration?: string;
+  liked?: boolean;
 }
