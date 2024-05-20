@@ -2,13 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
-import { CustomUser } from '../../types/user';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/Note/NoteForm';
 import NoteList from '../../components/Note/NoteList';
 import YoutubeVideoDetails from '../../components/Youtube/YoutubeVideoDetails';
 import { fetchYoutubeVideo, handleLike, handleUnlike, addNoteToVideo, deleteNoteFromVideo, editNoteInVideo } from '../../src/api';
 import { videoTimestampToSeconds, playFromTimestamp } from '../../src/utils';
+
+const formatDuration = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}分${remainingSeconds}秒`;
+};
 
 const YoutubeVideoShowPage: React.FC = () => {
   const [video, setVideo] = useState<YoutubeVideo | null>(null);
@@ -151,7 +156,7 @@ const YoutubeVideoShowPage: React.FC = () => {
       fetchYoutubeVideo(videoId, jwtToken)
         .then(videoData => {
           console.log('Fetched videoData:', videoData);
-          setVideo(videoData.youtube_video);
+          setVideo({ ...videoData.youtube_video, formattedDuration: formatDuration(videoData.youtube_video.duration) }); // フォーマットされた時間を追加
           setNotes(videoData.notes);
 
           const likes = videoData.youtube_video.likes || [];
@@ -192,7 +197,7 @@ const YoutubeVideoShowPage: React.FC = () => {
             currentUser={currentUser}
             videoTimestampToSeconds={videoTimestampToSeconds}
             playFromTimestamp={playFromTimestamp}
-            videoId={video.id} // ここでvideoIdを渡す
+            videoId={video.id}
             onDelete={handleDeleteNote}
             onEdit={handleEditNote}
           />

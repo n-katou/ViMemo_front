@@ -8,4 +8,5 @@ export interface YoutubeVideo {
   duration: number;
   likes_count: number;
   likes: Like[];
+  formattedDuration?: string;
 }
