@@ -143,6 +143,8 @@ const YoutubeVideosPage = () => {
                   </h2>
                   <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
                   <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
+                  <p className="text-gray-600">いいね数: {video.likes_count}</p>
+                  <p className="text-gray-600">メモ数: {video.notes_count}</p>
                 </div>
               </div>
             ))}
