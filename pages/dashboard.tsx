@@ -85,7 +85,7 @@ const Dashboard = () => {
         setYoutubeVideos(youtubeVideosData);
         console.log('Fetched YouTube Videos:', youtubeVideosData);
 
-        router.push(`/youtube_videos?query=${encodeURIComponent(genre)}`);
+        router.push(`/youtube_videos`);
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
