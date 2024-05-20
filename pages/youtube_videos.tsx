@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useAuth } from '../context/AuthContext';
 
-const ITEMS_PER_PAGE = 12; // 1ページあたりの動画数を設定
+const ITEMS_PER_PAGE = 9; // 1ページあたりの動画数を設定
 
 async function fetchYoutubeVideos(query = '', page = 1, itemsPerPage = ITEMS_PER_PAGE) {
   try {
