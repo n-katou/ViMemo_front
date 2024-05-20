@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 
 const ITEMS_PER_PAGE = 9; // 1ページあたりの動画数を設定
 
-async function fetchYoutubeVideos(query = '', page = 1, itemsPerPage = ITEMS_PER_PAGE) {
+async function fetchYoutubeVideos(query = '', page = 1, itemsPerPage = ITEMS_PER_PAGE, sort = '') {
   try {
     const authToken = localStorage.getItem('authToken');
     const headers: Record<string, string> = {
@@ -18,7 +18,7 @@ async function fetchYoutubeVideos(query = '', page = 1, itemsPerPage = ITEMS_PER
       headers['Authorization'] = `Bearer ${authToken}`;
     }
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos?q[title_cont]=${query}&page=${page}&per_page=${itemsPerPage}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos?q[title_cont]=${query}&page=${page}&per_page=${itemsPerPage}&sort=${sort}`, {
       method: 'GET',
       headers: headers,
       credentials: 'include',
@@ -65,6 +65,7 @@ const YoutubeVideosPage = () => {
     next_page: null,
     prev_page: null,
   });
+  const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションの初期値を設定
 
   const query = router.query.query as string || '';
 
@@ -77,7 +78,7 @@ const YoutubeVideosPage = () => {
     }
     const fetchData = async () => {
       setLoading(true);
-      const result = await fetchYoutubeVideos(query, pagination.current_page);
+      const result = await fetchYoutubeVideos(query, pagination.current_page, ITEMS_PER_PAGE, sortOption);
 
       if (result) {
         setYoutubeVideos(result.videos);
@@ -90,7 +91,7 @@ const YoutubeVideosPage = () => {
     };
 
     fetchData();
-  }, [pagination.current_page, currentUser, router, query]);
+  }, [pagination.current_page, currentUser, router, query, sortOption]);
 
   const handleTitleClick = async (id: number) => {
     console.log("遷移前のID:", id);
@@ -99,11 +100,27 @@ const YoutubeVideosPage = () => {
     console.log("遷移後のURL:", cleanUrl);
   };
 
+  const handleSortChange = (newSortOption: string) => {
+    setSortOption(newSortOption);
+    setPagination({ ...pagination, current_page: 1 }); // ソートオプションが変更されたら最初のページに戻る
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="container mx-auto py-8">
+      <div className="flex justify-end mb-4">
+        <select
+          value={sortOption}
+          onChange={(e) => handleSortChange(e.target.value)}
+          className="form-select form-select-lg"
+        >
+          <option value="created_at_desc">デフォルト（新しい順）</option>
+          <option value="likes_desc">いいね数順</option>
+          <option value="notes_desc">メモ数順</option>
+        </select>
+      </div>
       {youtubeVideos.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
