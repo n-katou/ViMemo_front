@@ -68,6 +68,26 @@ const YoutubeVideosPage = () => {
 
   const query = router.query.query as string || '';
 
+  const fetchData = async () => {
+    setLoading(true);
+    const result = await fetchYoutubeVideos(query, pagination.current_page, ITEMS_PER_PAGE, sortOption);
+
+    if (result) {
+      // `liked` プロパティを追加して設定する
+      const updatedVideos = result.videos.map((video: YoutubeVideo) => ({
+        ...video,
+        liked: video.likes?.some((like: Like) => like.user_id === Number(currentUser?.id)) || false,
+        likeId: video.likes?.find((like: Like) => like.user_id === Number(currentUser?.id))?.id || undefined,
+      }));
+      setYoutubeVideos(updatedVideos);
+      setPagination(result.pagination);
+      setError(null);
+    } else {
+      setError('YouTube動画を取得できませんでした');
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (!currentUser) {
       router.push('/login');
@@ -75,25 +95,6 @@ const YoutubeVideosPage = () => {
       setError(null);
       return;
     }
-    const fetchData = async () => {
-      setLoading(true);
-      const result = await fetchYoutubeVideos(query, pagination.current_page, ITEMS_PER_PAGE, sortOption);
-
-      if (result) {
-        // `liked` プロパティを追加して設定する
-        const updatedVideos = result.videos.map((video: YoutubeVideo) => ({
-          ...video,
-          liked: video.likes?.some((like: Like) => like.user_id === Number(currentUser.id)) || false
-        }));
-        setYoutubeVideos(updatedVideos);
-        setPagination(result.pagination);
-        setError(null);
-      } else {
-        setError('YouTube動画を取得できませんでした');
-      }
-      setLoading(false);
-    };
-
     fetchData();
   }, [pagination.current_page, currentUser, router, query, sortOption]);
 
@@ -110,6 +111,12 @@ const YoutubeVideosPage = () => {
   };
 
   const handleLike = async (id: number) => {
+    setYoutubeVideos((prevVideos) =>
+      prevVideos.map((video) =>
+        video.id === id ? { ...video, likes_count: video.likes_count + 1, liked: true } : video
+      )
+    );
+
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
         method: 'POST',
@@ -129,13 +136,7 @@ const YoutubeVideosPage = () => {
       }
 
       const data = await res.json();
-      if (data.success) {
-        setYoutubeVideos((prevVideos) =>
-          prevVideos.map((video: YoutubeVideo) =>
-            video.id === id ? { ...video, likes_count: data.likes_count, liked: true } : video
-          )
-        );
-      } else {
+      if (!data.success) {
         console.error('Like error:', data.message);
       }
     } catch (error) {
@@ -144,6 +145,12 @@ const YoutubeVideosPage = () => {
   };
 
   const handleUnlike = async (youtubeVideoId: number, likeId: number) => {
+    setYoutubeVideos((prevVideos) =>
+      prevVideos.map((video) =>
+        video.id === youtubeVideoId ? { ...video, likes_count: video.likes_count - 1, liked: false } : video
+      )
+    );
+
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${youtubeVideoId}/likes/${likeId}`, {
         method: 'DELETE',
@@ -163,13 +170,7 @@ const YoutubeVideosPage = () => {
       }
 
       const data = await res.json();
-      if (data.success) {
-        setYoutubeVideos((prevVideos) =>
-          prevVideos.map((video: YoutubeVideo) =>
-            video.id === youtubeVideoId ? { ...video, likes_count: data.likes_count, liked: false } : video
-          )
-        );
-      } else {
+      if (!data.success) {
         console.error('Unlike error:', data.message);
       }
     } catch (error) {
@@ -224,10 +225,6 @@ const YoutubeVideosPage = () => {
                           const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
                           if (like) {
                             await handleUnlike(video.id, like.id);
-                            const updatedVideos = youtubeVideos.map((v) =>
-                              v.id === video.id ? { ...v, liked: false, likes_count: v.likes_count - 1 } : v
-                            );
-                            setYoutubeVideos(updatedVideos);
                           }
                         }
                       }}
@@ -239,10 +236,6 @@ const YoutubeVideosPage = () => {
                     <button
                       onClick={async () => {
                         await handleLike(video.id);
-                        const updatedVideos = youtubeVideos.map((v) =>
-                          v.id === video.id ? { ...v, liked: true, likes_count: v.likes_count + 1 } : v
-                        );
-                        setYoutubeVideos(updatedVideos);
                       }}
                       className="mt-2 btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
                     >
