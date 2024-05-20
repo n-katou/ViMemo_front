@@ -18,6 +18,7 @@ const Header = () => {
     event.preventDefault();
     if (query) {
       router.push(`/youtube_videos?query=${encodeURIComponent(query)}`);
+      setQuery(''); // フォームをクリアする
     }
   };
 
