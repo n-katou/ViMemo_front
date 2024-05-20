@@ -219,11 +219,15 @@ const YoutubeVideosPage = () => {
                   <p className="text-gray-600">メモ数: {video.notes_count}</p>
                   {video.liked ? (
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         if (currentUser) {
                           const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
                           if (like) {
-                            handleUnlike(video.id, like.id);
+                            await handleUnlike(video.id, like.id);
+                            const updatedVideos = youtubeVideos.map((v) =>
+                              v.id === video.id ? { ...v, liked: false, likes_count: v.likes_count - 1 } : v
+                            );
+                            setYoutubeVideos(updatedVideos);
                           }
                         }
                       }}
@@ -233,7 +237,13 @@ const YoutubeVideosPage = () => {
                     </button>
                   ) : (
                     <button
-                      onClick={() => handleLike(video.id)}
+                      onClick={async () => {
+                        await handleLike(video.id);
+                        const updatedVideos = youtubeVideos.map((v) =>
+                          v.id === video.id ? { ...v, liked: true, likes_count: v.likes_count + 1 } : v
+                        );
+                        setYoutubeVideos(updatedVideos);
+                      }}
                       className="mt-2 btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
                     >
                       いいね
