@@ -11,7 +11,6 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import Badge from '@mui/material/Badge';
 import { Avatar, Tooltip, IconButton } from '@mui/material';
-import dayjs from 'dayjs'; // 日時フォーマット用にdayjsをインポート
 
 interface NoteItemProps {
   note: Note;
@@ -57,6 +56,9 @@ const NoteItem: React.FC<NoteItemProps> = ({
     if (note.likes) {
       setLiked(note.likes.some((like: Like) => like.user_id === Number(currentUser?.id)));
     }
+
+    // デバッグ: created_atフィールドの値をコンソールに出力
+    console.log('created_at:', note.created_at);
   }, [isEditing, note, videoTimestampToSeconds, currentUser]);
 
   const handleDelete = () => {
@@ -158,7 +160,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
             <button onClick={handleTimestampClick} className="text-blue-500 hover:underline">
               {padZero(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60))}:{padZero(videoTimestampToSeconds(note.video_timestamp) % 60)}
             </button>
-            <p className="text-gray-500 text-sm">{dayjs(note.created_at).format('YYYY-MM-DD HH:mm:ss')}</p> {/* 投稿日時を表示 */}
+            <p className="text-gray-500 text-sm">{new Date(note.created_at).toLocaleString()}</p> {/* 投稿日時を表示 */}
           </div>
         </div>
         <div className="h-40 overflow-y-auto mb-4">
