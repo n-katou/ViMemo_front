@@ -10,6 +10,7 @@ import { Like } from '../../types/like';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import Badge from '@mui/material/Badge';
+import { Avatar, Tooltip, IconButton } from '@mui/material';
 
 interface NoteItemProps {
   note: Note;
@@ -30,7 +31,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   videoId,
   onDelete,
   onEdit,
-  isOwner
+  isOwner,
 }) => {
   const { jwtToken } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
@@ -85,13 +86,13 @@ const NoteItem: React.FC<NoteItemProps> = ({
       if (result.success) {
         setLiked(true);
         setLikeError(null); // エラーをクリア
-        note.likes_count += 1;  // ノートのいいねカウントを更新
+        note.likes_count += 1; // ノートのいいねカウントを更新
         note.likes.push({
-          id: result.like_id,  // サーバーから返されたlikeのIDを使用する
+          id: result.like_id, // サーバーから返されたlikeのIDを使用する
           user_id: currentUser.id,
           likeable_id: note.id,
-          likeable_type: 'Note'
-        } as Like);  // likes配列に追加
+          likeable_type: 'Note',
+        } as Like); // likes配列に追加
       } else {
         setLikeError(result.error ?? 'いいねに失敗しました。');
       }
@@ -118,8 +119,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
       if (result.success) {
         setLiked(false);
         setLikeError(null); // エラーをクリア
-        note.likes_count -= 1;  // ノートのいいねカウントを更新
-        note.likes = note.likes.filter(like => like.user_id !== currentUser.id);  // likes配列から削除
+        note.likes_count -= 1; // ノートのいいねカウントを更新
+        note.likes = note.likes.filter((like) => like.user_id !== currentUser.id); // likes配列から削除
       } else {
         setLikeError(result.error ?? 'いいねの取り消しに失敗しました。');
       }
@@ -145,10 +146,12 @@ const NoteItem: React.FC<NoteItemProps> = ({
   }
 
   return (
-    <div className="card border border-blue-200 mx-auto w-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6 rounded-lg overflow-hidden">
-      <div className="card-body p-6">
+    <div className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 mb-6">
+      <div className="p-6">
         <div className="flex items-center mb-4">
-          {avatarUrl && <img src={avatarUrl} alt="User Avatar" className="w-16 h-16 rounded-full mr-4" />}
+          {avatarUrl && (
+            <Avatar src={avatarUrl} alt="User Avatar" sx={{ width: 48, height: 48, mr: 2 }} />
+          )}
           <div>
             <p className="text-xl font-bold">{note.user?.name || 'Unknown User'}</p>
             <button onClick={handleTimestampClick} className="text-blue-500 hover:underline">
@@ -156,31 +159,35 @@ const NoteItem: React.FC<NoteItemProps> = ({
             </button>
           </div>
         </div>
-        <div className="h-40 overflow-y-auto"> {/* 固定の高さを設定し、スクロールを許可 */}
+        <div className="h-40 overflow-y-auto mb-4">
           <NoteContent note={note} />
         </div>
-        <div className="mt-4 flex items-center">
-          <Badge badgeContent={note.likes_count} color="primary" className="mr-4">
-            {liked ? (
-              <ThumbUpIcon onClick={handleUnlikeNote} className="text-blue-500 cursor-pointer" />
-            ) : (
-              <ThumbUpOffAltIcon onClick={handleLikeNote} className="text-gray-500 cursor-pointer" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Tooltip title={liked ? "いいねを取り消す" : "いいね"}>
+              <IconButton onClick={liked ? handleUnlikeNote : handleLikeNote}>
+                <Badge badgeContent={note.likes_count} color="primary">
+                  {liked ? <ThumbUpIcon color="primary" /> : <ThumbUpOffAltIcon />}
+                </Badge>
+              </IconButton>
+            </Tooltip>
+            {!note.is_visible && isOwner && (
+              <p className="text-red-500 ml-2">非表示中</p>
             )}
-          </Badge>
-          {!note.is_visible && isOwner && (
-            <p><span className="badge badge-error">非表示中</span></p>
+          </div>
+          {isOwner && (
+            <NoteActions
+              note={note}
+              currentUser={currentUser}
+              videoId={videoId}
+              newMinutes={newMinutes}
+              newSeconds={newSeconds}
+              videoTimestampToSeconds={videoTimestampToSeconds}
+              handleDelete={handleDelete}
+              setIsEditing={startEditing}
+            />
           )}
         </div>
-        <NoteActions
-          note={note}
-          currentUser={currentUser}
-          videoId={videoId}
-          newMinutes={newMinutes}
-          newSeconds={newSeconds}
-          videoTimestampToSeconds={videoTimestampToSeconds}
-          handleDelete={handleDelete}
-          setIsEditing={startEditing}
-        />
       </div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <NoteEditor
@@ -200,7 +207,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
           padZero={padZero}
         />
       </Modal>
-      {likeError && <div className="error-message">{likeError}</div>}
+      {likeError && <div className="p-4 text-red-500">{likeError}</div>}
     </div>
   );
 };
