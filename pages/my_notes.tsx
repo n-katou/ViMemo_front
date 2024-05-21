@@ -16,6 +16,8 @@ const MyNotesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc'); // ソートの状態を管理
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     if (!currentUser) {
@@ -24,9 +26,9 @@ const MyNotesPage: React.FC = () => {
       return;
     }
 
-    const fetchNotes = async () => {
+    const fetchNotes = async (page: number) => {
       try {
-        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notes?filter=my_notes`;
+        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notes?filter=my_notes&page=${page}`;
         console.log(`Request URL for user notes: ${userNotesUrl}`);
 
         const res = await axios.get(userNotesUrl, {
@@ -37,8 +39,8 @@ const MyNotesPage: React.FC = () => {
 
         console.log('User notes API response:', res);
 
-        if (res.data) {
-          const notesWithTitles = await Promise.all(res.data.map(async (note: Note) => {
+        if (res.data.notes) {
+          const notesWithTitles = await Promise.all(res.data.notes.map(async (note: Note) => {
             const videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${note.youtube_video_id}`;
             const videoRes = await axios.get(videoUrl, {
               headers: {
@@ -52,6 +54,7 @@ const MyNotesPage: React.FC = () => {
             };
           }));
           setNotes(notesWithTitles);
+          setTotalPages(res.data.total_pages);
         } else {
           console.error('No data returned from API');
           setError('メモの取得に失敗しました。');
@@ -64,8 +67,8 @@ const MyNotesPage: React.FC = () => {
       }
     };
 
-    fetchNotes();
-  }, [currentUser, jwtToken]);
+    fetchNotes(page);
+  }, [currentUser, jwtToken, page]);
 
   const sortedNotes = notes.sort((a, b) => {
     if (sortOrder === 'asc') {
@@ -77,6 +80,13 @@ const MyNotesPage: React.FC = () => {
 
   const toggleSortOrder = () => {
     setSortOrder((prevSortOrder) => (prevSortOrder === 'asc' ? 'desc' : 'asc'));
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+      setLoading(true);
+    }
   };
 
   if (loading) return <LoadingSpinner loading={loading} />;
@@ -109,6 +119,23 @@ const MyNotesPage: React.FC = () => {
       ) : (
         <p>メモがありません。</p>
       )}
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={() => handlePageChange(page - 1)}
+          disabled={page === 1}
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2"
+        >
+          前へ
+        </button>
+        <span className="text-gray-700 px-4 py-2">{page} / {totalPages}</span>
+        <button
+          onClick={() => handlePageChange(page + 1)}
+          disabled={page === totalPages}
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded ml-2"
+        >
+          次へ
+        </button>
+      </div>
     </div>
   );
 };
