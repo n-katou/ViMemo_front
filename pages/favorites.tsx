@@ -11,6 +11,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import NoteIcon from '@mui/icons-material/Note';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 interface PaginationData {
   current_page: number;
@@ -178,7 +179,7 @@ const FavoritesPage: React.FC = () => {
     }));
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -206,7 +207,17 @@ const FavoritesPage: React.FC = () => {
                   </h2>
                   <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
                   <p className="text-gray-600">動画時間: {video.duration}分</p>
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center">
+                      <FavoriteIcon className="text-red-500 mr-1" />
+                      <span className="text-gray-600">{video.likes_count}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center mt-2">
+                    <NoteIcon className="text-blue-500 mr-1" />
+                    <span className="text-gray-600">{video.notes_count}</span>
+                  </div>
+                  <div className="flex items-center mt-2">
                     {video.liked ? (
                       <Tooltip title="いいね解除">
                         <IconButton
@@ -232,11 +243,7 @@ const FavoritesPage: React.FC = () => {
                         </IconButton>
                       </Tooltip>
                     )}
-                    <span className="ml-2 text-gray-600">{video.likes_count}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <NoteIcon className="text-blue-500 mr-1" />
-                    <p className="text-gray-600">{video.notes_count}</p>
+                    <p className="ml-2">{video.liked ? 'いいね解除' : 'いいねする'}</p>
                   </div>
                 </div>
               </div>
