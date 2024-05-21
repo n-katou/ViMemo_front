@@ -5,6 +5,8 @@ import { YoutubeVideo } from '../types/youtubeVideo';
 import { useAuth } from '../context/AuthContext';
 import { Like } from '../types/like';
 import LoadingSpinner from '../components/LoadingSpinner'; // Import the LoadingSpinner component
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import NoteIcon from '@mui/icons-material/Note'; // Noteアイコンをインポート
 
 const ITEMS_PER_PAGE = 9; // 1ページあたりの動画数を設定
 
@@ -221,8 +223,14 @@ const YoutubeVideosPage = () => {
                   </h2>
                   <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
                   <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-                  <p className="text-gray-600">いいね数: {video.likes_count}</p>
-                  <p className="text-gray-600">メモ数: {video.notes_count}</p>
+                  <div className="flex items-center">
+                    <FavoriteIcon className="text-red-500 mr-1" />
+                    <p className="text-gray-600">{video.likes_count}</p>
+                  </div>
+                  <div className="flex items-center">
+                    <NoteIcon className="text-blue-500 mr-1" />
+                    <p className="text-gray-600">{video.notes_count}</p>
+                  </div>
                   {video.liked ? (
                     <button
                       onClick={async () => {
