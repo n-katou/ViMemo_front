@@ -6,7 +6,12 @@ import { useAuth } from '../context/AuthContext';
 import { Like } from '../types/like';
 import LoadingSpinner from '../components/LoadingSpinner'; // Import the LoadingSpinner component
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import NoteIcon from '@mui/icons-material/Note'; // Noteアイコンをインポート
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Pagination from '@mui/material/Pagination'; // Paginationをインポート
+import Stack from '@mui/material/Stack'; // Stackをインポート
 
 const ITEMS_PER_PAGE = 9; // 1ページあたりの動画数を設定
 
@@ -231,55 +236,52 @@ const YoutubeVideosPage = () => {
                     <NoteIcon className="text-blue-500 mr-1" />
                     <p className="text-gray-600">{video.notes_count}</p>
                   </div>
-                  {video.liked ? (
-                    <button
-                      onClick={async () => {
-                        if (currentUser) {
-                          const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
-                          if (like) {
-                            await handleUnlike(video.id, like.id);
-                          }
-                        }
-                      }}
-                      className="mt-2 btn btn-secondary py-2 px-4 rounded-lg bg-red-500 text-white hover:bg-red-600 transition duration-200"
-                    >
-                      いいね解除
-                    </button>
-                  ) : (
-                    <button
-                      onClick={async () => {
-                        await handleLike(video.id);
-                      }}
-                      className="mt-2 btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
-                    >
-                      いいね
-                    </button>
-                  )}
+                  <div className="flex items-center mt-2">
+                    {video.liked ? (
+                      <Tooltip title="いいね解除">
+                        <IconButton
+                          onClick={async () => {
+                            if (currentUser) {
+                              const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
+                              if (like) {
+                                await handleUnlike(video.id, like.id);
+                              }
+                            }
+                          }}
+                          color="secondary"
+                        >
+                          <FavoriteIcon style={{ color: 'red' }} />
+                        </IconButton>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="いいね">
+                        <IconButton
+                          onClick={async () => {
+                            await handleLike(video.id);
+                          }}
+                          color="primary"
+                        >
+                          <FavoriteBorderIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                    <p className="ml-2">{video.liked ? 'いいね済み' : 'いいねする'}</p>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-          <div className="pagination mt-8 flex justify-center items-center space-x-4">
-            {pagination.prev_page && (
-              <button
-                onClick={() => setPagination({ ...pagination, current_page: pagination.prev_page! })}
-                className="btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
-              >
-                前ページ
-              </button>
-            )}
-            <span className="text-gray-700">
-              {pagination.current_page} / {pagination.total_pages}
-            </span>
-            {pagination.next_page && (
-              <button
-                onClick={() => setPagination({ ...pagination, current_page: pagination.next_page! })}
-                className="btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
-              >
-                次ページ
-              </button>
-            )}
-          </div>
+          <Stack spacing={2} className="mt-8">
+            <Pagination
+              count={pagination.total_pages}
+              page={pagination.current_page}
+              onChange={(event, value) => setPagination({ ...pagination, current_page: value })}
+              variant="outlined"
+              shape="rounded"
+              color="primary"
+              size="large"
+            />
+          </Stack>
         </>
       ) : <p>動画がありません。</p>}
       <style jsx>{`
