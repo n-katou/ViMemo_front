@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { Like } from '../types/like';
+import { useRouter } from 'next/router';
 
 interface Pagination {
   current_page: number;
@@ -13,6 +14,7 @@ interface Pagination {
 
 const FavoritesPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth();
+  const router = useRouter();
   const [videos, setVideos] = useState<YoutubeVideo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -123,10 +125,6 @@ const FavoritesPage: React.FC = () => {
           'Authorization': `Bearer ${jwtToken}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          likeable_type: 'YoutubeVideo',
-          likeable_id: youtubeVideoId,
-        }),
       });
 
       if (!res.ok) {
@@ -159,6 +157,10 @@ const FavoritesPage: React.FC = () => {
     }
   };
 
+  const handleTitleClick = (id: number) => {
+    router.push(`/youtube_videos/${id}`);
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -179,7 +181,12 @@ const FavoritesPage: React.FC = () => {
                   />
                 </div>
                 <div className="p-4">
-                  <h2 className="text-xl font-bold text-blue-600">{video.title}</h2>
+                  <h2
+                    className="text-xl font-bold text-blue-600 cursor-pointer hover:underline"
+                    onClick={() => handleTitleClick(video.id)}
+                  >
+                    {video.title}
+                  </h2>
                   <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
                   <p className="text-gray-600">いいね数: {video.likes_count}</p>
                   <p className="text-gray-600">メモ数: {video.notes_count}</p>
