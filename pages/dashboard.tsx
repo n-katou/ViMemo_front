@@ -1,4 +1,3 @@
-// pages/dashboard.tsx
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { YoutubeVideo } from '../types/youtubeVideo';
@@ -173,7 +172,7 @@ const Dashboard = () => {
             </>
           )}
 
-          <Accordion>
+          <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="h6">「いいね」した動画プレイリスト</Typography>
             </AccordionSummary>

@@ -7,21 +7,21 @@ interface NoteListProps {
   currentUser: any;
   videoTimestampToSeconds: (timestamp: string) => number;
   playFromTimestamp: (seconds: number) => void;
-  videoId: number; // ここをstringからnumberに変更
+  videoId: number;
   onDelete: (noteId: number) => void;
   onEdit: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void;
 }
 
 const NoteList: React.FC<NoteListProps> = ({ notes, currentUser, videoTimestampToSeconds, playFromTimestamp, videoId, onDelete, onEdit }) => {
   return (
-    <div id="notes_list">
-      <h2 style={{ marginTop: '20px' }}>メモ一覧</h2>
+    <div id="notes_list" className="mt-5">
+      <h2 className="text-xl font-bold mb-4">メモ一覧</h2>
       {notes.length > 0 ? (
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap -mx-2">
           {notes.map((note) => {
             const isOwner = currentUser?.id === note.user?.id;
             return (
-              <div key={note.id} className="p-2 flex-1 lg:max-w-1/3">
+              <div key={note.id} className="p-2 w-full sm:w-1/2 lg:w-1/3">
                 <NoteItem
                   note={note}
                   currentUser={currentUser}
