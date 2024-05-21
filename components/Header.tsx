@@ -14,6 +14,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Collapse from '@mui/material/Collapse';
 import Button from '@mui/material/Button';
+import YouTubeIcon from '@mui/icons-material/YouTube'; // YouTubeアイコンをインポート
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -44,7 +45,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1),
-    paddingLeft: 0, // 左側のスペースを無くす
+    paddingLeft: 0,
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('md')]: {
@@ -93,7 +94,19 @@ const Header = () => {
   return (
     <AppBar position="static" sx={{ backgroundColor: 'black' }}>
       <Toolbar>
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+        <Typography
+          variant="h6"
+          noWrap
+          component="div"
+          sx={{
+            flexGrow: 1,
+            fontSize: {
+              xs: '1rem', // モバイル用のフォントサイズ
+              sm: '1.25rem', // 小画面用のフォントサイズ
+              md: '1.5rem', // 中画面以上のフォントサイズ
+            }
+          }}
+        >
           Vimemo
         </Typography>
         {currentUser && (
@@ -108,10 +121,17 @@ const Header = () => {
                     <SearchIcon />
                   </SearchIconWrapper>
                   <StyledInputBase
-                    placeholder="動画タイトルを検索"
+                    placeholder="タイトルで検索"
                     inputProps={{ 'aria-label': 'search' }}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
+                    sx={{
+                      fontSize: {
+                        xs: '0.875rem', // モバイル用のフォントサイズ
+                        sm: '1rem', // 小画面用のフォントサイズ
+                        md: '1rem', // 中画面以上のフォントサイズ
+                      }
+                    }}
                   />
                 </Search>
               </form>
@@ -119,9 +139,7 @@ const Header = () => {
           </div>
         )}
         {currentUser && (
-          <Button color="inherit" onClick={navigateToYoutubeVideos}>
-            Youtube
-          </Button>
+          <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}></Button>
         )}
         <div>
           <IconButton
@@ -150,15 +168,15 @@ const Header = () => {
             onClose={handleClose}
           >
             {currentUser ? (
-              [
+              <>
                 <MenuItem onClick={handleClose} key="mypage">
                   <Link href="/mypage">マイページ</Link>
-                </MenuItem>,
+                </MenuItem>
                 <MenuItem onClick={handleClose} key="favorites">
                   <Link href="/favorites">お気に入りの動画</Link>
-                </MenuItem>,
+                </MenuItem>
                 <MenuItem onClick={handleLogout} key="logout">ログアウト</MenuItem>
-              ]
+              </>
             ) : (
               <MenuItem onClick={handleClose}>
                 <Link href="/login">ログインページ</Link>
