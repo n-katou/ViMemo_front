@@ -16,6 +16,9 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Avatar from '@mui/material/Avatar';
 
 function isNote(likeable: any): likeable is Note {
   return likeable !== undefined && (likeable as Note).content !== undefined;
@@ -127,49 +130,49 @@ const Dashboard = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-1/4 mb-8 md:mb-0">
-          <div className="bg-white shadow-lg rounded-lg p-4">
-            <div className="flex items-center mb-4">
-              {currentUser.avatar_url && (
-                <img
-                  src={currentUser.avatar_url}
-                  alt="Avatar"
-                  className="w-16 h-16 rounded-full mr-4"
-                />
-              )}
-              <div className="text-container">
-                <h2 className="text-xl font-bold text-wrap">{currentUser.name}</h2>
-                <p className="text-gray-600 text-wrap">{currentUser.email}</p>
+          <Card>
+            <CardContent>
+              <div className="flex items-center mb-4">
+                {currentUser.avatar_url && (
+                  <Avatar src={currentUser.avatar_url} alt="Avatar" sx={{ width: 64, height: 64, mr: 2 }} />
+                )}
+                <div className="text-container">
+                  <Typography variant="h6" className="text-wrap">{currentUser.name}</Typography>
+                  <Typography variant="body2" color="textSecondary" className="text-wrap">{currentUser.email}</Typography>
+                </div>
               </div>
-            </div>
-            <Link href="/mypage/edit" legacyBehavior>
-              <a className="block text-center bg-green-500 text-white py-2 rounded-lg mt-4">ユーザー編集</a>
-            </Link>
-            {isAdmin && (
-              <Link href={`${process.env.NEXT_PUBLIC_API_URL}/admin/users`} legacyBehavior>
-                <a className="block text-center bg-blue-500 text-white py-2 rounded-lg mt-4">会員一覧</a>
+              <Link href="/mypage/edit" legacyBehavior>
+                <Button variant="contained" color="primary" fullWidth>ユーザー編集</Button>
               </Link>
-            )}
-          </div>
+              {isAdmin && (
+                <Link href={`${process.env.NEXT_PUBLIC_API_URL}/admin/users`} legacyBehavior>
+                  <Button variant="contained" color="secondary" fullWidth className="mt-4">会員一覧</Button>
+                </Link>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         <div className="w-full md:flex-1 md:pl-8">
           {currentUser.role === 'admin' && (
-            <>
-              <form onSubmit={handleSearch} className="mb-8">
-                <Box display="flex" alignItems="center" mb={2}>
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="キーワードで動画を取得"
-                  />
-                  <Button type="submit" variant="contained" color="primary" sx={{ ml: 2 }}>
-                    取得
-                  </Button>
-                </Box>
-              </form>
-            </>
+            <Card className="mb-8">
+              <CardContent>
+                <form onSubmit={handleSearch}>
+                  <Box display="flex" alignItems="center">
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="キーワードで動画を取得"
+                    />
+                    <Button type="submit" variant="contained" color="primary" sx={{ ml: 2 }}>
+                      取得
+                    </Button>
+                  </Box>
+                </form>
+              </CardContent>
+            </Card>
           )}
 
           <Accordion defaultExpanded>
@@ -187,7 +190,7 @@ const Dashboard = () => {
                   ></iframe>
                 </div>
               ) : (
-                <p>いいねした動画がありません。</p>
+                <Typography variant="body2" color="textSecondary">いいねした動画がありません。</Typography>
               )}
             </AccordionDetails>
           </Accordion>
@@ -204,42 +207,36 @@ const Dashboard = () => {
                       const note = like.likeable;
                       console.log('Rendering Note:', note);
                       return (
-                        <div key={note.id} className="col-span-1">
-                          <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-                            <div className="p-4">
-                              {note.user && (
-                                <div className="flex items-center mb-4">
-                                  {note.user.avatar_url && (
-                                    <img
-                                      src={note.user.avatar_url}
-                                      alt="User Avatar"
-                                      className="w-12 h-12 rounded-full mr-4"
-                                    />
-                                  )}
-                                  <div>
-                                    <p className="font-bold">{note.user.name}</p>
-                                  </div>
+                        <Card key={note.id} className="col-span-1 fixed-card-size">
+                          <CardContent className="fixed-card-content">
+                            {note.user && (
+                              <div className="flex items-center mb-4">
+                                {note.user.avatar_url && (
+                                  <Avatar src={note.user.avatar_url} alt="User Avatar" sx={{ width: 32, height: 32, mr: 2 }} />
+                                )}
+                                <div>
+                                  <Typography variant="body2" className="font-bold">{note.user.name}</Typography>
                                 </div>
-                              )}
-                              <p className="text-gray-800 mb-2">メモ内容：{note.content}</p>
-                              <p className="text-gray-600">いいね数：{note.likes_count}</p>
-                              {note.youtube_video_id && (
-                                <div className="mt-4">
-                                  <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
-                                    <a className="text-blue-500">この動画を見る</a>
-                                  </Link>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                              </div>
+                            )}
+                            <Typography variant="body2" color="textPrimary" className="mb-2 note-content">メモ内容：{note.content}</Typography>
+                            <Typography variant="body2" color="textSecondary">いいね数：{note.likes_count}</Typography>
+                            {note.youtube_video_id && (
+                              <Box mt={2}>
+                                <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
+                                  <Button variant="contained" color="primary" size="small">この動画を見る</Button>
+                                </Link>
+                              </Box>
+                            )}
+                          </CardContent>
+                        </Card>
                       );
                     }
                     return null;
                   })}
                 </div>
               ) : (
-                <p>いいねしたメモがありません。</p>
+                <Typography variant="body2" color="textSecondary">いいねしたメモがありません。</Typography>
               )}
             </AccordionDetails>
           </Accordion>
@@ -253,6 +250,20 @@ const Dashboard = () => {
         }
         .text-wrap {
           word-wrap: break-word;
+        }
+        .fixed-card-size {
+          height: 250px; /* 固定サイズを設定 */
+          overflow: hidden; /* オーバーフローを隠す */
+        }
+        .fixed-card-content {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        .note-content {
+          white-space: pre-wrap; /* 改行を反映 */
+          overflow-y: auto; /* コンテンツがカードを超えた場合のスクロールを許可 */
         }
       `}</style>
     </div>

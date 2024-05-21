@@ -85,3 +85,7 @@ input[type="text"] {
   background-color: white; /* 背景色を白に設定 */
   color: black; /* テキスト色を黒に設定 */
 }
+
+.fixed-card-size {
+  height: 360px; /* 固定の高さを設定 */
+}
