@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NoteItem from './NoteItem';
 import { Note } from '../../types/note';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import { Pagination, Navigation } from 'swiper/modules'; // 修正: 適切なモジュールをインポート
+import { Pagination, Navigation } from 'swiper/modules';
+import dayjs from 'dayjs';
 
 interface NoteListProps {
   notes: Note[];
@@ -38,19 +39,22 @@ const NoteList: React.FC<NoteListProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // 作成日時でソートする
+  const sortedNotes = [...notes].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
   return (
     <div id="notes_list" className="mt-5">
       <h2 className="text-xl font-bold mb-4">メモ一覧</h2>
-      {notes.length > 0 ? (
+      {sortedNotes.length > 0 ? (
         isMobile ? (
           <Swiper
             spaceBetween={10}
             slidesPerView={1}
             pagination={{ clickable: true }}
             navigation
-            modules={[Pagination, Navigation]} // 修正: 適切なモジュールを指定
+            modules={[Pagination, Navigation]}
           >
-            {notes.map((note) => {
+            {sortedNotes.map((note) => {
               const isOwner = currentUser?.id === note.user?.id;
               return (
                 <SwiperSlide key={note.id}>
@@ -70,7 +74,7 @@ const NoteList: React.FC<NoteListProps> = ({
           </Swiper>
         ) : (
           <div className="flex flex-wrap -mx-2">
-            {notes.map((note) => {
+            {sortedNotes.map((note) => {
               const isOwner = currentUser?.id === note.user?.id;
               return (
                 <div key={note.id} className="p-2 w-full sm:w-1/2 lg:w-1/3">
