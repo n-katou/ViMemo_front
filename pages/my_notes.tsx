@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import NoteCard from '../components/Note/NoteCard';
 import { Note } from '../types/note';
-import Link from 'next/link';
 
 interface NoteWithVideoTitle extends Note {
   video_title?: string;
@@ -74,16 +74,13 @@ const MyNotesPage: React.FC = () => {
       {notes.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {notes.map((note) => (
-            <div key={note.id} className="bg-white shadow-lg rounded-lg p-6">
-              <p className="text-gray-800 font-semibold mb-2">{note.video_title}</p>
-              <p className="text-gray-600 mb-2">{note.content}</p>
-              <p className="text-gray-600 mb-4">{note.video_timestamp}</p>
-              <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
-                <a className="text-blue-500 hover:underline">
-                  YouTube動画を見る
-                </a>
-              </Link>
-            </div>
+            <NoteCard
+              key={note.id}
+              videoTitle={note.video_title || 'タイトルなし'}
+              content={note.content}
+              videoTimestamp={note.video_timestamp}
+              youtubeVideoId={note.youtube_video_id}
+            />
           ))}
         </div>
       ) : (
