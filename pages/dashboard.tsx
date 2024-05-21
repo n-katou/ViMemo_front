@@ -18,7 +18,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import Avatar from '@mui/material/Avatar';
 
 function isNote(likeable: any): likeable is Note {
