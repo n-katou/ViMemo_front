@@ -11,7 +11,7 @@ interface Pagination {
   prev_page: number | null;
 }
 
-const FavoritesPage = () => {
+const FavoritesPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth();
   const [videos, setVideos] = useState<YoutubeVideo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -48,6 +48,20 @@ const FavoritesPage = () => {
     }
   };
 
+  const fetchVideoLikes = async (videoId: number) => {
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes`, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+      return res.data;
+    } catch (err) {
+      console.error('Error fetching video likes:', err);
+      return null;
+    }
+  };
+
   useEffect(() => {
     fetchFavorites();
   }, []);
@@ -72,21 +86,36 @@ const FavoritesPage = () => {
       }
 
       const data = await res.json();
-      if (data.success) {
+      if (!data.success) {
+        console.error('Like error:', data.message);
+        return;
+      }
+
+      const likeData = await fetchVideoLikes(id);
+      if (likeData) {
         setVideos((prevVideos) =>
           prevVideos.map((video) =>
-            video.id === id ? { ...video, likes_count: video.likes_count + 1, liked: true, likeId: data.like.id } : video
+            video.id === id ? {
+              ...video,
+              likes_count: likeData.likes_count,
+              likes: likeData.likes,
+              liked: true,
+              likeId: data.like ? data.like.id : video.likeId,
+            } : video
           )
         );
-      } else {
-        console.error('Like error:', data.message);
       }
     } catch (error) {
       console.error('Like exception:', error);
     }
   };
 
-  const handleUnlike = async (youtubeVideoId: number, likeId: number) => {
+  const handleUnlike = async (youtubeVideoId: number, likeId: number | undefined) => {
+    if (!likeId) {
+      console.error('Unlike error: likeId is undefined');
+      return;
+    }
+
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${youtubeVideoId}/likes/${likeId}`, {
         method: 'DELETE',
@@ -106,14 +135,24 @@ const FavoritesPage = () => {
       }
 
       const data = await res.json();
-      if (data.success) {
+      if (!data.success) {
+        console.error('Unlike error:', data.message);
+        return;
+      }
+
+      const likeData = await fetchVideoLikes(youtubeVideoId);
+      if (likeData) {
         setVideos((prevVideos) =>
           prevVideos.map((video) =>
-            video.id === youtubeVideoId ? { ...video, likes_count: video.likes_count - 1, liked: false, likeId: undefined } : video
+            video.id === youtubeVideoId ? {
+              ...video,
+              likes_count: likeData.likes_count,
+              likes: likeData.likes,
+              liked: false,
+              likeId: undefined,
+            } : video
           )
         );
-      } else {
-        console.error('Unlike error:', data.message);
       }
     } catch (error) {
       console.error('Unlike exception:', error);
@@ -147,8 +186,8 @@ const FavoritesPage = () => {
                   {video.liked ? (
                     <button
                       onClick={async () => {
-                        if (currentUser) {
-                          await handleUnlike(video.id, video.likeId!);
+                        if (currentUser && video.likeId) {
+                          await handleUnlike(video.id, video.likeId);
                         }
                       }}
                       className="mt-2 btn btn-secondary py-2 px-4 rounded-lg bg-red-500 text-white hover:bg-red-600 transition duration-200"
