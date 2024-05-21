@@ -1,19 +1,18 @@
-// pages/youtubeVideos.tsx
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useAuth } from '../context/AuthContext';
 import { Like } from '../types/like';
-import LoadingSpinner from '../components/LoadingSpinner'; // Import the LoadingSpinner component
+import LoadingSpinner from '../components/LoadingSpinner';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import NoteIcon from '@mui/icons-material/Note'; // Noteアイコンをインポート
+import NoteIcon from '@mui/icons-material/Note';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import Pagination from '@mui/material/Pagination'; // Paginationをインポート
-import Stack from '@mui/material/Stack'; // Stackをインポート
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
-const ITEMS_PER_PAGE = 9; // 1ページあたりの動画数を設定
+const ITEMS_PER_PAGE = 9;
 
 async function fetchYoutubeVideos(query = '', page = 1, itemsPerPage = ITEMS_PER_PAGE, sort = '') {
   try {
@@ -50,14 +49,44 @@ async function fetchYoutubeVideos(query = '', page = 1, itemsPerPage = ITEMS_PER
   }
 }
 
+async function fetchVideoLikes(id: number) {
+  try {
+    const authToken = localStorage.getItem('authToken');
+    const headers: Record<string, string> = {
+      'Accept': 'application/json',
+    };
+
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`;
+    }
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
+      method: 'GET',
+      headers: headers,
+      credentials: 'include',
+    });
+
+    if (!res.ok) {
+      console.error('Fetch error:', res.status, res.statusText);
+      return null;
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error('Fetch exception:', error);
+    return null;
+  }
+}
+
 const formatDuration = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   return `${minutes}分${remainingSeconds}秒`;
 };
 
-const YoutubeVideosPage = () => {
-  const { currentUser, jwtToken } = useAuth();  // jwtTokenを追加
+const YoutubeVideosPage: React.FC = () => {
+  const { currentUser, jwtToken } = useAuth();
   const router = useRouter();
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
   const [loading, setLoading] = useState(false);
@@ -73,7 +102,7 @@ const YoutubeVideosPage = () => {
     next_page: null,
     prev_page: null,
   });
-  const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションの初期値を設定
+  const [sortOption, setSortOption] = useState<string>('created_at_desc');
 
   const query = router.query.query as string || '';
 
@@ -82,7 +111,6 @@ const YoutubeVideosPage = () => {
     const result = await fetchYoutubeVideos(query, pagination.current_page, ITEMS_PER_PAGE, sortOption);
 
     if (result) {
-      // `liked` プロパティを追加して設定する
       const updatedVideos = result.videos.map((video: YoutubeVideo) => ({
         ...video,
         liked: video.likes?.some((like: Like) => like.user_id === Number(currentUser?.id)) || false,
@@ -108,20 +136,18 @@ const YoutubeVideosPage = () => {
   }, [pagination.current_page, currentUser, router, query, sortOption]);
 
   const handleTitleClick = async (id: number) => {
-    console.log("遷移前のID:", id);
     const cleanUrl = `/youtube_videos/${id}`;
     await router.push(cleanUrl);
-    console.log("遷移後のURL:", cleanUrl);
   };
 
   const handleSortChange = (newSortOption: string) => {
     setSortOption(newSortOption);
-    setPagination({ ...pagination, current_page: 1 }); // ソートオプションが変更されたら最初のページに戻る
+    setPagination({ ...pagination, current_page: 1 });
   };
 
   const handleLike = async (id: number) => {
-    setYoutubeVideos((prevVideos) =>
-      prevVideos.map((video) =>
+    setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
+      prevVideos.map((video: YoutubeVideo) =>
         video.id === id ? { ...video, likes_count: video.likes_count + 1, liked: true } : video
       )
     );
@@ -130,7 +156,7 @@ const YoutubeVideosPage = () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${jwtToken}`, // localStorageではなく、useAuthから直接取得
+          'Authorization': `Bearer ${jwtToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -147,6 +173,15 @@ const YoutubeVideosPage = () => {
       const data = await res.json();
       if (!data.success) {
         console.error('Like error:', data.message);
+      } else {
+        const likeData = await fetchVideoLikes(id);
+        if (likeData) {
+          setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
+            prevVideos.map((video: YoutubeVideo) =>
+              video.id === id ? { ...video, likes_count: likeData.likes_count, likes: likeData.likes, liked: true } : video
+            )
+          );
+        }
       }
     } catch (error) {
       console.error('Like exception:', error);
@@ -154,8 +189,8 @@ const YoutubeVideosPage = () => {
   };
 
   const handleUnlike = async (youtubeVideoId: number, likeId: number) => {
-    setYoutubeVideos((prevVideos) =>
-      prevVideos.map((video) =>
+    setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
+      prevVideos.map((video: YoutubeVideo) =>
         video.id === youtubeVideoId ? { ...video, likes_count: video.likes_count - 1, liked: false } : video
       )
     );
@@ -164,12 +199,12 @@ const YoutubeVideosPage = () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${youtubeVideoId}/likes/${likeId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${jwtToken}`, // localStorageではなく、useAuthから直接取得
+          'Authorization': `Bearer ${jwtToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          likeable_type: 'YoutubeVideo', // ここに likeable_type を追加
-          likeable_id: youtubeVideoId,   // ここに likeable_id を追加
+          likeable_type: 'YoutubeVideo',
+          likeable_id: youtubeVideoId,
         }),
       });
 
@@ -181,6 +216,15 @@ const YoutubeVideosPage = () => {
       const data = await res.json();
       if (!data.success) {
         console.error('Unlike error:', data.message);
+      } else {
+        const likeData = await fetchVideoLikes(youtubeVideoId);
+        if (likeData) {
+          setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
+            prevVideos.map((video: YoutubeVideo) =>
+              video.id === youtubeVideoId ? { ...video, likes_count: likeData.likes_count, likes: likeData.likes, liked: false } : video
+            )
+          );
+        }
       }
     } catch (error) {
       console.error('Unlike exception:', error);
