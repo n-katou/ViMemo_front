@@ -74,9 +74,10 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
-      logout();
+      await logout();
+      handleClose();
     }
   };
 
