@@ -1,15 +1,17 @@
-import { useAuth } from '../context/AuthContext';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Link from 'next/link';
+// pages/dashboard.tsx
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { YoutubeVideo } from '../types/youtubeVideo';
+import { useAuth } from '../context/AuthContext';
 import { Like } from '../types/like';
 import { Note } from '../types/note';
 import { CustomUser } from '../types/user';
-import { YoutubeVideo } from '../types/youtubeVideo';
+import axios from 'axios';
+import Link from 'next/link';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import LoadingSpinner from '../components/LoadingSpinner';  // LoadingSpinner をインポート
 
 function isNote(likeable: any): likeable is Note {
   return likeable !== undefined && (likeable as Note).content !== undefined;
@@ -105,7 +107,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen"><p className="text-xl">Loading...</p></div>;
+    return <LoadingSpinner loading={loading} />; // LoadingSpinner を使用
   }
 
   if (!currentUser) {

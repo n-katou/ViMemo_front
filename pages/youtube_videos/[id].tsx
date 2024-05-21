@@ -9,6 +9,7 @@ import NoteList from '../../components/Note/NoteList';
 import YoutubeVideoDetails from '../../components/Youtube/YoutubeVideoDetails';
 import { fetchYoutubeVideo, handleLike, handleUnlike, addNoteToVideo, deleteNoteFromVideo, editNoteInVideo } from '../../src/api';
 import { videoTimestampToSeconds, playFromTimestamp } from '../../src/utils';
+import LoadingSpinner from '../../components/LoadingSpinner'; // LoadingSpinner をインポート
 
 const formatDuration = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
@@ -174,7 +175,7 @@ const YoutubeVideoShowPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8">
-      {loading && <div className="text-center">Loading...</div>}
+      {loading && <LoadingSpinner loading={loading} />} {/* LoadingSpinner を使用 */}
       {!loading && !video && <div className="text-center">Video not found</div>}
       {!loading && video && (
         <>

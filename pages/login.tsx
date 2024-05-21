@@ -1,3 +1,4 @@
+// pages/login.tsx
 "use client";
 import axios from 'axios';
 import { useState, FormEvent, useEffect } from 'react';
@@ -5,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button, TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
+import LoadingSpinner from '../components/LoadingSpinner';  // LoadingSpinner をインポート
 
 const LoginPage = () => {
   const router = useRouter();
@@ -63,6 +65,10 @@ const LoginPage = () => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return <LoadingSpinner loading={loading} />;  // LoadingSpinner を使用
+  }
 
   return (
     <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#f5f5f5">

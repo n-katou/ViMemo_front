@@ -1,8 +1,10 @@
+// pages/youtubeVideos.tsx
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useAuth } from '../context/AuthContext';
 import { Like } from '../types/like';
+import LoadingSpinner from '../components/LoadingSpinner'; // Import the LoadingSpinner component
 
 const ITEMS_PER_PAGE = 9; // 1ページあたりの動画数を設定
 
@@ -178,7 +180,10 @@ const YoutubeVideosPage = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return <LoadingSpinner loading={loading} />;
+  }
+
   if (error) return <p>Error: {error}</p>;
 
   return (
