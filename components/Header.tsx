@@ -19,6 +19,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import PersonIcon from '@mui/icons-material/Person';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LoginIcon from '@mui/icons-material/Login';
+import NoteIcon from '@mui/icons-material/Note';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -184,20 +185,24 @@ const Header = () => {
             onClose={handleClose}
           >
             {currentUser ? (
-              <>
+              [
                 <StyledMenuItem onClick={handleClose} key="mypage">
                   <PersonIcon sx={{ marginRight: 1 }} />
                   <Link href="/mypage">マイページ</Link>
-                </StyledMenuItem>
+                </StyledMenuItem>,
                 <StyledMenuItem onClick={handleClose} key="favorites">
                   <FavoriteIcon sx={{ marginRight: 1 }} />
                   <Link href="/favorites">お気に入りの動画</Link>
-                </StyledMenuItem>
+                </StyledMenuItem>,
+                <StyledMenuItem onClick={handleClose} key="my_notes">
+                  <NoteIcon sx={{ marginRight: 1 }} />
+                  <Link href="/my_notes">MYメモ一覧</Link>
+                </StyledMenuItem>,
                 <StyledMenuItem onClick={handleLogout} key="logout">
                   <ExitToAppIcon sx={{ marginRight: 1 }} />
                   ログアウト
                 </StyledMenuItem>
-              </>
+              ]
             ) : (
               <StyledMenuItem onClick={handleClose}>
                 <LoginIcon sx={{ marginRight: 1 }} />
