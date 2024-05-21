@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { Note } from '../types/note'; // Noteインターフェースをインポート
+import { Note } from '../types/note';
 import Link from 'next/link';
 
 interface NoteWithVideoTitle extends Note {
@@ -43,10 +43,10 @@ const MyNotesPage: React.FC = () => {
                 Authorization: `Bearer ${jwtToken}`,
               },
             });
-            console.log('Video API response:', videoRes); // 追加: 動画APIのレスポンスをログに出力
+            console.log('Video API response:', videoRes); // デバッグ: 動画APIのレスポンスをログに出力
             return {
               ...note,
-              video_title: videoRes.data.title,
+              video_title: videoRes.data.youtube_video.title, // 修正: 適切なフィールドを参照
             };
           }));
           setNotes(notesWithTitles);
