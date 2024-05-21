@@ -4,13 +4,17 @@ import { useAuth } from '../context/AuthContext';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { Like } from '../types/like';
 import { useRouter } from 'next/router';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
-interface Pagination {
+interface PaginationData {
   current_page: number;
   total_pages: number;
   next_page: number | null;
   prev_page: number | null;
 }
+
+const ITEMS_PER_PAGE = 9;
 
 const FavoritesPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth();
@@ -18,7 +22,7 @@ const FavoritesPage: React.FC = () => {
   const [videos, setVideos] = useState<YoutubeVideo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<Pagination>({
+  const [pagination, setPagination] = useState<PaginationData>({
     current_page: 1,
     total_pages: 1,
     next_page: null,
@@ -26,9 +30,10 @@ const FavoritesPage: React.FC = () => {
   });
 
   const fetchFavorites = async (page = 1) => {
+    setLoading(true);
     try {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/favorites`, {
-        params: { page },
+        params: { page, per_page: ITEMS_PER_PAGE },
         headers: {
           Authorization: `Bearer ${jwtToken}`,
         },
@@ -65,8 +70,8 @@ const FavoritesPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchFavorites();
-  }, []);
+    fetchFavorites(pagination.current_page);
+  }, [pagination.current_page]);
 
   const handleLike = async (id: number) => {
     try {
@@ -161,6 +166,13 @@ const FavoritesPage: React.FC = () => {
     router.push(`/youtube_videos/${id}`);
   };
 
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+    setPagination((prev) => ({
+      ...prev,
+      current_page: page,
+    }));
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -215,27 +227,17 @@ const FavoritesPage: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className="pagination mt-8 flex justify-center items-center space-x-4">
-            {pagination.prev_page !== null && (
-              <button
-                onClick={() => fetchFavorites(pagination.prev_page!)}
-                className="btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
-              >
-                前ページ
-              </button>
-            )}
-            <span className="text-gray-700">
-              {pagination.current_page} / {pagination.total_pages}
-            </span>
-            {pagination.next_page !== null && (
-              <button
-                onClick={() => fetchFavorites(pagination.next_page!)}
-                className="btn btn-primary py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
-              >
-                次ページ
-              </button>
-            )}
-          </div>
+          <Stack spacing={2} className="mt-8">
+            <Pagination
+              count={pagination.total_pages}
+              page={pagination.current_page}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+              color="primary"
+              size="large"
+            />
+          </Stack>
         </>
       ) : <p>お気に入りの動画はありません。</p>}
       <style jsx>{`
