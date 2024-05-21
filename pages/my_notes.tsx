@@ -15,7 +15,7 @@ const MyNotesPage: React.FC = () => {
   const [notes, setNotes] = useState<NoteWithVideoTitle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc'); // ソートの状態を管理
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -47,10 +47,10 @@ const MyNotesPage: React.FC = () => {
                 Authorization: `Bearer ${jwtToken}`,
               },
             });
-            console.log('Video API response:', videoRes); // デバッグ: 動画APIのレスポンスをログに出力
+            console.log('Video API response:', videoRes);
             return {
               ...note,
-              video_title: videoRes.data.youtube_video.title, // 修正: 適切なフィールドを参照
+              video_title: videoRes.data.youtube_video.title,
             };
           }));
           setNotes(notesWithTitles);
@@ -69,6 +69,20 @@ const MyNotesPage: React.FC = () => {
 
     fetchNotes(page);
   }, [currentUser, jwtToken, page]);
+
+  const handleDeleteNote = async (noteId: number) => {
+    try {
+      const deleteUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notes/${noteId}`;
+      await axios.delete(deleteUrl, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+      setNotes((prevNotes) => prevNotes.filter((note) => note.id !== noteId));
+    } catch (err) {
+      console.error('Error deleting note:', err);
+    }
+  };
 
   const sortedNotes = notes.sort((a, b) => {
     if (sortOrder === 'asc') {
@@ -113,7 +127,8 @@ const MyNotesPage: React.FC = () => {
               content={note.content}
               videoTimestamp={note.video_timestamp}
               youtubeVideoId={note.youtube_video_id}
-              createdAt={note.created_at} // 作成日時を追加
+              createdAt={note.created_at}
+              onDelete={() => handleDeleteNote(note.id)}
             />
           ))}
         </div>

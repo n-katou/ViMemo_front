@@ -195,7 +195,7 @@ const Header = () => {
                 </StyledMenuItem>,
                 <StyledMenuItem onClick={handleClose} key="my_notes">
                   <FavoriteIcon sx={{ marginRight: 1 }} />
-                  <Link href="/my_notes">メモ一覧</Link>
+                  <Link href="/my_notes">MYメモ一覧</Link>
                 </StyledMenuItem>,
                 <StyledMenuItem onClick={handleLogout} key="logout">
                   <ExitToAppIcon sx={{ marginRight: 1 }} />
