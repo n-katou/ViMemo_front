@@ -1,11 +1,17 @@
 import React from 'react';
 import { Note } from '../../types/note';
+import NoteIcon from '@mui/icons-material/Note';
 
 const NoteContent: React.FC<{ note: Note }> = ({ note }) => (
-  <p>
-    <span className="font-bold">メモ:</span>
-    {note.content}
-  </p>
+  <div className="note-card bg-gray-100 p-4 rounded-lg shadow-md">
+    <div className="note-header flex items-center mb-2">
+      <NoteIcon className="text-blue-500 mr-2" />
+      <span className="font-bold text-lg">メモ</span>
+    </div>
+    <div className="note-content text-gray-800" style={{ whiteSpace: 'pre-wrap' }}>
+      {note.content}
+    </div>
+  </div>
 );
 
 export default NoteContent;

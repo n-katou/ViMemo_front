@@ -145,7 +145,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   }
 
   return (
-    <div className="card mx-auto w-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6 rounded-lg overflow-hidden">
+    <div className="card border border-blue-200 mx-auto w-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6 rounded-lg overflow-hidden">
       <div className="card-body p-6">
         <div className="flex items-center mb-4">
           {avatarUrl && <img src={avatarUrl} alt="User Avatar" className="w-16 h-16 rounded-full mr-4" />}
@@ -156,7 +156,9 @@ const NoteItem: React.FC<NoteItemProps> = ({
             </button>
           </div>
         </div>
-        <NoteContent note={note} />
+        <div className="h-40 overflow-y-auto"> {/* 固定の高さを設定し、スクロールを許可 */}
+          <NoteContent note={note} />
+        </div>
         <div className="mt-4 flex items-center">
           <Badge badgeContent={note.likes_count} color="primary" className="mr-4">
             {liked ? (

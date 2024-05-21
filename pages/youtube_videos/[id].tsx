@@ -1,4 +1,3 @@
-// YoutubeVideoShowPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
@@ -10,6 +9,8 @@ import YoutubeVideoDetails from '../../components/Youtube/YoutubeVideoDetails';
 import { fetchYoutubeVideo, handleLike, handleUnlike, addNoteToVideo, deleteNoteFromVideo, editNoteInVideo } from '../../src/api';
 import { videoTimestampToSeconds, playFromTimestamp } from '../../src/utils';
 import LoadingSpinner from '../../components/LoadingSpinner'; // LoadingSpinner をインポート
+import AddIcon from '@mui/icons-material/Add'; // アイコンをインポート
+import CloseIcon from '@mui/icons-material/Close'; // アイコンをインポート
 
 const formatDuration = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
@@ -22,6 +23,7 @@ const YoutubeVideoShowPage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [likeError, setLikeError] = useState<string | null>(null);
   const [liked, setLiked] = useState<boolean>(false);
+  const [isNoteFormVisible, setIsNoteFormVisible] = useState<boolean>(false); // フォームの表示・非表示を制御するステート
   const pathname = usePathname();
   const router = useRouter();
   const { currentUser, jwtToken, loading } = useAuth();
@@ -191,7 +193,13 @@ const YoutubeVideoShowPage: React.FC = () => {
           </div>
           {currentUser && (
             <div className="mb-8">
-              <NoteForm addNote={addNote} />
+              <button
+                onClick={() => setIsNoteFormVisible(!isNoteFormVisible)}
+                className="btn btn-primary mb-4 flex items-center"
+              >
+                {isNoteFormVisible ? <><CloseIcon className="mr-2" />投稿フォームを閉じる</> : <><AddIcon className="mr-2" />投稿フォームを開く</>}
+              </button>
+              {isNoteFormVisible && <NoteForm addNote={addNote} />}
             </div>
           )}
           <NoteList

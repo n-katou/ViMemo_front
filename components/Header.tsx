@@ -14,12 +14,17 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Collapse from '@mui/material/Collapse';
 import Button from '@mui/material/Button';
-import YouTubeIcon from '@mui/icons-material/YouTube'; // YouTubeアイコンをインポート
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import PersonIcon from '@mui/icons-material/Person';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import LoginIcon from '@mui/icons-material/Login';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
+  border: '1px solid white',
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
@@ -51,6 +56,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     [theme.breakpoints.up('md')]: {
       width: '20ch',
     },
+  },
+}));
+
+const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.primary.main, 0.2),
   },
 }));
 
@@ -139,7 +152,9 @@ const Header = () => {
           </div>
         )}
         {currentUser && (
-          <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}></Button>
+          <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
+            YouTube
+          </Button>
         )}
         <div>
           <IconButton
@@ -169,18 +184,24 @@ const Header = () => {
           >
             {currentUser ? (
               <>
-                <MenuItem onClick={handleClose} key="mypage">
+                <StyledMenuItem onClick={handleClose} key="mypage">
+                  <PersonIcon sx={{ marginRight: 1 }} />
                   <Link href="/mypage">マイページ</Link>
-                </MenuItem>
-                <MenuItem onClick={handleClose} key="favorites">
+                </StyledMenuItem>
+                <StyledMenuItem onClick={handleClose} key="favorites">
+                  <FavoriteIcon sx={{ marginRight: 1 }} />
                   <Link href="/favorites">お気に入りの動画</Link>
-                </MenuItem>
-                <MenuItem onClick={handleLogout} key="logout">ログアウト</MenuItem>
+                </StyledMenuItem>
+                <StyledMenuItem onClick={handleLogout} key="logout">
+                  <ExitToAppIcon sx={{ marginRight: 1 }} />
+                  ログアウト
+                </StyledMenuItem>
               </>
             ) : (
-              <MenuItem onClick={handleClose}>
+              <StyledMenuItem onClick={handleClose}>
+                <LoginIcon sx={{ marginRight: 1 }} />
                 <Link href="/login">ログインページ</Link>
-              </MenuItem>
+              </StyledMenuItem>
             )}
           </Menu>
         </div>
