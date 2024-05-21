@@ -113,6 +113,7 @@ const MyNotesPage: React.FC = () => {
               content={note.content}
               videoTimestamp={note.video_timestamp}
               youtubeVideoId={note.youtube_video_id}
+              createdAt={note.created_at} // 作成日時を追加
             />
           ))}
         </div>
