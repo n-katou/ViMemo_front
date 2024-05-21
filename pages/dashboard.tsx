@@ -132,9 +132,9 @@ const Dashboard = () => {
                   className="w-16 h-16 rounded-full mr-4"
                 />
               )}
-              <div>
-                <h2 className="text-xl font-bold">{currentUser.name}</h2>
-                <p className="text-gray-600">{currentUser.email}</p>
+              <div className="text-container">
+                <h2 className="text-xl font-bold text-wrap">{currentUser.name}</h2>
+                <p className="text-gray-600 text-wrap">{currentUser.email}</p>
               </div>
             </div>
             <Link href="/mypage/edit" legacyBehavior>
@@ -254,6 +254,16 @@ const Dashboard = () => {
           )}
         </div>
       </div>
+      <style jsx>{`
+        .text-container {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .text-wrap {
+          word-wrap: break-word;
+        }
+      `}</style>
     </div>
   );
 };
