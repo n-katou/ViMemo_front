@@ -1,6 +1,8 @@
-// YoutubeVideoDetails.tsx
 import React from 'react';
 import { YoutubeVideo } from '../../types/youtubeVideo';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import IconButton from '@mui/material/IconButton';
 
 interface YoutubeVideoDetailsProps {
   video: YoutubeVideo & { formattedDuration: string };
@@ -29,13 +31,25 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handle
         <p className="text-gray-600 mb-4">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
         <p className="text-gray-600 mb-4">動画時間: {video.formattedDuration}</p>
         {currentUser && (
-          <div className="flex justify-between items-center">
-            <button
+          <div className="flex items-center">
+            <IconButton
               onClick={liked ? handleUnlike : handleLike}
-              className={`btn ${liked ? 'btn-danger' : 'btn-primary'}`}
+              color={liked ? 'secondary' : 'default'}
+              aria-label={liked ? 'Unlike' : 'Like'}
+              sx={{
+                borderRadius: '50%',
+                backgroundColor: liked ? '#ffebee' : 'transparent',
+                '&:hover': {
+                  backgroundColor: liked ? '#ffcdd2' : '#f5f5f5',
+                },
+                transition: 'background-color 0.3s',
+              }}
             >
-              {liked ? 'いいねを取り消す' : 'いいね'}
-            </button>
+              {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            </IconButton>
+            <span className="ml-2 text-lg font-medium text-gray-700">
+              {liked ? 'いいね済み' : 'いいねする'}
+            </span>
           </div>
         )}
       </div>

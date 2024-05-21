@@ -14,11 +14,17 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Collapse from '@mui/material/Collapse';
 import Button from '@mui/material/Button';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import PersonIcon from '@mui/icons-material/Person';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import LoginIcon from '@mui/icons-material/Login';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
+  border: '1px solid white',
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
@@ -43,13 +49,21 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    padding: theme.spacing(1),
+    paddingLeft: 0,
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('md')]: {
       width: '20ch',
     },
+  },
+}));
+
+const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.primary.main, 0.2),
   },
 }));
 
@@ -60,9 +74,10 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
-      logout();
+      await logout();
+      handleClose();
     }
   };
 
@@ -93,7 +108,19 @@ const Header = () => {
   return (
     <AppBar position="static" sx={{ backgroundColor: 'black' }}>
       <Toolbar>
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+        <Typography
+          variant="h6"
+          noWrap
+          component="div"
+          sx={{
+            flexGrow: 1,
+            fontSize: {
+              xs: '1rem', // モバイル用のフォントサイズ
+              sm: '1.25rem', // 小画面用のフォントサイズ
+              md: '1.5rem', // 中画面以上のフォントサイズ
+            }
+          }}
+        >
           Vimemo
         </Typography>
         {currentUser && (
@@ -108,10 +135,17 @@ const Header = () => {
                     <SearchIcon />
                   </SearchIconWrapper>
                   <StyledInputBase
-                    placeholder="動画タイトルを検索"
+                    placeholder="タイトルで検索"
                     inputProps={{ 'aria-label': 'search' }}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
+                    sx={{
+                      fontSize: {
+                        xs: '0.875rem', // モバイル用のフォントサイズ
+                        sm: '1rem', // 小画面用のフォントサイズ
+                        md: '1rem', // 中画面以上のフォントサイズ
+                      }
+                    }}
                   />
                 </Search>
               </form>
@@ -119,8 +153,8 @@ const Header = () => {
           </div>
         )}
         {currentUser && (
-          <Button color="inherit" onClick={navigateToYoutubeVideos}>
-            Youtube
+          <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
+            YouTube
           </Button>
         )}
         <div>
@@ -150,16 +184,25 @@ const Header = () => {
             onClose={handleClose}
           >
             {currentUser ? (
-              [
-                <MenuItem onClick={handleClose} key="mypage">
+              <>
+                <StyledMenuItem onClick={handleClose} key="mypage">
+                  <PersonIcon sx={{ marginRight: 1 }} />
                   <Link href="/mypage">マイページ</Link>
-                </MenuItem>,
-                <MenuItem onClick={handleLogout} key="logout">ログアウト</MenuItem>
-              ]
+                </StyledMenuItem>
+                <StyledMenuItem onClick={handleClose} key="favorites">
+                  <FavoriteIcon sx={{ marginRight: 1 }} />
+                  <Link href="/favorites">お気に入りの動画</Link>
+                </StyledMenuItem>
+                <StyledMenuItem onClick={handleLogout} key="logout">
+                  <ExitToAppIcon sx={{ marginRight: 1 }} />
+                  ログアウト
+                </StyledMenuItem>
+              </>
             ) : (
-              <MenuItem onClick={handleClose}>
+              <StyledMenuItem onClick={handleClose}>
+                <LoginIcon sx={{ marginRight: 1 }} />
                 <Link href="/login">ログインページ</Link>
-              </MenuItem>
+              </StyledMenuItem>
             )}
           </Menu>
         </div>

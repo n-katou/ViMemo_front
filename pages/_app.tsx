@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner'; // LoadingSpinner をインポート
 import "../styles/globals.css";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 
@@ -22,7 +23,7 @@ function AuthenticatedApp({ Component, pageProps, router }: AuthenticatedAppProp
   }, [currentUser, loading, router]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner loading={loading} />;
   }
 
   return <Component {...pageProps} />;

@@ -7,6 +7,9 @@ import Modal from './Modal';
 import { handleNoteLike, handleNoteUnlike, fetchCurrentUserLike } from '../../src/api';
 import { useAuth } from '../../context/AuthContext';
 import { Like } from '../../types/like';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import Badge from '@mui/material/Badge';
 
 interface NoteItemProps {
   note: Note;
@@ -49,10 +52,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
       setNewIsVisible(note.is_visible);
     }
 
-    console.log('note.likes:', note.likes); // note.likesの構造をログ出力
-    console.log('currentUser:', currentUser); // currentUserの構造をログ出力
     if (note.likes) {
-      console.log('Checking likes:', note.likes.some((like: Like) => like.user_id === Number(currentUser?.id)));
       setLiked(note.likes.some((like: Like) => like.user_id === Number(currentUser?.id)));
     }
   }, [isEditing, note, videoTimestampToSeconds, currentUser]);
@@ -80,10 +80,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
       return;
     }
 
-    console.log('jwtToken:', jwtToken);  // JWTトークンをログ出力
     try {
       const result = await handleNoteLike(videoId, note.id, jwtToken);
-      console.log('handleLikeNote result:', result);  // レスポンスをログ出力
       if (result.success) {
         setLiked(true);
         setLikeError(null); // エラーをクリア
@@ -116,9 +114,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
         return;
       }
 
-      console.log('handleUnlikeNote called with:', { videoId, noteId: note.id, likeId, jwtToken }); // ログ出力
       const result = await handleNoteUnlike(videoId, note.id, likeId, jwtToken);
-      console.log('handleUnlikeNote result:', result);  // レスポンスをログ出力
       if (result.success) {
         setLiked(false);
         setLikeError(null); // エラーをクリア
@@ -149,7 +145,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   }
 
   return (
-    <div className="card mx-auto w-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6 rounded-lg overflow-hidden">
+    <div className="card border border-blue-200 mx-auto w-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6 rounded-lg overflow-hidden">
       <div className="card-body p-6">
         <div className="flex items-center mb-4">
           {avatarUrl && <img src={avatarUrl} alt="User Avatar" className="w-16 h-16 rounded-full mr-4" />}
@@ -160,27 +156,20 @@ const NoteItem: React.FC<NoteItemProps> = ({
             </button>
           </div>
         </div>
-        <NoteContent note={note} />
-        <div className="mt-4">
-          <p>いいね: {note.likes_count}</p>
+        <div className="h-40 overflow-y-auto"> {/* 固定の高さを設定し、スクロールを許可 */}
+          <NoteContent note={note} />
+        </div>
+        <div className="mt-4 flex items-center">
+          <Badge badgeContent={note.likes_count} color="primary" className="mr-4">
+            {liked ? (
+              <ThumbUpIcon onClick={handleUnlikeNote} className="text-blue-500 cursor-pointer" />
+            ) : (
+              <ThumbUpOffAltIcon onClick={handleLikeNote} className="text-gray-500 cursor-pointer" />
+            )}
+          </Badge>
           {!note.is_visible && isOwner && (
             <p><span className="badge badge-error">非表示中</span></p>
           )}
-          <div>
-            {currentUser && currentUser.id !== note.user.id && ( // currentUser.idとnote.user.idが一致しない場合のみ表示
-              <>
-                {!liked ? (
-                  <button className="btn btn-outline btn-warning" onClick={handleLikeNote}>
-                    いいね
-                  </button>
-                ) : (
-                  <button className="btn btn-outline btn-success" onClick={handleUnlikeNote}>
-                    いいねを取り消す
-                  </button>
-                )}
-              </>
-            )}
-          </div>
         </div>
         <NoteActions
           note={note}
