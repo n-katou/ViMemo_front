@@ -207,8 +207,8 @@ const Dashboard = () => {
                       const note = like.likeable;
                       console.log('Rendering Note:', note);
                       return (
-                        <Card key={note.id} className="col-span-1">
-                          <CardContent>
+                        <Card key={note.id} className="col-span-1 fixed-card-size">
+                          <CardContent className="fixed-card-content">
                             {note.user && (
                               <div className="flex items-center mb-4">
                                 {note.user.avatar_url && (
@@ -219,7 +219,7 @@ const Dashboard = () => {
                                 </div>
                               </div>
                             )}
-                            <Typography variant="body2" color="textPrimary" className="mb-2">メモ内容：{note.content}</Typography>
+                            <Typography variant="body2" color="textPrimary" className="mb-2 note-content">メモ内容：{note.content}</Typography>
                             <Typography variant="body2" color="textSecondary">いいね数：{note.likes_count}</Typography>
                             {note.youtube_video_id && (
                               <Box mt={2}>
@@ -250,6 +250,20 @@ const Dashboard = () => {
         }
         .text-wrap {
           word-wrap: break-word;
+        }
+        .fixed-card-size {
+          height: 250px; /* 固定サイズを設定 */
+          overflow: hidden; /* オーバーフローを隠す */
+        }
+        .fixed-card-content {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        .note-content {
+          white-space: pre-wrap; /* 改行を反映 */
+          overflow-y: auto; /* コンテンツがカードを超えた場合のスクロールを許可 */
         }
       `}</style>
     </div>
