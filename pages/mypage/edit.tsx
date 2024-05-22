@@ -47,7 +47,7 @@ const EditProfile = () => {
       });
 
       if (response.status === 200) {
-        router.push('/mypage');
+        router.push('/mypage/dashboard');
       }
     } catch (error) {
       console.error('Error updating profile:', error);

@@ -207,8 +207,8 @@ const Dashboard = () => {
                       const note = like.likeable;
                       console.log('Rendering Note:', note);
                       return (
-                        <Card key={note.id} className="col-span-1 fixed-card-size">
-                          <CardContent className="fixed-card-content">
+                        <Card key={note.id} className="col-span-1 custom-card-size">
+                          <CardContent className="custom-card-content">
                             {note.user && (
                               <div className="flex items-center mb-4">
                                 {note.user.avatar_url && (
@@ -251,11 +251,11 @@ const Dashboard = () => {
         .text-wrap {
           word-wrap: break-word;
         }
-        .fixed-card-size {
+        .custom-card-size {
           height: 250px; /* 固定サイズを設定 */
           overflow: hidden; /* オーバーフローを隠す */
         }
-        .fixed-card-content {
+        .custom-card-content {
           height: 100%;
           display: flex;
           flex-direction: column;
