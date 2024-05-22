@@ -30,7 +30,7 @@ const FlashMessage = () => {
         severity="info"
         sx={{
           width: '100%',
-          backgroundColor: '#2196f3',
+          backgroundColor: '#2126f3',
           color: '#fff',
           fontWeight: 'bold',
           borderRadius: '8px',
