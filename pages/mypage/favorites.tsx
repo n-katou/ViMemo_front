@@ -208,6 +208,12 @@ const FavoritesPage: React.FC = () => {
     }));
   };
 
+  const formatDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}分${remainingSeconds}秒`;
+  };
+
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
 
@@ -242,7 +248,7 @@ const FavoritesPage: React.FC = () => {
                     {video.title}
                   </h2>
                   <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-                  <p className="text-gray-600">動画時間: {video.duration}分</p>
+                  <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p> {/* 変更点 */}
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center">
                       <FavoriteIcon className="text-red-500 mr-1" />
