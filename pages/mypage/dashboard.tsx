@@ -34,6 +34,7 @@ const Dashboard = () => {
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMessageDisplayed, setIsMessageDisplayed] = useState(false); // フラグを追加
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,7 +76,13 @@ const Dashboard = () => {
           localStorage.setItem('currentUser', JSON.stringify(updatedUser));
         }
 
-        setFlashMessage('ログインに成功しました'); // フラッシュメッセージを設定
+        // フラッシュメッセージが表示されたかどうかをlocalStorageで確認
+        const messageDisplayed = localStorage.getItem('isMessageDisplayed') === 'true';
+
+        if (!messageDisplayed) {
+          setFlashMessage('ログインに成功しました'); // フラッシュメッセージを設定
+          localStorage.setItem('isMessageDisplayed', 'true'); // フラグを更新
+        }
 
         console.log('Updated currentUser:', currentUser);
         console.log('Fetched Note Likes:', note_likes);
@@ -86,7 +93,9 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [jwtToken, setAuthState, setFlashMessage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwtToken]);
+
 
   const fetchVideosByGenre = async (genre: string) => {
     try {
@@ -199,7 +208,6 @@ const Dashboard = () => {
               )}
             </AccordionDetails>
           </Accordion>
-
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="h6">最新「いいね」したメモ一覧</Typography>

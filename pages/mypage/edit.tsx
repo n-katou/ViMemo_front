@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import { useFlashMessage } from '../../context/FlashMessageContext';
 import { CustomUser } from '../../types/user';
 
 const EditProfile = () => {
   const { currentUser, jwtToken } = useAuth();
+  const { setFlashMessage } = useFlashMessage();
   const router = useRouter();
   const [user, setUser] = useState<CustomUser | null>(null);
   const [avatar, setAvatar] = useState<File | null>(null);
@@ -32,7 +34,6 @@ const EditProfile = () => {
     if (!user) return;
 
     const formData = new FormData();
-    // formData.append('user[email]', email);
     formData.append('user[name]', name);
     if (avatar) {
       formData.append('user[avatar]', avatar);
@@ -47,10 +48,14 @@ const EditProfile = () => {
       });
 
       if (response.status === 200) {
+        setFlashMessage('プロフィールが更新されました。');
         router.push('/mypage/dashboard');
+      } else {
+        setFlashMessage('プロフィールの更新に失敗しました。');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
+      setFlashMessage('プロフィールの更新中にエラーが発生しました。');
     }
   };
 
