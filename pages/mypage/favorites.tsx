@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { YoutubeVideo } from '../types/youtubeVideo';
-import { Like } from '../types/like';
+import { YoutubeVideo } from '../../types/youtubeVideo';
+import { Like } from '../../types/like';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -11,7 +11,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import NoteIcon from '@mui/icons-material/Note';
-import LoadingSpinner from '../components/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 interface PaginationData {
   current_page: number;

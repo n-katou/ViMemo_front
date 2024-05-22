@@ -15,34 +15,6 @@ const RootPage = () => {
     setOpenSnackbar(false);
   };
 
-  // const handleLogout = async () => {
-  //   try {
-  //     const response = await fetch('https://vimemo.fly.dev/api/v1/logout', {
-  //       method: 'DELETE',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': `Bearer ${localStorage.getItem('token')}`
-  //       }
-  //     });
-
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       localStorage.removeItem('token');
-  //       router.push('/login');
-  //       setSnackbarMessage('ログアウトに成功しました！');
-  //       setSnackbarSeverity('success');
-  //     } else {
-  //       throw new Error(data.error || 'Logout failed');
-  //     }
-  //   } catch (error) {
-  //     console.error('Logout failed:', error);
-  //     setSnackbarMessage('ログアウトに失敗しました。');
-  //     setSnackbarSeverity('error');
-  //   } finally {
-  //     setOpenSnackbar(true);
-  //   }
-  // };
-
   const handleLogout = async () => {
     try {
       await logout();

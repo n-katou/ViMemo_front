@@ -32,7 +32,7 @@ const EditProfile = () => {
     if (!user) return;
 
     const formData = new FormData();
-    formData.append('user[email]', email);
+    // formData.append('user[email]', email);
     formData.append('user[name]', name);
     if (avatar) {
       formData.append('user[avatar]', avatar);

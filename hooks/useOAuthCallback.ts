@@ -17,7 +17,7 @@ const useOAuthCallback = () => {
       // バックエンドからユーザーデータをフェッチ
       fetchUserData(token).then(userData => {
         setAuthState({ currentUser: userData, jwtToken: token });
-        router.push('/dashboard'); // ダッシュボードへリダイレクト
+        router.push('/mypage/dashboard'); // ダッシュボードへリダイレクト
       }).catch(error => {
         console.error(error);
         router.push('/login'); // エラーがあればログインページへリダイレクト

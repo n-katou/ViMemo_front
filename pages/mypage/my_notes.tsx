@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
-import LoadingSpinner from '../components/LoadingSpinner';
-import NoteCard from '../components/Note/NoteCard';
-import { Note } from '../types/note';
+import { useAuth } from '../../context/AuthContext';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import NoteCard from '../../components/Note/NoteCard';
+import { Note } from '../../types/note';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 
 interface NoteWithVideoTitle extends Note {
