@@ -18,7 +18,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (currentUser) {
-      router.push('/dashboard');
+      router.push('/mypage/dashboard');
     }
   }, [currentUser, router]);
 

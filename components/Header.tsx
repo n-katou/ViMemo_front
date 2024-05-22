@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
@@ -14,6 +14,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Collapse from '@mui/material/Collapse';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import PersonIcon from '@mui/icons-material/Person';
@@ -34,6 +35,9 @@ const Search = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     marginLeft: 0,
     width: 'auto',
+  },
+  [theme.breakpoints.down('sm')]: {
+    marginRight: theme.spacing(2),
   },
 }));
 
@@ -74,6 +78,7 @@ const Header = () => {
   const [query, setQuery] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const tooltipRef = useRef<HTMLButtonElement | null>(null);
 
   const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
@@ -100,6 +105,9 @@ const Header = () => {
 
   const toggleSearch = () => {
     setSearchOpen((prevOpen) => !prevOpen);
+    if (tooltipRef.current) {
+      tooltipRef.current.blur(); // ツールチップをリセット
+    }
   };
 
   const navigateToYoutubeVideos = () => {
@@ -126,9 +134,20 @@ const Header = () => {
         </Typography>
         {currentUser && (
           <div className="flex items-center">
-            <IconButton onClick={toggleSearch} color="inherit">
-              <SearchIcon />
-            </IconButton>
+            <Tooltip
+              title={searchOpen ? "検索欄を閉じる" : "検索欄を表示"}
+              arrow
+              enterTouchDelay={0}
+              leaveTouchDelay={3000}
+            >
+              <IconButton
+                onClick={toggleSearch}
+                color="inherit"
+                ref={tooltipRef}
+              >
+                <SearchIcon />
+              </IconButton>
+            </Tooltip>
             <Collapse in={searchOpen} timeout="auto" unmountOnExit>
               <form onSubmit={handleSearch} className="flex items-center ml-4">
                 <Search>
@@ -136,7 +155,7 @@ const Header = () => {
                     <SearchIcon />
                   </SearchIconWrapper>
                   <StyledInputBase
-                    placeholder="タイトルで検索"
+                    placeholder="タイトル検索"
                     inputProps={{ 'aria-label': 'search' }}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
@@ -154,9 +173,10 @@ const Header = () => {
           </div>
         )}
         {currentUser && (
-          <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
-            YouTube
-          </Button>
+          <Tooltip title="YouTube一覧へ" arrow enterTouchDelay={0} leaveTouchDelay={3000}>
+            <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
+            </Button>
+          </Tooltip>
         )}
         <div>
           <IconButton
@@ -188,15 +208,15 @@ const Header = () => {
               [
                 <StyledMenuItem onClick={handleClose} key="mypage">
                   <PersonIcon sx={{ marginRight: 1 }} />
-                  <Link href="/mypage">マイページ</Link>
+                  <Link href="/mypage/dashboard">マイページ</Link>
                 </StyledMenuItem>,
                 <StyledMenuItem onClick={handleClose} key="favorites">
                   <FavoriteIcon sx={{ marginRight: 1 }} />
-                  <Link href="/favorites">お気に入りの動画</Link>
+                  <Link href="/mypage/favorites">お気に入りの動画</Link>
                 </StyledMenuItem>,
                 <StyledMenuItem onClick={handleClose} key="my_notes">
                   <NoteIcon sx={{ marginRight: 1 }} />
-                  <Link href="/my_notes">MYメモ一覧</Link>
+                  <Link href="/mypage/my_notes">MYメモ一覧</Link>
                 </StyledMenuItem>,
                 <StyledMenuItem onClick={handleLogout} key="logout">
                   <ExitToAppIcon sx={{ marginRight: 1 }} />

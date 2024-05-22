@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { YoutubeVideo } from '../types/youtubeVideo';
-import { useAuth } from '../context/AuthContext';
-import { Like } from '../types/like';
-import { Note } from '../types/note';
-import { CustomUser } from '../types/user';
+import { YoutubeVideo } from '../../types/youtubeVideo';
+import { useAuth } from '../../context/AuthContext';
+import { Like } from '../../types/like';
+import { Note } from '../../types/note';
+import { CustomUser } from '../../types/user';
 import axios from 'axios';
 import Link from 'next/link';
 import Box from '@mui/material/Box';
@@ -15,7 +15,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import LoadingSpinner from '../components/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
@@ -207,8 +207,8 @@ const Dashboard = () => {
                       const note = like.likeable;
                       console.log('Rendering Note:', note);
                       return (
-                        <Card key={note.id} className="col-span-1 fixed-card-size">
-                          <CardContent className="fixed-card-content">
+                        <Card key={note.id} className="col-span-1 custom-card-size">
+                          <CardContent className="custom-card-content">
                             {note.user && (
                               <div className="flex items-center mb-4">
                                 {note.user.avatar_url && (
@@ -251,11 +251,11 @@ const Dashboard = () => {
         .text-wrap {
           word-wrap: break-word;
         }
-        .fixed-card-size {
+        .custom-card-size {
           height: 250px; /* 固定サイズを設定 */
           overflow: hidden; /* オーバーフローを隠す */
         }
-        .fixed-card-content {
+        .custom-card-content {
           height: 100%;
           display: flex;
           flex-direction: column;
