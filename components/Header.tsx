@@ -22,6 +22,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LoginIcon from '@mui/icons-material/Login';
 import NoteIcon from '@mui/icons-material/Note';
+import { useFlashMessage } from '../context/FlashMessageContext'; // フラッシュメッセージ用のフックをインポート
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -73,6 +74,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 const Header = () => {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
+  const { setFlashMessage } = useFlashMessage(); // フラッシュメッセージ用のフックを使用
   const [query, setQuery] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -80,7 +82,9 @@ const Header = () => {
   const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
       await logout();
+      setFlashMessage('ログアウトしました'); // フラッシュメッセージを設定
       handleClose();
+      router.push('/'); // ログアウト後にホームページにリダイレクト
     }
   };
 

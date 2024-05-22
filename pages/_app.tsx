@@ -1,4 +1,3 @@
-// pages/_app.tsx
 import { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import Header from '../components/Header';
@@ -33,15 +32,15 @@ function AuthenticatedApp({ Component, pageProps, router }: AuthenticatedAppProp
 
 export default function App({ Component, pageProps, router }: AppProps) {
   return (
-    <div className="app-layout">
+    <FlashMessageProvider>
       <AuthProvider>
-        <Header />
-        <FlashMessageProvider>
+        <div className="app-layout">
+          <Header />
           <FlashMessage />
           <AuthenticatedApp Component={Component} pageProps={pageProps} router={router} />
-        </FlashMessageProvider>
-        <Footer />
+          <Footer />
+        </div>
       </AuthProvider>
-    </div>
+    </FlashMessageProvider>
   );
 }
