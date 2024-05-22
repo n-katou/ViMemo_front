@@ -76,6 +76,24 @@ const FavoritesPage: React.FC = () => {
     }
   };
 
+  const fetchUserLikeStatus = async (videoId: number) => {
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/favorites_count`, {
+        params: {
+          likeable_type: 'YoutubeVideo',
+          likeable_id: videoId,
+        },
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+      return res.data.length > 0 ? res.data[0] : null;
+    } catch (err) {
+      console.error('Error fetching like status:', err);
+      return null;
+    }
+  };
+
   useEffect(() => {
     fetchFavorites(pagination.current_page);
   }, [pagination.current_page, sortOption]);
@@ -106,7 +124,8 @@ const FavoritesPage: React.FC = () => {
       }
 
       const likeData = await fetchVideoLikes(id);
-      if (likeData) {
+      const userLikeStatus = await fetchUserLikeStatus(id);
+      if (likeData && userLikeStatus) {
         setVideos((prevVideos) =>
           prevVideos.map((video) =>
             video.id === id ? {
@@ -114,7 +133,7 @@ const FavoritesPage: React.FC = () => {
               likes_count: likeData.likes_count,
               likes: likeData.likes,
               liked: true,
-              likeId: data.like ? data.like.id : video.likeId,
+              likeId: userLikeStatus.id,
             } : video
           )
         );
@@ -155,6 +174,7 @@ const FavoritesPage: React.FC = () => {
       }
 
       const likeData = await fetchVideoLikes(youtubeVideoId);
+      const userLikeStatus = await fetchUserLikeStatus(youtubeVideoId);
       if (likeData) {
         setVideos((prevVideos) =>
           prevVideos.map((video) =>
@@ -162,8 +182,8 @@ const FavoritesPage: React.FC = () => {
               ...video,
               likes_count: likeData.likes_count,
               likes: likeData.likes,
-              liked: false,
-              likeId: undefined,
+              liked: userLikeStatus !== null,
+              likeId: userLikeStatus ? userLikeStatus.id : undefined,
             } : video
           )
         );
