@@ -1,47 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import Fade from '@mui/material/Fade';
-import InfoIcon from '@mui/icons-material/Info';
 import { useFlashMessage } from '../context/FlashMessageContext';
 
 const FlashMessage = () => {
-  const { message } = useFlashMessage();
+  const { message, setFlashMessage } = useFlashMessage();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const flashMessage = query.get('flash_message');
+
+    if (flashMessage) {
+      setFlashMessage(decodeURIComponent(flashMessage));
+      query.delete('flash_message');
+      const newQuery = query.toString();
+      const newUrl = window.location.pathname + (newQuery ? `?${newQuery}` : '');
+      router.replace(newUrl, undefined, { shallow: true });
+    }
+
+    if (message) {
+      setOpen(true);
+    }
+  }, [message, setFlashMessage, router]);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <Snackbar
-      open={Boolean(message)}
+      open={open}
       autoHideDuration={3000}
-      TransitionComponent={Fade}
+      onClose={handleClose}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      sx={{
-        '.MuiSnackbarContent-root': {
-          backgroundColor: '#444',
-          color: '#fff',
-          fontWeight: 'bold',
-          borderRadius: '8px',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
-          padding: '16px',
-          transition: 'all 0.3s ease',
-        },
-      }}
     >
-      <Alert
-        icon={<InfoIcon fontSize="inherit" />}
-        severity="info"
-        sx={{
-          width: '100%',
-          background: 'linear-gradient(45deg, #2196f3 30%, #21cbf3 90%)',
-          color: '#fff',
-          fontWeight: 'bold',
-          borderRadius: '8px',
-          border: '1px solid #1976d2',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-          display: 'flex',
-          alignItems: 'center',
-          transition: 'all 0.3s ease',
-        }}
-      >
+      <Alert onClose={handleClose} severity="info">
         {message}
       </Alert>
     </Snackbar>

@@ -77,11 +77,10 @@ const Dashboard = () => {
         }
 
         // フラッシュメッセージが表示されたかどうかをlocalStorageで確認
-        const messageDisplayed = localStorage.getItem('isMessageDisplayed') === 'true';
-
-        if (!messageDisplayed) {
+        if (!localStorage.getItem('isMessageDisplayed')) {
           setFlashMessage('ログインに成功しました'); // フラッシュメッセージを設定
           localStorage.setItem('isMessageDisplayed', 'true'); // フラグを更新
+          setIsMessageDisplayed(true); // フラグを設定
         }
 
         console.log('Updated currentUser:', currentUser);
@@ -95,6 +94,7 @@ const Dashboard = () => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jwtToken]);
+
 
 
   const fetchVideosByGenre = async (genre: string) => {

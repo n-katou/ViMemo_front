@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
@@ -79,10 +79,19 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
 
+  useEffect(() => {
+    // 初期読み込み時に localStorage から isMessageDisplayed の値を取得
+    const isMessageDisplayed = localStorage.getItem('isMessageDisplayed');
+    if (isMessageDisplayed === 'true') {
+      setFlashMessage('前回のメッセージを表示しています');
+    }
+  }, [setFlashMessage]);
+
   const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
       await logout();
       setFlashMessage('ログアウトしました'); // フラッシュメッセージを設定
+      localStorage.setItem('isMessageDisplayed', 'false'); // ログアウト時に localStorage を更新
       handleClose();
       router.push('/'); // ログアウト後にホームページにリダイレクト
     }
