@@ -81,15 +81,6 @@ const EditProfile = () => {
                 />
               </div>
             </div>
-            {/* <div className="form-control">
-              <label className="label">Eメール</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input input-bordered w-full p-2 border border-gray-300 rounded-lg"
-              />
-            </div> */}
             <div className="form-control">
               <label className="label text-gray-700">名前</label>
               <input
@@ -103,6 +94,19 @@ const EditProfile = () => {
           </form>
         </div>
       </div>
+      <style jsx>{`
+        @media (max-width: 640px) {
+          .flex-wrap {
+            flex-wrap: wrap;
+          }
+          .space-x-4 > * {
+            margin-right: 0.5rem;
+          }
+          .space-x-4 > *:last-child {
+            margin-right: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 };

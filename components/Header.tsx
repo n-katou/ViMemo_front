@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
@@ -12,9 +12,10 @@ import InputBase from '@mui/material/InputBase';
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Collapse from '@mui/material/Collapse';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import PersonIcon from '@mui/icons-material/Person';
@@ -35,9 +36,6 @@ const Search = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     marginLeft: 0,
     width: 'auto',
-  },
-  [theme.breakpoints.down('sm')]: {
-    marginRight: theme.spacing(2),
   },
 }));
 
@@ -78,7 +76,6 @@ const Header = () => {
   const [query, setQuery] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
-  const tooltipRef = useRef<HTMLButtonElement | null>(null);
 
   const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
@@ -92,6 +89,7 @@ const Header = () => {
     if (query) {
       router.push(`/youtube_videos?query=${encodeURIComponent(query)}`);
       setQuery(''); // フォームをクリアする
+      setSearchOpen(false); // モーダルを閉じる
     }
   };
 
@@ -104,10 +102,7 @@ const Header = () => {
   };
 
   const toggleSearch = () => {
-    setSearchOpen((prevOpen) => !prevOpen);
-    if (tooltipRef.current) {
-      tooltipRef.current.blur(); // ツールチップをリセット
-    }
+    setSearchOpen(!searchOpen);
   };
 
   const navigateToYoutubeVideos = () => {
@@ -134,49 +129,36 @@ const Header = () => {
         </Typography>
         {currentUser && (
           <div className="flex items-center">
-            <Tooltip
-              title={searchOpen ? "検索欄を閉じる" : "検索欄を表示"}
-              arrow
-              enterTouchDelay={0}
-              leaveTouchDelay={3000}
-            >
-              <IconButton
-                onClick={toggleSearch}
-                color="inherit"
-                ref={tooltipRef}
-              >
-                <SearchIcon />
-              </IconButton>
-            </Tooltip>
-            <Collapse in={searchOpen} timeout="auto" unmountOnExit>
-              <form onSubmit={handleSearch} className="flex items-center ml-4">
-                <Search>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                    placeholder="タイトル検索"
-                    inputProps={{ 'aria-label': 'search' }}
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    sx={{
-                      fontSize: {
-                        xs: '0.875rem', // モバイル用のフォントサイズ
-                        sm: '1rem', // 小画面用のフォントサイズ
-                        md: '1rem', // 中画面以上のフォントサイズ
-                      }
-                    }}
-                  />
-                </Search>
-              </form>
-            </Collapse>
+            <IconButton onClick={toggleSearch} color="inherit">
+              <SearchIcon />
+            </IconButton>
+            <Dialog open={searchOpen} onClose={toggleSearch}>
+              <DialogTitle>検索</DialogTitle>
+              <DialogContent>
+                <form onSubmit={handleSearch}>
+                  <Search>
+                    <SearchIconWrapper>
+                      <SearchIcon />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                      placeholder="タイトル検索"
+                      inputProps={{ 'aria-label': 'search' }}
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                  </Search>
+                  <Button type="submit" variant="contained" color="primary" fullWidth>
+                    検索
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         )}
         {currentUser && (
-          <Tooltip title="YouTube一覧へ" arrow enterTouchDelay={0} leaveTouchDelay={3000}>
-            <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
-            </Button>
-          </Tooltip>
+          <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
+            YouTube
+          </Button>
         )}
         <div>
           <IconButton
