@@ -95,8 +95,6 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jwtToken]);
 
-
-
   const fetchVideosByGenre = async (genre: string) => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/fetch_videos_by_genre`, {
@@ -107,9 +105,10 @@ const Dashboard = () => {
       });
 
       if (response.status === 200) {
-        const youtubeVideosData = response.data;
-        setYoutubeVideos(youtubeVideosData);
-        console.log('Fetched YouTube Videos:', youtubeVideosData);
+        const { youtube_videos_data, newly_created_count } = response.data;
+        setYoutubeVideos(youtube_videos_data);
+        setFlashMessage(`動画を ${newly_created_count} 件取得しました`); // フラッシュメッセージを設定
+        console.log('Fetched YouTube Videos:', youtube_videos_data);
 
         router.push(`/youtube_videos`);
       }
