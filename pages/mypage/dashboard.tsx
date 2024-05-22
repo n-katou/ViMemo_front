@@ -20,6 +20,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
 import { useFlashMessage } from '../../context/FlashMessageContext';
+import ShuffleIcon from '@mui/icons-material/Shuffle';
 
 function isNote(likeable: any): likeable is Note {
   return likeable !== undefined && (likeable as Note).content !== undefined;
@@ -209,15 +210,16 @@ const Dashboard = () => {
                 <Typography variant="body2" color="textSecondary">いいねした動画がありません。</Typography>
               )}
             </AccordionDetails>
-            <Button
-              variant="contained"
-              color="secondary"
-              fullWidth
-              className="mt-4"
-              onClick={shufflePlaylist}
-            >
-              シャッフル再生
-            </Button>
+            <Box textAlign="center" mt={2} mb={4}>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<ShuffleIcon />}
+                onClick={shufflePlaylist}
+              >
+                シャッフル再生
+              </Button>
+            </Box>
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
