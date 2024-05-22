@@ -19,6 +19,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
+import { useFlashMessage } from '../../context/FlashMessageContext'; // フラッシュメッセージ用フックをインポート
 
 function isNote(likeable: any): likeable is Note {
   return likeable !== undefined && (likeable as Note).content !== undefined;
@@ -26,12 +27,14 @@ function isNote(likeable: any): likeable is Note {
 
 const Dashboard = () => {
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
+  const { setFlashMessage } = useFlashMessage(); // フラッシュメッセージ用のフックを使用
   const router = useRouter();
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMessageDisplayed, setIsMessageDisplayed] = useState(false); // フラグを追加
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,15 +76,24 @@ const Dashboard = () => {
           localStorage.setItem('currentUser', JSON.stringify(updatedUser));
         }
 
+        // フラッシュメッセージが表示されたかどうかをlocalStorageで確認
+        if (!localStorage.getItem('isMessageDisplayed')) {
+          setFlashMessage('ログインに成功しました'); // フラッシュメッセージを設定
+          localStorage.setItem('isMessageDisplayed', 'true'); // フラグを更新
+          setIsMessageDisplayed(true); // フラグを設定
+        }
+
         console.log('Updated currentUser:', currentUser);
         console.log('Fetched Note Likes:', note_likes);
       } catch (error) {
+        setFlashMessage('ログインに失敗しました'); // エラーメッセージを設定
         console.error('Error fetching mypage data:', error);
       }
     };
 
     fetchData();
-  }, [jwtToken, setAuthState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwtToken]);
 
   const fetchVideosByGenre = async (genre: string) => {
     try {
@@ -93,9 +105,10 @@ const Dashboard = () => {
       });
 
       if (response.status === 200) {
-        const youtubeVideosData = response.data;
-        setYoutubeVideos(youtubeVideosData);
-        console.log('Fetched YouTube Videos:', youtubeVideosData);
+        const { youtube_videos_data, newly_created_count } = response.data;
+        setYoutubeVideos(youtube_videos_data);
+        setFlashMessage(`動画を ${newly_created_count} 件取得しました`); // フラッシュメッセージを設定
+        console.log('Fetched YouTube Videos:', youtube_videos_data);
 
         router.push(`/youtube_videos`);
       }
@@ -194,7 +207,6 @@ const Dashboard = () => {
               )}
             </AccordionDetails>
           </Accordion>
-
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="h6">最新「いいね」したメモ一覧</Typography>

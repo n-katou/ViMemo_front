@@ -1,4 +1,3 @@
-// pages/_app.tsx
 import { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import Header from '../components/Header';
@@ -6,6 +5,8 @@ import Footer from '../components/Footer';
 import LoadingSpinner from '../components/LoadingSpinner'; // LoadingSpinner をインポート
 import "../styles/globals.css";
 import { AuthProvider, useAuth } from "../context/AuthContext";
+import { FlashMessageProvider } from '../context/FlashMessageContext';
+import FlashMessage from '../components/FlashMessage';
 
 interface AuthenticatedAppProps {
   Component: AppProps['Component'];
@@ -31,12 +32,15 @@ function AuthenticatedApp({ Component, pageProps, router }: AuthenticatedAppProp
 
 export default function App({ Component, pageProps, router }: AppProps) {
   return (
-    <div className="app-layout">
+    <FlashMessageProvider>
       <AuthProvider>
-        <Header />
-        <AuthenticatedApp Component={Component} pageProps={pageProps} router={router} />
-        <Footer />
+        <div className="app-layout">
+          <Header />
+          <FlashMessage />
+          <AuthenticatedApp Component={Component} pageProps={pageProps} router={router} />
+          <Footer />
+        </div>
       </AuthProvider>
-    </div>
+    </FlashMessageProvider>
   );
 }

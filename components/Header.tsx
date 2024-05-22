@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
@@ -22,6 +22,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LoginIcon from '@mui/icons-material/Login';
 import NoteIcon from '@mui/icons-material/Note';
+import { useFlashMessage } from '../context/FlashMessageContext'; // フラッシュメッセージ用のフックをインポート
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -73,14 +74,26 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 const Header = () => {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
+  const { setFlashMessage } = useFlashMessage(); // フラッシュメッセージ用のフックを使用
   const [query, setQuery] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
 
+  useEffect(() => {
+    // 初期読み込み時に localStorage から isMessageDisplayed の値を取得
+    const isMessageDisplayed = localStorage.getItem('isMessageDisplayed');
+    if (isMessageDisplayed === 'true') {
+      setFlashMessage('前回のメッセージを表示しています');
+    }
+  }, [setFlashMessage]);
+
   const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
       await logout();
+      setFlashMessage('ログアウトしました'); // フラッシュメッセージを設定
+      localStorage.setItem('isMessageDisplayed', 'false'); // ログアウト時に localStorage を更新
       handleClose();
+      router.push('/'); // ログアウト後にホームページにリダイレクト
     }
   };
 
