@@ -62,7 +62,7 @@ const EditProfile = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="form-control">
               <label className="label text-gray-700">アバター</label>
-              <div className="flex flex-wrap items-center space-x-4">
+              <div className="flex flex-wrap items-center">
                 {user?.avatar_url && (
                   <img
                     src={user.avatar_url}
@@ -75,7 +75,7 @@ const EditProfile = () => {
                 )}
                 <input
                   type="file"
-                  className="input input-bordered p-2 border border-gray-300 rounded-lg"
+                  className="input-file p-2 border border-gray-300 rounded-lg"
                   accept="image/*"
                   onChange={handleFileChange}
                 />
@@ -95,15 +95,17 @@ const EditProfile = () => {
         </div>
       </div>
       <style jsx>{`
+        .flex-wrap {
+          flex-wrap: wrap;
+        }
+        .input-file {
+          flex: 1 1 auto;
+          min-width: 0;
+        }
         @media (max-width: 640px) {
-          .flex-wrap {
-            flex-wrap: wrap;
-          }
-          .space-x-4 > * {
-            margin-right: 0.5rem;
-          }
-          .space-x-4 > *:last-child {
-            margin-right: 0;
+          .input-file {
+            width: 100%;
+            margin-top: 0.5rem;
           }
         }
       `}</style>
