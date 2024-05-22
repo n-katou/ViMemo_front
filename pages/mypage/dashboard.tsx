@@ -19,6 +19,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
+import { useFlashMessage } from '../../context/FlashMessageContext'; // フラッシュメッセージ用フックをインポート
 
 function isNote(likeable: any): likeable is Note {
   return likeable !== undefined && (likeable as Note).content !== undefined;
@@ -26,6 +27,7 @@ function isNote(likeable: any): likeable is Note {
 
 const Dashboard = () => {
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
+  const { setFlashMessage } = useFlashMessage(); // フラッシュメッセージ用のフックを使用
   const router = useRouter();
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
@@ -73,15 +75,18 @@ const Dashboard = () => {
           localStorage.setItem('currentUser', JSON.stringify(updatedUser));
         }
 
+        setFlashMessage('ログインに成功しました'); // フラッシュメッセージを設定
+
         console.log('Updated currentUser:', currentUser);
         console.log('Fetched Note Likes:', note_likes);
       } catch (error) {
+        setFlashMessage('ログインに失敗しました'); // エラーメッセージを設定
         console.error('Error fetching mypage data:', error);
       }
     };
 
     fetchData();
-  }, [jwtToken, setAuthState]);
+  }, [jwtToken, setAuthState, setFlashMessage]);
 
   const fetchVideosByGenre = async (genre: string) => {
     try {

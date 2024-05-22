@@ -6,6 +6,8 @@ import Footer from '../components/Footer';
 import LoadingSpinner from '../components/LoadingSpinner'; // LoadingSpinner をインポート
 import "../styles/globals.css";
 import { AuthProvider, useAuth } from "../context/AuthContext";
+import { FlashMessageProvider } from '../context/FlashMessageContext';
+import FlashMessage from '../components/FlashMessage';
 
 interface AuthenticatedAppProps {
   Component: AppProps['Component'];
@@ -34,7 +36,10 @@ export default function App({ Component, pageProps, router }: AppProps) {
     <div className="app-layout">
       <AuthProvider>
         <Header />
-        <AuthenticatedApp Component={Component} pageProps={pageProps} router={router} />
+        <FlashMessageProvider>
+          <FlashMessage />
+          <AuthenticatedApp Component={Component} pageProps={pageProps} router={router} />
+        </FlashMessageProvider>
         <Footer />
       </AuthProvider>
     </div>
