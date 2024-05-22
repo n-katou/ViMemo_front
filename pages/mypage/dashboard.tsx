@@ -19,7 +19,8 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
-import { useFlashMessage } from '../../context/FlashMessageContext'; // フラッシュメッセージ用フックをインポート
+import { useFlashMessage } from '../../context/FlashMessageContext';
+import ShuffleIcon from '@mui/icons-material/Shuffle';
 
 function isNote(likeable: any): likeable is Note {
   return likeable !== undefined && (likeable as Note).content !== undefined;
@@ -27,19 +28,17 @@ function isNote(likeable: any): likeable is Note {
 
 const Dashboard = () => {
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
-  const { setFlashMessage } = useFlashMessage(); // フラッシュメッセージ用のフックを使用
+  const { setFlashMessage } = useFlashMessage();
   const router = useRouter();
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMessageDisplayed, setIsMessageDisplayed] = useState(false); // フラグを追加
+  const [isMessageDisplayed, setIsMessageDisplayed] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log('Fetching data...');
-
       if (!jwtToken) {
         console.error('Token is undefined');
         return;
@@ -52,14 +51,11 @@ const Dashboard = () => {
           },
         });
 
-        console.log('Response data:', response.data);
-
         const { youtube_video_likes, note_likes, youtube_playlist_url, avatar_url, role, email, name } = response.data;
         setYoutubeVideoLikes(youtube_video_likes);
         setNoteLikes(note_likes);
         setYoutubePlaylistUrl(youtube_playlist_url);
 
-        // currentUserにavatar_url, role, email, nameを追加
         if (currentUser) {
           const updatedUser = {
             ...currentUser,
@@ -76,23 +72,18 @@ const Dashboard = () => {
           localStorage.setItem('currentUser', JSON.stringify(updatedUser));
         }
 
-        // フラッシュメッセージが表示されたかどうかをlocalStorageで確認
         if (!localStorage.getItem('isMessageDisplayed')) {
-          setFlashMessage('ログインに成功しました'); // フラッシュメッセージを設定
-          localStorage.setItem('isMessageDisplayed', 'true'); // フラグを更新
-          setIsMessageDisplayed(true); // フラグを設定
+          setFlashMessage('ログインに成功しました');
+          localStorage.setItem('isMessageDisplayed', 'true');
+          setIsMessageDisplayed(true);
         }
-
-        console.log('Updated currentUser:', currentUser);
-        console.log('Fetched Note Likes:', note_likes);
       } catch (error) {
-        setFlashMessage('ログインに失敗しました'); // エラーメッセージを設定
+        setFlashMessage('ログインに失敗しました');
         console.error('Error fetching mypage data:', error);
       }
     };
 
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jwtToken]);
 
   const fetchVideosByGenre = async (genre: string) => {
@@ -107,8 +98,7 @@ const Dashboard = () => {
       if (response.status === 200) {
         const { youtube_videos_data, newly_created_count } = response.data;
         setYoutubeVideos(youtube_videos_data);
-        setFlashMessage(`動画を ${newly_created_count} 件取得しました`); // フラッシュメッセージを設定
-        console.log('Fetched YouTube Videos:', youtube_videos_data);
+        setFlashMessage(`動画を ${newly_created_count} 件取得しました`);
 
         router.push(`/youtube_videos`);
       }
@@ -126,6 +116,23 @@ const Dashboard = () => {
     fetchVideosByGenre(searchQuery);
   };
 
+  const shufflePlaylist = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/generate_shuffle_playlist`, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+
+      if (response.status === 200) {
+        const { shuffled_youtube_playlist_url } = response.data;
+        setYoutubePlaylistUrl(shuffled_youtube_playlist_url);
+      }
+    } catch (error) {
+      console.error('Error generating shuffled playlist:', error);
+    }
+  };
+
   if (loading) {
     return <LoadingSpinner loading={loading} />;
   }
@@ -135,9 +142,6 @@ const Dashboard = () => {
   }
 
   const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-
-  console.log('Current User:', currentUser);
-  console.log('Current User Role:', currentUser.role);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -206,6 +210,16 @@ const Dashboard = () => {
                 <Typography variant="body2" color="textSecondary">いいねした動画がありません。</Typography>
               )}
             </AccordionDetails>
+            <Box textAlign="center" mt={2} mb={4}>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<ShuffleIcon />}
+                onClick={shufflePlaylist}
+              >
+                シャッフル再生
+              </Button>
+            </Box>
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -217,7 +231,6 @@ const Dashboard = () => {
                   {noteLikes.map((like, index) => {
                     if (like.likeable && isNote(like.likeable)) {
                       const note = like.likeable;
-                      console.log('Rendering Note:', note);
                       return (
                         <Card key={note.id} className="col-span-1 custom-card-size">
                           <CardContent className="custom-card-content">
