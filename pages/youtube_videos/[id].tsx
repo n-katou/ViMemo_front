@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
@@ -28,6 +28,7 @@ const YoutubeVideoShowPage: React.FC = () => {
   const router = useRouter();
   const { currentUser, jwtToken, loading } = useAuth();
   const [dataLoading, setDataLoading] = useState<boolean>(true);
+  const playerRef = useRef<any>(null);
 
   const fetchNotes = async (videoId: number, token?: string) => {
     try {
@@ -138,6 +139,16 @@ const YoutubeVideoShowPage: React.FC = () => {
     }
   };
 
+  const playFromTimestamp = (seconds: number) => {
+    if (playerRef.current) {
+      playerRef.current.seekTo(seconds, true);
+    }
+  };
+
+  const onPlayerReady = (player: any) => {
+    playerRef.current = player;
+  };
+
   useEffect(() => {
     if (!pathname) {
       console.error('Pathname is null');
@@ -185,6 +196,7 @@ const YoutubeVideoShowPage: React.FC = () => {
               handleUnlike={currentUser ? handleUnlikeVideo : undefined}
               currentUser={currentUser}
               liked={liked}
+              onPlayerReady={onPlayerReady}
             />
             {likeError && <div className="text-red-500 text-center mt-4">{likeError}</div>}
           </div>
