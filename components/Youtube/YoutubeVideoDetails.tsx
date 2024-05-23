@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -11,9 +11,10 @@ interface YoutubeVideoDetailsProps {
   handleUnlike?: () => void; // Optional
   currentUser: any;
   liked: boolean;
+  onPlayerReady: (player: any) => void;
 }
 
-const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handleLike, handleUnlike, currentUser, liked }) => {
+const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handleLike, handleUnlike, currentUser, liked, onPlayerReady }) => {
   const [currentTime, setCurrentTime] = useState<string>('0:00');
   const [player, setPlayer] = useState<any>(null);
 
@@ -21,6 +22,7 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handle
     if (event.data === window.YT.PlayerState.PLAYING) {
       const player = event.target;
       setPlayer(player);
+      onPlayerReady(player);
     }
   };
 
