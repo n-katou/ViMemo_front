@@ -77,6 +77,14 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   },
 }));
 
+const SuggestionItem = styled('li')(({ theme }) => ({
+  padding: theme.spacing(1),
+  cursor: 'pointer',
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+  },
+}));
+
 const Header: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
@@ -147,6 +155,11 @@ const Header: React.FC = () => {
     router.push('/youtube_videos');
   };
 
+  const handleSuggestionClick = (id: number) => {
+    router.push(`/youtube_videos/${id}`);
+    setSearchOpen(false);
+  };
+
   return (
     <AppBar position="static" sx={{ backgroundColor: 'black' }}>
       <Toolbar>
@@ -187,9 +200,9 @@ const Header: React.FC = () => {
                   </Search>
                   <ul>
                     {suggestions.map((suggestion) => (
-                      <li key={suggestion.id}>
+                      <SuggestionItem key={suggestion.id} onClick={() => handleSuggestionClick(suggestion.id)}>
                         {suggestion.title}
-                      </li>
+                      </SuggestionItem>
                     ))}
                   </ul>
                   <Button type="submit" variant="contained" color="primary" fullWidth>
