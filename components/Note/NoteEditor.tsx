@@ -27,32 +27,6 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
   setIsEditing,
   padZero
 }) => {
-  const incrementMinutes = () => {
-    setNewMinutes(newMinutes < 59 ? newMinutes + 1 : newMinutes);
-  };
-
-  const decrementMinutes = () => {
-    setNewMinutes(newMinutes > 0 ? newMinutes - 1 : newMinutes);
-  };
-
-  const incrementSeconds = () => {
-    if (newSeconds < 59) {
-      setNewSeconds(newSeconds + 1);
-    } else {
-      setNewSeconds(0);
-      setNewMinutes(newMinutes < 59 ? newMinutes + 1 : newMinutes);
-    }
-  };
-
-  const decrementSeconds = () => {
-    if (newSeconds > 0) {
-      setNewSeconds(newSeconds - 1);
-    } else if (newMinutes > 0) {
-      setNewSeconds(59);
-      setNewMinutes(newMinutes - 1);
-    }
-  };
-
   return (
     <form onSubmit={(e) => { e.preventDefault(); handleEdit(); }} className="space-y-4">
       <textarea
@@ -66,31 +40,25 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
         <label className="label">
           <span>タイムスタンプ:</span>
           <div className="flex gap-2 items-center">
-            <div className="flex items-center gap-1">
-              <button type="button" onClick={incrementMinutes} className="btn btn-outline btn-sm p-1 w-8">+</button>
-              <input
-                type="number"
-                value={newMinutes}
-                onChange={(e) => setNewMinutes(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
-                min="0"
-                max="59"
-                className="input input-bordered text-center w-12"
-              />
-              <button type="button" onClick={decrementMinutes} className="btn btn-outline btn-sm p-1 w-8">-</button>
-            </div>
+            <input
+              type="number"
+              value={newMinutes || ''}
+              onChange={(e) => setNewMinutes(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
+              min="0"
+              max="59"
+              placeholder="00"
+              className="input input-bordered text-center w-12"
+            />
             <span>分</span>
-            <div className="flex items-center gap-1">
-              <button type="button" onClick={incrementSeconds} className="btn btn-outline btn-sm p-1 w-8">+</button>
-              <input
-                type="number"
-                value={newSeconds}
-                onChange={(e) => setNewSeconds(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
-                min="0"
-                max="59"
-                className="input input-bordered text-center w-12"
-              />
-              <button type="button" onClick={decrementSeconds} className="btn btn-outline btn-sm p-1 w-8">-</button>
-            </div>
+            <input
+              type="number"
+              value={newSeconds || ''}
+              onChange={(e) => setNewSeconds(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
+              min="0"
+              max="59"
+              placeholder="00"
+              className="input input-bordered text-center w-12"
+            />
             <span>秒</span>
           </div>
         </label>

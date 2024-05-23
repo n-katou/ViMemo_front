@@ -55,7 +55,7 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handle
           onStateChange={handlePlayerStateChange}
           className="w-full aspect-video"
         />
-        <div className="absolute bottom-12 right-4 bg-black bg-opacity-50 text-white p-2 rounded">
+        <div className="absolute bottom-10 right-4 bg-black bg-opacity-50 text-white p-2 rounded">
           {currentTime} / {video.formattedDuration}
         </div>
       </div>
