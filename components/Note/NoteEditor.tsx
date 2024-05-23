@@ -28,13 +28,11 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
   padZero
 }) => {
   const incrementMinutes = () => {
-    setNewMinutes(newMinutes + 1);
+    setNewMinutes(newMinutes < 59 ? newMinutes + 1 : newMinutes);
   };
 
   const decrementMinutes = () => {
-    if (newMinutes > 0) {
-      setNewMinutes(newMinutes - 1);
-    }
+    setNewMinutes(newMinutes > 0 ? newMinutes - 1 : newMinutes);
   };
 
   const incrementSeconds = () => {
@@ -42,7 +40,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
       setNewSeconds(newSeconds + 1);
     } else {
       setNewSeconds(0);
-      setNewMinutes(newMinutes + 1);
+      setNewMinutes(newMinutes < 59 ? newMinutes + 1 : newMinutes);
     }
   };
 
@@ -67,31 +65,33 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
       <div className="form-control">
         <label className="label">
           <span>タイムスタンプ:</span>
-          <div className="flex gap-1 items-center flex-wrap">
-            <button type="button" onClick={incrementMinutes} className="btn btn-outline btn-sm">+</button>
-            <input
-              type="number"
-              value={newMinutes}
-              onChange={(e) => setNewMinutes(parseInt(e.target.value, 10))}
-              min="0"
-              max="59"
-              className="input input-bordered text-center"
-              style={{ width: '40px' }}
-            />
+          <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-1">
+              <button type="button" onClick={incrementMinutes} className="btn btn-outline btn-sm p-1 w-8">+</button>
+              <input
+                type="number"
+                value={newMinutes}
+                onChange={(e) => setNewMinutes(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
+                min="0"
+                max="59"
+                className="input input-bordered text-center w-12"
+              />
+              <button type="button" onClick={decrementMinutes} className="btn btn-outline btn-sm p-1 w-8">-</button>
+            </div>
             <span>分</span>
-            <button type="button" onClick={decrementMinutes} className="btn btn-outline btn-sm">-</button>
-            <button type="button" onClick={incrementSeconds} className="btn btn-outline btn-sm">+</button>
-            <input
-              type="number"
-              value={newSeconds}
-              onChange={(e) => setNewSeconds(parseInt(e.target.value, 10))}
-              min="0"
-              max="59"
-              className="input input-bordered text-center"
-              style={{ width: '40px' }}
-            />
+            <div className="flex items-center gap-1">
+              <button type="button" onClick={incrementSeconds} className="btn btn-outline btn-sm p-1 w-8">+</button>
+              <input
+                type="number"
+                value={newSeconds}
+                onChange={(e) => setNewSeconds(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
+                min="0"
+                max="59"
+                className="input input-bordered text-center w-12"
+              />
+              <button type="button" onClick={decrementSeconds} className="btn btn-outline btn-sm p-1 w-8">-</button>
+            </div>
             <span>秒</span>
-            <button type="button" onClick={decrementSeconds} className="btn btn-outline btn-sm">-</button>
           </div>
         </label>
       </div>

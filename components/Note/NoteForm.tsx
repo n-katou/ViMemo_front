@@ -32,7 +32,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
       setTimestampSeconds((prev) => prev + 1);
     } else {
       setTimestampSeconds(0);
-      setTimestampMinutes((prev) => prev < 59 ? prev + 1 : prev);
+      setTimestampMinutes((prev) => (prev < 59 ? prev + 1 : prev));
     }
   };
 
@@ -60,26 +60,32 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
       <div className="form-control">
         <label className="label font-semibold text-gray-700">タイムスタンプ:</label>
         <div className="flex gap-2 items-center flex-wrap">
-          <button type="button" onClick={incrementMinutes} className="btn btn-outline">+</button>
-          <input
-            type="text"
-            value={timestampMinutes}
-            readOnly
-            className="input input-bordered text-center"
-            style={{ width: '50px' }}
-          />
-          分
-          <button type="button" onClick={decrementMinutes} className="btn btn-outline">-</button>
-          <button type="button" onClick={incrementSeconds} className="btn btn-outline">+</button>
-          <input
-            type="text"
-            value={timestampSeconds}
-            readOnly
-            className="input input-bordered text-center"
-            style={{ width: '50px' }}
-          />
-          秒
-          <button type="button" onClick={decrementSeconds} className="btn btn-outline">-</button>
+          <div className="flex items-center gap-1">
+            <button type="button" onClick={incrementMinutes} className="btn btn-outline p-1 w-8">+</button>
+            <input
+              type="number"
+              value={timestampMinutes}
+              onChange={(e) => setTimestampMinutes(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
+              min="0"
+              max="59"
+              className="input input-bordered text-center w-12"
+            />
+            <button type="button" onClick={decrementMinutes} className="btn btn-outline p-1 w-8">-</button>
+          </div>
+          <span>分</span>
+          <div className="flex items-center gap-1">
+            <button type="button" onClick={incrementSeconds} className="btn btn-outline p-1 w-8">+</button>
+            <input
+              type="number"
+              value={timestampSeconds}
+              onChange={(e) => setTimestampSeconds(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
+              min="0"
+              max="59"
+              className="input input-bordered text-center w-12"
+            />
+            <button type="button" onClick={decrementSeconds} className="btn btn-outline p-1 w-8">-</button>
+          </div>
+          <span>秒</span>
         </div>
       </div>
       <div className="form-control">
