@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
+import Drawer from '@mui/material/Drawer'; // Drawerをインポート
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
@@ -91,7 +91,7 @@ const Header: React.FC = () => {
   const { setFlashMessage } = useFlashMessage(); 
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Video[]>([]);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false); // Drawerの開閉状態を管理するための状態を追加
   const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
@@ -125,7 +125,7 @@ const Header: React.FC = () => {
       await logout();
       setFlashMessage('ログアウトしました');
       localStorage.setItem('isMessageDisplayed', 'false');
-      handleClose();
+      setDrawerOpen(false); // Drawerを閉じる
       router.push('/');
     }
   };
@@ -139,12 +139,8 @@ const Header: React.FC = () => {
     }
   };
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
+  const toggleDrawer = (open: boolean) => () => {
+    setDrawerOpen(open);
   };
 
   const toggleSearch = () => {
@@ -224,52 +220,42 @@ const Header: React.FC = () => {
             aria-label="account of current user"
             aria-controls="menu-appbar"
             aria-haspopup="true"
-            onClick={handleMenu}
+            onClick={toggleDrawer(true)}
             color="inherit"
           >
             <AccountCircle />
           </IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
+          <Drawer
+            anchor="right"
+            open={drawerOpen}
+            onClose={toggleDrawer(false)}
           >
             {currentUser ? (
-              [
-                <StyledMenuItem onClick={handleClose} key="mypage">
+              <div>
+                <StyledMenuItem onClick={toggleDrawer(false)}>
                   <PersonIcon sx={{ marginRight: 1 }} />
                   <Link href="/mypage/dashboard">マイページ</Link>
-                </StyledMenuItem>,
-                <StyledMenuItem onClick={handleClose} key="favorites">
+                </StyledMenuItem>
+                <StyledMenuItem onClick={toggleDrawer(false)}>
                   <FavoriteIcon sx={{ marginRight: 1 }} />
                   <Link href="/mypage/favorites">お気に入りの動画</Link>
-                </StyledMenuItem>,
-                <StyledMenuItem onClick={handleClose} key="my_notes">
+                </StyledMenuItem>
+                <StyledMenuItem onClick={toggleDrawer(false)}>
                   <NoteIcon sx={{ marginRight: 1 }} />
                   <Link href="/mypage/my_notes">MYメモ一覧</Link>
-                </StyledMenuItem>,
-                <StyledMenuItem onClick={handleLogout} key="logout">
+                </StyledMenuItem>
+                <StyledMenuItem onClick={handleLogout}>
                   <ExitToAppIcon sx={{ marginRight: 1 }} />
                   ログアウト
                 </StyledMenuItem>
-              ]
+              </div>
             ) : (
-              <StyledMenuItem onClick={handleClose}>
+              <StyledMenuItem onClick={toggleDrawer(false)}>
                 <LoginIcon sx={{ marginRight: 1 }} />
                 <Link href="/login">ログインページ</Link>
               </StyledMenuItem>
             )}
-          </Menu>
+          </Drawer>
         </div>
       </Toolbar>
     </AppBar>
