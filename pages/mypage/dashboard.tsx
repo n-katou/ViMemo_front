@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { useAuth } from '../../context/AuthContext';
@@ -21,6 +21,8 @@ import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
 import { useFlashMessage } from '../../context/FlashMessageContext';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
+import Autocomplete from '@mui/lab/Autocomplete';
+import debounce from 'lodash/debounce';
 
 function isNote(likeable: any): likeable is Note {
   return likeable !== undefined && (likeable as Note).content !== undefined;
@@ -35,6 +37,7 @@ const Dashboard = () => {
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isMessageDisplayed, setIsMessageDisplayed] = useState(false);
 
   useEffect(() => {
@@ -116,6 +119,35 @@ const Dashboard = () => {
     fetchVideosByGenre(searchQuery);
   };
 
+  const fetchSuggestions = async (query: string) => {
+    if (!query) return;
+
+    try {
+      const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+        params: {
+          part: 'snippet',
+          q: query,
+          type: 'video',
+          key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY,
+        },
+      });
+
+      if (response.status === 200) {
+        const items = response.data.items;
+        const titles = items.map((item: any) => item.snippet.title);
+        setSuggestions(titles);
+      }
+    } catch (error) {
+      console.error('Error fetching YouTube suggestions:', error);
+    }
+  };
+
+  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 300), []);
+
+  useEffect(() => {
+    debouncedFetchSuggestions(searchQuery);
+  }, [searchQuery]);
+
   const shufflePlaylist = async () => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/generate_shuffle_playlist`, {
@@ -176,12 +208,19 @@ const Dashboard = () => {
               <CardContent>
                 <form onSubmit={handleSearch}>
                   <Box display="flex" alignItems="center">
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="キーワードで動画を取得"
+                    <Autocomplete
+                      freeSolo
+                      options={suggestions}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          variant="outlined"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="キーワードで動画を取得"
+                        />
+                      )}
                     />
                     <Button type="submit" variant="contained" color="primary" sx={{ ml: 2 }}>
                       取得
