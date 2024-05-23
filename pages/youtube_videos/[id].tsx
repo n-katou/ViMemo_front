@@ -27,6 +27,7 @@ const YoutubeVideoShowPage: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { currentUser, jwtToken, loading } = useAuth();
+  const [dataLoading, setDataLoading] = useState<boolean>(true); // データの読み込み状態を管理
 
   const fetchNotes = async (videoId: number, jwtToken: string) => {
     try {
@@ -169,17 +170,24 @@ const YoutubeVideoShowPage: React.FC = () => {
         .catch(error => {
           console.error('Error loading the video:', error);
           setVideo(null);
+        })
+        .finally(() => {
+          setDataLoading(false); // データの読み込みが完了したらdataLoadingをfalseに設定
         });
     } else {
       console.error('Invalid videoId or missing jwtToken');
+      setDataLoading(false); // エラー時にもdataLoadingをfalseに設定
     }
   }, [pathname, jwtToken, currentUser, loading]);
 
+  if (loading || dataLoading) {
+    return <LoadingSpinner loading={loading || dataLoading} />; // ローディング中はスピナーを表示
+  }
+
   return (
     <div className="container mx-auto py-8">
-      {loading && <LoadingSpinner loading={loading} />} {/* LoadingSpinner を使用 */}
-      {!loading && !video && <div className="text-center">Video not found</div>}
-      {!loading && video && (
+      {!video && <div className="text-center">Video not found</div>}
+      {video && (
         <>
           <div className="mb-8">
             <YoutubeVideoDetails
