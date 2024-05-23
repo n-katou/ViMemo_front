@@ -143,11 +143,6 @@ const YoutubeVideoShowPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!currentUser && !loading) {
-      router.push('/login');
-      return;
-    }
-
     if (!pathname) {
       console.error('Pathname is null');
       return;
@@ -156,7 +151,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     const pathSegments = pathname.split('/');
     const videoId = parseInt(pathSegments[pathSegments.length - 1], 10);
 
-    if (!isNaN(videoId) && jwtToken) {
+    if (!isNaN(videoId)) {
       console.log('JWT Token:', jwtToken);
       fetchYoutubeVideo(videoId, jwtToken)
         .then(videoData => {
@@ -175,10 +170,10 @@ const YoutubeVideoShowPage: React.FC = () => {
           setDataLoading(false); // データの読み込みが完了したらdataLoadingをfalseに設定
         });
     } else {
-      console.error('Invalid videoId or missing jwtToken');
+      console.error('Invalid videoId');
       setDataLoading(false); // エラー時にもdataLoadingをfalseに設定
     }
-  }, [pathname, jwtToken, currentUser, loading]);
+  }, [pathname, jwtToken, currentUser]);
 
   if (loading || dataLoading) {
     return <LoadingSpinner loading={loading || dataLoading} />; // ローディング中はスピナーを表示
@@ -192,8 +187,8 @@ const YoutubeVideoShowPage: React.FC = () => {
           <div className="mb-8 sticky-video">
             <YoutubeVideoDetails
               video={video as YoutubeVideo & { formattedDuration: string }}
-              handleLike={handleLikeVideo}
-              handleUnlike={handleUnlikeVideo}
+              handleLike={currentUser ? handleLikeVideo : undefined}
+              handleUnlike={currentUser ? handleUnlikeVideo : undefined}
               currentUser={currentUser}
               liked={liked}
             />
@@ -216,8 +211,8 @@ const YoutubeVideoShowPage: React.FC = () => {
             videoTimestampToSeconds={videoTimestampToSeconds}
             playFromTimestamp={playFromTimestamp}
             videoId={video.id}
-            onDelete={handleDeleteNote}
-            onEdit={handleEditNote}
+            onDelete={currentUser ? handleDeleteNote : undefined}
+            onEdit={currentUser ? handleEditNote : undefined}
           />
           <div className="text-left mt-8">
             <button

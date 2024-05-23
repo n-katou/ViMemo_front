@@ -6,8 +6,8 @@ import IconButton from '@mui/material/IconButton';
 
 interface YoutubeVideoDetailsProps {
   video: YoutubeVideo & { formattedDuration: string };
-  handleLike: () => void;
-  handleUnlike: () => void;
+  handleLike?: () => void; // Optional
+  handleUnlike?: () => void; // Optional
   currentUser: any;
   liked: boolean;
 }

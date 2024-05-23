@@ -126,14 +126,8 @@ const YoutubeVideosPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!currentUser) {
-      router.push('/login');
-      setYoutubeVideos([]);
-      setError(null);
-      return;
-    }
     fetchData();
-  }, [pagination.current_page, currentUser, router, query, sortOption]);
+  }, [pagination.current_page, query, sortOption]);
 
   const handleTitleClick = async (id: number) => {
     const cleanUrl = `/youtube_videos/${id}`;
@@ -146,6 +140,11 @@ const YoutubeVideosPage: React.FC = () => {
   };
 
   const handleLike = async (id: number) => {
+    if (!currentUser) {
+      router.push('/login');
+      return;
+    }
+
     setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
       prevVideos.map((video: YoutubeVideo) =>
         video.id === id ? { ...video, likes_count: video.likes_count + 1, liked: true } : video
@@ -189,6 +188,11 @@ const YoutubeVideosPage: React.FC = () => {
   };
 
   const handleUnlike = async (youtubeVideoId: number, likeId: number) => {
+    if (!currentUser) {
+      router.push('/login');
+      return;
+    }
+
     setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
       prevVideos.map((video: YoutubeVideo) =>
         video.id === youtubeVideoId ? { ...video, likes_count: video.likes_count - 1, liked: false } : video
@@ -280,37 +284,39 @@ const YoutubeVideosPage: React.FC = () => {
                     <NoteIcon className="text-blue-500 mr-1" />
                     <p className="text-gray-600">{video.notes_count}</p>
                   </div>
-                  <div className="flex items-center mt-2">
-                    {video.liked ? (
-                      <Tooltip title="いいね解除">
-                        <IconButton
-                          onClick={async () => {
-                            if (currentUser) {
-                              const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
-                              if (like) {
-                                await handleUnlike(video.id, like.id);
+                  {currentUser && (
+                    <div className="flex items-center mt-2">
+                      {video.liked ? (
+                        <Tooltip title="いいね解除">
+                          <IconButton
+                            onClick={async () => {
+                              if (currentUser) {
+                                const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
+                                if (like) {
+                                  await handleUnlike(video.id, like.id);
+                                }
                               }
-                            }
-                          }}
-                          color="secondary"
-                        >
-                          <FavoriteIcon style={{ color: 'red' }} />
-                        </IconButton>
-                      </Tooltip>
-                    ) : (
-                      <Tooltip title="いいね">
-                        <IconButton
-                          onClick={async () => {
-                            await handleLike(video.id);
-                          }}
-                          color="primary"
-                        >
-                          <FavoriteBorderIcon />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                    <p className="ml-2">{video.liked ? 'いいね済み' : 'いいねする'}</p>
-                  </div>
+                            }}
+                            color="secondary"
+                          >
+                            <FavoriteIcon style={{ color: 'red' }} />
+                          </IconButton>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title="いいね">
+                          <IconButton
+                            onClick={async () => {
+                              await handleLike(video.id);
+                            }}
+                            color="primary"
+                          >
+                            <FavoriteBorderIcon />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      <p className="ml-2">{video.liked ? 'いいね済み' : 'いいねする'}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

@@ -18,8 +18,8 @@ interface NoteItemProps {
   videoTimestampToSeconds: (timestamp: string) => number;
   playFromTimestamp: (seconds: number) => void;
   videoId: number;
-  onDelete: (noteId: number) => void;
-  onEdit: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void;
+  onDelete?: (noteId: number) => void; // Optional
+  onEdit?: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void; // Optional
   isOwner: boolean;
 }
 
@@ -29,8 +29,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
   videoTimestampToSeconds,
   playFromTimestamp,
   videoId,
-  onDelete,
-  onEdit,
+  onDelete = () => { }, // Default empty function
+  onEdit = () => { }, // Default empty function
   isOwner,
 }) => {
   const { jwtToken } = useAuth();
