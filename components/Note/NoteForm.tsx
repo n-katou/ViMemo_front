@@ -19,6 +19,32 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
     setIsVisible(true);
   };
 
+  const incrementMinutes = () => {
+    setTimestampMinutes((prev) => (prev < 59 ? prev + 1 : prev));
+  };
+
+  const decrementMinutes = () => {
+    setTimestampMinutes((prev) => (prev > 0 ? prev - 1 : prev));
+  };
+
+  const incrementSeconds = () => {
+    if (timestampSeconds < 59) {
+      setTimestampSeconds((prev) => prev + 1);
+    } else {
+      setTimestampSeconds(0);
+      setTimestampMinutes((prev) => prev < 59 ? prev + 1 : prev);
+    }
+  };
+
+  const decrementSeconds = () => {
+    if (timestampSeconds > 0) {
+      setTimestampSeconds((prev) => prev - 1);
+    } else if (timestampMinutes > 0) {
+      setTimestampSeconds(59);
+      setTimestampMinutes((prev) => prev - 1);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6 p-4 bg-white shadow-md rounded-md">
       <div className="form-control">
@@ -33,25 +59,27 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
       </div>
       <div className="form-control">
         <label className="label font-semibold text-gray-700">タイムスタンプ:</label>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center flex-wrap">
+          <button type="button" onClick={incrementMinutes} className="btn btn-outline">+</button>
           <input
-            type="number"
+            type="text"
             value={timestampMinutes}
-            onChange={(e) => setTimestampMinutes(parseInt(e.target.value, 10))}
-            min="0"
-            max="59"
-            className="input input-bordered w-20 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            readOnly
+            className="input input-bordered text-center"
+            style={{ width: '50px' }}
           />
-          <span>分</span>
+          分
+          <button type="button" onClick={decrementMinutes} className="btn btn-outline">-</button>
+          <button type="button" onClick={incrementSeconds} className="btn btn-outline">+</button>
           <input
-            type="number"
+            type="text"
             value={timestampSeconds}
-            onChange={(e) => setTimestampSeconds(parseInt(e.target.value, 10))}
-            min="0"
-            max="59"
-            className="input input-bordered w-20 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            readOnly
+            className="input input-bordered text-center"
+            style={{ width: '50px' }}
           />
-          <span>秒</span>
+          秒
+          <button type="button" onClick={decrementSeconds} className="btn btn-outline">-</button>
         </div>
       </div>
       <div className="form-control">

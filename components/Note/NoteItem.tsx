@@ -163,7 +163,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
             <p className="text-gray-500 text-sm">{new Date(note.created_at).toLocaleString()}</p> {/* 投稿日時を表示 */}
           </div>
         </div>
-        <div className="h-40 overflow-y-auto mb-4">
+        <div className="h-40 overflow-y-auto mb-1">
           <NoteContent note={note} />
         </div>
         <div className="flex items-center justify-between">
@@ -194,22 +194,24 @@ const NoteItem: React.FC<NoteItemProps> = ({
         </div>
       </div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <NoteEditor
-          newContent={newContent}
-          newMinutes={newMinutes}
-          newSeconds={newSeconds}
-          newIsVisible={newIsVisible}
-          setNewContent={setNewContent}
-          setNewMinutes={setNewMinutes}
-          setNewSeconds={setNewSeconds}
-          setNewIsVisible={setNewIsVisible}
-          handleEdit={handleEdit}
-          setIsEditing={(value) => {
-            setIsEditing(value);
-            setIsModalOpen(value);
-          }}
-          padZero={padZero}
-        />
+        <div className="max-w-full overflow-y-auto p-4">
+          <NoteEditor
+            newContent={newContent}
+            newMinutes={newMinutes}
+            newSeconds={newSeconds}
+            newIsVisible={newIsVisible}
+            setNewContent={setNewContent}
+            setNewMinutes={setNewMinutes}
+            setNewSeconds={setNewSeconds}
+            setNewIsVisible={setNewIsVisible}
+            handleEdit={handleEdit}
+            setIsEditing={(value) => {
+              setIsEditing(value);
+              setIsModalOpen(value);
+            }}
+            padZero={padZero}
+          />
+        </div>
       </Modal>
       {likeError && <div className="p-4 text-red-500">{likeError}</div>}
     </div>
