@@ -142,7 +142,7 @@ const Dashboard = () => {
     }
   };
 
-  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 300), []);
+  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 1000), []);
 
   useEffect(() => {
     debouncedFetchSuggestions(searchQuery);
