@@ -29,7 +29,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ videoTitle, content, videoTimestamp
       <div className="flex justify-between items-center">
         <Link href={`/youtube_videos/${youtubeVideoId}`} legacyBehavior>
           <a className="text-blue-500 hover:underline">
-            YouTube動画を見る
+            この動画を見る
           </a>
         </Link>
         <button
