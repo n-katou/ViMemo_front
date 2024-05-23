@@ -7,7 +7,7 @@ export const FlashMessageProvider = ({ children }) => {
 
   const setFlashMessage = useCallback((msg) => {
     setMessage(msg);
-    setTimeout(() => setMessage(null), 3000); // 3秒後にメッセージをクリア
+    setTimeout(() => setMessage(null), 2000); // 3秒後にメッセージをクリア
   }, []);
 
   return (

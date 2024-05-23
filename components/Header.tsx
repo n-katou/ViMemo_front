@@ -22,7 +22,13 @@ import PersonIcon from '@mui/icons-material/Person';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LoginIcon from '@mui/icons-material/Login';
 import NoteIcon from '@mui/icons-material/Note';
-import { useFlashMessage } from '../context/FlashMessageContext'; // フラッシュメッセージ用のフックをインポート
+import axios from 'axios';
+import { useFlashMessage } from '../context/FlashMessageContext';
+
+interface Video {
+  id: number;
+  title: string;
+}
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -71,29 +77,48 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   },
 }));
 
-const Header = () => {
+const Header: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
-  const { setFlashMessage } = useFlashMessage(); // フラッシュメッセージ用のフックを使用
+  const { setFlashMessage } = useFlashMessage(); 
   const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<Video[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
-    // 初期読み込み時に localStorage から isMessageDisplayed の値を取得
     const isMessageDisplayed = localStorage.getItem('isMessageDisplayed');
     if (isMessageDisplayed === 'true') {
-      setFlashMessage('前回のメッセージを表示しています');
+      setFlashMessage('ロード中です。');
     }
   }, [setFlashMessage]);
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (query.length > 0) {
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/autocomplete`, {
+            params: { query }
+          });
+          setSuggestions(response.data);
+        } catch (error) {
+          console.error('Error fetching suggestions:', error);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    };
+
+    fetchSuggestions();
+  }, [query]);
 
   const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
       await logout();
-      setFlashMessage('ログアウトしました'); // フラッシュメッセージを設定
-      localStorage.setItem('isMessageDisplayed', 'false'); // ログアウト時に localStorage を更新
+      setFlashMessage('ログアウトしました');
+      localStorage.setItem('isMessageDisplayed', 'false');
       handleClose();
-      router.push('/'); // ログアウト後にホームページにリダイレクト
+      router.push('/');
     }
   };
 
@@ -101,8 +126,8 @@ const Header = () => {
     event.preventDefault();
     if (query) {
       router.push(`/youtube_videos?query=${encodeURIComponent(query)}`);
-      setQuery(''); // フォームをクリアする
-      setSearchOpen(false); // モーダルを閉じる
+      setQuery('');
+      setSearchOpen(false);
     }
   };
 
@@ -132,9 +157,9 @@ const Header = () => {
           sx={{
             flexGrow: 1,
             fontSize: {
-              xs: '1rem', // モバイル用のフォントサイズ
-              sm: '1.25rem', // 小画面用のフォントサイズ
-              md: '1.5rem', // 中画面以上のフォントサイズ
+              xs: '1rem',
+              sm: '1.25rem',
+              md: '1.5rem',
             }
           }}
         >
@@ -160,6 +185,13 @@ const Header = () => {
                       onChange={(e) => setQuery(e.target.value)}
                     />
                   </Search>
+                  <ul>
+                    {suggestions.map((suggestion) => (
+                      <li key={suggestion.id}>
+                        {suggestion.title}
+                      </li>
+                    ))}
+                  </ul>
                   <Button type="submit" variant="contained" color="primary" fullWidth>
                     検索
                   </Button>
