@@ -3,8 +3,11 @@ import axios from 'axios';
 export async function fetchYoutubeVideo(id, jwtToken) {
   const headers = {
     'Accept': 'application/json',
-    'Authorization': `Bearer ${jwtToken}`,
   };
+
+  if (jwtToken) {
+    headers['Authorization'] = `Bearer ${jwtToken}`;
+  }
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}`, {
     headers: headers,
@@ -163,7 +166,6 @@ export async function handleNoteUnlike(videoId, noteId, likeId, jwtToken) {
     return { success: false, error: 'Unable to unlike the note.' };
   }
 }
-
 
 export async function fetchCurrentUserLike(videoId, noteId, jwtToken) {
   try {

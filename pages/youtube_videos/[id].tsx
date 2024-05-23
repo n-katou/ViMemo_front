@@ -8,9 +8,9 @@ import NoteList from '../../components/Note/NoteList';
 import YoutubeVideoDetails from '../../components/Youtube/YoutubeVideoDetails';
 import { fetchYoutubeVideo, handleLike, handleUnlike, addNoteToVideo, deleteNoteFromVideo, editNoteInVideo } from '../../src/api';
 import { videoTimestampToSeconds, playFromTimestamp } from '../../src/utils';
-import LoadingSpinner from '../../components/LoadingSpinner'; // LoadingSpinner をインポート
-import AddIcon from '@mui/icons-material/Add'; // アイコンをインポート
-import CloseIcon from '@mui/icons-material/Close'; // アイコンをインポート
+import LoadingSpinner from '../../components/LoadingSpinner';
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
 
 const formatDuration = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
@@ -23,15 +23,15 @@ const YoutubeVideoShowPage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [likeError, setLikeError] = useState<string | null>(null);
   const [liked, setLiked] = useState<boolean>(false);
-  const [isNoteFormVisible, setIsNoteFormVisible] = useState<boolean>(false); // フォームの表示・非表示を制御するステート
+  const [isNoteFormVisible, setIsNoteFormVisible] = useState<boolean>(false);
   const pathname = usePathname();
   const router = useRouter();
   const { currentUser, jwtToken, loading } = useAuth();
-  const [dataLoading, setDataLoading] = useState<boolean>(true); // データの読み込み状態を管理
+  const [dataLoading, setDataLoading] = useState<boolean>(true);
 
-  const fetchNotes = async (videoId: number, jwtToken: string) => {
+  const fetchNotes = async (videoId: number, token?: string) => {
     try {
-      const response = await fetchYoutubeVideo(videoId, jwtToken);
+      const response = await fetchYoutubeVideo(videoId, token);
       setNotes(response.notes);
     } catch (error) {
       console.error('Failed to fetch notes:', error);
@@ -92,10 +92,8 @@ const YoutubeVideoShowPage: React.FC = () => {
 
     try {
       const result = await handleLike(video.id, jwtToken);
-      console.log('Like result:', result);
       if (result.success) {
         const updatedVideo = await fetchYoutubeVideo(video.id, jwtToken);
-        console.log('Updated video:', updatedVideo);
         setVideo({ ...updatedVideo.youtube_video, formattedDuration: formatDuration(updatedVideo.youtube_video.duration) });
 
         const likes = updatedVideo.youtube_video.likes || [];
@@ -124,10 +122,8 @@ const YoutubeVideoShowPage: React.FC = () => {
 
     try {
       const result = await handleUnlike(video.id, userLike.id, jwtToken);
-      console.log('Unlike result:', result);
       if (result.success) {
         const updatedVideo = await fetchYoutubeVideo(video.id, jwtToken);
-        console.log('Updated video:', updatedVideo);
         setVideo({ ...updatedVideo.youtube_video, formattedDuration: formatDuration(updatedVideo.youtube_video.duration) });
 
         const likes = updatedVideo.youtube_video.likes || [];
@@ -152,11 +148,9 @@ const YoutubeVideoShowPage: React.FC = () => {
     const videoId = parseInt(pathSegments[pathSegments.length - 1], 10);
 
     if (!isNaN(videoId)) {
-      console.log('JWT Token:', jwtToken);
       fetchYoutubeVideo(videoId, jwtToken)
         .then(videoData => {
-          console.log('Fetched videoData:', videoData);
-          setVideo({ ...videoData.youtube_video, formattedDuration: formatDuration(videoData.youtube_video.duration) }); // フォーマットされた時間を追加
+          setVideo({ ...videoData.youtube_video, formattedDuration: formatDuration(videoData.youtube_video.duration) });
           setNotes(videoData.notes);
 
           const likes = videoData.youtube_video.likes || [];
@@ -167,16 +161,16 @@ const YoutubeVideoShowPage: React.FC = () => {
           setVideo(null);
         })
         .finally(() => {
-          setDataLoading(false); // データの読み込みが完了したらdataLoadingをfalseに設定
+          setDataLoading(false);
         });
     } else {
       console.error('Invalid videoId');
-      setDataLoading(false); // エラー時にもdataLoadingをfalseに設定
+      setDataLoading(false);
     }
   }, [pathname, jwtToken, currentUser]);
 
   if (loading || dataLoading) {
-    return <LoadingSpinner loading={loading || dataLoading} />; // ローディング中はスピナーを表示
+    return <LoadingSpinner loading={loading || dataLoading} />;
   }
 
   return (

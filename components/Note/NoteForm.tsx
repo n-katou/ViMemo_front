@@ -19,8 +19,6 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
     setIsVisible(true);
   };
 
-  const padZero = (num: number) => num.toString().padStart(2, '0');
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6 p-4 bg-white shadow-md rounded-md">
       <div className="form-control">
@@ -38,7 +36,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
         <div className="flex gap-2 items-center">
           <input
             type="number"
-            value={padZero(timestampMinutes)}
+            value={timestampMinutes}
             onChange={(e) => setTimestampMinutes(parseInt(e.target.value, 10))}
             min="0"
             max="59"
@@ -47,7 +45,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
           <span>分</span>
           <input
             type="number"
-            value={padZero(timestampSeconds)}
+            value={timestampSeconds}
             onChange={(e) => setTimestampSeconds(parseInt(e.target.value, 10))}
             min="0"
             max="59"
