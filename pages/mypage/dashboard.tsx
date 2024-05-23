@@ -257,7 +257,7 @@ const Dashboard = () => {
                 startIcon={<ShuffleIcon />}
                 onClick={shufflePlaylist}
               >
-                シャッフル再生
+                プレイリストをシャッフル
               </Button>
             </Box>
           </Accordion>

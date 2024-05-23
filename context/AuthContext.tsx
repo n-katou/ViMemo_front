@@ -2,6 +2,7 @@ import React, { createContext, useContext, ReactNode } from "react";
 import useFirebaseAuth from "../hooks/useFirebaseAuth";
 import { AuthState } from "../types/AuthState";
 import { CustomUser } from "@/types/user";
+import { useFlashMessage } from "./FlashMessageContext"; // フラッシュメッセージコンテキストをインポート
 
 interface AuthContextType {
   currentUser: CustomUser | null;
@@ -23,9 +24,18 @@ const AuthCtx = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const auth = useFirebaseAuth();
+  const { setFlashMessage } = useFlashMessage();
+
+  const enhancedAuth = {
+    ...auth,
+    logout: async () => {
+      await auth.logout();
+      setFlashMessage('ログアウトしました');
+    },
+  };
 
   return (
-    <AuthCtx.Provider value={auth}>
+    <AuthCtx.Provider value={enhancedAuth}>
       {children}
     </AuthCtx.Provider>
   );

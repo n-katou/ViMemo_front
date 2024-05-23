@@ -1,30 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IconButton from '@mui/material/IconButton';
+import YouTube from 'react-youtube';
 
 interface YoutubeVideoDetailsProps {
   video: YoutubeVideo & { formattedDuration: string };
-  handleLike: () => void;
-  handleUnlike: () => void;
+  handleLike?: () => void; // Optional
+  handleUnlike?: () => void; // Optional
   currentUser: any;
   liked: boolean;
 }
 
 const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handleLike, handleUnlike, currentUser, liked }) => {
+  const [currentTime, setCurrentTime] = useState<string>('0:00');
+  const [player, setPlayer] = useState<any>(null);
+
+  const handlePlayerStateChange = (event: any) => {
+    if (event.data === window.YT.PlayerState.PLAYING) {
+      const player = event.target;
+      setPlayer(player);
+    }
+  };
+
+  useEffect(() => {
+    if (player) {
+      const interval = setInterval(() => {
+        const time = player.getCurrentTime();
+        setCurrentTime(formatTime(time));
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [player]);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
-      <div className="video-wrapper">
-        <iframe
+      <div className="relative video-wrapper">
+        <YouTube
+          videoId={video.youtube_id}
+          opts={{ playerVars: { playsinline: 1 } }}
+          onStateChange={handlePlayerStateChange}
           className="w-full aspect-video"
-          id="youtube-video"
-          data-video-id={video.youtube_id}
-          src={`https://www.youtube.com/embed/${video.youtube_id}?playsinline=1`}
-          frameBorder="0"
-          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
         />
+        <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white p-2 rounded">
+          {currentTime} / {video.formattedDuration}
+        </div>
       </div>
       <div className="p-4">
         <h2 className="text-2xl font-bold mb-2">{video.title}</h2>

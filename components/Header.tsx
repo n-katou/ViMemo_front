@@ -170,61 +170,57 @@ const Header: React.FC = () => {
         >
           Vimemo
         </Typography>
-        {currentUser && (
-          <div className="flex items-center">
-            <IconButton onClick={toggleSearch} color="inherit">
-              <SearchIcon />
-            </IconButton>
-            <Dialog
-              open={searchOpen}
-              onClose={toggleSearch}
-              maxWidth="sm" // ダイアログの最大幅を設定
-              fullWidth // ダイアログを全幅に設定
-            >
-              <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                検索
-                <IconButton
-                  edge="end"
-                  color="inherit"
-                  onClick={toggleSearch}
-                  aria-label="close"
-                >
-                  <CloseIcon />
-                </IconButton>
-              </DialogTitle>
-              <DialogContent>
-                <form onSubmit={handleSearch}>
-                  <Search>
-                    <SearchIconWrapper>
-                      <SearchIcon />
-                    </SearchIconWrapper>
-                    <StyledInputBase
-                      placeholder="タイトル検索"
-                      inputProps={{ 'aria-label': 'search' }}
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                    />
-                  </Search>
-                  <ul>
-                    {suggestions.map((suggestion) => (
-                      <StyledMenuItem key={suggestion.id} onClick={() => handleSuggestionClick(suggestion.id)}>
-                        {suggestion.title}
-                      </StyledMenuItem>
-                    ))}
-                  </ul>
-                  <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
-                    検索
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        )}
-        {currentUser && (
-          <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
-            YouTube
-          </Button>
-        )}
+        <div className="flex items-center">
+          <IconButton onClick={toggleSearch} color="inherit">
+            <SearchIcon />
+          </IconButton>
+          <Dialog
+            open={searchOpen}
+            onClose={toggleSearch}
+            maxWidth="sm" // ダイアログの最大幅を設定
+            fullWidth // ダイアログを全幅に設定
+          >
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              検索
+              <IconButton
+                edge="end"
+                color="inherit"
+                onClick={toggleSearch}
+                aria-label="close"
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              <form onSubmit={handleSearch}>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="タイトル検索"
+                    inputProps={{ 'aria-label': 'search' }}
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
+                </Search>
+                <ul>
+                  {suggestions.map((suggestion) => (
+                    <StyledMenuItem key={suggestion.id} onClick={() => handleSuggestionClick(suggestion.id)}>
+                      {suggestion.title}
+                    </StyledMenuItem>
+                  ))}
+                </ul>
+                <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
+                  検索
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+        <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
+          YouTube
+        </Button>
         <div>
           <IconButton
             size="large"

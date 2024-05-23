@@ -8,7 +8,7 @@ const RootPage = () => {
   const router = useRouter();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'info' | 'success' | 'warning' | 'error'>('info');
   const { currentUser, logout } = useAuth();
 
   const handleCloseSnackbar = () => {
@@ -18,9 +18,15 @@ const RootPage = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      setSnackbarMessage('ログアウトに成功しました。');
+      setSnackbarSeverity('success');
+      setOpenSnackbar(true);
       router.push('/login');
     } catch (error) {
       console.error('Logout failed:', error);
+      setSnackbarMessage('ログアウトに失敗しました。');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
     }
   };
 
@@ -36,10 +42,20 @@ const RootPage = () => {
             </Button>
           </>
         ) : (
-          <Typography variant="subtitle1">ログインしてください。</Typography>
+          <>
+            <Typography variant="subtitle1">ログインしてください。</Typography>
+            <Button onClick={() => router.push('/login')} variant="outlined" color="primary">
+              ログインページへ
+            </Button>
+          </>
         )}
       </Grid>
-    </Grid>  // 修正された Grid コンポーネントの終了タグ
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </Grid>
   );
 };
 

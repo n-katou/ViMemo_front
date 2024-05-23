@@ -27,6 +27,34 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
   setIsEditing,
   padZero
 }) => {
+  const incrementMinutes = () => {
+    setNewMinutes(newMinutes + 1);
+  };
+
+  const decrementMinutes = () => {
+    if (newMinutes > 0) {
+      setNewMinutes(newMinutes - 1);
+    }
+  };
+
+  const incrementSeconds = () => {
+    if (newSeconds < 59) {
+      setNewSeconds(newSeconds + 1);
+    } else {
+      setNewSeconds(0);
+      setNewMinutes(newMinutes + 1);
+    }
+  };
+
+  const decrementSeconds = () => {
+    if (newSeconds > 0) {
+      setNewSeconds(newSeconds - 1);
+    } else if (newMinutes > 0) {
+      setNewSeconds(59);
+      setNewMinutes(newMinutes - 1);
+    }
+  };
+
   return (
     <form onSubmit={(e) => { e.preventDefault(); handleEdit(); }} className="space-y-4">
       <textarea
@@ -39,25 +67,31 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
       <div className="form-control">
         <label className="label">
           <span>タイムスタンプ:</span>
-          <div className="flex gap-2">
+          <div className="flex gap-1 items-center flex-wrap">
+            <button type="button" onClick={incrementMinutes} className="btn btn-outline btn-sm">+</button>
             <input
               type="number"
-              value={padZero(newMinutes)}
+              value={newMinutes}
               onChange={(e) => setNewMinutes(parseInt(e.target.value, 10))}
               min="0"
               max="59"
-              className="input input-bordered"
+              className="input input-bordered text-center"
+              style={{ width: '40px' }}
             />
-            分
+            <span>分</span>
+            <button type="button" onClick={decrementMinutes} className="btn btn-outline btn-sm">-</button>
+            <button type="button" onClick={incrementSeconds} className="btn btn-outline btn-sm">+</button>
             <input
               type="number"
-              value={padZero(newSeconds)}
+              value={newSeconds}
               onChange={(e) => setNewSeconds(parseInt(e.target.value, 10))}
               min="0"
               max="59"
-              className="input input-bordered"
+              className="input input-bordered text-center"
+              style={{ width: '40px' }}
             />
-            秒
+            <span>秒</span>
+            <button type="button" onClick={decrementSeconds} className="btn btn-outline btn-sm">-</button>
           </div>
         </label>
       </div>
