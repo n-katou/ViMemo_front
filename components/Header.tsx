@@ -6,7 +6,10 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Drawer from '@mui/material/Drawer'; // Drawerをインポート
-import MenuItem from '@mui/material/MenuItem';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import { styled, alpha } from '@mui/material/styles';
@@ -69,7 +72,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+const StyledMenuItem = styled(ListItem)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   '&:hover': {
@@ -77,21 +80,13 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   },
 }));
 
-const SuggestionItem = styled('li')(({ theme }) => ({
-  padding: theme.spacing(1),
-  cursor: 'pointer',
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.1),
-  },
-}));
-
 const Header: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
-  const { setFlashMessage } = useFlashMessage(); 
+  const { setFlashMessage } = useFlashMessage();
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Video[]>([]);
-  const [drawerOpen, setDrawerOpen] = useState(false); // Drawerの開閉状態を管理するための状態を追加
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
@@ -125,7 +120,7 @@ const Header: React.FC = () => {
       await logout();
       setFlashMessage('ログアウトしました');
       localStorage.setItem('isMessageDisplayed', 'false');
-      setDrawerOpen(false); // Drawerを閉じる
+      setDrawerOpen(false);
       router.push('/');
     }
   };
@@ -196,9 +191,9 @@ const Header: React.FC = () => {
                   </Search>
                   <ul>
                     {suggestions.map((suggestion) => (
-                      <SuggestionItem key={suggestion.id} onClick={() => handleSuggestionClick(suggestion.id)}>
+                      <StyledMenuItem key={suggestion.id} onClick={() => handleSuggestionClick(suggestion.id)}>
                         {suggestion.title}
-                      </SuggestionItem>
+                      </StyledMenuItem>
                     ))}
                   </ul>
                   <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
@@ -229,32 +224,45 @@ const Header: React.FC = () => {
             anchor="right"
             open={drawerOpen}
             onClose={toggleDrawer(false)}
+            sx={{ '& .MuiDrawer-paper': { width: '250px' } }} // ドロワーの幅を設定
           >
-            {currentUser ? (
-              <div>
-                <StyledMenuItem onClick={toggleDrawer(false)}>
-                  <PersonIcon sx={{ marginRight: 1 }} />
-                  <Link href="/mypage/dashboard">マイページ</Link>
-                </StyledMenuItem>
-                <StyledMenuItem onClick={toggleDrawer(false)}>
-                  <FavoriteIcon sx={{ marginRight: 1 }} />
-                  <Link href="/mypage/favorites">お気に入りの動画</Link>
-                </StyledMenuItem>
-                <StyledMenuItem onClick={toggleDrawer(false)}>
-                  <NoteIcon sx={{ marginRight: 1 }} />
-                  <Link href="/mypage/my_notes">MYメモ一覧</Link>
-                </StyledMenuItem>
-                <StyledMenuItem onClick={handleLogout}>
-                  <ExitToAppIcon sx={{ marginRight: 1 }} />
-                  ログアウト
-                </StyledMenuItem>
-              </div>
-            ) : (
-              <StyledMenuItem onClick={toggleDrawer(false)}>
-                <LoginIcon sx={{ marginRight: 1 }} />
-                <Link href="/login">ログインページ</Link>
-              </StyledMenuItem>
-            )}
+            <List>
+              {currentUser ? (
+                <>
+                  <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/dashboard">
+                    <ListItemIcon>
+                      <PersonIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="マイページ" />
+                  </ListItem>
+                  <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/favorites">
+                    <ListItemIcon>
+                      <FavoriteIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="お気に入りの動画" />
+                  </ListItem>
+                  <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/my_notes">
+                    <ListItemIcon>
+                      <NoteIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="MYメモ一覧" />
+                  </ListItem>
+                  <ListItem button onClick={handleLogout}>
+                    <ListItemIcon>
+                      <ExitToAppIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="ログアウト" />
+                  </ListItem>
+                </>
+              ) : (
+                <ListItem button onClick={toggleDrawer(false)} component={Link} href="/login">
+                  <ListItemIcon>
+                    <LoginIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="ログインページ" />
+                </ListItem>
+              )}
+            </List>
           </Drawer>
         </div>
       </Toolbar>
