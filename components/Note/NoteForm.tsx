@@ -6,43 +6,17 @@ type NoteFormProps = {
 
 const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
   const [noteContent, setNoteContent] = useState('');
-  const [timestampMinutes, setTimestampMinutes] = useState(0);
-  const [timestampSeconds, setTimestampSeconds] = useState(0);
+  const [timestampMinutes, setTimestampMinutes] = useState('');
+  const [timestampSeconds, setTimestampSeconds] = useState('');
   const [isVisible, setIsVisible] = useState(true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addNote(noteContent, timestampMinutes, timestampSeconds, isVisible);
+    addNote(noteContent, parseInt(timestampMinutes) || 0, parseInt(timestampSeconds) || 0, isVisible);
     setNoteContent('');
-    setTimestampMinutes(0);
-    setTimestampSeconds(0);
+    setTimestampMinutes('');
+    setTimestampSeconds('');
     setIsVisible(true);
-  };
-
-  const incrementMinutes = () => {
-    setTimestampMinutes((prev) => (prev < 59 ? prev + 1 : prev));
-  };
-
-  const decrementMinutes = () => {
-    setTimestampMinutes((prev) => (prev > 0 ? prev - 1 : prev));
-  };
-
-  const incrementSeconds = () => {
-    if (timestampSeconds < 59) {
-      setTimestampSeconds((prev) => prev + 1);
-    } else {
-      setTimestampSeconds(0);
-      setTimestampMinutes((prev) => (prev < 59 ? prev + 1 : prev));
-    }
-  };
-
-  const decrementSeconds = () => {
-    if (timestampSeconds > 0) {
-      setTimestampSeconds((prev) => prev - 1);
-    } else if (timestampMinutes > 0) {
-      setTimestampSeconds(59);
-      setTimestampMinutes((prev) => prev - 1);
-    }
   };
 
   return (
@@ -60,31 +34,25 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
       <div className="form-control">
         <label className="label font-semibold text-gray-700">タイムスタンプ:</label>
         <div className="flex gap-2 items-center flex-wrap">
-          <div className="flex items-center gap-1">
-            <button type="button" onClick={incrementMinutes} className="btn btn-outline p-1 w-8">+</button>
-            <input
-              type="number"
-              value={timestampMinutes}
-              onChange={(e) => setTimestampMinutes(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
-              min="0"
-              max="59"
-              className="input input-bordered text-center w-12"
-            />
-            <button type="button" onClick={decrementMinutes} className="btn btn-outline p-1 w-8">-</button>
-          </div>
+          <input
+            type="number"
+            value={timestampMinutes}
+            onChange={(e) => setTimestampMinutes(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)).toString())}
+            min="0"
+            max="59"
+            placeholder="00"
+            className="input input-bordered text-center w-12"
+          />
           <span>分</span>
-          <div className="flex items-center gap-1">
-            <button type="button" onClick={incrementSeconds} className="btn btn-outline p-1 w-8">+</button>
-            <input
-              type="number"
-              value={timestampSeconds}
-              onChange={(e) => setTimestampSeconds(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
-              min="0"
-              max="59"
-              className="input input-bordered text-center w-12"
-            />
-            <button type="button" onClick={decrementSeconds} className="btn btn-outline p-1 w-8">-</button>
-          </div>
+          <input
+            type="number"
+            value={timestampSeconds}
+            onChange={(e) => setTimestampSeconds(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)).toString())}
+            min="0"
+            max="59"
+            placeholder="00"
+            className="input input-bordered text-center w-12"
+          />
           <span>秒</span>
         </div>
       </div>
