@@ -89,3 +89,11 @@ input[type="text"] {
 .fixed-card-size {
   height: 360px; /* 固定の高さを設定 */
 }
+
+.sticky-video {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0; /* 画面の上部に固定 */
+  z-index: 1000; /* 必要に応じて他の要素より前面に表示 */
+  background-color: white; /* 背景色を設定して重なり防止 */
+}

@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Drawer from '@mui/material/Drawer'; // Drawerをインポート
+import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -27,6 +27,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import NoteIcon from '@mui/icons-material/Note';
 import axios from 'axios';
 import { useFlashMessage } from '../context/FlashMessageContext';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface Video {
   id: number;
@@ -37,7 +38,7 @@ const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
-  border: '1px solid grey', // ここで枠を追加
+  border: '1px solid grey',
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
@@ -174,8 +175,23 @@ const Header: React.FC = () => {
             <IconButton onClick={toggleSearch} color="inherit">
               <SearchIcon />
             </IconButton>
-            <Dialog open={searchOpen} onClose={toggleSearch}>
-              <DialogTitle>検索</DialogTitle>
+            <Dialog
+              open={searchOpen}
+              onClose={toggleSearch}
+              maxWidth="sm" // ダイアログの最大幅を設定
+              fullWidth // ダイアログを全幅に設定
+            >
+              <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                検索
+                <IconButton
+                  edge="end"
+                  color="inherit"
+                  onClick={toggleSearch}
+                  aria-label="close"
+                >
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
               <DialogContent>
                 <form onSubmit={handleSearch}>
                   <Search>
@@ -224,9 +240,18 @@ const Header: React.FC = () => {
             anchor="right"
             open={drawerOpen}
             onClose={toggleDrawer(false)}
-            sx={{ '& .MuiDrawer-paper': { width: '250px' } }} // ドロワーの幅を設定
+            sx={{ '& .MuiDrawer-paper': { width: '250px', position: 'fixed', right: 0, height: '100%' } }} // ドロワーの幅とpositionを設定
           >
-            <List>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={toggleDrawer(false)}
+              aria-label="close"
+              sx={{ position: 'absolute', top: 8, left: 8 }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <List sx={{ marginTop: '48px' }}>
               {currentUser ? (
                 <>
                   <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/dashboard">

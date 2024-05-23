@@ -189,7 +189,7 @@ const YoutubeVideoShowPage: React.FC = () => {
       {!video && <div className="text-center">Video not found</div>}
       {video && (
         <>
-          <div className="mb-8">
+          <div className="mb-8 sticky-video">
             <YoutubeVideoDetails
               video={video as YoutubeVideo & { formattedDuration: string }}
               handleLike={handleLikeVideo}
