@@ -207,7 +207,7 @@ const Dashboard = () => {
             <Card className="mb-8">
               <CardContent>
                 <form onSubmit={handleSearch}>
-                  <Box display="flex" alignItems="center">
+                  <Box display="flex" alignItems="center" width="100%">
                     <Autocomplete
                       freeSolo
                       options={suggestions}
@@ -221,6 +221,7 @@ const Dashboard = () => {
                           placeholder="キーワードで動画を取得"
                         />
                       )}
+                      sx={{ flex: 1 }}
                     />
                     <Button type="submit" variant="contained" color="primary" sx={{ ml: 2 }}>
                       取得
