@@ -18,10 +18,17 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (currentUser) {
-      router.push('/mypage/dashboard');
+      console.log('User is logged in, redirecting to dashboard');
+      const loginSuccessMessage = localStorage.getItem('loginSuccessMessage');
+      if (loginSuccessMessage) {
+        setSuccessMessage(loginSuccessMessage);
+        localStorage.removeItem('loginSuccessMessage');
+      }
+      router.push('/mypage/dashboard?flash_message=ログインに成功しました');
     } else {
       const logoutMessage = localStorage.getItem('logoutMessage');
       if (logoutMessage) {
+        console.log('Logout message found:', logoutMessage);
         setSuccessMessage(logoutMessage);
         localStorage.removeItem('logoutMessage');
       }
@@ -37,7 +44,7 @@ const LoginPage = () => {
       if (response.data.success) {
         localStorage.setItem('token', response.data.token);
         setAuthState({ currentUser: response.data.user, jwtToken: response.data.token });
-        router.push('/');
+        router.push('/mypage/dashboard');
       } else {
         setError(response.data.error);
       }
@@ -58,6 +65,7 @@ const LoginPage = () => {
     setLoading(true);
     setError('');
     try {
+      console.log('Initiating Google OAuth');
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/google`, {
         headers: {
           'Frontend-Request': 'true',
@@ -147,14 +155,24 @@ const LoginPage = () => {
         </div>
       </Card>
       {error && (
-        <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError('')}>
+        <Snackbar
+          open={!!error}
+          autoHideDuration={6000}
+          onClose={() => setError('')}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
           <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
             {error}
           </Alert>
         </Snackbar>
       )}
       {successMessage && (
-        <Snackbar open={!!successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage('')}>
+        <Snackbar
+          open={!!successMessage}
+          autoHideDuration={6000}
+          onClose={() => setSuccessMessage('')}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
           <Alert onClose={() => setSuccessMessage('')} severity="success" sx={{ width: '100%' }}>
             {successMessage}
           </Alert>

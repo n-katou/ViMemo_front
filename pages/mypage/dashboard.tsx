@@ -20,6 +20,8 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
 import { useFlashMessage } from '../../context/FlashMessageContext';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
 import Autocomplete from '@mui/lab/Autocomplete';
 import debounce from 'lodash/debounce';
@@ -39,6 +41,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isMessageDisplayed, setIsMessageDisplayed] = useState(false);
+  const [flashMessage, setFlashMessageState] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,6 +88,12 @@ const Dashboard = () => {
         console.error('Error fetching mypage data:', error);
       }
     };
+
+    const loginSuccessMessage = localStorage.getItem('loginSuccessMessage');
+    if (loginSuccessMessage) {
+      setFlashMessageState(loginSuccessMessage);
+      localStorage.removeItem('loginSuccessMessage');
+    }
 
     fetchData();
   }, [jwtToken]);
@@ -308,30 +317,18 @@ const Dashboard = () => {
           </Accordion>
         </div>
       </div>
-      <style jsx>{`
-        .text-container {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-        .text-wrap {
-          word-wrap: break-word;
-        }
-        .custom-card-size {
-          height: 250px;
-          overflow: hidden;
-        }
-        .custom-card-content {
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-        }
-        .note-content {
-          white-space: pre-wrap;
-          overflow-y: auto;
-        }
-      `}</style>
+      {flashMessage && (
+        <Snackbar
+          open={!!flashMessage}
+          autoHideDuration={6000}
+          onClose={() => setFlashMessageState('')}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert onClose={() => setFlashMessageState('')} severity="success" sx={{ width: '100%' }}>
+            {flashMessage}
+          </Alert>
+        </Snackbar>
+      )}
     </div>
   );
 };
