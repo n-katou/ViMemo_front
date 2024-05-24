@@ -27,7 +27,16 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
       anchor="right"
       open={drawerOpen}
       onClose={toggleDrawer(false)}
-      sx={{ '& .MuiDrawer-paper': { width: '250px', position: 'fixed', right: 0, height: '100%' } }}
+      sx={{
+        '& .MuiDrawer-paper': {
+          width: '250px',
+          position: 'fixed',
+          right: 0,
+          height: '100%',
+          zIndex: 1400, // zIndexをHeaderより高く設定
+          marginTop: '64px', // Headerの高さ分マージンを追加
+        },
+      }}
     >
       <IconButton
         edge="start"

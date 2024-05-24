@@ -52,7 +52,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: 'black' }}>
+      <AppBar position="fixed" sx={{ backgroundColor: 'black', zIndex: 1300 }}>
         <Toolbar>
           <Typography
             variant="h6"
@@ -106,6 +106,7 @@ const Header: React.FC = () => {
           </div>
         </Toolbar>
       </AppBar>
+      <Toolbar /> {/* この行はコンテンツの上にスペースを作ります */}
       <FlashMessage /> {/* フラッシュメッセージコンポーネントを追加 */}
     </>
   );
