@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
+import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -54,17 +55,29 @@ function AuthenticatedApp({ Component, pageProps, router }: AuthenticatedAppProp
   return <Component {...pageProps} />;
 }
 
-export default function App({ Component, pageProps, router }: AppProps) {
+const MyApp = ({ Component, pageProps, router }: AppProps) => {
   return (
-    <FlashMessageProvider>
-      <AuthProvider>
-        <div className="app-layout">
-          <Header />
-          <FlashMessage />
-          <AuthenticatedApp Component={Component} pageProps={pageProps} router={router} />
-          <Footer />
-        </div>
-      </AuthProvider>
-    </FlashMessageProvider>
+    <>
+      <Head>
+        <title>Vimemo</title>
+        <meta property="og:title" content="ViMemo" />
+        <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
+        <meta property="og:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
+        <meta property="og:url" content="https://vimemo.vercel.app" />
+        <meta property="og:type" content="website" />
+      </Head>
+      <FlashMessageProvider>
+        <AuthProvider>
+          <div className="app-layout">
+            <Header />
+            <FlashMessage />
+            <AuthenticatedApp Component={Component} pageProps={pageProps} router={router} />
+            <Footer />
+          </div>
+        </AuthProvider>
+      </FlashMessageProvider>
+    </>
   );
-}
+};
+
+export default MyApp;
