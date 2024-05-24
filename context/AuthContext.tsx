@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     ...auth,
     logout: async () => {
       await auth.logout();
-      setFlashMessage('ログアウトしました');
+      setFlashMessage('ログアウトしました', 'success');
     },
   };
 
@@ -46,5 +46,6 @@ export const useAuth = () => {
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
+
   return context;
 };

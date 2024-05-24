@@ -9,37 +9,38 @@ import { AuthProvider, useAuth } from "../context/AuthContext";
 import { FlashMessageProvider, useFlashMessage } from '../context/FlashMessageContext';
 import FlashMessage from '../components/FlashMessage';
 import { Alert, Container, Box } from '@mui/material';
+import { useRouter } from 'next/router';
+import { analytics } from '../lib/initFirebase';
+import { logEvent } from 'firebase/analytics';
 
 interface AuthenticatedAppProps {
   Component: AppProps['Component'];
   pageProps: AppProps['pageProps'];
-  router: AppProps['router'];
+  appRouter: AppProps['router'];
 }
 
-// ログインが必要なページかどうかを判断するためのリスト
-const protectedRoutes = ['/mypage/dashboard', '/mypage/edit', '/mypage/favorites', '/mypage/my_notes']; // 例: ダッシュボードやプロフィールページなど
+const protectedRoutes = ['/mypage/dashboard', '/mypage/edit', '/mypage/favorites', '/mypage/my_notes'];
 
-function AuthenticatedApp({ Component, pageProps, router }: AuthenticatedAppProps) {
+function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppProps) {
   const { currentUser, loading } = useAuth();
   const { setFlashMessage } = useFlashMessage();
   const [showLoginMessage, setShowLoginMessage] = useState(false);
 
-  const isProtectedRoute = protectedRoutes.includes(router.pathname);
+  const isProtectedRoute = protectedRoutes.includes(appRouter.pathname);
 
   useEffect(() => {
     if (!loading && !currentUser && isProtectedRoute) {
-      setFlashMessage('ログインしてください');
+      setFlashMessage('ログインしてください', 'warning');
       setShowLoginMessage(true);
     } else {
       setShowLoginMessage(false);
     }
-  }, [currentUser, loading, router.pathname, isProtectedRoute, setFlashMessage]);
+  }, [currentUser, loading, appRouter.pathname, isProtectedRoute, setFlashMessage]);
 
   if (loading) {
     return <LoadingSpinner loading={loading} />;
   }
 
-  // 保護されたルートの場合、ユーザーがログインしていない場合にログインメッセージを表示する
   if (isProtectedRoute && !currentUser) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
@@ -56,6 +57,24 @@ function AuthenticatedApp({ Component, pageProps, router }: AuthenticatedAppProp
 }
 
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
+  const nextRouter = useRouter();
+
+  useEffect(() => {
+    const logPageView = (url: string) => {
+      if (analytics) {
+        logEvent(analytics, 'page_view', { page_path: url });
+      }
+    };
+
+    logPageView(window.location.pathname);
+
+    nextRouter.events.on('routeChangeComplete', logPageView);
+
+    return () => {
+      nextRouter.events.off('routeChangeComplete', logPageView);
+    };
+  }, [nextRouter.events]);
+
   return (
     <>
       <Head>
@@ -70,8 +89,7 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
         <AuthProvider>
           <div className="app-layout">
             <Header />
-            <FlashMessage />
-            <AuthenticatedApp Component={Component} pageProps={pageProps} router={router} />
+            <AuthenticatedApp Component={Component} pageProps={pageProps} appRouter={router} />
             <Footer />
           </div>
         </AuthProvider>
