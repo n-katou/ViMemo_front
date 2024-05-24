@@ -17,7 +17,7 @@ interface NoteItemProps {
   currentUser: any;
   videoTimestampToSeconds: (timestamp: string) => number;
   playFromTimestamp: (seconds: number) => void;
-  videoId: number;
+  videoId: number;  // videoId の型を number に修正
   onDelete?: (noteId: number) => void; // Optional
   onEdit?: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void; // Optional
   isOwner: boolean;

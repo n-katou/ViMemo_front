@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 interface NoteActionsProps {
   note: Note;
   currentUser: any;
+  videoId: number;
   newMinutes: number;
   newSeconds: number;
   videoTimestampToSeconds: (timestamp: string) => number;
