@@ -1,4 +1,3 @@
-// pages/login.tsx
 "use client";
 import axios from 'axios';
 import { useState, FormEvent, useEffect } from 'react';
@@ -15,10 +14,17 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); // ログアウト成功メッセージ用の状態
 
   useEffect(() => {
     if (currentUser) {
       router.push('/mypage/dashboard');
+    } else {
+      const logoutMessage = localStorage.getItem('logoutMessage');
+      if (logoutMessage) {
+        setSuccessMessage(logoutMessage);
+        localStorage.removeItem('logoutMessage');
+      }
     }
   }, [currentUser, router]);
 
@@ -144,6 +150,13 @@ const LoginPage = () => {
         <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError('')}>
           <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
             {error}
+          </Alert>
+        </Snackbar>
+      )}
+      {successMessage && (
+        <Snackbar open={!!successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage('')}>
+          <Alert onClose={() => setSuccessMessage('')} severity="success" sx={{ width: '100%' }}>
+            {successMessage}
           </Alert>
         </Snackbar>
       )}

@@ -26,6 +26,12 @@ const FlashMessage = () => {
     }
   }, [message, setFlashMessage, router]);
 
+  useEffect(() => {
+    if (message) {
+      setOpen(true);
+    }
+  }, [message]);
+
   const handleClose = () => {
     setOpen(false);
   };

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Snackbar, Alert, Grid, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
@@ -10,6 +10,16 @@ const RootPage = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'info' | 'success' | 'warning' | 'error'>('info');
   const { currentUser, logout } = useAuth();
+
+  useEffect(() => {
+    const logoutMessage = localStorage.getItem('logoutMessage');
+    if (logoutMessage) {
+      setSnackbarMessage(logoutMessage);
+      setSnackbarSeverity('success');
+      setOpenSnackbar(true);
+      localStorage.removeItem('logoutMessage');
+    }
+  }, []);
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
