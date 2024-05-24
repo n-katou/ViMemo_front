@@ -27,13 +27,14 @@ const NoteActions: React.FC<NoteActionsProps> = ({
   setIsEditing
 }) => {
   const padZero = (num: number) => num.toString().padStart(2, '0');
+  const shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`【シェア】\nタイムスタンプ: ${padZero(newMinutes)}:${padZero(newSeconds)} \nメモ: ${note.content} \nYouTube: https://www.youtube.com/watch?v=${videoId}&t=${videoTimestampToSeconds(note.video_timestamp)}s \n`)}`;
 
   return (
     <div className="card-actions mt-4 flex space-x-4">
       {currentUser?.id === note.user?.id && (
         <>
           <IconButton
-            href={`https://x.com/share?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`【シェア】\nタイムスタンプ: ${padZero(newMinutes)}:${padZero(newSeconds)} \nメモ: ${note.content} \nYouTube: https://www.youtube.com/watch?v=${videoId}&t=${videoTimestampToSeconds(note.video_timestamp)}s`)}`}
+            href={shareUrl}
             target="_blank"
             className="btn btn-outline btn-primary"
           >

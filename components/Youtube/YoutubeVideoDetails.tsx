@@ -18,7 +18,9 @@ interface YoutubeVideoDetailsProps {
   onPlayerReady: (player: any) => void;
 }
 
-const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handleLike, handleUnlike, currentUser, liked, onPlayerReady }) => {
+const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
+  video, handleLike, handleUnlike, currentUser, liked, onPlayerReady
+}) => {
   const [currentTime, setCurrentTime] = useState<string>('0:00');
   const [player, setPlayer] = useState<any>(null);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
@@ -66,19 +68,23 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handle
       </div>
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">{video.title}</h2>
-          <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
-            {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-          </IconButton>
-        </div>
-        <div className="flex items-center mb-4">
-          <IconButton
-            onClick={() => setShowTime(!showTime)}
-            aria-label={showTime ? 'Hide Time' : 'Show Time'}
-          >
-            {showTime ? <VisibilityOffIcon /> : <VisibilityIcon />}
-          </IconButton>
-          <p className="ml-2 text-sm text-gray-700">タイムの表示・非表示切り替え</p>
+          <div className="flex items-center">
+            <h2 className="text-2xl font-bold mr-4">{video.title}</h2>
+            <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+              {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+            </IconButton>
+          </div>
+          <div className="flex items-center">
+            <IconButton
+              onClick={() => setShowTime(!showTime)}
+              aria-label={showTime ? 'Hide Time' : 'Show Time'}
+            >
+              {showTime ? <VisibilityOffIcon /> : <VisibilityIcon />}
+            </IconButton>
+            <span className="ml-2 text-sm text-gray-700">
+              {showTime ? '非表示' : '表示'}
+            </span>
+          </div>
         </div>
         {!isCollapsed && (
           <>
