@@ -10,8 +10,8 @@ export interface Note {
   created_at: string;
   updated_at: string;
   user: CustomUser;  // ユーザー情報を含める
-  // youtube_id: string;
   youtube_video: YoutubeVideo;
+  youtube_video_id: number;
   likes_count: number; // いいねのカウントを追加
   likes: Like[];
 }

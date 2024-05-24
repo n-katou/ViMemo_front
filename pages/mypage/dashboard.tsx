@@ -271,6 +271,7 @@ const Dashboard = () => {
                   {noteLikes.map((like, index) => {
                     if (like.likeable && isNote(like.likeable)) {
                       const note = like.likeable;
+                      console.log('Note:', note); // デバッグ用のログ
                       return (
                         <Card key={note.id} className="col-span-1 custom-card-size">
                           <CardContent className="custom-card-content">
@@ -286,7 +287,7 @@ const Dashboard = () => {
                             )}
                             <Typography variant="body2" color="textPrimary" className="mb-2 note-content">メモ内容：{note.content}</Typography>
                             <Typography variant="body2" color="textSecondary">いいね数：{note.likes_count}</Typography>
-                            {note.youtube_video_id && (
+                            {note.youtube_video_id && ( // ここで確認
                               <Box mt={2}>
                                 <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
                                   <Button variant="contained" color="primary" size="small">この動画を見る</Button>
@@ -317,8 +318,8 @@ const Dashboard = () => {
           word-wrap: break-word;
         }
         .custom-card-size {
-          height: 250px; /* 固定サイズを設定 */
-          overflow: hidden; /* オーバーフローを隠す */
+          height: 250px;
+          overflow: hidden;
         }
         .custom-card-content {
           height: 100%;
@@ -327,8 +328,8 @@ const Dashboard = () => {
           justify-content: space-between;
         }
         .note-content {
-          white-space: pre-wrap; /* 改行を反映 */
-          overflow-y: auto; /* コンテンツがカードを超えた場合のスクロールを許可 */
+          white-space: pre-wrap;
+          overflow-y: auto;
         }
       `}</style>
     </div>
