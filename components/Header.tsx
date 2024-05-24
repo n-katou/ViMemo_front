@@ -120,6 +120,7 @@ const Header: React.FC = () => {
   const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
       await logout();
+      setDrawerOpen(false); // ドロワーを閉じる
       localStorage.setItem('isMessageDisplayed', 'false');
       router.push('/login?flash_message=ログアウトしました');
     }
