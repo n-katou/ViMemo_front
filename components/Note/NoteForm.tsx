@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import useMediaQuery from '../../hooks/useMediaQuery';
+import Modal from './Modal'; // モーダルコンポーネントのインポート
+import { FaPlus } from 'react-icons/fa'; // アイコンのインポート
 
 type NoteFormProps = {
   addNote: (content: string, minutes: number, seconds: number, isVisible: boolean) => Promise<void>;
@@ -9,6 +12,9 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
   const [timestampMinutes, setTimestampMinutes] = useState('');
   const [timestampSeconds, setTimestampSeconds] = useState('');
   const [isVisible, setIsVisible] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,9 +23,10 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
     setTimestampMinutes('');
     setTimestampSeconds('');
     setIsVisible(true);
+    setIsModalOpen(false);
   };
 
-  return (
+  const formContent = (
     <form onSubmit={handleSubmit} className="space-y-6 p-4 bg-white shadow-md rounded-md">
       <div className="form-control">
         <label className="label font-semibold text-gray-700">メモを入力:</label>
@@ -73,6 +80,24 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
         </button>
       </div>
     </form>
+  );
+
+  return (
+    <>
+      {isMobile ? (
+        <>
+          <button onClick={() => setIsModalOpen(true)} className="btn btn-primary flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
+            <FaPlus />
+            メモを追加
+          </button>
+          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            {formContent}
+          </Modal>
+        </>
+      ) : (
+        formContent
+      )}
+    </>
   );
 };
 
