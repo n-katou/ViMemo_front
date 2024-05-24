@@ -156,6 +156,7 @@ const Header: React.FC = () => {
   return (
     <>
       <Head>
+        <link rel="icon" href="/favicon.ico" />
         <title>Vimemo</title>
         <meta property="og:title" content="ViMemo" />
         <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
