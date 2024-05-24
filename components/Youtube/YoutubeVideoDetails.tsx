@@ -6,6 +6,8 @@ import IconButton from '@mui/material/IconButton';
 import YouTube from 'react-youtube';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 interface YoutubeVideoDetailsProps {
   video: YoutubeVideo & { formattedDuration: string };
@@ -20,6 +22,7 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handle
   const [currentTime, setCurrentTime] = useState<string>('0:00');
   const [player, setPlayer] = useState<any>(null);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [showTime, setShowTime] = useState<boolean>(true);
 
   const handlePlayerStateChange = (event: any) => {
     if (event.data === window.YT.PlayerState.PLAYING) {
@@ -55,16 +58,27 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({ video, handle
           onStateChange={handlePlayerStateChange}
           className="w-full aspect-video"
         />
-        <div className="absolute bottom-10 right-4 bg-black bg-opacity-50 text-white p-2 rounded">
-          {currentTime} / {video.formattedDuration}
-        </div>
+        {showTime && (
+          <div className="absolute bottom-10 right-4 bg-black bg-opacity-50 text-white p-2 rounded">
+            {currentTime} / {video.formattedDuration}
+          </div>
+        )}
       </div>
       <div className="p-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold mb-2">{video.title}</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">{video.title}</h2>
           <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
             {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
           </IconButton>
+        </div>
+        <div className="flex items-center mb-4">
+          <IconButton
+            onClick={() => setShowTime(!showTime)}
+            aria-label={showTime ? 'Hide Time' : 'Show Time'}
+          >
+            {showTime ? <VisibilityOffIcon /> : <VisibilityIcon />}
+          </IconButton>
+          <p className="ml-2 text-sm text-gray-700">タイムの表示・非表示切り替え</p>
         </div>
         {!isCollapsed && (
           <>
