@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "yarn next build",
-    "postbuild": "next-sitemap",
+    "sitemap": "next-sitemap",
     "start": "next start",
     "lint": "next lint",
     "deploy": "yarn build && firebase deploy"
