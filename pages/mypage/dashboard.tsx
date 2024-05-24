@@ -1,47 +1,30 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { YoutubeVideo } from '../../types/youtubeVideo';
-import { useAuth } from '../../context/AuthContext';
-import { Like } from '../../types/like';
-import { Note } from '../../types/note';
-import { CustomUser } from '../../types/user';
 import axios from 'axios';
-import Link from 'next/link';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Avatar from '@mui/material/Avatar';
+import debounce from 'lodash/debounce';
+import { useAuth } from '../../context/AuthContext';
 import { useFlashMessage } from '../../context/FlashMessageContext';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import ShuffleIcon from '@mui/icons-material/Shuffle';
-import Autocomplete from '@mui/lab/Autocomplete';
-import debounce from 'lodash/debounce';
+import UserCard from '../../components/Mypage/UserCard';
+import YoutubeLikesAccordion from '../../components/Mypage/YoutubeLikesAccordion';
+import NoteLikesAccordion from '../../components/Mypage/NoteLikesAccordion';
+import SearchForm from '../../components/Mypage/SearchForm';
+import { CustomUser } from '../../types/user';
+import { Like } from '../../types/like';
 
-function isNote(likeable: any): likeable is Note {
-  return likeable !== undefined && (likeable as Note).content !== undefined;
-}
-
-const Dashboard = () => {
+const Dashboard: React.FC = () => {
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
   const { setFlashMessage } = useFlashMessage();
   const router = useRouter();
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
-  const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [youtubeVideos, setYoutubeVideos] = useState([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isMessageDisplayed, setIsMessageDisplayed] = useState(false);
-  const [flashMessage, setFlashMessageState] = useState('');
+  const [flashMessage, setFlashMessageState] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,13 +46,13 @@ const Dashboard = () => {
         setYoutubePlaylistUrl(youtube_playlist_url);
 
         if (currentUser) {
-          const updatedUser = {
+          const updatedUser: CustomUser = {
             ...currentUser,
             avatar_url,
             role,
             email,
             name,
-          } as CustomUser;
+          };
 
           setAuthState({
             currentUser: updatedUser,
@@ -81,7 +64,6 @@ const Dashboard = () => {
         if (!localStorage.getItem('isMessageDisplayed')) {
           setFlashMessage('ログインに成功しました');
           localStorage.setItem('isMessageDisplayed', 'true');
-          setIsMessageDisplayed(true);
         }
       } catch (error) {
         setFlashMessage('ログインに失敗しました');
@@ -123,12 +105,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    fetchVideosByGenre(searchQuery);
-  };
-
-  const fetchSuggestions = async (query: string) => {
+  const debouncedFetchSuggestions = useCallback(debounce(async (query: string) => {
     if (!query) return;
 
     try {
@@ -149,9 +126,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error fetching YouTube suggestions:', error);
     }
-  };
-
-  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 1000), []);
+  }, 1000), []);
 
   useEffect(() => {
     debouncedFetchSuggestions(searchQuery);
@@ -188,133 +163,26 @@ const Dashboard = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-1/4 mb-8 md:mb-0">
-          <Card>
-            <CardContent>
-              <div className="flex items-center mb-4">
-                {currentUser.avatar_url && (
-                  <Avatar src={currentUser.avatar_url} alt="Avatar" sx={{ width: 64, height: 64, mr: 2 }} />
-                )}
-                <div className="text-container">
-                  <Typography variant="h6" className="text-wrap">{currentUser.name}</Typography>
-                  <Typography variant="body2" color="textSecondary" className="text-wrap">{currentUser.email}</Typography>
-                </div>
-              </div>
-              <Link href="/mypage/edit" legacyBehavior>
-                <Button variant="contained" color="primary" fullWidth>ユーザー編集</Button>
-              </Link>
-              {isAdmin && (
-                <Link href={`${process.env.NEXT_PUBLIC_API_URL}/admin/users`} legacyBehavior>
-                  <Button variant="contained" color="secondary" fullWidth className="mt-4">会員一覧</Button>
-                </Link>
-              )}
-            </CardContent>
-          </Card>
+          <UserCard currentUser={currentUser} isAdmin={isAdmin} />
         </div>
-
         <div className="w-full md:flex-1 md:pl-8">
           {currentUser.role === 'admin' && (
-            <Card className="mb-8">
-              <CardContent>
-                <form onSubmit={handleSearch}>
-                  <Box display="flex" alignItems="center" width="100%">
-                    <Autocomplete
-                      freeSolo
-                      options={suggestions}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          fullWidth
-                          variant="outlined"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          placeholder="キーワードで動画を取得"
-                        />
-                      )}
-                      sx={{ flex: 1 }}
-                    />
-                    <Button type="submit" variant="contained" color="primary" sx={{ ml: 2 }}>
-                      取得
-                    </Button>
-                  </Box>
-                </form>
-              </CardContent>
-            </Card>
+            <SearchForm
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              suggestions={suggestions}
+              handleSearch={(e) => {
+                e.preventDefault();
+                fetchVideosByGenre(searchQuery);
+              }}
+            />
           )}
-
-          <Accordion defaultExpanded>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">「いいね」した動画プレイリスト</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {youtubeVideoLikes.length > 0 ? (
-                <div className="mb-4 video-wrapper">
-                  <iframe
-                    src={youtubePlaylistUrl}
-                    frameBorder="0"
-                    allowFullScreen
-                    className="w-full aspect-video"
-                  ></iframe>
-                </div>
-              ) : (
-                <Typography variant="body2" color="textSecondary">いいねした動画がありません。</Typography>
-              )}
-            </AccordionDetails>
-            <Box textAlign="center" mt={2} mb={4}>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<ShuffleIcon />}
-                onClick={shufflePlaylist}
-              >
-                プレイリストをシャッフル
-              </Button>
-            </Box>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">最新「いいね」したメモ一覧</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {noteLikes.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {noteLikes.map((like, index) => {
-                    if (like.likeable && isNote(like.likeable)) {
-                      const note = like.likeable;
-                      console.log('Note:', note); // デバッグ用のログ
-                      return (
-                        <Card key={note.id} className="col-span-1 custom-card-size">
-                          <CardContent className="custom-card-content">
-                            {note.user && (
-                              <div className="flex items-center mb-4">
-                                {note.user.avatar_url && (
-                                  <Avatar src={note.user.avatar_url} alt="User Avatar" sx={{ width: 32, height: 32, mr: 2 }} />
-                                )}
-                                <div>
-                                  <Typography variant="body2" className="font-bold">{note.user.name}</Typography>
-                                </div>
-                              </div>
-                            )}
-                            <Typography variant="body2" color="textPrimary" className="mb-2 note-content">メモ内容：{note.content}</Typography>
-                            <Typography variant="body2" color="textSecondary">いいね数：{note.likes_count}</Typography>
-                            {note.youtube_video_id && ( // ここで確認
-                              <Box mt={2}>
-                                <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
-                                  <Button variant="contained" color="primary" size="small">この動画を見る</Button>
-                                </Link>
-                              </Box>
-                            )}
-                          </CardContent>
-                        </Card>
-                      );
-                    }
-                    return null;
-                  })}
-                </div>
-              ) : (
-                <Typography variant="body2" color="textSecondary">いいねしたメモがありません。</Typography>
-              )}
-            </AccordionDetails>
-          </Accordion>
+          <YoutubeLikesAccordion
+            youtubeVideoLikes={youtubeVideoLikes}
+            youtubePlaylistUrl={youtubePlaylistUrl}
+            shufflePlaylist={shufflePlaylist}
+          />
+          <NoteLikesAccordion noteLikes={noteLikes} />
         </div>
       </div>
       {flashMessage && (
