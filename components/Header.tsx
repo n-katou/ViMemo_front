@@ -72,6 +72,9 @@ const Header: React.FC = () => {
           <div className="flex items-center">
             <IconButton onClick={toggleSearch} color="inherit">
               <SearchIcon />
+              <Typography variant="body1" sx={{ marginLeft: 1 }}>
+                検索
+              </Typography>
             </IconButton>
             <SearchDialog
               searchOpen={searchOpen}
@@ -79,7 +82,9 @@ const Header: React.FC = () => {
             />
           </div>
           <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
-            YouTube
+            <Typography variant="body1">
+              YouTube
+            </Typography>
           </Button>
           <div>
             <IconButton

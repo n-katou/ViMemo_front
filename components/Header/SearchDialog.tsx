@@ -74,6 +74,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Video[]>([]);
+  const [maxSuggestions, setMaxSuggestions] = useState(10);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -93,6 +94,21 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
 
     fetchSuggestions();
   }, [query]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 600) {
+        setMaxSuggestions(3);
+      } else {
+        setMaxSuggestions(10);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Call initially to set the correct state
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -140,7 +156,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
             />
           </Search>
           <ul>
-            {suggestions.map((suggestion) => (
+            {suggestions.slice(0, maxSuggestions).map((suggestion) => (
               <StyledMenuItem key={suggestion.id} onClick={() => handleSuggestionClick(suggestion.id)}>
                 {suggestion.title}
               </StyledMenuItem>
