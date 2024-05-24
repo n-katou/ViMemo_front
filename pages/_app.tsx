@@ -10,8 +10,7 @@ import { FlashMessageProvider, useFlashMessage } from '../context/FlashMessageCo
 import FlashMessage from '../components/FlashMessage';
 import { Alert, Container, Box } from '@mui/material';
 import { useRouter } from 'next/router';
-import { analytics } from '../lib/initFirebase';
-import { logEvent } from 'firebase/analytics';
+import * as gtag from '../lib/gtag';
 
 interface AuthenticatedAppProps {
   Component: AppProps['Component'];
@@ -61,9 +60,7 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
 
   useEffect(() => {
     const logPageView = (url: string) => {
-      if (analytics) {
-        logEvent(analytics, 'page_view', { page_path: url });
-      }
+      gtag.pageview(url);
     };
 
     logPageView(window.location.pathname);
@@ -87,6 +84,22 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
         <meta property="og:type" content="website" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="canonical" href="https://vimemo.vercel.app" />
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_TRACKING_ID}`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${gtag.GA_TRACKING_ID}', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
       </Head>
       <FlashMessageProvider>
         <AuthProvider>
