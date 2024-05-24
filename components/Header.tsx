@@ -157,8 +157,8 @@ const Header: React.FC = () => {
     <>
       <Head>
         <title>Vimemo</title>
-        <meta property="og:title" content="vimemo" />
-        <meta property="og:description" content="動画視聴中、時間軸上で直感的にメモを追加しXへ共有できるサービス" />
+        <meta property="og:title" content="ViMemo" />
+        <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
         <meta property="og:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
         <meta property="og:url" content="https://vimemo.vercel.app" />
         <meta property="og:type" content="website" />
