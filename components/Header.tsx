@@ -28,6 +28,7 @@ import NoteIcon from '@mui/icons-material/Note';
 import axios from 'axios';
 import { useFlashMessage } from '../context/FlashMessageContext';
 import CloseIcon from '@mui/icons-material/Close';
+import Head from 'next/head';
 
 interface Video {
   id: number;
@@ -153,141 +154,151 @@ const Header: React.FC = () => {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: 'black' }}>
-      <Toolbar>
-        <Typography
-          variant="h6"
-          noWrap
-          component="div"
-          sx={{
-            flexGrow: 1,
-            fontSize: {
-              xs: '1rem',
-              sm: '1.25rem',
-              md: '1.5rem',
-            }
-          }}
-        >
-          Vimemo
-        </Typography>
-        <div className="flex items-center">
-          <IconButton onClick={toggleSearch} color="inherit">
-            <SearchIcon />
-          </IconButton>
-          <Dialog
-            open={searchOpen}
-            onClose={toggleSearch}
-            maxWidth="sm" // ダイアログの最大幅を設定
-            fullWidth // ダイアログを全幅に設定
+    <>
+      <Head>
+        <title>Vimemo</title>
+        <meta property="og:title" content="vimemo" />
+        <meta property="og:description" content="動画視聴中、時間軸上で直感的にメモを追加しXへ共有できるサービス" />
+        <meta property="og:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
+        <meta property="og:url" content="https://vimemo.vercel.app" />
+        <meta property="og:type" content="website" />
+      </Head>
+      <AppBar position="static" sx={{ backgroundColor: 'black' }}>
+        <Toolbar>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{
+              flexGrow: 1,
+              fontSize: {
+                xs: '1rem',
+                sm: '1.25rem',
+                md: '1.5rem',
+              }
+            }}
           >
-            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              検索
+            Vimemo
+          </Typography>
+          <div className="flex items-center">
+            <IconButton onClick={toggleSearch} color="inherit">
+              <SearchIcon />
+            </IconButton>
+            <Dialog
+              open={searchOpen}
+              onClose={toggleSearch}
+              maxWidth="sm" // ダイアログの最大幅を設定
+              fullWidth // ダイアログを全幅に設定
+            >
+              <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                検索
+                <IconButton
+                  edge="end"
+                  color="inherit"
+                  onClick={toggleSearch}
+                  aria-label="close"
+                >
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <form onSubmit={handleSearch}>
+                  <Search>
+                    <SearchIconWrapper>
+                      <SearchIcon />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                      placeholder="タイトル検索"
+                      inputProps={{ 'aria-label': 'search' }}
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                  </Search>
+                  <ul>
+                    {suggestions.map((suggestion) => (
+                      <StyledMenuItem key={suggestion.id} onClick={() => handleSuggestionClick(suggestion.id)}>
+                        {suggestion.title}
+                      </StyledMenuItem>
+                    ))}
+                  </ul>
+                  <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
+                    検索
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+          <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
+            YouTube
+          </Button>
+          <div>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={toggleDrawer(true)}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+            <Drawer
+              anchor="right"
+              open={drawerOpen}
+              onClose={toggleDrawer(false)}
+              sx={{ '& .MuiDrawer-paper': { width: '250px', position: 'fixed', right: 0, height: '100%' } }} // ドロワーの幅とpositionを設定
+            >
               <IconButton
-                edge="end"
+                edge="start"
                 color="inherit"
-                onClick={toggleSearch}
+                onClick={toggleDrawer(false)}
                 aria-label="close"
+                sx={{ position: 'absolute', top: 8, left: 8 }}
               >
                 <CloseIcon />
               </IconButton>
-            </DialogTitle>
-            <DialogContent>
-              <form onSubmit={handleSearch}>
-                <Search>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                    placeholder="タイトル検索"
-                    inputProps={{ 'aria-label': 'search' }}
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                </Search>
-                <ul>
-                  {suggestions.map((suggestion) => (
-                    <StyledMenuItem key={suggestion.id} onClick={() => handleSuggestionClick(suggestion.id)}>
-                      {suggestion.title}
-                    </StyledMenuItem>
-                  ))}
-                </ul>
-                <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
-                  検索
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-        <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
-          YouTube
-        </Button>
-        <div>
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={toggleDrawer(true)}
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-          <Drawer
-            anchor="right"
-            open={drawerOpen}
-            onClose={toggleDrawer(false)}
-            sx={{ '& .MuiDrawer-paper': { width: '250px', position: 'fixed', right: 0, height: '100%' } }} // ドロワーの幅とpositionを設定
-          >
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={toggleDrawer(false)}
-              aria-label="close"
-              sx={{ position: 'absolute', top: 8, left: 8 }}
-            >
-              <CloseIcon />
-            </IconButton>
-            <List sx={{ marginTop: '48px' }}>
-              {currentUser ? (
-                <>
-                  <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/dashboard">
+              <List sx={{ marginTop: '48px' }}>
+                {currentUser ? (
+                  <>
+                    <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/dashboard">
+                      <ListItemIcon>
+                        <PersonIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="マイページ" />
+                    </ListItem>
+                    <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/favorites">
+                      <ListItemIcon>
+                        <FavoriteIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="お気に入りの動画" />
+                    </ListItem>
+                    <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/my_notes">
+                      <ListItemIcon>
+                        <NoteIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="MYメモ一覧" />
+                    </ListItem>
+                    <ListItem button onClick={handleLogout}>
+                      <ListItemIcon>
+                        <ExitToAppIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="ログアウト" />
+                    </ListItem>
+                  </>
+                ) : (
+                  <ListItem button onClick={toggleDrawer(false)} component={Link} href="/login">
                     <ListItemIcon>
-                      <PersonIcon />
+                      <LoginIcon />
                     </ListItemIcon>
-                    <ListItemText primary="マイページ" />
+                    <ListItemText primary="ログインページ" />
                   </ListItem>
-                  <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/favorites">
-                    <ListItemIcon>
-                      <FavoriteIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="お気に入りの動画" />
-                  </ListItem>
-                  <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/my_notes">
-                    <ListItemIcon>
-                      <NoteIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="MYメモ一覧" />
-                  </ListItem>
-                  <ListItem button onClick={handleLogout}>
-                    <ListItemIcon>
-                      <ExitToAppIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="ログアウト" />
-                  </ListItem>
-                </>
-              ) : (
-                <ListItem button onClick={toggleDrawer(false)} component={Link} href="/login">
-                  <ListItemIcon>
-                    <LoginIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="ログインページ" />
-                </ListItem>
-              )}
-            </List>
-          </Drawer>
-        </div>
-      </Toolbar>
-    </AppBar>
+                )}
+              </List>
+            </Drawer>
+          </div>
+        </Toolbar>
+      </AppBar>
+    </>
   );
 };
 
