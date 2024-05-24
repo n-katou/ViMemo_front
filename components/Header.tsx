@@ -28,7 +28,6 @@ import NoteIcon from '@mui/icons-material/Note';
 import axios from 'axios';
 import { useFlashMessage } from '../context/FlashMessageContext';
 import CloseIcon from '@mui/icons-material/Close';
-import Head from 'next/head';
 
 interface Video {
   id: number;
@@ -155,15 +154,6 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <link rel="icon" href="/favicon.ico" />
-        <title>Vimemo</title>
-        <meta property="og:title" content="ViMemo" />
-        <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
-        <meta property="og:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
-        <meta property="og:url" content="https://vimemo.vercel.app" />
-        <meta property="og:type" content="website" />
-      </Head>
       <AppBar position="static" sx={{ backgroundColor: 'black' }}>
         <Toolbar>
           <Typography
