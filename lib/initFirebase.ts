@@ -1,6 +1,7 @@
 // lib/initFirebase.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getAnalytics, Analytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCBTeINHuytWKsQdYLQn9WNqRwHKzwTUFA",
@@ -12,8 +13,6 @@ const firebaseConfig = {
   measurementId: "G-BSTSJJB3RF"
 };
 
-// Firebase初期化し、FirebaseAppオブジェクトを作成
-// appが既に存在する場合、そのappを取得する
 const getFirebaseApp = () => {
   if (getApps().length === 0) {
     return initializeApp(firebaseConfig);
@@ -23,6 +22,11 @@ const getFirebaseApp = () => {
 };
 
 const app = getFirebaseApp();
-
-// FirebaseAppに関連付けられたAuthインスタンスを取得
 export const auth = getAuth(app);
+
+let analytics: Analytics | null = null;
+if (typeof window !== "undefined") {
+  analytics = getAnalytics(app);
+}
+
+export { analytics };

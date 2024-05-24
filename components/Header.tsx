@@ -26,8 +26,9 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LoginIcon from '@mui/icons-material/Login';
 import NoteIcon from '@mui/icons-material/Note';
 import axios from 'axios';
-import { useFlashMessage } from '../context/FlashMessageContext';
 import CloseIcon from '@mui/icons-material/Close';
+import FlashMessage from '../components/FlashMessage'; // フラッシュメッセージコンポーネントのインポート
+import { useFlashMessage } from '../context/FlashMessageContext'; // フラッシュメッセージコンテキストのインポート
 
 interface Video {
   id: number;
@@ -84,7 +85,7 @@ const StyledMenuItem = styled(ListItem)(({ theme }) => ({
 const Header: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
-  const { setFlashMessage } = useFlashMessage();
+  const { setFlashMessage } = useFlashMessage(); // フラッシュメッセージの使用
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Video[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -119,10 +120,9 @@ const Header: React.FC = () => {
   const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
       await logout();
-      setFlashMessage('ログアウトしました');
+      setDrawerOpen(false); // ドロワーを閉じる
       localStorage.setItem('isMessageDisplayed', 'false');
-      setDrawerOpen(false);
-      router.push('/');
+      router.push('/?flash_message=ログアウトしました');
     }
   };
 
@@ -178,8 +178,8 @@ const Header: React.FC = () => {
             <Dialog
               open={searchOpen}
               onClose={toggleSearch}
-              maxWidth="sm" // ダイアログの最大幅を設定
-              fullWidth // ダイアログを全幅に設定
+              maxWidth="sm"
+              fullWidth
             >
               <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 検索
@@ -237,7 +237,7 @@ const Header: React.FC = () => {
               anchor="right"
               open={drawerOpen}
               onClose={toggleDrawer(false)}
-              sx={{ '& .MuiDrawer-paper': { width: '250px', position: 'fixed', right: 0, height: '100%' } }} // ドロワーの幅とpositionを設定
+              sx={{ '& .MuiDrawer-paper': { width: '250px', position: 'fixed', right: 0, height: '100%' } }}
             >
               <IconButton
                 edge="start"
@@ -289,6 +289,7 @@ const Header: React.FC = () => {
           </div>
         </Toolbar>
       </AppBar>
+      <FlashMessage /> {/* フラッシュメッセージコンポーネントを追加 */}
     </>
   );
 };
