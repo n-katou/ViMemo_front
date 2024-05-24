@@ -28,6 +28,7 @@ import NoteIcon from '@mui/icons-material/Note';
 import axios from 'axios';
 import { useFlashMessage } from '../context/FlashMessageContext';
 import CloseIcon from '@mui/icons-material/Close';
+import FlashMessage from '../components/FlashMessage'; // フラッシュメッセージコンポーネントのインポート
 
 interface Video {
   id: number;
@@ -119,8 +120,8 @@ const Header: React.FC = () => {
   const handleLogout = async () => {
     if (window.confirm('本当にログアウトしますか？')) {
       await logout();
-      setFlashMessage('ログアウトしました');
       localStorage.setItem('isMessageDisplayed', 'false');
+      setFlashMessage('ログアウトしました');
       setDrawerOpen(false);
       router.push('/');
     }
@@ -289,6 +290,7 @@ const Header: React.FC = () => {
           </div>
         </Toolbar>
       </AppBar>
+      <FlashMessage /> {/* フラッシュメッセージコンポーネントを追加 */}
     </>
   );
 };
