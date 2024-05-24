@@ -15,7 +15,6 @@ interface YoutubeLikesAccordionProps {
   shufflePlaylist: () => void;
 }
 
-
 const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVideoLikes, youtubePlaylistUrl, shufflePlaylist }) => {
   return (
     <Accordion defaultExpanded>
@@ -36,16 +35,18 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVi
           <Typography variant="body2" color="textSecondary">いいねした動画がありません。</Typography>
         )}
       </AccordionDetails>
-      <Box textAlign="center" mt={2} mb={4}>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<ShuffleIcon />}
-          onClick={shufflePlaylist}
-        >
-          プレイリストをシャッフル
-        </Button>
-      </Box>
+      {youtubeVideoLikes.length > 0 && (
+        <Box textAlign="center" mt={2} mb={4}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<ShuffleIcon />}
+            onClick={shufflePlaylist}
+          >
+            プレイリストをシャッフル
+          </Button>
+        </Box>
+      )}
     </Accordion>
   );
 };
