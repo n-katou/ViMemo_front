@@ -59,16 +59,14 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
   const nextRouter = useRouter();
 
   useEffect(() => {
-    const logPageView = (url: string) => {
+    const handleRouteChange = (url: string) => {
       gtag.pageview(url);
     };
 
-    logPageView(window.location.pathname);
-
-    nextRouter.events.on('routeChangeComplete', logPageView);
+    nextRouter.events.on('routeChangeComplete', handleRouteChange);
 
     return () => {
-      nextRouter.events.off('routeChangeComplete', logPageView);
+      nextRouter.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [nextRouter.events]);
 
