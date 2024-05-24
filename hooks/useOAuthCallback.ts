@@ -8,36 +8,56 @@ const useOAuthCallback = () => {
   const { setAuthState } = useAuth();
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('session_id');
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-    console.log("Token from URL:", token); // デバッグ用のログ
+    const fetchData = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('session_id');
 
-    if (token) {
-      localStorage.setItem('token', token);
+      console.log("Token from URL:", token); // デバッグ用のログ
 
-      // バックエンドからユーザーデータをフェッチ
-      fetchUserData(token)
-        .then(userData => {
-          setAuthState({ currentUser: userData, jwtToken: token });
-          router.push('/mypage/dashboard'); // ダッシュボードへリダイレクト
-        })
-        .catch(error => {
-          console.error("Error fetching user data:", error);
-          router.push('/login'); // エラーがあればログインページへリダイレクト
-        });
-    } else {
-      router.push('/login');
-    }
+      if (token) {
+        localStorage.setItem('token', token);
+
+        try {
+          const userData = await fetchUserData(token, signal);
+          if (!signal.aborted) {
+            setAuthState({ currentUser: userData, jwtToken: token });
+            await router.push('/mypage/dashboard'); // ダッシュボードへリダイレクト
+          }
+        } catch (error) {
+          if (!signal.aborted) {
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
+              console.error("Unauthorized error: ", error.response.data);
+            } else {
+              console.error("Error fetching user data:", error);
+            }
+            router.push('/login'); // エラーがあればログインページへリダイレクト
+          } else {
+            console.log("Fetch user data request was canceled");
+          }
+        }
+      } else {
+        router.push('/login');
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      controller.abort();
+    };
   }, [router, setAuthState]);
 };
 
-async function fetchUserData(token: string) {
+async function fetchUserData(token: string, signal: AbortSignal) {
   try {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`, {
       headers: {
         'Authorization': `Bearer ${token}`
-      }
+      },
+      signal: signal // リクエストにsignalを渡す
     });
 
     if (response.status !== 200) {
@@ -46,8 +66,12 @@ async function fetchUserData(token: string) {
 
     return response.data;
   } catch (error) {
-    console.error("Fetch user data failed:", error); // デバッグ用のログ
-    throw error;
+    if (axios.isCancel(error)) {
+      console.log("Fetch user data canceled");
+    } else {
+      console.error("Axios error:", error); // デバッグ用のログ
+      throw error;
+    }
   }
 }
 
