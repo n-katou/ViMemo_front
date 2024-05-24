@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://vimemo.vercel.app
+
+# Sitemaps
+Sitemap: https://vimemo.vercel.app/sitemap.xml
