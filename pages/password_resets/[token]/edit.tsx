@@ -38,7 +38,9 @@ const PasswordReset = () => {
       });
       setMessage(response.data.message);
       setError('');
-      router.push('/login'); // リセット後にログインページにリダイレクト
+      setTimeout(() => {
+        router.push('/login'); // リセット後にログインページにリダイレクト
+      }, 3000); // 3秒後にリダイレクト
     } catch (err: any) {
       setError(err.response?.data?.error || 'パスワードリセットに失敗しました。');
       setMessage('');

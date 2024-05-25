@@ -1,20 +1,30 @@
 "use client";
-import axios, { AxiosError } from 'axios';
-import { Button, TextField, Card, Typography, Snackbar, Alert } from '@mui/material';
-import useFirebaseAuth from '../hooks/useFirebaseAuth';
-import React, { useState } from 'react';
+import axios from 'axios';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button, TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
+import { useAuth } from '../context/AuthContext';
 
 const RegisterPage = () => {
   const router = useRouter();
-  const { currentUser, logout, loginWithGoogle } = useFirebaseAuth();
+  const { setAuthState, currentUser } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = async () => {
+  useEffect(() => {
+    if (currentUser) {
+      router.push('/mypage/dashboard');
+    }
+  }, [currentUser, router]);
+
+  const handleRegister = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
     try {
       const userData = {
         user: {
@@ -27,72 +37,57 @@ const RegisterPage = () => {
       const config = {
         headers: { 'Content-Type': 'application/json' }
       };
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`, userData, config);
-      console.log('Registration successful', response.data);
-      router.push('/?registered=true');
+      const registerResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`, userData, config);
+      console.log('Registration successful', registerResponse.data);
+
+      // ユーザー登録後にログインを試みる
+      const loginResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/login`, { email, password });
+      if (loginResponse.data.success) {
+        localStorage.setItem('token', loginResponse.data.token);
+        setAuthState({ currentUser: loginResponse.data.user, jwtToken: loginResponse.data.token });
+        // フラッシュメッセージをlocalStorageに保存
+        localStorage.setItem('flashMessage', '登録に成功しました');
+        router.push('/mypage/dashboard');
+      } else {
+        setError(loginResponse.data.error);
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data.error || '登録に失敗しました。');
       } else {
         setError('登録に失敗しました。');
       }
+    } finally {
+      setLoading(false);
     }
   };
-
-  // const handleGoogleLogin = async () => {
-  //   try {
-  //     const user = await loginWithGoogle();
-  //     if (user) {
-  //       const token = await user.getIdToken();
-  //       const userData = {
-  //         user: {
-  //           name: user.displayName,
-  //           email: user.email,
-  //           password: 'test',
-  //           password_confirmation: 'test'
-  //         }
-  //       };
-  //       const config = {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': `Bearer ${token}`
-  //         }
-  //       };
-  //       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/auth_create`, userData, config);
-  //       console.log('User registered successfully');
-  //     }
-  //   } catch (error) {
-  //     setError('Google アカウントでの登録に失敗しました。');
-  //   }
-  // };
 
   const handleCloseSnackbar = () => {
     setError('');
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100vh' }}>
-      <Card style={{ padding: '20px', maxWidth: 400, width: '100%', marginBottom: '20px' }}>
+    <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#f5f5f5">
+      <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
         <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
           ユーザー登録
         </Typography>
-        <TextField label="名前" variant="outlined" fullWidth margin="normal" value={name} onChange={e => setName(e.target.value)} />
-        <TextField label="メールアドレス" variant="outlined" fullWidth margin="normal" value={email} onChange={e => setEmail(e.target.value)} />
-        <TextField label="パスワード" variant="outlined" type="password" fullWidth margin="normal" value={password} onChange={e => setPassword(e.target.value)} />
-        <TextField label="パスワード確認" variant="outlined" type="password" fullWidth margin="normal" value={passwordConfirmation} onChange={e => setPasswordConfirmation(e.target.value)} />
-        <Button onClick={handleRegister} variant="contained" color="primary" fullWidth style={{ marginTop: '20px' }}>
-          登録
-        </Button>
+        <form onSubmit={handleRegister}>
+          <TextField label="名前" variant="outlined" fullWidth margin="normal" value={name} onChange={e => setName(e.target.value)} />
+          <TextField label="メールアドレス" variant="outlined" fullWidth margin="normal" value={email} onChange={e => setEmail(e.target.value)} />
+          <TextField label="パスワード" variant="outlined" type="password" fullWidth margin="normal" value={password} onChange={e => setPassword(e.target.value)} />
+          <TextField label="パスワード確認" variant="outlined" type="password" fullWidth margin="normal" value={passwordConfirmation} onChange={e => setPasswordConfirmation(e.target.value)} />
+          <Button type="submit" variant="contained" color="primary" fullWidth style={{ marginTop: '20px' }} disabled={loading}>
+            {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : '登録'}
+          </Button>
+        </form>
       </Card>
       <Snackbar open={!!error} autoHideDuration={6000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
           {error}
         </Alert>
       </Snackbar>
-      {/* <Button onClick={handleGoogleLogin} variant="contained" color="primary">
-        Googleで登録
-      </Button> */}
-    </div>
+    </Box>
   );
 }
 
