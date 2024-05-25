@@ -150,8 +150,16 @@ const RootPage = () => {
       minHeight="100vh"
       sx={{ background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', padding: '2rem' }}
     >
-      <Paper elevation={3} sx={{ padding: 4, textAlign: 'center', width: '80%', maxWidth: '1200px', height: 'auto', overflow: 'hidden' }}>
-        <Typography variant="h4" gutterBottom>ViMemoは、動画視聴中に直感的にメモを追加できるサービスです</Typography>
+      <Paper elevation={3} sx={{ padding: 4, textAlign: 'left', width: '100%', maxWidth: 'auto', height: 'auto', overflow: 'hidden' }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }
+          }}
+        >
+          ViMemoは、動画視聴中に直感的にメモを追加できるサービスです
+        </Typography>
         <Typography variant="h5" sx={{ marginTop: 4 }}>機能説明</Typography>
         <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
           <Select value={activeTab} onChange={handleTabChange} fullWidth>
@@ -168,9 +176,11 @@ const RootPage = () => {
         <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 2 }}>
           <Tabs tabs={tabs} />
         </Box>
-        <Button onClick={() => router.push('/login')} variant="contained" color="primary" sx={{ marginTop: 2 }}>
-          ログインページへ
-        </Button>
+        {!currentUser && (
+          <Button onClick={() => router.push('/login')} variant="contained" color="primary" sx={{ marginTop: 2 }}>
+            ログインページへ
+          </Button>
+        )}
       </Paper>
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
