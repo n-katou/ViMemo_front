@@ -265,7 +265,7 @@ const YoutubeVideosPage: React.FC = () => {
         <select
           value={sortOption}
           onChange={(e) => handleSortChange(e.target.value)}
-          className="form-select form-select-lg"
+          className="form-select form-select-lg text-white bg-gray-800 border-gray-600"
         >
           <option value="created_at_desc">デフォルト（新しい順）</option>
           <option value="likes_desc">いいね数順</option>
@@ -348,6 +348,14 @@ const YoutubeVideosPage: React.FC = () => {
               shape="rounded"
               color="primary"
               size="large"
+              sx={{
+                '& .MuiPaginationItem-root': {
+                  color: 'white',
+                },
+                '& .MuiPaginationItem-root.Mui-selected': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                },
+              }}
             />
           </Stack>
         </>

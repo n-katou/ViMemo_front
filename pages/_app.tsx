@@ -58,12 +58,14 @@ function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppP
 
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
   const nextRouter = useRouter();
+  const [showFooter, setShowFooter] = useState(true);
 
   useEffect(() => {
     const handleRouteChange = (url: string) => {
       if (analytics) {
         logEvent(analytics, 'page_view', { page_path: url });
       }
+      setShowFooter(url !== '/'); // ルートページ以外ではFooterを表示する
     };
 
     nextRouter.events.on('routeChangeComplete', handleRouteChange);
@@ -92,12 +94,14 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
             <Box sx={{ flexShrink: 0 }}>
               <Header />
             </Box>
-            <Box component="main" sx={{ flex: 1 }}>
+            <Box component="main" sx={{ flex: 1, backgroundColor: 'black', color: 'white' }}>
               <AuthenticatedApp Component={Component} pageProps={pageProps} appRouter={router} />
             </Box>
-            <Box sx={{ position: 'fixed', bottom: 0, width: '100%' }}>
-              <Footer />
-            </Box>
+            {showFooter && (
+              <Box sx={{ flexShrink: 0 }}>
+                <Footer />
+              </Box>
+            )}
           </Box>
         </AuthProvider>
       </FlashMessageProvider>

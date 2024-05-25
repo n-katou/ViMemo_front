@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { Tabs } from '../components/Tabs'; // Tabsコンポーネントをインポート
 import { WavyBackground } from '../components/WavyBackground'; // WavyBackgroundコンポーネントをインポート
+import Footer from '../components/Footer'; // Footerコンポーネントをインポート
 
 
 const tabs = [
@@ -199,6 +200,7 @@ const RootPage = () => {
             )}
           </div>
         </div>
+        {/* <Footer /> */}
         <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
           <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
             {snackbarMessage}
