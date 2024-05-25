@@ -156,46 +156,48 @@ const RootPage = () => {
           margin: 0,
         }}
       >
-        <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', flex: 1, backgroundColor: 'transparent', color: 'white', boxShadow: 'none', margin: 'auto' }}>
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{
-              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-              margin: 0,
-            }}
-          >
-            ViMemoは、動画視聴中に直感的にメモを追加できるサービスです
-          </Typography>
-          <Typography variant="h5" sx={{ marginTop: 0 }}>機能説明</Typography>
-          <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-            <Select value={activeTab} onChange={handleTabChange} fullWidth sx={{ color: 'white' }}>
-              {tabs.map((tab) => (
-                <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
-                  {tab.title}
-                </MenuItem>
-              ))}
-            </Select>
-            <Box sx={{ marginTop: 0 }}>
-              {activeTabContent}
-            </Box>
-          </Box>
-          <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 0 }}>
-            <Tabs tabs={tabs} />
-          </Box>
-          {!currentUser && (
-            <Button
-              onClick={() => router.push('/login')}
-              variant="contained"
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px' }}>
+          <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: 'white', boxShadow: 'none' }}>
+            <Typography
+              variant="h4"
+              gutterBottom
               sx={{
-                marginTop: 0,
-                background: 'linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee)',
-                color: 'white',
+                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+                margin: 0,
               }}
             >
-              ログインページへ
-            </Button>
-          )}
+              ViMemoは、動画視聴中に直感的にメモを追加できるサービスです
+            </Typography>
+            <Typography variant="h5" sx={{ marginTop: 0 }}>機能説明</Typography>
+            <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 2 }}>
+              <Select value={activeTab} onChange={handleTabChange} fullWidth sx={{ color: 'white' }}>
+                {tabs.map((tab) => (
+                  <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
+                    {tab.title}
+                  </MenuItem>
+                ))}
+              </Select>
+              <Box sx={{ marginTop: 2 }}>
+                {activeTabContent}
+              </Box>
+            </Box>
+            <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 2 }}>
+              <Tabs tabs={tabs} />
+            </Box>
+            {!currentUser && (
+              <Button
+                onClick={() => router.push('/login')}
+                variant="contained"
+                sx={{
+                  marginTop: 4,
+                  background: 'linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee)',
+                  color: 'white',
+                }}
+              >
+                ログインページへ
+              </Button>
+            )}
+          </div>
         </div>
         <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
           <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
