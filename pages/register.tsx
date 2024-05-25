@@ -1,8 +1,8 @@
 "use client";
 import axios from 'axios';
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, TextField, Card, Typography, Snackbar, Alert, CircularProgress, Box } from '@mui/material';
+import { Button, TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 
 const RegisterPage = () => {
@@ -46,8 +46,8 @@ const RegisterPage = () => {
         localStorage.setItem('token', loginResponse.data.token);
         setAuthState({ currentUser: loginResponse.data.user, jwtToken: loginResponse.data.token });
         // フラッシュメッセージをlocalStorageに保存
-        localStorage.setItem('flashMessage', '登録が成功しました');
-        router.push('/mypage/dashboard?flash_message=登録に成功しました');
+        localStorage.setItem('flashMessage', '登録に成功しました');
+        router.push('/mypage/dashboard');
       } else {
         setError(loginResponse.data.error);
       }

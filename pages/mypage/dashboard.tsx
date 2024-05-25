@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import debounce from 'lodash/debounce';
 import { useAuth } from '../../context/AuthContext';
-import { useFlashMessage } from '../../context/FlashMessageContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
@@ -16,7 +15,6 @@ import { Like } from '../../types/like';
 
 const Dashboard: React.FC = () => {
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
-  const { setFlashMessage } = useFlashMessage();
   const router = useRouter();
   const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<Like[]>([]);
@@ -61,24 +59,18 @@ const Dashboard: React.FC = () => {
           localStorage.setItem('currentUser', JSON.stringify(updatedUser));
         }
 
-        if (!localStorage.getItem('isMessageDisplayed')) {
-          setFlashMessage('ログインに成功しました');
-          localStorage.setItem('isMessageDisplayed', 'true');
+        const storedFlashMessage = localStorage.getItem('flashMessage');
+        if (storedFlashMessage) {
+          setFlashMessageState(storedFlashMessage);
+          localStorage.removeItem('flashMessage');
         }
       } catch (error) {
-        setFlashMessage('ログインに失敗しました');
         console.error('Error fetching mypage data:', error);
       }
     };
 
-    const loginSuccessMessage = localStorage.getItem('loginSuccessMessage');
-    if (loginSuccessMessage) {
-      setFlashMessageState(loginSuccessMessage);
-      localStorage.removeItem('loginSuccessMessage');
-    }
-
     fetchData();
-  }, [jwtToken]);
+  }, [jwtToken, currentUser, setAuthState]);
 
   const fetchVideosByGenre = async (genre: string) => {
     try {
@@ -92,7 +84,7 @@ const Dashboard: React.FC = () => {
       if (response.status === 200) {
         const { youtube_videos_data, newly_created_count } = response.data;
         setYoutubeVideos(youtube_videos_data);
-        setFlashMessage(`動画を ${newly_created_count} 件取得しました`);
+        setFlashMessageState(`動画を ${newly_created_count} 件取得しました`);
 
         router.push(`/youtube_videos`);
       }
@@ -149,6 +141,10 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setFlashMessageState('');
+  };
+
   if (loading) {
     return <LoadingSpinner loading={loading} />;
   }
@@ -189,10 +185,10 @@ const Dashboard: React.FC = () => {
         <Snackbar
           open={!!flashMessage}
           autoHideDuration={6000}
-          onClose={() => setFlashMessageState('')}
+          onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
-          <Alert onClose={() => setFlashMessageState('')} severity="success" sx={{ width: '100%' }}>
+          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
             {flashMessage}
           </Alert>
         </Snackbar>
