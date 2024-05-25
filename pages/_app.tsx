@@ -58,14 +58,12 @@ function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppP
 
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
   const nextRouter = useRouter();
-  const [showFooter, setShowFooter] = useState(true);
 
   useEffect(() => {
     const handleRouteChange = (url: string) => {
       if (analytics) {
         logEvent(analytics, 'page_view', { page_path: url });
       }
-      setShowFooter(url !== '/'); // ルートページ以外ではFooterを表示する
     };
 
     nextRouter.events.on('routeChangeComplete', handleRouteChange);
@@ -74,6 +72,8 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
       nextRouter.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [nextRouter.events]);
+
+  const showFooter = router.pathname !== '/login'; // ログインページ以外でフッターを表示
 
   return (
     <>
