@@ -88,14 +88,14 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
       </Head>
       <FlashMessageProvider>
         <AuthProvider>
-          <Box id="root" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'black', color: 'white' }}>
+          <Box id="root" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Box sx={{ flexShrink: 0 }}>
               <Header />
             </Box>
-            <Box component="main" sx={{ flex: 1, backgroundColor: 'white', color: 'black', overflowY: 'auto' }}>
+            <Box component="main" sx={{ flex: 1 }}>
               <AuthenticatedApp Component={Component} pageProps={pageProps} appRouter={router} />
             </Box>
-            <Box sx={{ flexShrink: 0, width: '100%' }}>
+            <Box sx={{ position: 'fixed', bottom: 0, width: '100%' }}>
               <Footer />
             </Box>
           </Box>

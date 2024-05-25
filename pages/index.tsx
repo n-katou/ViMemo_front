@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { Tabs } from '../components/Tabs'; // Tabsコンポーネントをインポート
 import { WavyBackground } from '../components/WavyBackground'; // WavyBackgroundコンポーネントをインポート
-import Footer from '../components/Footer';
+
 
 const tabs = [
   {
@@ -202,9 +202,6 @@ const RootPage = () => {
             {snackbarMessage}
           </Alert>
         </Snackbar>
-        <Box sx={{ flexShrink: 0 }}>
-          <Footer />
-        </Box>
       </div>
     </WavyBackground>
   );
