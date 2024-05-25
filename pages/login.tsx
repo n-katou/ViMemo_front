@@ -153,6 +153,9 @@ const LoginPage = () => {
         <div className="text-center mt-4">
           <Link href="/register">登録ページへ</Link>
         </div>
+        <div className="text-center mt-4">
+          <Link href="/password_reset">パスワードを忘れた方はこちら</Link>
+        </div>
       </Card>
       {error && (
         <Snackbar
