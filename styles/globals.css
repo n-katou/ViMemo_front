@@ -147,3 +147,7 @@ footer {
 .no-visible-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+.bg-gradient-rainbow {
+  background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee);
+}

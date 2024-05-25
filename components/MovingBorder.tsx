@@ -35,7 +35,9 @@ export function Button({
       className={cn(
         "relative text-xl h-16 w-40 p-[1px] overflow-hidden",
         containerClassName,
-        isActive ? "bg-blue-500 text-white" : "bg-transparent text-white" // アクティブなタブの場合のスタイルを追加
+        isActive
+          ? "bg-gradient-to-r from-[#38bdf8] via-[#818cf8] via-[#c084fc] via-[#e879f9] to-[#22d3ee] text-white"
+          : "bg-black text-white" // アクティブなタブの場合のスタイルを追加
       )}
       style={{
         borderRadius: borderRadius,
@@ -49,9 +51,12 @@ export function Button({
         <MovingBorder duration={duration} rx="30%" ry="30%" isActive={isActive}>
           <div
             className={cn(
-              "h-20 w-20 opacity-[0.8] bg-[radial-gradient(var(--sky-500)_40%,transparent_60%)]",
+              "h-20 w-20 opacity-[0.8]",
               borderClassName
             )}
+            style={{
+              background: "linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee)", // レインボーグラデーションを適用
+            }}
           />
         </MovingBorder>
       </div>
@@ -73,7 +78,7 @@ export function Button({
 
 export const MovingBorder = ({
   children,
-  duration = 4000,
+  duration = 7000,
   rx,
   ry,
   isActive = false, // 新しく追加したプロパティ
@@ -135,6 +140,10 @@ export const MovingBorder = ({
           left: 0,
           display: "inline-block",
           transform,
+          background: "linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee)", // レインボーグラデーションを適用
+          borderRadius: "50%",
+          width: "20px",
+          height: "20px",
         }}
       >
         {children}
