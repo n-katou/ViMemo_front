@@ -24,53 +24,63 @@ const Dashboard: React.FC = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [flashMessage, setFlashMessageState] = useState<string>('');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!jwtToken) {
-        console.error('Token is undefined');
-        return;
-      }
+  const fetchData = useCallback(async () => {
+    if (!jwtToken) {
+      console.error('Token is undefined');
+      return;
+    }
 
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mypage`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mypage`, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
 
-        const { youtube_video_likes, note_likes, youtube_playlist_url, avatar_url, role, email, name } = response.data;
-        setYoutubeVideoLikes(youtube_video_likes);
-        setNoteLikes(note_likes);
-        setYoutubePlaylistUrl(youtube_playlist_url);
+      const { youtube_video_likes, note_likes, youtube_playlist_url, avatar_url, role, email, name } = response.data;
+      setYoutubeVideoLikes(youtube_video_likes);
+      setNoteLikes(note_likes);
+      setYoutubePlaylistUrl(youtube_playlist_url);
 
-        if (currentUser) {
-          const updatedUser: CustomUser = {
-            ...currentUser,
-            avatar_url,
-            role,
-            email,
-            name,
-          };
+      if (currentUser) {
+        const updatedUser: CustomUser = {
+          ...currentUser,
+          avatar_url,
+          role,
+          email,
+          name,
+        };
 
+        // ユーザー情報の更新が不要な場合は更新しない
+        if (
+          currentUser.avatar_url !== avatar_url ||
+          currentUser.role !== role ||
+          currentUser.email !== email ||
+          currentUser.name !== name
+        ) {
           setAuthState({
             currentUser: updatedUser,
             jwtToken,
           });
           localStorage.setItem('currentUser', JSON.stringify(updatedUser));
         }
-
-        const storedFlashMessage = localStorage.getItem('flashMessage');
-        if (storedFlashMessage) {
-          setFlashMessageState(storedFlashMessage);
-          localStorage.removeItem('flashMessage');
-        }
-      } catch (error) {
-        console.error('Error fetching mypage data:', error);
       }
-    };
 
-    fetchData();
+      const storedFlashMessage = localStorage.getItem('flashMessage');
+      if (storedFlashMessage) {
+        setFlashMessageState(storedFlashMessage);
+        localStorage.removeItem('flashMessage');
+      }
+    } catch (error) {
+      console.error('Error fetching mypage data:', error);
+    }
   }, [jwtToken, currentUser, setAuthState]);
+
+  useEffect(() => {
+    if (jwtToken && currentUser) {
+      fetchData();
+    }
+  }, [jwtToken, currentUser, fetchData]);
 
   const fetchVideosByGenre = async (genre: string) => {
     try {
@@ -122,7 +132,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     debouncedFetchSuggestions(searchQuery);
-  }, [searchQuery]);
+  }, [searchQuery, debouncedFetchSuggestions]);
 
   const shufflePlaylist = async () => {
     try {
