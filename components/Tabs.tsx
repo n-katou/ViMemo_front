@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
+import { Button } from "./MovingBorder";
 
 type Tab = {
   title: string;
@@ -29,27 +30,16 @@ export const Tabs = ({
     <>
       <div className="hidden sm:flex flex-row items-center justify-center [perspective:1000px] relative overflow-auto sm:overflow-visible no-visible-scrollbar max-w-full w-full">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab.value}
             onClick={() => setActiveTab(tab)}
-            className={cn(
-              "relative px-4 py-2 mx-2 rounded-full bg-gray-200 text-black hover:bg-gray-300",
-              tabClassName
-            )}
-            style={{ transformStyle: "preserve-3d" }}
+            containerClassName={cn("relative px-4 py-2 mx-2 rounded-full", tabClassName)}
+            borderClassName={cn("absolute inset-0 bg-blue-500 rounded-full", activeTabClassName)}
+            className={cn("relative block")}
+            isActive={activeTab.value === tab.value} // アクティブなタブの場合は動きを止める
           >
-            {activeTab.value === tab.value && (
-              <motion.div
-                layoutId="clickedbutton"
-                transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
-                className={cn(
-                  "absolute inset-0 bg-blue-500 rounded-full",
-                  activeTabClassName
-                )}
-              />
-            )}
-            <span className="relative block">{tab.title}</span>
-          </button>
+            {tab.title}
+          </Button>
         ))}
       </div>
       <div className="sm:hidden flex justify-center mt-4">
