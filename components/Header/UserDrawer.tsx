@@ -4,7 +4,6 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -12,6 +11,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LoginIcon from '@mui/icons-material/Login';
 import NoteIcon from '@mui/icons-material/Note';
+import Typography from '@mui/material/Typography';
 import { CustomUser } from '../../types/user';
 
 interface UserDrawerProps {
@@ -50,29 +50,34 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
       <List sx={{ marginTop: '48px' }}>
         {currentUser ? (
           <>
+            <ListItem>
+              <Typography variant="subtitle1" sx={{ ml: 2 }}>
+                こんにちは、{currentUser.name}さん
+              </Typography>
+            </ListItem>
             <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/dashboard">
               <ListItemIcon>
                 <PersonIcon />
               </ListItemIcon>
-              <ListItemText primary="マイページ" />
+              <Typography>マイページ</Typography>
             </ListItem>
             <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/favorites">
               <ListItemIcon>
                 <FavoriteIcon />
               </ListItemIcon>
-              <ListItemText primary="お気に入りの動画" />
+              <Typography>お気に入りの動画</Typography>
             </ListItem>
             <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/my_notes">
               <ListItemIcon>
                 <NoteIcon />
               </ListItemIcon>
-              <ListItemText primary="MYメモ一覧" />
+              <Typography>MYメモ一覧</Typography>
             </ListItem>
             <ListItem button onClick={handleLogout}>
               <ListItemIcon>
                 <ExitToAppIcon />
               </ListItemIcon>
-              <ListItemText primary="ログアウト" />
+              <Typography>ログアウト</Typography>
             </ListItem>
           </>
         ) : (
@@ -80,7 +85,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
             <ListItemIcon>
               <LoginIcon />
             </ListItemIcon>
-            <ListItemText primary="ログインページ" />
+            <Typography>ログインページ</Typography>
           </ListItem>
         )}
       </List>
