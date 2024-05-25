@@ -1,6 +1,7 @@
 "use client";
 import axios from 'axios';
 import { useState, FormEvent, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button, TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
@@ -13,6 +14,7 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -21,8 +23,40 @@ const RegisterPage = () => {
     }
   }, [currentUser, router]);
 
+  const validateInputs = () => {
+    let valid = true;
+    const errors: string[] = [];
+
+    if (name.trim() === '') {
+      errors.push('名前を入力してください。');
+      valid = false;
+    }
+    if (email.trim() === '') {
+      errors.push('メールアドレスを入力してください。');
+      valid = false;
+    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      errors.push('有効なメールアドレスを入力してください。');
+      valid = false;
+    }
+    if (password.length < 3) {
+      errors.push('パスワードは3文字以上で入力してください。');
+      valid = false;
+    }
+    if (password !== passwordConfirmation) {
+      errors.push('パスワードが一致しません。');
+      valid = false;
+    }
+
+    setValidationErrors(errors);
+    return valid;
+  };
+
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
+    if (!validateInputs()) {
+      return;
+    }
+
     setLoading(true);
     setError('');
     try {
@@ -53,7 +87,12 @@ const RegisterPage = () => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data.error || '登録に失敗しました。');
+        setError('登録に失敗しました。');
+        if (error.response?.data.errors) {
+          setValidationErrors(error.response.data.errors);
+        } else {
+          setError(error.response?.data.error || '登録に失敗しました。');
+        }
       } else {
         setError('登録に失敗しました。');
       }
@@ -64,6 +103,7 @@ const RegisterPage = () => {
 
   const handleCloseSnackbar = () => {
     setError('');
+    setValidationErrors([]);
   };
 
   return (
@@ -73,18 +113,68 @@ const RegisterPage = () => {
           ユーザー登録
         </Typography>
         <form onSubmit={handleRegister}>
-          <TextField label="名前" variant="outlined" fullWidth margin="normal" value={name} onChange={e => setName(e.target.value)} />
-          <TextField label="メールアドレス" variant="outlined" fullWidth margin="normal" value={email} onChange={e => setEmail(e.target.value)} />
-          <TextField label="パスワード" variant="outlined" type="password" fullWidth margin="normal" value={password} onChange={e => setPassword(e.target.value)} />
-          <TextField label="パスワード確認" variant="outlined" type="password" fullWidth margin="normal" value={passwordConfirmation} onChange={e => setPasswordConfirmation(e.target.value)} />
-          <Button type="submit" variant="contained" color="primary" fullWidth style={{ marginTop: '20px' }} disabled={loading}>
+          <TextField
+            label="名前"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            error={!!validationErrors.find(error => error.includes('名前'))}
+            helperText={validationErrors.find(error => error.includes('名前'))}
+          />
+          <TextField
+            label="メールアドレス"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            error={!!validationErrors.find(error => error.includes('メールアドレス'))}
+            helperText={validationErrors.find(error => error.includes('メールアドレス'))}
+          />
+          <TextField
+            label="パスワード"
+            variant="outlined"
+            type="password"
+            fullWidth
+            margin="normal"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            error={!!validationErrors.find(error => error.includes('パスワード'))}
+            helperText={validationErrors.find(error => error.includes('パスワード'))}
+          />
+          <TextField
+            label="パスワード確認"
+            variant="outlined"
+            type="password"
+            fullWidth
+            margin="normal"
+            value={passwordConfirmation}
+            onChange={e => setPasswordConfirmation(e.target.value)}
+            error={!!validationErrors.find(error => error.includes('パスワード確認'))}
+            helperText={validationErrors.find(error => error.includes('パスワード確認'))}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            style={{ marginTop: '20px' }}
+            disabled={loading}
+          >
             {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : '登録'}
           </Button>
         </form>
       </Card>
-      <Snackbar open={!!error} autoHideDuration={6000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+      <Snackbar open={!!error || validationErrors.length > 0} autoHideDuration={6000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
           {error}
+          <ul>
+            {validationErrors.map((err, index) => (
+              <li key={index}>{err}</li>
+            ))}
+          </ul>
         </Alert>
       </Snackbar>
     </Box>

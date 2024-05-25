@@ -44,13 +44,16 @@ const LoginPage = () => {
       if (response.data.success) {
         localStorage.setItem('token', response.data.token);
         setAuthState({ currentUser: response.data.user, jwtToken: response.data.token });
+        localStorage.setItem('loginSuccessMessage', 'ログインに成功しました');
         router.push('/mypage/dashboard');
       } else {
         setError(response.data.error);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data.error || 'ログインに失敗しました。');
+        const errors = error.response?.data.errors;
+        const errorMessage = Array.isArray(errors) ? errors.join(', ') : 'ログインに失敗しました。';
+        setError(errorMessage);
         console.error('Axios error:', error.response);
       } else {
         setError('ログインに失敗しました。');
@@ -90,7 +93,7 @@ const LoginPage = () => {
         <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
           ログイン
         </Typography>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit}>
           <TextField
             label="メールアドレス"
             type="email"
@@ -99,6 +102,7 @@ const LoginPage = () => {
             variant="outlined"
             fullWidth
             margin="normal"
+            required
           />
           <TextField
             label="パスワード"
@@ -108,6 +112,7 @@ const LoginPage = () => {
             variant="outlined"
             fullWidth
             margin="normal"
+            required
           />
           <Button
             type="submit"
@@ -117,8 +122,8 @@ const LoginPage = () => {
             fullWidth
             style={{
               marginTop: '20px',
-              backgroundColor: '#4CA',  // 通常ログインボタンの背景色を変更
-              color: '#fff'  // 通常ログインボタンのテキスト色を変更
+              backgroundColor: '#4CA',
+              color: '#fff'
             }}
           >
             {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'ログイン'}
@@ -162,7 +167,7 @@ const LoginPage = () => {
           open={!!error}
           autoHideDuration={6000}
           onClose={() => setError('')}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 画面中央上部に表示
         >
           <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
             {error}
@@ -174,7 +179,7 @@ const LoginPage = () => {
           open={!!successMessage}
           autoHideDuration={6000}
           onClose={() => setSuccessMessage('')}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 画面中央上部に表示
         >
           <Alert onClose={() => setSuccessMessage('')} severity="success" sx={{ width: '100%' }}>
             {successMessage}
