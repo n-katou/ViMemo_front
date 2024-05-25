@@ -23,6 +23,7 @@ const Dashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [flashMessage, setFlashMessageState] = useState<string>('');
+  const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
 
   const fetchData = useCallback(async () => {
     if (!jwtToken) {
@@ -66,15 +67,21 @@ const Dashboard: React.FC = () => {
         }
       }
 
-      const storedFlashMessage = localStorage.getItem('flashMessage');
-      if (storedFlashMessage) {
-        setFlashMessageState(storedFlashMessage);
-        localStorage.removeItem('flashMessage');
+      const flashMessageFromQuery = router.query.flashMessage;
+      if (flashMessageFromQuery) {
+        setFlashMessageState(flashMessageFromQuery as string);
+        setShowSnackbar(true);
+        // フラッシュメッセージを表示した後、URLから削除する
+        const { flashMessage, ...rest } = router.query;
+        router.replace({
+          pathname: router.pathname,
+          query: rest,
+        }, undefined, { shallow: true });
       }
     } catch (error) {
       console.error('Error fetching mypage data:', error);
     }
-  }, [jwtToken, currentUser, setAuthState]);
+  }, [jwtToken, currentUser, setAuthState, router]);
 
   useEffect(() => {
     if (jwtToken && currentUser) {
@@ -94,9 +101,12 @@ const Dashboard: React.FC = () => {
       if (response.status === 200) {
         const { youtube_videos_data, newly_created_count } = response.data;
         setYoutubeVideos(youtube_videos_data);
-        setFlashMessageState(`動画を ${newly_created_count} 件取得しました`);
+        const flashMessage = `動画を ${newly_created_count} 件取得しました`;
 
-        router.push(`/youtube_videos`);
+        router.push({
+          pathname: '/youtube_videos',
+          query: { flashMessage }
+        });
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -152,6 +162,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleCloseSnackbar = () => {
+    setShowSnackbar(false);
     setFlashMessageState('');
   };
 
@@ -193,8 +204,8 @@ const Dashboard: React.FC = () => {
       </div>
       {flashMessage && (
         <Snackbar
-          open={!!flashMessage}
-          autoHideDuration={6000}
+          open={showSnackbar}
+          autoHideDuration={3000}
           onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >

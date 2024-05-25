@@ -50,6 +50,10 @@ const Header: React.FC = () => {
     router.push('/youtube_videos');
   };
 
+  const navigateToHome = () => {
+    router.push('/');
+  };
+
   return (
     <>
       <AppBar position="fixed" sx={{ backgroundColor: 'black', zIndex: 1300 }}>
@@ -66,6 +70,8 @@ const Header: React.FC = () => {
                 md: '1.5rem',
               }
             }}
+            onClick={navigateToHome}
+            style={{ cursor: 'pointer' }} // カーソルがポインタになるようにスタイルを追加
           >
             Vimemo
           </Typography>

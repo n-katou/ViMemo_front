@@ -11,6 +11,8 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -103,6 +105,8 @@ const YoutubeVideosPage: React.FC = () => {
     prev_page: null,
   });
   const [sortOption, setSortOption] = useState<string>('created_at_desc');
+  const [flashMessage, setFlashMessage] = useState<string | null>(null);
+  const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
 
   const query = router.query.query as string || '';
 
@@ -128,6 +132,19 @@ const YoutubeVideosPage: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, [pagination.current_page, query, sortOption]);
+
+  useEffect(() => {
+    if (router.query.flashMessage) {
+      setFlashMessage(router.query.flashMessage as string);
+      setShowSnackbar(true);
+      // クエリパラメータからフラッシュメッセージを削除
+      const { flashMessage, ...rest } = router.query;
+      router.replace({
+        pathname: router.pathname,
+        query: rest,
+      }, undefined, { shallow: true });
+    }
+  }, [router.query]);
 
   const handleTitleClick = async (id: number) => {
     const cleanUrl = `/youtube_videos/${id}`;
@@ -206,10 +223,6 @@ const YoutubeVideosPage: React.FC = () => {
           'Authorization': `Bearer ${jwtToken}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          likeable_type: 'YoutubeVideo',
-          likeable_id: youtubeVideoId,
-        }),
       });
 
       if (!res.ok) {
@@ -233,6 +246,11 @@ const YoutubeVideosPage: React.FC = () => {
     } catch (error) {
       console.error('Unlike exception:', error);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setShowSnackbar(false);
+    setFlashMessage(null);
   };
 
   if (loading) {
@@ -334,6 +352,18 @@ const YoutubeVideosPage: React.FC = () => {
           </Stack>
         </>
       ) : <p>動画がありません。</p>}
+      {flashMessage && (
+        <Snackbar
+          open={showSnackbar}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+            {flashMessage}
+          </Alert>
+        </Snackbar>
+      )}
       <style jsx>{`
         .relative {
           position: relative;
