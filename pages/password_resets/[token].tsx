@@ -1,37 +1,59 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 import { TextField, Button, Card, Typography, Snackbar, Alert, Box } from '@mui/material';
 
-const ResetPasswordPage = () => {
+const PasswordReset = () => {
   const router = useRouter();
   const { token } = router.query;
+
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [isTokenValid, setIsTokenValid] = useState(false);
+
+  useEffect(() => {
+    if (token) {
+      axios
+        .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/password_resets/${token}/edit`)
+        .then((response) => {
+          setIsTokenValid(true);
+        })
+        .catch((error) => {
+          setIsTokenValid(false);
+          setError('無効なトークンです');
+        });
+    }
+  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/password_resets/${token}`, {
+      const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/password_resets/${token}`, {
         user: {
-          password,
-          password_confirmation: passwordConfirmation
-        }
+          password: password,
+          password_confirmation: passwordConfirmation,
+        },
       });
       setMessage(response.data.message);
       setError('');
-
-      // 成功した場合にログインページにリダイレクト
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000); // 2秒後にリダイレクト
+      router.push('/login'); // リセット後にログインページにリダイレクト
     } catch (err: any) {
-      setError(err.response?.data?.error || 'パスワードのリセットに失敗しました。');
+      setError(err.response?.data?.error || 'パスワードリセットに失敗しました。');
       setMessage('');
     }
   };
+
+  if (!isTokenValid) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#f5f5f5">
+        <Typography variant="h5" component="h2" style={{ textAlign: 'center' }}>
+          {error}
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#f5f5f5">
@@ -51,7 +73,7 @@ const ResetPasswordPage = () => {
             required
           />
           <TextField
-            label="新しいパスワード（確認）"
+            label="新しいパスワード確認"
             type="password"
             value={passwordConfirmation}
             onChange={(e) => setPasswordConfirmation(e.target.value)}
@@ -71,24 +93,14 @@ const ResetPasswordPage = () => {
           </Button>
         </form>
         {message && (
-          <Snackbar
-            open={!!message}
-            autoHideDuration={6000}
-            onClose={() => setMessage('')}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          >
+          <Snackbar open={!!message} autoHideDuration={6000} onClose={() => setMessage('')}>
             <Alert onClose={() => setMessage('')} severity="success" sx={{ width: '100%' }}>
               {message}
             </Alert>
           </Snackbar>
         )}
         {error && (
-          <Snackbar
-            open={!!error}
-            autoHideDuration={6000}
-            onClose={() => setError('')}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          >
+          <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError('')}>
             <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
               {error}
             </Alert>
@@ -99,4 +111,4 @@ const ResetPasswordPage = () => {
   );
 };
 
-export default ResetPasswordPage;
+export default PasswordReset;
