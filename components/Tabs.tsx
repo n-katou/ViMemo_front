@@ -36,7 +36,7 @@ export const Tabs = ({
             containerClassName={cn("relative px-4 py-2 mx-2 rounded-full", tabClassName)}
             borderClassName={cn("absolute inset-0 bg-blue-500 rounded-full", activeTabClassName)}
             className={cn("relative block")}
-            isActive={activeTab.value === tab.value} // アクティブなタブの場合は動きを止める
+            isActive={activeTab.value === tab.value}
           >
             {tab.title}
           </Button>
@@ -51,7 +51,8 @@ export const Tabs = ({
               setActiveTab(selectedTab);
             }
           }}
-          className="form-select form-select-lg"
+          className="form-select form-select-lg border border-white-300 rounded-md shadow-sm focus:border-white-500 focus:ring focus:ring-white-200 focus:ring-opacity-50"
+        // ボーダーのスタイルを追加
         >
           {tabs.map((tab) => (
             <option key={tab.value} value={tab.value}>

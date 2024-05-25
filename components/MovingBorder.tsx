@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   motion,
   useAnimationFrame,
@@ -93,14 +93,18 @@ export const MovingBorder = ({
 }) => {
   const pathRef = useRef<any>();
   const progress = useMotionValue<number>(0);
+  const lengthRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (pathRef.current) {
+      lengthRef.current = pathRef.current.getTotalLength();
+    }
+  }, []);
 
   useAnimationFrame((time) => {
-    if (isActive) return; // isActiveの場合は動きを止める
-    const length = pathRef.current?.getTotalLength();
-    if (length) {
-      const pxPerMillisecond = length / duration;
-      progress.set((time * pxPerMillisecond) % length);
-    }
+    if (isActive || !lengthRef.current) return; // isActiveの場合は動きを止める
+    const pxPerMillisecond = lengthRef.current / duration;
+    progress.set((time * pxPerMillisecond) % lengthRef.current);
   });
 
   const x = useTransform(
@@ -124,12 +128,9 @@ export const MovingBorder = ({
         height="100%"
         {...otherProps}
       >
-        <rect
+        <path
           fill="none"
-          width="100%"
-          height="100%"
-          rx={rx}
-          ry={ry}
+          d="M 0,0 L 100,0 L 100,100 L 0,100 Z"
           ref={pathRef}
         />
       </svg>

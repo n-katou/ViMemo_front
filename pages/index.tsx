@@ -156,7 +156,7 @@ const RootPage = () => {
           margin: 0,
         }}
       >
-        <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1200px', height: 'auto', overflow: 'hidden', backgroundColor: 'transparent', color: 'white', boxShadow: 'none', margin: 0 }}>
+        <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', height: 'auto', overflow: 'hidden', backgroundColor: 'transparent', color: 'white', boxShadow: 'none', margin: 0 }}>
           <Typography
             variant="h4"
             gutterBottom
@@ -184,7 +184,15 @@ const RootPage = () => {
             <Tabs tabs={tabs} />
           </Box>
           {!currentUser && (
-            <Button onClick={() => router.push('/login')} variant="contained" color="primary" sx={{ marginTop: 0 }}>
+            <Button
+              onClick={() => router.push('/login')}
+              variant="contained"
+              sx={{
+                marginTop: 0,
+                background: 'linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee)',
+                color: 'white',
+              }}
+            >
               ログインページへ
             </Button>
           )}
