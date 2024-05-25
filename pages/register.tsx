@@ -1,6 +1,7 @@
 "use client";
 import axios from 'axios';
 import { useState, FormEvent, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button, TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
@@ -171,7 +172,7 @@ const RegisterPage = () => {
           {error}
           <ul>
             {validationErrors.map((err, index) => (
-              <li>{err}</li>
+              <li key={index}>{err}</li>
             ))}
           </ul>
         </Alert>
