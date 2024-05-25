@@ -76,7 +76,7 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
   return (
     <>
       <Head>
-        <title>Vimemo</title>
+        <title>ViMemo</title>
         <meta name="description" content="ViMemoは、動画視聴中に直感的にメモを追加できるサービスです。" />
         <meta property="og:title" content="ViMemo" />
         <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
