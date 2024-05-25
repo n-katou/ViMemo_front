@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { Tabs } from '../components/Tabs'; // Tabsコンポーネントをインポート
 import { WavyBackground } from '../components/WavyBackground'; // WavyBackgroundコンポーネントをインポート
+import Footer from '../components/Footer';
 
 const tabs = [
   {
@@ -148,15 +149,14 @@ const RootPage = () => {
       <div
         style={{
           display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
+          flexDirection: 'column',
+          minHeight: '100vh',
           backgroundColor: 'transparent',
           padding: 0,
           margin: 0,
         }}
       >
-        <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', height: 'auto', overflow: 'hidden', backgroundColor: 'transparent', color: 'white', boxShadow: 'none', margin: 0 }}>
+        <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', flex: 1, backgroundColor: 'transparent', color: 'white', boxShadow: 'none', margin: 'auto' }}>
           <Typography
             variant="h4"
             gutterBottom
@@ -202,6 +202,9 @@ const RootPage = () => {
             {snackbarMessage}
           </Alert>
         </Snackbar>
+        <Box sx={{ flexShrink: 0 }}>
+          <Footer />
+        </Box>
       </div>
     </WavyBackground>
   );
