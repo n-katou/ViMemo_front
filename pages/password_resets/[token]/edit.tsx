@@ -95,14 +95,24 @@ const PasswordReset = () => {
           </Button>
         </form>
         {message && (
-          <Snackbar open={!!message} autoHideDuration={6000} onClose={() => setMessage('')}>
+          <Snackbar
+            open={!!message}
+            autoHideDuration={6000}
+            onClose={() => setMessage('')}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 画面中央上部に表示
+          >
             <Alert onClose={() => setMessage('')} severity="success" sx={{ width: '100%' }}>
               {message}
             </Alert>
           </Snackbar>
         )}
         {error && (
-          <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError('')}>
+          <Snackbar
+            open={!!error}
+            autoHideDuration={6000}
+            onClose={() => setError('')}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 画面中央上部に表示
+          >
             <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
               {error}
             </Alert>
