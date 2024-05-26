@@ -12,6 +12,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LoginIcon from '@mui/icons-material/Login';
 import NoteIcon from '@mui/icons-material/Note';
 import Typography from '@mui/material/Typography';
+import HomeIcon from '@mui/icons-material/Home'; // HomeIcon をインポート
 import { CustomUser } from '../../types/user';
 
 interface UserDrawerProps {
@@ -48,6 +49,12 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
         <CloseIcon />
       </IconButton>
       <List sx={{ marginTop: '48px' }}>
+        <ListItem button onClick={toggleDrawer(false)} component={Link} href="/">
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <Typography>ホーム</Typography>
+        </ListItem>
         {currentUser ? (
           <>
             <ListItem>
@@ -71,7 +78,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               <ListItemIcon>
                 <NoteIcon />
               </ListItemIcon>
-              <Typography>MYメモ一覧</Typography>
+              <Typography>MYメモ</Typography>
             </ListItem>
             <ListItem button onClick={handleLogout}>
               <ListItemIcon>
