@@ -50,7 +50,7 @@ const NoteLikesAccordion: React.FC<NoteLikesAccordionProps> = ({ noteLikes }) =>
                       {note.youtube_video_id && (
                         <Box mt={2}>
                           <Link href={`/youtube_videos/${note.youtube_video_id}`} legacyBehavior>
-                            <Button variant="contained" color="primary" size="small">この動画を見る</Button>
+                            <Button variant="contained" className="btn btn-outline btn-darkpink" size="small">この動画を見る</Button>
                           </Link>
                         </Box>
                       )}

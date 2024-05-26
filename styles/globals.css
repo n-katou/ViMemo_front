@@ -231,6 +231,19 @@ footer {
   border-color: #e879f9;
 }
 
+.btn-outline.btn-darkpink {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #38bdf8;
+}
+
+/* ホバー時のスタイル */
+.btn-outline.btn-darkpink:hover {
+  background-color: #38bdf8;
+  color: #fff;
+  border-color: #38bdf8;
+}
+
 .bg-gradient-rainbow-header {
   background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee);
   background-size: 200% 200%;
