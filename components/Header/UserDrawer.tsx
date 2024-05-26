@@ -30,12 +30,12 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
       onClose={toggleDrawer(false)}
       sx={{
         '& .MuiDrawer-paper': {
-          width: '250px',
+          width: '300px',
           position: 'fixed',
           right: 0,
           height: '100%',
           zIndex: 1400, // zIndexをHeaderより高く設定
-          marginTop: '64px', // Headerの高さ分マージンを追加
+          marginTop: '100px', // Headerの高さ分マージンを追加
         },
       }}
     >
@@ -49,18 +49,18 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
         <CloseIcon />
       </IconButton>
       <List sx={{ marginTop: '48px' }}>
-        <ListItem button onClick={toggleDrawer(false)} component={Link} href="/">
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <Typography>ホーム</Typography>
-        </ListItem>
         {currentUser ? (
           <>
             <ListItem>
               <Typography variant="subtitle1" sx={{ ml: 2 }}>
                 こんにちは、{currentUser.name}さん
               </Typography>
+            </ListItem>
+            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/">
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+              <Typography>ホーム</Typography>
             </ListItem>
             <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/dashboard">
               <ListItemIcon>
@@ -88,12 +88,20 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
             </ListItem>
           </>
         ) : (
-          <ListItem button onClick={toggleDrawer(false)} component={Link} href="/login">
-            <ListItemIcon>
-              <LoginIcon />
-            </ListItemIcon>
-            <Typography>ログインページ</Typography>
-          </ListItem>
+          <>
+            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/">
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+              <Typography>ホーム</Typography>
+            </ListItem>
+            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/login">
+              <ListItemIcon>
+                <LoginIcon />
+              </ListItemIcon>
+              <Typography>ログインページ</Typography>
+            </ListItem>
+          </>
         )}
       </List>
     </Drawer>
