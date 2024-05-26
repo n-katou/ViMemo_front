@@ -28,12 +28,10 @@ const NoteActions: React.FC<NoteActionsProps> = ({
   const padZero = (num: number) => num.toString().padStart(2, '0');
   const youtubeId = note.youtube_video?.youtube_id;
 
-  // デバッグ用のログ
-  console.log('Note:', note);
-  console.log('YouTube Video:', note.youtube_video);
-  console.log('YouTube ID:', youtubeId);
+  // インパクトのあるシェアメッセージ
+  const shareMessage = `【シェア】\n\n🔖タイムスタンプ: ${padZero(newMinutes)}:${padZero(newSeconds)}\n📝メモ: ${note.content}\n📺YouTube: https://www.youtube.com/watch?v=${youtubeId}&t=${videoTimestampToSeconds(note.video_timestamp)}s\n\nViMemoでシェアしよう✍️`;
 
-  const shareUrl = youtubeId ? `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`【シェア】\nタイムスタンプ: ${padZero(newMinutes)}:${padZero(newSeconds)} \nメモ: ${note.content} \nYouTube: https://www.youtube.com/watch?v=${youtubeId}&t=${videoTimestampToSeconds(note.video_timestamp)}s \n`)}` : '';
+  const shareUrl = youtubeId ? `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(shareMessage)}` : '';
 
   return (
     <div className="card-actions mt-4 flex space-x-4">
@@ -43,17 +41,17 @@ const NoteActions: React.FC<NoteActionsProps> = ({
             <IconButton
               href={shareUrl}
               target="_blank"
-              className="btn btn-outline btn-primary"
+              className="btn btn-outline btn-primary share-button"
             >
               <BsTwitterX />
             </IconButton>
           ) : (
             <p>YouTube IDが見つかりません</p>
           )}
-          <IconButton onClick={() => setIsEditing(true)} className="btn btn-outline btn-info">
+          <IconButton onClick={() => setIsEditing(true)} className="btn btn-outline btn-info edit-button">
             <EditIcon />
           </IconButton>
-          <IconButton onClick={handleDelete} className="btn btn-outline btn-error">
+          <IconButton onClick={handleDelete} className="btn btn-outline btn-error delete-button">
             <DeleteIcon />
           </IconButton>
         </>
