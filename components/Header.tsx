@@ -74,9 +74,9 @@ const Header: React.FC = () => {
                 fontFamily: 'Volkhov',
                 fontWeight: 600,
                 fontSize: {
-                  xs: '1rem',
-                  sm: '1.25rem',
-                  md: '2.5rem',
+                  xs: '1.5rem',
+                  sm: '3.0rem',
+                  md: '3.3rem',
                 }
               }}
             >
