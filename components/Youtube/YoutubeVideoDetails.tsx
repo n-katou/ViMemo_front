@@ -69,7 +69,7 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
-            <h2 className="text-2xl font-bold mr-4">{video.title}</h2>
+            <h2 className="text-2xl font-bold mr-4 text-gray-600">{video.title}</h2>
             <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
               {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
             </IconButton>

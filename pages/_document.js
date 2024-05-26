@@ -17,6 +17,7 @@ class MyDocument extends Document {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <link rel="canonical" href="https://vimemo.vercel.app" />
           <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+          <meta name="apple-mobile-web-app-title" content="ViMemo" />
         </Head>
         <body>
           <Main />
