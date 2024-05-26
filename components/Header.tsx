@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import AppBar from '@mui/material/AppBar';
@@ -58,23 +57,33 @@ const Header: React.FC = () => {
     <>
       <AppBar position="fixed" sx={{ backgroundColor: 'black', zIndex: 1300 }}>
         <Toolbar>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{
-              flexGrow: 1,
-              fontSize: {
-                xs: '1rem',
-                sm: '1.25rem',
-                md: '1.5rem',
-              }
-            }}
+          <span
+            className="bg-gradient-rainbow-header"
             onClick={navigateToHome}
-            style={{ cursor: 'pointer' }} // カーソルがポインタになるようにスタイルを追加
+            style={{
+              cursor: 'pointer',
+              display: 'inline-block',
+            }}
           >
-            ViMemo
-          </Typography>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{
+                flexGrow: 1,
+                fontFamily: 'Volkhov',
+                fontWeight: 600,
+                fontSize: {
+                  xs: '1rem',
+                  sm: '1.25rem',
+                  md: '2.5rem',
+                }
+              }}
+            >
+              ViMemo
+            </Typography>
+          </span>
+          <div style={{ flexGrow: 1 }} /> {/* ダミーのスペースを追加 */}
           <div className="flex items-center">
             <IconButton onClick={toggleSearch} color="inherit">
               <SearchIcon />
