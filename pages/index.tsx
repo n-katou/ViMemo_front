@@ -189,9 +189,9 @@ const RootPage = () => {
               <Button
                 onClick={() => router.push('/login')}
                 variant="contained"
+                className="bg-gradient-rainbow"
                 sx={{
                   marginTop: 4,
-                  background: 'linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee)',
                   color: 'white',
                 }}
               >

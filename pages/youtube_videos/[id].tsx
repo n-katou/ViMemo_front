@@ -222,7 +222,7 @@ const YoutubeVideoShowPage: React.FC = () => {
           />
           <div className="text-left mt-8">
             <button
-              className="btn btn-outline btn-info"
+              className="btn btn-outline btn-blue"
               onClick={() => router.push('/youtube_videos')}
             >
               戻る

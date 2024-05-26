@@ -91,9 +91,8 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
             <p className="text-gray-600 mb-4">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
             <p className="text-gray-600 mb-4">動画時間: {video.formattedDuration}</p>
             {currentUser && (
-              <div className="flex items-center">
+              <div className="flex items-center cursor-pointer" onClick={liked ? handleUnlike : handleLike}>
                 <IconButton
-                  onClick={liked ? handleUnlike : handleLike}
                   color={liked ? 'secondary' : 'default'}
                   aria-label={liked ? 'Unlike' : 'Like'}
                   sx={{
@@ -105,7 +104,7 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
                     transition: 'background-color 0.3s',
                   }}
                 >
-                  {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  {liked ? <FavoriteIcon style={{ color: 'red' }} /> : <FavoriteBorderIcon />}
                 </IconButton>
                 <span className="ml-2 text-lg font-medium text-gray-700">
                   {liked ? 'いいね済み' : 'いいねする'}

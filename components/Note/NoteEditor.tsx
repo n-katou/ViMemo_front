@@ -28,16 +28,17 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
   padZero
 }) => {
   return (
-    <form onSubmit={(e) => { e.preventDefault(); handleEdit(); }} className="space-y-4">
+    <form onSubmit={(e) => { e.preventDefault(); handleEdit(); }} className="space-y-4 text-black">
+      <span>メモ：</span>
       <textarea
         value={newContent}
         onChange={(e) => setNewContent(e.target.value)}
         placeholder="メモを編集..."
         required
-        className="textarea textarea-bordered w-full"
+        className="textarea textarea-bordered w-full text-black"
       />
       <div className="form-control">
-        <label className="label">
+        <label className="label text-black">
           <span>タイムスタンプ:</span>
           <div className="flex gap-2 items-center">
             <input
@@ -47,7 +48,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
               min="0"
               max="59"
               placeholder="00"
-              className="input input-bordered text-center w-12"
+              className="input input-bordered text-center w-12 text-black"
             />
             <span>分</span>
             <input
@@ -57,19 +58,19 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
               min="0"
               max="59"
               placeholder="00"
-              className="input input-bordered text-center w-12"
+              className="input input-bordered text-center w-12 text-black"
             />
             <span>秒</span>
           </div>
         </label>
       </div>
       <div className="form-control">
-        <label className="label">
+        <label className="label text-black">
           <span>表示:</span>
           <select
             value={newIsVisible ? 'true' : 'false'}
             onChange={(e) => setNewIsVisible(e.target.value === 'true')}
-            className="select select-bordered"
+            className="select select-bordered text-black"
           >
             <option value="true">表示する</option>
             <option value="false">表示しない</option>

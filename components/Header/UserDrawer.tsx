@@ -65,7 +65,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               <ListItemIcon>
                 <FavoriteIcon />
               </ListItemIcon>
-              <Typography>お気に入りの動画</Typography>
+              <Typography>いいねした動画</Typography>
             </ListItem>
             <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/my_notes">
               <ListItemIcon>
