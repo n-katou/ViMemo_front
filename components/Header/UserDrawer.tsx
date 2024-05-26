@@ -35,7 +35,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
           right: 0,
           height: '100%',
           zIndex: 1400, // zIndexをHeaderより高く設定
-          marginTop: '72px', // Headerの高さ分マージンを追加
+          marginTop: '75px', // Headerの高さ分マージンを追加
         },
       }}
     >

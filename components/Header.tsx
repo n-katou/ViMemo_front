@@ -76,7 +76,7 @@ const Header: React.FC = () => {
                 fontSize: {
                   xs: '1.5rem',
                   sm: '3.0rem',
-                  md: '3.3rem',
+                  md: '3.5rem',
                 }
               }}
             >
