@@ -73,7 +73,7 @@ const Header: React.FC = () => {
             onClick={navigateToHome}
             style={{ cursor: 'pointer' }} // カーソルがポインタになるようにスタイルを追加
           >
-            Vimemo
+            ViMemo
           </Typography>
           <div className="flex items-center">
             <IconButton onClick={toggleSearch} color="inherit">

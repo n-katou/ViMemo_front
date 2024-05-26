@@ -107,7 +107,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#f5f5f5">
+    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
       <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
         <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
           ユーザー登録
@@ -158,7 +158,7 @@ const RegisterPage = () => {
           <Button
             type="submit"
             variant="contained"
-            color="primary"
+            className="bg-gradient-rainbow"
             fullWidth
             style={{ marginTop: '20px' }}
             disabled={loading}
