@@ -5,6 +5,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import NoteCard from '../../components/Note/NoteCard';
 import { Note } from '../../types/note';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
+import PaginationComponent from '../../components/Pagination';  // 共通コンポーネントをインポート
 
 interface NoteWithVideoTitle extends Note {
   video_title?: string;
@@ -96,7 +97,7 @@ const MyNotesPage: React.FC = () => {
     setSortOrder((prevSortOrder) => (prevSortOrder === 'asc' ? 'desc' : 'asc'));
   };
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
       setLoading(true);
@@ -135,23 +136,11 @@ const MyNotesPage: React.FC = () => {
       ) : (
         <p>メモがありません。</p>
       )}
-      <div className="flex justify-center mt-6">
-        <button
-          onClick={() => handlePageChange(page - 1)}
-          disabled={page === 1}
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2"
-        >
-          前へ
-        </button>
-        <span className="text-gray-700 px-4 py-2">{page} / {totalPages}</span>
-        <button
-          onClick={() => handlePageChange(page + 1)}
-          disabled={page === totalPages}
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded ml-2"
-        >
-          次へ
-        </button>
-      </div>
+      <PaginationComponent
+        count={totalPages}
+        page={page}
+        onChange={handlePageChange}
+      />
     </div>
   );
 };

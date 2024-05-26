@@ -4,8 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Like } from '../../types/like';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
+import PaginationComponent from '../../components/Pagination';  // 共通コンポーネントをインポート
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IconButton from '@mui/material/IconButton';
@@ -292,25 +291,11 @@ const FavoritesPage: React.FC = () => {
               </div>
             ))}
           </div>
-          <Stack spacing={2} className="mt-8">
-            <Pagination
-              count={pagination.total_pages}
-              page={pagination.current_page}
-              onChange={(event, value) => setPagination({ ...pagination, current_page: value })}
-              variant="outlined"
-              shape="rounded"
-              color="primary"
-              size="large"
-              sx={{
-                '& .MuiPaginationItem-root': {
-                  color: 'white',
-                },
-                '& .MuiPaginationItem-root.Mui-selected': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                },
-              }}
-            />
-          </Stack>
+          <PaginationComponent
+            count={pagination.total_pages}
+            page={pagination.current_page}
+            onChange={handlePageChange}
+          />
         </>
       ) : <p>お気に入りの動画はありません。</p>}
       <style jsx>{`
