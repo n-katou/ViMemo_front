@@ -179,6 +179,19 @@ footer {
   border-color: #38bdf8;
 }
 
+.btn-outline.btn-skyblue {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #22d3ee;
+}
+
+/* ホバー時のスタイル */
+.btn-outline.btn-skyblue:hover {
+  background-color: #22d3ee;
+  color: #fff;
+  border-color: #22d3ee;
+}
+
 .btn-outline.btn-perple {
   border: 1px solid #c084fc;
   color: #c084fc;
@@ -190,4 +203,30 @@ footer {
   background-color: #c084fc;
   color: #fff;
   border-color: #c084fc;
+}
+
+.btn-outline.btn-lightperple {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #818cf8;
+}
+
+/* ホバー時のスタイル */
+.btn-outline.btn-lightperple:hover {
+  background-color: #818cf8;
+  color: #fff;
+  border-color: #818cf8;
+}
+
+.btn-outline.btn-pink {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #e879f9;
+}
+
+/* ホバー時のスタイル */
+.btn-outline.btn-pink:hover {
+  background-color: #e879f9;
+  color: #fff;
+  border-color: #e879f9;
 }

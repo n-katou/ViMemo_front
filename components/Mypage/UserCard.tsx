@@ -26,7 +26,7 @@ const UserCard: React.FC<UserCardProps> = ({ currentUser, isAdmin }) => {
           </div>
         </div>
         <Link href="/mypage/edit" legacyBehavior>
-          <Button variant="contained" color="primary" fullWidth>ユーザー編集</Button>
+          <Button variant="contained" className="btn btn-outline btn-skyblue" fullWidth>ユーザー編集</Button>
         </Link>
         {isAdmin && (
           <Link href={`${process.env.NEXT_PUBLIC_API_URL}/admin/users`} legacyBehavior>

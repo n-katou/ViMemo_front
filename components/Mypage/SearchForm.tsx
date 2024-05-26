@@ -34,7 +34,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ searchQuery, setSearchQuery, su
               )}
               sx={{ flex: 1 }}
             />
-            <Button type="submit" variant="contained" color="primary" sx={{ ml: 2 }}>
+            <Button type="submit" variant="contained" className="btn btn-outline btn-pink" sx={{ ml: 2 }}>
               取得
             </Button>
           </Box>

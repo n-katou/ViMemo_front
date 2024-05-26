@@ -39,7 +39,7 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVi
         <Box textAlign="center" mt={2} mb={4}>
           <Button
             variant="contained"
-            color="primary"
+            className="btn btn-outline btn-lightperple"
             startIcon={<ShuffleIcon />}
             onClick={shufflePlaylist}
           >
