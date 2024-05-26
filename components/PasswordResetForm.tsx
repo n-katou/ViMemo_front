@@ -27,7 +27,7 @@ const PasswordResetForm = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#f5f5f5">
+    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
       <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
         <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
           パスワードリセット
@@ -48,7 +48,8 @@ const PasswordResetForm = () => {
             variant="contained"
             color="primary"
             fullWidth
-            style={{ marginTop: '20px', backgroundColor: '#4CA', color: '#fff' }}
+            style={{ marginTop: '20px', color: '#fff' }}
+            className="bg-gradient-rainbow"
           >
             送信
           </Button>

@@ -332,7 +332,7 @@ const YoutubeVideosPage: React.FC = () => {
                           </IconButton>
                         </Tooltip>
                       )}
-                      <p className="ml-2">{video.liked ? 'いいね済み' : 'いいねする'}</p>
+                      <p className="ml-2" style={{ color: 'black' }}>{video.liked ? 'いいね済み' : 'いいねする'}</p>
                     </div>
                   )}
                 </div>

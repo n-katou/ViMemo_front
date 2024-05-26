@@ -73,12 +73,10 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
     };
   }, [nextRouter.events]);
 
-  const showFooter = router.pathname !== '/login'; // ログインページ以外でフッターを表示
-
   return (
     <>
       <Head>
-        <title>Vimemo</title>
+        <title>ViMemo</title>
         <meta name="description" content="ViMemoは、動画視聴中に直感的にメモを追加できるサービスです。" />
         <meta property="og:title" content="ViMemo" />
         <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
@@ -97,11 +95,9 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
             <Box component="main" sx={{ flex: 1, backgroundColor: 'black', color: 'white' }}>
               <AuthenticatedApp Component={Component} pageProps={pageProps} appRouter={router} />
             </Box>
-            {showFooter && (
-              <Box sx={{ flexShrink: 0 }}>
-                <Footer />
-              </Box>
-            )}
+            <Box sx={{ flexShrink: 0 }}>
+              <Footer />
+            </Box>
           </Box>
         </AuthProvider>
       </FlashMessageProvider>

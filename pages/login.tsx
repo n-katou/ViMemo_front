@@ -88,7 +88,7 @@ const LoginPage = () => {
   }
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#f5f5f5">
+    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
       <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
         <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
           ログイン
@@ -120,15 +120,18 @@ const LoginPage = () => {
             variant="contained"
             color="primary"
             fullWidth
+            className="bg-gradient-rainbow"
             style={{
               marginTop: '20px',
-              backgroundColor: '#4CA',
               color: '#fff'
             }}
           >
             {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'ログイン'}
           </Button>
         </form>
+        <div className="text-center mt-4">
+          <Link href="/register">新規登録はこちら</Link>
+        </div>
         <div className="flex justify-center mt-4">
           <Button
             variant="contained"
@@ -154,9 +157,6 @@ const LoginPage = () => {
           >
             {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Googleでログイン'}
           </Button>
-        </div>
-        <div className="text-center mt-4">
-          <Link href="/register">登録ページへ</Link>
         </div>
         <div className="text-center mt-4">
           <Link href="/password_reset">パスワードを忘れた方はこちら</Link>

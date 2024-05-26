@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -75,6 +75,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Video[]>([]);
   const [maxSuggestions, setMaxSuggestions] = useState(10);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -124,6 +125,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
     toggleSearch();
   };
 
+  const handleSearchClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   return (
     <Dialog
       open={searchOpen}
@@ -144,7 +151,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
       </DialogTitle>
       <DialogContent>
         <form onSubmit={handleSearch}>
-          <Search>
+          <Search onClick={handleSearchClick}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
@@ -153,6 +160,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
               inputProps={{ 'aria-label': 'search' }}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              inputRef={inputRef}
             />
           </Search>
           <ul>
@@ -162,7 +170,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
               </StyledMenuItem>
             ))}
           </ul>
-          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
+          <Button type="submit" variant="contained" className="bg-gradient-rainbow" fullWidth sx={{ marginTop: 2 }}>
             検索
           </Button>
         </form>
