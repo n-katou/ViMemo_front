@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-8 w-full">
+    <footer className="bg-gradient-rainbow text-white py-8 w-full">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
         <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8">
           <Link href="/agreement" legacyBehavior>
