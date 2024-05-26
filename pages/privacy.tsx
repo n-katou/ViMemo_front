@@ -5,9 +5,9 @@ const PrivacyPolicy = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">プライバシーポリシー</h1>
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* お客様から取得する情報 */}
-        <div className="card bg-base-100 shadow-xl p-4">
+        <div className="p-4">
           <h2 className="font-semibold text-xl">お客様から取得する情報</h2>
           <ul className="list-disc pl-5">
             <li>氏名(ニックネームやペンネームも含む)</li>
@@ -19,7 +19,7 @@ const PrivacyPolicy = () => {
           </ul>
         </div>
         {/* お客様の情報を利用する目的 */}
-        <div className="card bg-base-100 shadow-xl p-4">
+        <div className="p-4">
           <h2 className="font-semibold text-xl">お客様の情報を利用する目的</h2>
           <ul className="list-disc pl-5">
             <li>当社サービスに関する登録の受付、お客様の本人確認、認証のため</li>
@@ -30,7 +30,7 @@ const PrivacyPolicy = () => {
           </ul>
         </div>
         {/* 第三者提供 */}
-        <div className="card bg-base-100 shadow-xl p-4">
+        <div className="p-4">
           <h2 className="font-semibold text-xl">第三者提供</h2>
           <p>当社は、個人データについては、お客様の同意なく第三者に提供しません。ただし、以下の例外があります：</p>
           <ul className="list-disc pl-5">
@@ -41,7 +41,7 @@ const PrivacyPolicy = () => {
           </ul>
         </div>
         {/* プライバシーポリシーの変更 */}
-        <div className="card bg-base-100 shadow-xl p-4">
+        <div className="p-4">
           <h2 className="font-semibold text-xl">プライバシーポリシーの変更</h2>
           <p>当社は、必要に応じて、プライバシーポリシーを変更します。変更後のプライバシーポリシーは、効力発生前に適切な方法で周知または通知します。</p>
         </div>

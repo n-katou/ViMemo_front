@@ -130,7 +130,11 @@ const LoginPage = () => {
           </Button>
         </form>
         <div className="text-center mt-4">
-          <Link href="/register">新規登録はこちら</Link>
+          <Link href="/register" passHref>
+            <Typography variant="body2" color="primary" style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+              新規登録はこちら
+            </Typography>
+          </Link>
         </div>
         <div className="flex justify-center mt-4">
           <Button
@@ -159,7 +163,11 @@ const LoginPage = () => {
           </Button>
         </div>
         <div className="text-center mt-4">
-          <Link href="/password_reset">パスワードを忘れた方はこちら</Link>
+          <Link href="/password_reset" passHref>
+            <Typography variant="body2" color="primary" style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+              パスワードを忘れた方はこちら
+            </Typography>
+          </Link>
         </div>
       </Card>
       {error && (

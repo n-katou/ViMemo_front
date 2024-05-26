@@ -306,33 +306,36 @@ const YoutubeVideosPage: React.FC = () => {
                     <div className="flex items-center mt-2">
                       {video.liked ? (
                         <Tooltip title="いいね解除">
-                          <IconButton
-                            onClick={async () => {
-                              if (currentUser) {
-                                const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
-                                if (like) {
-                                  await handleUnlike(video.id, like.id);
-                                }
+                          <div className="flex items-center cursor-pointer" onClick={async () => {
+                            if (currentUser) {
+                              const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
+                              if (like) {
+                                await handleUnlike(video.id, like.id);
                               }
-                            }}
-                            color="secondary"
-                          >
-                            <FavoriteIcon style={{ color: 'red' }} />
-                          </IconButton>
+                            }
+                          }}>
+                            <IconButton
+                              color="secondary"
+                            >
+                              <FavoriteIcon style={{ color: 'red' }} />
+                            </IconButton>
+                            <span style={{ color: 'black' }}>いいね解除</span>
+                          </div>
                         </Tooltip>
                       ) : (
                         <Tooltip title="いいね">
-                          <IconButton
-                            onClick={async () => {
-                              await handleLike(video.id);
-                            }}
-                            color="primary"
-                          >
-                            <FavoriteBorderIcon />
-                          </IconButton>
+                          <div className="flex items-center cursor-pointer" onClick={async () => {
+                            await handleLike(video.id);
+                          }}>
+                            <IconButton
+                              color="primary"
+                            >
+                              <FavoriteBorderIcon />
+                            </IconButton>
+                            <span style={{ color: 'black' }}>いいねする</span>
+                          </div>
                         </Tooltip>
                       )}
-                      <p className="ml-2" style={{ color: 'black' }}>{video.liked ? 'いいね済み' : 'いいねする'}</p>
                     </div>
                   )}
                 </div>
