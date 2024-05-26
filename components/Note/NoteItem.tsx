@@ -150,7 +150,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
   return (
     <div className="note-item fixed-card-size bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 mb-6">
-      <div className="p-6">
+      <div className="p-6 text-black">
         <div className="flex items-center mb-4">
           {avatarUrl && (
             <Avatar src={avatarUrl} alt="User Avatar" sx={{ width: 48, height: 48, mr: 2 }} />

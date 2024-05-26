@@ -4,8 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Like } from '../../types/like';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
+import PaginationComponent from '../../components/Pagination';  // 共通コンポーネントをインポート
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IconButton from '@mui/material/IconButton';
@@ -248,68 +247,55 @@ const FavoritesPage: React.FC = () => {
                     {video.title}
                   </h2>
                   <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-                  <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p> {/* 変更点 */}
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center">
-                      <FavoriteIcon className="text-red-500 mr-1" />
-                      <span className="text-gray-600">{video.likes_count}</span>
-                    </div>
+                  <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
+                  <div className="flex items-center">
+                    <FavoriteIcon className="text-red-500 mr-1" />
+                    <p className="text-gray-600">{video.likes_count}</p>
                   </div>
-                  <div className="flex items-center mt-2">
+                  <div className="flex items-center">
                     <NoteIcon className="text-blue-500 mr-1" />
-                    <span className="text-gray-600">{video.notes_count}</span>
+                    <p className="text-gray-600">{video.notes_count}</p>
                   </div>
                   <div className="flex items-center mt-2">
                     {video.liked ? (
                       <Tooltip title="いいね解除">
-                        <IconButton
-                          onClick={async () => {
-                            if (currentUser && video.likeId) {
-                              await handleUnlike(video.id, video.likeId);
-                            }
-                          }}
-                          color="secondary"
-                        >
-                          <FavoriteIcon style={{ color: 'red' }} />
-                        </IconButton>
+                        <div className="flex items-center cursor-pointer" onClick={async () => {
+                          if (currentUser && video.likeId) {
+                            await handleUnlike(video.id, video.likeId);
+                          }
+                        }}>
+                          <IconButton
+                            color="secondary"
+                          >
+                            <FavoriteIcon style={{ color: 'red' }} />
+                          </IconButton>
+                          <span style={{ color: 'black' }}>いいね解除</span>
+                        </div>
                       </Tooltip>
                     ) : (
                       <Tooltip title="いいね">
-                        <IconButton
-                          onClick={async () => {
-                            await handleLike(video.id);
-                          }}
-                          color="primary"
-                        >
-                          <FavoriteBorderIcon />
-                        </IconButton>
+                        <div className="flex items-center cursor-pointer" onClick={async () => {
+                          await handleLike(video.id);
+                        }}>
+                          <IconButton
+                            color="primary"
+                          >
+                            <FavoriteBorderIcon />
+                          </IconButton>
+                          <span style={{ color: 'black' }}>いいねする</span>
+                        </div>
                       </Tooltip>
                     )}
-                    <p className="ml-2">{video.liked ? 'いいね解除' : 'いいねする'}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          <Stack spacing={2} className="mt-8">
-            <Pagination
-              count={pagination.total_pages}
-              page={pagination.current_page}
-              onChange={(event, value) => setPagination({ ...pagination, current_page: value })}
-              variant="outlined"
-              shape="rounded"
-              color="primary"
-              size="large"
-              sx={{
-                '& .MuiPaginationItem-root': {
-                  color: 'white',
-                },
-                '& .MuiPaginationItem-root.Mui-selected': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                },
-              }}
-            />
-          </Stack>
+          <PaginationComponent
+            count={pagination.total_pages}
+            page={pagination.current_page}
+            onChange={handlePageChange}
+          />
         </>
       ) : <p>お気に入りの動画はありません。</p>}
       <style jsx>{`

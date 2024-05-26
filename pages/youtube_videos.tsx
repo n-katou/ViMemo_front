@@ -9,10 +9,9 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import NoteIcon from '@mui/icons-material/Note';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import PaginationComponent from '../components/Pagination';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -306,58 +305,47 @@ const YoutubeVideosPage: React.FC = () => {
                     <div className="flex items-center mt-2">
                       {video.liked ? (
                         <Tooltip title="いいね解除">
-                          <IconButton
-                            onClick={async () => {
-                              if (currentUser) {
-                                const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
-                                if (like) {
-                                  await handleUnlike(video.id, like.id);
-                                }
+                          <div className="flex items-center cursor-pointer" onClick={async () => {
+                            if (currentUser) {
+                              const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
+                              if (like) {
+                                await handleUnlike(video.id, like.id);
                               }
-                            }}
-                            color="secondary"
-                          >
-                            <FavoriteIcon style={{ color: 'red' }} />
-                          </IconButton>
+                            }
+                          }}>
+                            <IconButton
+                              color="secondary"
+                            >
+                              <FavoriteIcon style={{ color: 'red' }} />
+                            </IconButton>
+                            <span style={{ color: 'black' }}>いいね解除</span>
+                          </div>
                         </Tooltip>
                       ) : (
                         <Tooltip title="いいね">
-                          <IconButton
-                            onClick={async () => {
-                              await handleLike(video.id);
-                            }}
-                            color="primary"
-                          >
-                            <FavoriteBorderIcon />
-                          </IconButton>
+                          <div className="flex items-center cursor-pointer" onClick={async () => {
+                            await handleLike(video.id);
+                          }}>
+                            <IconButton
+                              color="primary"
+                            >
+                              <FavoriteBorderIcon />
+                            </IconButton>
+                            <span style={{ color: 'black' }}>いいねする</span>
+                          </div>
                         </Tooltip>
                       )}
-                      <p className="ml-2" style={{ color: 'black' }}>{video.liked ? 'いいね済み' : 'いいねする'}</p>
                     </div>
                   )}
                 </div>
               </div>
             ))}
           </div>
-          <Stack spacing={2} className="mt-8">
-            <Pagination
-              count={pagination.total_pages}
-              page={pagination.current_page}
-              onChange={(event, value) => setPagination({ ...pagination, current_page: value })}
-              variant="outlined"
-              shape="rounded"
-              color="primary"
-              size="large"
-              sx={{
-                '& .MuiPaginationItem-root': {
-                  color: 'white',
-                },
-                '& .MuiPaginationItem-root.Mui-selected': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                },
-              }}
-            />
-          </Stack>
+          <PaginationComponent
+            count={pagination.total_pages}
+            page={pagination.current_page}
+            onChange={(event, value) => setPagination({ ...pagination, current_page: value })}
+          />
         </>
       ) : <p>動画がありません。</p>}
       {flashMessage && (

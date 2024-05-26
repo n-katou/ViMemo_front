@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import NoteCard from '../../components/Note/NoteCard';
 import { Note } from '../../types/note';
-import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
+import PaginationComponent from '../../components/Pagination';  // 共通コンポーネントをインポート
 
 interface NoteWithVideoTitle extends Note {
   video_title?: string;
@@ -15,7 +15,7 @@ const MyNotesPage: React.FC = () => {
   const [notes, setNotes] = useState<NoteWithVideoTitle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [sortOption, setSortOption] = useState<string>('created_at_desc');  // ソートオプションを追加
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -26,9 +26,9 @@ const MyNotesPage: React.FC = () => {
       return;
     }
 
-    const fetchNotes = async (page: number) => {
+    const fetchNotes = async (page: number, sort: string) => {
       try {
-        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notes?filter=my_notes&page=${page}`;
+        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notes?filter=my_notes&page=${page}&sort=${sort}`;
         console.log(`Request URL for user notes: ${userNotesUrl}`);
 
         const res = await axios.get(userNotesUrl, {
@@ -67,8 +67,8 @@ const MyNotesPage: React.FC = () => {
       }
     };
 
-    fetchNotes(page);
-  }, [currentUser, jwtToken, page]);
+    fetchNotes(page, sortOption);
+  }, [currentUser, jwtToken, page, sortOption]);  // sortOptionを依存配列に追加
 
   const handleDeleteNote = async (noteId: number) => {
     try {
@@ -84,19 +84,12 @@ const MyNotesPage: React.FC = () => {
     }
   };
 
-  const sortedNotes = notes.sort((a, b) => {
-    if (sortOrder === 'asc') {
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    } else {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    }
-  });
-
-  const toggleSortOrder = () => {
-    setSortOrder((prevSortOrder) => (prevSortOrder === 'asc' ? 'desc' : 'asc'));
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOption(event.target.value);
+    setPage(1);  // ソートオプションが変更された場合、ページをリセット
   };
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
       setLoading(true);
@@ -110,17 +103,18 @@ const MyNotesPage: React.FC = () => {
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">自分のメモ</h1>
-        <button
-          onClick={toggleSortOrder}
-          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2"
+        <select
+          value={sortOption}
+          onChange={handleSortChange}
+          className="form-select form-select-lg text-white bg-gray-800 border-gray-600"
         >
-          {sortOrder === 'asc' ? <FaSortAmountUp /> : <FaSortAmountDown />}
-          {sortOrder === 'asc' ? '古い順' : '新しい順'}
-        </button>
+          <option value="created_at_desc">デフォルト（新しい順）</option>
+          <option value="created_at_asc">古い順</option>
+        </select>
       </div>
-      {sortedNotes.length > 0 ? (
+      {notes.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortedNotes.map((note) => (
+          {notes.map((note) => (
             <NoteCard
               key={note.id}
               videoTitle={note.video_title || 'タイトルなし'}
@@ -135,23 +129,11 @@ const MyNotesPage: React.FC = () => {
       ) : (
         <p>メモがありません。</p>
       )}
-      <div className="flex justify-center mt-6">
-        <button
-          onClick={() => handlePageChange(page - 1)}
-          disabled={page === 1}
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2"
-        >
-          前へ
-        </button>
-        <span className="text-gray-700 px-4 py-2">{page} / {totalPages}</span>
-        <button
-          onClick={() => handlePageChange(page + 1)}
-          disabled={page === totalPages}
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded ml-2"
-        >
-          次へ
-        </button>
-      </div>
+      <PaginationComponent
+        count={totalPages}
+        page={page}
+        onChange={handlePageChange}
+      />
     </div>
   );
 };

@@ -165,3 +165,88 @@ footer {
   background-size: 200% 200%;
   animation: rainbow 7s ease infinite;
 }
+
+.btn-outline.btn-blue {
+  border: 1px solid #fff;
+  color: #38bdf8;
+  background-color: transparent;
+}
+
+/* ホバー時のスタイル */
+.btn-outline.btn-blue:hover {
+  background-color: #38bdf8;
+  color: #fff;
+  border-color: #38bdf8;
+}
+
+.btn-outline.btn-skyblue {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #22d3ee;
+}
+
+/* ホバー時のスタイル */
+.btn-outline.btn-skyblue:hover {
+  background-color: #22d3ee;
+  color: #fff;
+  border-color: #22d3ee;
+}
+
+.btn-outline.btn-perple {
+  border: 1px solid #c084fc;
+  color: #c084fc;
+  background-color: transparent;
+}
+
+/* ホバー時のスタイル */
+.btn-outline.btn-perple:hover {
+  background-color: #c084fc;
+  color: #fff;
+  border-color: #c084fc;
+}
+
+.btn-outline.btn-lightperple {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #818cf8;
+}
+
+/* ホバー時のスタイル */
+.btn-outline.btn-lightperple:hover {
+  background-color: #818cf8;
+  color: #fff;
+  border-color: #818cf8;
+}
+
+.btn-outline.btn-pink {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #e879f9;
+}
+
+/* ホバー時のスタイル */
+.btn-outline.btn-pink:hover {
+  background-color: #e879f9;
+  color: #fff;
+  border-color: #e879f9;
+}
+
+.bg-gradient-rainbow-header {
+  background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee);
+  background-size: 200% 200%;
+  animation: rainbow 7s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes rainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
