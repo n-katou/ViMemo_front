@@ -1,13 +1,10 @@
-"use client";
-
 import React, { useState, useEffect } from 'react';
 import { Button, Snackbar, Alert, Typography, Box, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { Tabs } from '../components/Tabs'; // Tabsコンポーネントをインポート
 import { WavyBackground } from '../components/WavyBackground'; // WavyBackgroundコンポーネントをインポート
-import Footer from '../components/Footer'; // Footerコンポーネントをインポート
-
+import Footer from '../components/Footer'; // Footerコンポーネントをインポーネート
 
 const tabs = [
   {
@@ -157,10 +154,10 @@ const RootPage = () => {
           margin: 0,
         }}
       >
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px' }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '100px' }}>
           <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: 'white', boxShadow: 'none' }}>
             <Typography
-              variant="h4"
+              variant="h1"
               gutterBottom
               sx={{
                 fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
@@ -169,8 +166,8 @@ const RootPage = () => {
             >
               ViMemoは、動画視聴中に直感的にメモを追加できるサービスです
             </Typography>
-            <Typography variant="h5" sx={{ marginTop: 0 }}>機能説明</Typography>
-            <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 2 }}>
+            <Typography variant="h5" sx={{ marginTop: 10 }}>機能説明</Typography>
+            <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5 }}>
               <Select value={activeTab} onChange={handleTabChange} fullWidth sx={{ color: 'white' }}>
                 {tabs.map((tab) => (
                   <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
@@ -182,7 +179,7 @@ const RootPage = () => {
                 {activeTabContent}
               </Box>
             </Box>
-            <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 2 }}>
+            <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8 }}>
               <Tabs tabs={tabs} />
             </Box>
             {!currentUser && (
