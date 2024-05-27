@@ -2,120 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 追加のスタイル */
-.video-wrapper {
-  position: relative;
-  padding-top: 56.25%; /* 16:9アスペクト比 */
-  height: 0;
-  overflow: hidden;
-  z-index: 10;
-}
-
-.video-wrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.video-title {
-  font-size: 2.5rem; /* 40pxに相当 */
-  font-weight: bold; /* 太字にする */
-  color: #333; /* 色を暗めのグレーに設定 */
-  margin-bottom: 20px; /* 下の要素との間隔 */
-}
-
-.card {
-  background-color: #f5f5f5; /* カードの背景色 */
-  border-radius: 0.5rem; /* カードの角を丸くする */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* カードの影 */
-  transition: box-shadow 0.3s; /* ホバー時の影のトランジション */
-}
-
-.card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* ホバー時の影 */
-}
-
-.card-body {
-  padding: 1rem; /* カードの内部余白 */
-}
-
-.font-bold {
-  font-weight: bold; /* 太字 */
-}
-
-.badge-error {
-  background-color: #e3342f; /* エラーバッジの背景色 */
-  color: #fff; /* エラーバッジの文字色 */
-}
-
-.btn-outline {
-  border: 1px solid #ccc; /* アウトラインボタンの境界線 */
-  padding: 0.5rem 1rem; /* アウトラインボタンの余白 */
-}
-
-.btn-outline:hover {
-  background-color: #f0f0f0; /* ホバー時の背景色 */
-}
-
-.link-hover:hover {
-  text-decoration: underline; /* ホバー時の下線 */
-}
-
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.mb-3 {
-  margin-bottom: 1rem; /* 下の余白 */
-}
-
-.transition-shadow {
-  transition: box-shadow 0.3s; /* 影のトランジション */
-}
-
-.duration-300 {
-  transition-duration: 300ms; /* トランジションの継続時間 */
-}
-
-input[type="text"] {
-  background-color: white; /* 背景色を白に設定 */
-  color: black; /* テキスト色を黒に設定 */
-}
-
-.fixed-card-size {
-  height: 340px; /* 固定の高さを設定 */
-}
-
-.text-container {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.text-wrap {
-  word-wrap: break-word;
-}
-
-.custom-card-size {
-  height: 250px;
-  overflow: hidden;
-}
-
-.custom-card-content {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.note-content {
-  white-space: pre-wrap;
-  overflow-y: auto;
-}
-
+/* Layout Styles */
 html, body {
   height: 100%;
   margin: 0;
@@ -138,6 +25,182 @@ footer {
   margin-top: auto;
 }
 
+/* Video Styles */
+.video-wrapper, .video-container {
+  position: relative;
+  padding-top: 56.25%; /* 16:9アスペクト比 */
+  height: 0;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.video-wrapper iframe, .video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Card Styles */
+.card {
+  background-color: #f5f5f5; /* カードの背景色 */
+  border-radius: 0.5rem; /* カードの角を丸くする */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* カードの影 */
+  transition: box-shadow 0.3s; /* ホバー時の影のトランジション */
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* ホバー時の影 */
+}
+
+.card-body {
+  padding: 1rem; /* カードの内部余白 */
+}
+
+.fixed-card-size {
+  height: 340px; /* 固定の高さを設定 */
+}
+
+.custom-card-size {
+  height: 250px; /* 固定の高さを設定 */
+  overflow: hidden;
+}
+
+.custom-card-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Text Styles */
+.font-bold {
+  font-weight: bold; /* 太字 */
+}
+
+.video-title {
+  font-size: 2.5rem; /* 40pxに相当 */
+  font-weight: bold; /* 太字にする */
+  color: #333; /* 色を暗めのグレーに設定 */
+  margin-bottom: 20px; /* 下の要素との間隔 */
+}
+
+.text-container {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-wrap {
+  word-wrap: break-word;
+}
+
+.note-content {
+  white-space: pre-wrap;
+  overflow-y: auto;
+}
+
+/* Button Styles */
+.btn-outline {
+  border: 1px solid #ccc; /* アウトラインボタンの境界線 */
+  padding: 0.5rem 1rem; /* アウトラインボタンの余白 */
+}
+
+.btn-outline:hover {
+  background-color: #f0f0f0; /* ホバー時の背景色 */
+}
+
+.btn-outline.btn-blue {
+  border: 1px solid #fff;
+  color: #38bdf8;
+  background-color: transparent;
+}
+
+.btn-outline.btn-blue:hover {
+  background-color: #38bdf8;
+  color: #fff;
+  border-color: #38bdf8;
+}
+
+.btn-outline.btn-skyblue {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #22eec5;
+}
+
+.btn-outline.btn-skyblue:hover {
+  background-color: #22eec5;
+  color: #fff;
+  border-color: #22eec5;
+}
+
+.btn-outline.btn-perple {
+  border: 1px solid #c084fc;
+  color: #c084fc;
+  background-color: transparent;
+}
+
+.btn-outline.btn-perple:hover {
+  background-color: #c084fc;
+  color: #fff;
+  border-color: #c084fc;
+}
+
+.btn-outline.btn-lightperple {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #818cf8;
+}
+
+.btn-outline.btn-lightperple:hover {
+  background-color: #818cf8;
+  color: #fff;
+  border-color: #818cf8;
+}
+
+.btn-outline.btn-pink {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #e879f9;
+}
+
+.btn-outline.btn-pink:hover {
+  background-color: #e879f9;
+  color: #fff;
+  border-color: #e879f9;
+}
+
+.btn-outline.btn-darkpink {
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #38bdf8;
+}
+
+.btn-outline.btn-darkpink:hover {
+  background-color: #38bdf8;
+  color: #fff;
+  border-color: #38bdf8;
+}
+
+/* Badge Styles */
+.badge-error {
+  background-color: #e3342f; /* エラーバッジの背景色 */
+  color: #fff; /* エラーバッジの文字色 */
+}
+
+/* Link Styles */
+.link-hover:hover {
+  text-decoration: underline; /* ホバー時の下線 */
+}
+
+/* Input Styles */
+input[type="text"] {
+  background-color: white; /* 背景色を白に設定 */
+  color: black; /* テキスト色を黒に設定 */
+}
+
+/* Scrollbar Styles */
 .no-visible-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -148,6 +211,25 @@ footer {
   display: none;
 }
 
+/* Utility Styles */
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mb-3 {
+  margin-bottom: 1rem; /* 下の余白 */
+}
+
+.transition-shadow {
+  transition: box-shadow 0.3s; /* 影のトランジション */
+}
+
+.duration-300 {
+  transition-duration: 300ms; /* トランジションの継続時間 */
+}
+
+/* Gradient Backgrounds */
 @keyframes rainbow {
   0% {
     background-position: 0% 50%;
@@ -166,114 +248,10 @@ footer {
   animation: rainbow 7s ease infinite;
 }
 
-.btn-outline.btn-blue {
-  border: 1px solid #fff;
-  color: #38bdf8;
-  background-color: transparent;
-}
-
-/* ホバー時のスタイル */
-.btn-outline.btn-blue:hover {
-  background-color: #38bdf8;
-  color: #fff;
-  border-color: #38bdf8;
-}
-
-.btn-outline.btn-skyblue {
-  border: 1px solid #fff;
-  color: #fff;
-  background-color: #22eec5;
-}
-
-/* ホバー時のスタイル */
-.btn-outline.btn-skyblue:hover {
-  background-color: #22eec5;
-  color: #fff;
-  border-color: #22eec5;
-}
-
-.btn-outline.btn-perple {
-  border: 1px solid #c084fc;
-  color: #c084fc;
-  background-color: transparent;
-}
-
-/* ホバー時のスタイル */
-.btn-outline.btn-perple:hover {
-  background-color: #c084fc;
-  color: #fff;
-  border-color: #c084fc;
-}
-
-.btn-outline.btn-lightperple {
-  border: 1px solid #fff;
-  color: #fff;
-  background-color: #818cf8;
-}
-
-/* ホバー時のスタイル */
-.btn-outline.btn-lightperple:hover {
-  background-color: #818cf8;
-  color: #fff;
-  border-color: #818cf8;
-}
-
-.btn-outline.btn-pink {
-  border: 1px solid #fff;
-  color: #fff;
-  background-color: #e879f9;
-}
-
-/* ホバー時のスタイル */
-.btn-outline.btn-pink:hover {
-  background-color: #e879f9;
-  color: #fff;
-  border-color: #e879f9;
-}
-
-.btn-outline.btn-darkpink {
-  border: 1px solid #fff;
-  color: #fff;
-  background-color: #38bdf8;
-}
-
-/* ホバー時のスタイル */
-.btn-outline.btn-darkpink:hover {
-  background-color: #38bdf8;
-  color: #fff;
-  border-color: #38bdf8;
-}
-
 .bg-gradient-rainbow-header {
   background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5);
   background-size: 200% 200%;
   animation: rainbow 7s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-@keyframes rainbow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.video-container {
-  position: relative;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
-  height: 0;
-}
-
-.video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
 }
