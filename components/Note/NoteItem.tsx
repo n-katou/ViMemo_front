@@ -47,19 +47,21 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
   // コンポーネントのマウント時と状態の変更時に実行
   useEffect(() => {
-    // 編集モードの場合、メモの内容をセット
     if (isEditing) {
-      setNewContent(note.content);
-      setNewMinutes(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
-      setNewSeconds(videoTimestampToSeconds(note.video_timestamp) % 60);
-      setNewIsVisible(note.is_visible);
+      initializeEditor();
     }
-
-    // メモがいいねされているかどうかを確認
     if (note.likes) {
       setLiked(note.likes.some((like: Like) => like.user_id === Number(currentUser?.id)));
     }
   }, [isEditing, note, videoTimestampToSeconds, currentUser]);
+
+  // 編集モードを初期化する関数
+  const initializeEditor = () => {
+    setNewContent(note.content);
+    setNewMinutes(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
+    setNewSeconds(videoTimestampToSeconds(note.video_timestamp) % 60);
+    setNewIsVisible(note.is_visible);
+  };
 
   // メモを削除する関数
   const handleDelete = () => {
@@ -77,8 +79,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
   // タイムスタンプをクリックした時に再生を開始する関数
   const handleTimestampClick = () => {
-    const seconds = videoTimestampToSeconds(note.video_timestamp);
-    playFromTimestamp(seconds);
+    playFromTimestamp(videoTimestampToSeconds(note.video_timestamp));
   };
 
   // メモにいいねをする関数
@@ -91,15 +92,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
     try {
       const result = await handleNoteLike(videoId, note.id, jwtToken);
       if (result.success) {
-        setLiked(true);
-        setLikeError(null); // エラーをクリア
-        note.likes_count += 1; // ノートのいいねカウントを更新
-        note.likes.push({
-          id: result.like_id, // サーバーから返されたlikeのIDを使用する
-          user_id: currentUser.id,
-          likeable_id: note.id,
-          likeable_type: 'Note',
-        } as Like); // likes配列に追加
+        updateLikeState(true, result.like_id);
       } else {
         setLikeError(result.error ?? 'いいねに失敗しました。');
       }
@@ -125,10 +118,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
       const result = await handleNoteUnlike(videoId, note.id, likeId, jwtToken);
       if (result.success) {
-        setLiked(false);
-        setLikeError(null); // エラーをクリア
-        note.likes_count -= 1; // ノートのいいねカウントを更新
-        note.likes = note.likes.filter((like) => like.user_id !== currentUser.id); // likes配列から削除
+        updateLikeState(false);
       } else {
         setLikeError(result.error ?? 'いいねの取り消しに失敗しました。');
       }
@@ -138,15 +128,30 @@ const NoteItem: React.FC<NoteItemProps> = ({
     }
   };
 
+  // いいねの状態を更新する関数
+  const updateLikeState = (isLiked: boolean, likeId?: number) => {
+    setLiked(isLiked);
+    setLikeError(null); // エラーをクリア
+    if (isLiked) {
+      note.likes_count += 1; // ノートのいいねカウントを更新
+      note.likes.push({
+        id: likeId!, // サーバーから返されたlikeのIDを使用する
+        user_id: currentUser.id,
+        likeable_id: note.id,
+        likeable_type: 'Note',
+      } as Like); // likes配列に追加
+    } else {
+      note.likes_count -= 1; // ノートのいいねカウントを更新
+      note.likes = note.likes.filter((like) => like.user_id !== currentUser.id); // likes配列から削除
+    }
+  };
+
   // 数値を2桁にパディングする関数
   const padZero = (num: number) => num.toString().padStart(2, '0');
 
   // 編集モードを開始する関数
   const startEditing = () => {
-    setNewContent(note.content);
-    setNewMinutes(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
-    setNewSeconds(videoTimestampToSeconds(note.video_timestamp) % 60);
-    setNewIsVisible(note.is_visible);
+    initializeEditor();
     setIsEditing(true);
     setIsModalOpen(true);
   };
@@ -230,7 +235,6 @@ const NoteItem: React.FC<NoteItemProps> = ({
       {likeError && <div className="p-4 text-red-500">{likeError}</div>}
     </div>
   );
-  };
-  
-  export default NoteItem;
-  
+};
+
+export default NoteItem;
