@@ -161,7 +161,7 @@ footer {
 }
 
 .bg-gradient-rainbow {
-  background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee);
+  background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5);
   background-size: 200% 200%;
   animation: rainbow 7s ease infinite;
 }
@@ -182,14 +182,14 @@ footer {
 .btn-outline.btn-skyblue {
   border: 1px solid #fff;
   color: #fff;
-  background-color: #22d3ee;
+  background-color: #22eec5;
 }
 
 /* ホバー時のスタイル */
 .btn-outline.btn-skyblue:hover {
-  background-color: #22d3ee;
+  background-color: #22eec5;
   color: #fff;
-  border-color: #22d3ee;
+  border-color: #22eec5;
 }
 
 .btn-outline.btn-perple {
@@ -245,7 +245,7 @@ footer {
 }
 
 .bg-gradient-rainbow-header {
-  background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee);
+  background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5);
   background-size: 200% 200%;
   animation: rainbow 7s ease infinite;
   -webkit-background-clip: text;
