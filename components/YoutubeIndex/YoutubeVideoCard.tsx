@@ -23,9 +23,9 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
 
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-      <div className="relative pb-56.25%"> {/* 動画のアスペクト比を維持するためのラッパー */}
+      <div className="video-container"> {/* 動画のアスペクト比を維持するためのラッパー */}
         <iframe
-          className="absolute top-0 left-0 w-full h-full" // フレームを絶対配置
+          className="video" // フレームを絶対配置
           src={`https://www.youtube.com/embed/${video.youtube_id}`} // YouTube動画のURLを設定
           frameBorder="0"
           allowFullScreen
@@ -85,21 +85,6 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
           </div>
         )}
       </div>
-      <style jsx>{`
-        .relative {
-          position: relative;
-          padding-bottom: 56.25%; // 16:9のアスペクト比を維持
-          height: 0;
-          overflow: hidden;
-        }
-        .absolute {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-      `}</style>
     </div>
   );
 };
