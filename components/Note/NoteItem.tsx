@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Note } from '../../types/note'; 
-import { Like } from '../../types/like'; 
+import { Note } from '../../types/note';
+import { Like } from '../../types/like';
 import { useAuth } from '../../context/AuthContext'; // 認証コンテキストをインポート
 import NoteContent from './NoteContent'; // NoteContent コンポーネントをインポート
 import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポート
@@ -16,7 +16,7 @@ import {
   handleLikeNote,
   handleUnlikeNote,
   padZero,
-} from './NoteItemFunctions'; // 外部の関数をインポート
+} from '../../src/NoteItemFunctions'; // 外部の関数をインポート
 
 interface NoteItemProps {
   note: Note; // メモのデータ
@@ -35,8 +35,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
   videoTimestampToSeconds,
   playFromTimestamp,
   videoId,
-  onDelete = () => {}, // デフォルトの空関数
-  onEdit = () => {}, // デフォルトの空関数
+  onDelete = () => { }, // デフォルトの空関数
+  onEdit = () => { }, // デフォルトの空関数
   isOwner,
 }) => {
   const { jwtToken } = useAuth(); // 認証コンテキストからJWTトークンを取得
