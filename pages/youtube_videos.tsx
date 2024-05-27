@@ -12,6 +12,11 @@ import Tooltip from '@mui/material/Tooltip';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import PaginationComponent from '../components/Pagination';
+import {
+  handleLike,
+  handleUnlike,
+  fetchVideoLikes
+} from '../src/api';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -44,36 +49,6 @@ async function fetchYoutubeVideos(query = '', page = 1, itemsPerPage = ITEMS_PER
       console.error('Invalid data format');
       return null;
     }
-  } catch (error) {
-    console.error('Fetch exception:', error);
-    return null;
-  }
-}
-
-async function fetchVideoLikes(id: number) {
-  try {
-    const authToken = localStorage.getItem('authToken');
-    const headers: Record<string, string> = {
-      'Accept': 'application/json',
-    };
-
-    if (authToken) {
-      headers['Authorization'] = `Bearer ${authToken}`;
-    }
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
-      method: 'GET',
-      headers: headers,
-      credentials: 'include',
-    });
-
-    if (!res.ok) {
-      console.error('Fetch error:', res.status, res.statusText);
-      return null;
-    }
-
-    const data = await res.json();
-    return data;
   } catch (error) {
     console.error('Fetch exception:', error);
     return null;
@@ -155,7 +130,7 @@ const YoutubeVideosPage: React.FC = () => {
     setPagination({ ...pagination, current_page: 1 });
   };
 
-  const handleLike = async (id: number) => {
+  const handleLikeVideo = async (id: number) => {
     if (!currentUser) {
       router.push('/login');
       return;
@@ -168,27 +143,8 @@ const YoutubeVideosPage: React.FC = () => {
     );
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          likeable_type: 'YoutubeVideo',
-          likeable_id: id,
-        }),
-      });
-
-      if (!res.ok) {
-        console.error('Like error:', res.status, res.statusText);
-        return;
-      }
-
-      const data = await res.json();
-      if (!data.success) {
-        console.error('Like error:', data.message);
-      } else {
+      const result = await handleLike(id, jwtToken);
+      if (result.success) {
         const likeData = await fetchVideoLikes(id);
         if (likeData) {
           setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
@@ -203,7 +159,7 @@ const YoutubeVideosPage: React.FC = () => {
     }
   };
 
-  const handleUnlike = async (youtubeVideoId: number, likeId: number) => {
+  const handleUnlikeVideo = async (youtubeVideoId: number, likeId: number) => {
     if (!currentUser) {
       router.push('/login');
       return;
@@ -216,23 +172,8 @@ const YoutubeVideosPage: React.FC = () => {
     );
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${youtubeVideoId}/likes/${likeId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!res.ok) {
-        console.error('Unlike error:', res.status, res.statusText);
-        return;
-      }
-
-      const data = await res.json();
-      if (!data.success) {
-        console.error('Unlike error:', data.message);
-      } else {
+      const result = await handleUnlike(youtubeVideoId, likeId, jwtToken);
+      if (result.success) {
         const likeData = await fetchVideoLikes(youtubeVideoId);
         if (likeData) {
           setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
@@ -309,7 +250,7 @@ const YoutubeVideosPage: React.FC = () => {
                             if (currentUser) {
                               const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
                               if (like) {
-                                await handleUnlike(video.id, like.id);
+                                await handleUnlikeVideo(video.id, like.id);
                               }
                             }
                           }}>
@@ -324,7 +265,7 @@ const YoutubeVideosPage: React.FC = () => {
                       ) : (
                         <Tooltip title="いいね">
                           <div className="flex items-center cursor-pointer" onClick={async () => {
-                            await handleLike(video.id);
+                            await handleLikeVideo(video.id);
                           }}>
                             <IconButton
                               color="primary"

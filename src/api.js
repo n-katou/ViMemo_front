@@ -74,6 +74,34 @@ export async function handleUnlike(videoId, likeId, jwtToken) {
   }
 }
 
+// 動画のいいねリストを取得する非同期関数
+export async function fetchVideoLikes(id, jwtToken) {
+  try {
+    const headers = {
+      'Accept': 'application/json',
+    };
+
+    if (jwtToken) {
+      headers['Authorization'] = `Bearer ${jwtToken}`;
+    }
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
+      headers: headers,
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error fetching likes for video with ID ${id}`);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch video likes:', error);
+    return null;
+  }
+}
+
+
 // ノート関連の関数
 // 動画にノートを追加する非同期関数
 export async function addNoteToVideo(videoId, content, minutes, seconds, isVisible, jwtToken) {
