@@ -21,7 +21,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ videoTitle, content, videoTimestamp
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col justify-between">
+    <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col justify-between transition-transform transform hover:scale-105">
       <div>
         <h2 className="text-xl font-bold text-gray-800 mb-4">{videoTitle}</h2>
         <p className="text-gray-600 mb-2"><strong>メモ内容:</strong> {content}</p>
@@ -29,14 +29,14 @@ const NoteCard: React.FC<NoteCardProps> = ({ videoTitle, content, videoTimestamp
         <p className="text-gray-600 mb-4"><strong>作成日時:</strong> {new Date(createdAt).toLocaleString()}</p>
       </div>
       <div className="flex justify-between items-center">
-        <Link href={`/youtube_videos/${youtubeVideoId}`} legacyBehavior>
-          <a className="text-blue-500 hover:underline">
+        <Link href={`/youtube_videos/${youtubeVideoId}`} passHref legacyBehavior>
+          <a className="btn-outline btn-lightperple">
             この動画を見る
           </a>
         </Link>
         <button
           onClick={handleDelete}
-          className="text-red-500 hover:text-red-700 ml-4"
+          className="text-red-500 hover:text-red-700 ml-4 transition-colors duration-300"
           title="削除"
         >
           <FaTrashAlt size={20} />
