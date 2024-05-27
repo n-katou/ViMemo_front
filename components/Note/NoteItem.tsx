@@ -16,7 +16,7 @@ import {
   handleLikeNote,
   handleUnlikeNote,
   padZero
-} from '../../src/noteItemFunctions';
+} from './noteItemFunctions';
 
 interface NoteItemProps {
   note: Note; // メモのデータ
