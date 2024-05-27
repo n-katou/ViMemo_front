@@ -1,22 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import PaginationComponent from '../../components/Pagination';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import NoteIcon from '@mui/icons-material/Note';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { fetchFavorites, fetchVideoLikes, fetchUserLikeStatus, handleLike, handleUnlike } from '../../src/favorites';
-import { formatDuration } from '../../src/youtubeShowUtils';
+import VideoCard from '../../components/Mypage/FavoriteVideoCard';
 
 const ITEMS_PER_PAGE = 9;
 
 const FavoritesPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth();
-  const router = useRouter();
   const [videos, setVideos] = useState<YoutubeVideo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -91,65 +84,13 @@ const FavoritesPage: React.FC = () => {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {videos.map((video: YoutubeVideo) => (
-              <div key={video.id} className="bg-white shadow-lg rounded-lg overflow-hidden">
-                <div className="relative pb-56.25%">
-                  <iframe
-                    className="absolute top-0 left-0 w-full h-full"
-                    src={`https://www.youtube.com/embed/${video.youtube_id}`}
-                    frameBorder="0"
-                    allowFullScreen
-                  />
-                </div>
-                <div className="p-4">
-                  <h2
-                    className="text-xl font-bold text-blue-600 cursor-pointer hover:underline"
-                    onClick={() => router.push(`/youtube_videos/${video.id}`)}
-                  >
-                    {video.title}
-                  </h2>
-                  <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-                  <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-                  <div className="flex items-center">
-                    <FavoriteIcon className="text-red-500 mr-1" />
-                    <p className="text-gray-600">{video.likes_count}</p>
-                  </div>
-                  <div className="flex items-center">
-                    <NoteIcon className="text-blue-500 mr-1" />
-                    <p className="text-gray-600">{video.notes_count}</p>
-                  </div>
-                  <div className="flex items-center mt-2">
-                    {video.liked ? (
-                      <Tooltip title="いいね解除">
-                        <div className="flex items-center cursor-pointer" onClick={async () => {
-                          if (currentUser && video.likeId) {
-                            await handleUnlikeVideo(video.id, video.likeId);
-                          }
-                        }}>
-                          <IconButton
-                            color="secondary"
-                          >
-                            <FavoriteIcon style={{ color: 'red' }} />
-                          </IconButton>
-                          <span style={{ color: 'black' }}>いいね解除</span>
-                        </div>
-                      </Tooltip>
-                    ) : (
-                      <Tooltip title="いいね">
-                        <div className="flex items-center cursor-pointer" onClick={async () => {
-                          await handleLikeVideo(video.id);
-                        }}>
-                          <IconButton
-                            color="primary"
-                          >
-                            <FavoriteBorderIcon />
-                          </IconButton>
-                          <span style={{ color: 'black' }}>いいねする</span>
-                        </div>
-                      </Tooltip>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <VideoCard
+                key={video.id}
+                video={video}
+                currentUser={currentUser}
+                handleLikeVideo={handleLikeVideo}
+                handleUnlikeVideo={handleUnlikeVideo}
+              />
             ))}
           </div>
           <PaginationComponent
@@ -159,20 +100,6 @@ const FavoritesPage: React.FC = () => {
           />
         </>
       ) : <p>お気に入りの動画はありません。</p>}
-      <style jsx>{`
-        .relative {
-          position: relative;
-          padding-bottom: 56.25%; /* 16:9 aspect ratio */
-          height: 0;
-        }
-        .absolute {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-      `}</style>
     </div>
   );
 };
