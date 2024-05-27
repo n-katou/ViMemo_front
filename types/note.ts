@@ -12,6 +12,7 @@ export interface Note {
   user: CustomUser;  // ユーザー情報を含める
   youtube_video: YoutubeVideo;
   youtube_video_id: number;
+  youtube_video_title: string;
   likes_count: number; // いいねのカウントを追加
   likes: Like[];
 }

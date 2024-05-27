@@ -1,92 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { YoutubeVideo } from '../types/youtubeVideo';
-import { useAuth } from '../context/AuthContext';
 import { Like } from '../types/like';
+import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import NoteIcon from '@mui/icons-material/Note';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import PaginationComponent from '../components/Pagination';
+import { fetchYoutubeVideos, handleLikeVideo, handleUnlikeVideo } from '../src/youtubeIndexUtils';
+import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 
 const ITEMS_PER_PAGE = 9;
 
-async function fetchYoutubeVideos(query = '', page = 1, itemsPerPage = ITEMS_PER_PAGE, sort = '') {
-  try {
-    const authToken = localStorage.getItem('authToken');
-    const headers: Record<string, string> = {
-      'Accept': 'application/json',
-    };
-
-    if (authToken) {
-      headers['Authorization'] = `Bearer ${authToken}`;
-    }
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos?q[title_cont]=${query}&page=${page}&per_page=${itemsPerPage}&sort=${sort}`, {
-      method: 'GET',
-      headers: headers,
-      credentials: 'include',
-    });
-
-    if (!res.ok) {
-      console.error('Fetch error:', res.status, res.statusText);
-      return null;
-    }
-
-    const data = await res.json();
-    if (data && Array.isArray(data.videos)) {
-      return { videos: data.videos, pagination: data.pagination };
-    } else {
-      console.error('Invalid data format');
-      return null;
-    }
-  } catch (error) {
-    console.error('Fetch exception:', error);
-    return null;
-  }
-}
-
-async function fetchVideoLikes(id: number) {
-  try {
-    const authToken = localStorage.getItem('authToken');
-    const headers: Record<string, string> = {
-      'Accept': 'application/json',
-    };
-
-    if (authToken) {
-      headers['Authorization'] = `Bearer ${authToken}`;
-    }
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
-      method: 'GET',
-      headers: headers,
-      credentials: 'include',
-    });
-
-    if (!res.ok) {
-      console.error('Fetch error:', res.status, res.statusText);
-      return null;
-    }
-
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error('Fetch exception:', error);
-    return null;
-  }
-}
-
-const formatDuration = (seconds: number) => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}分${remainingSeconds}秒`;
-};
-
 const YoutubeVideosPage: React.FC = () => {
+  // 認証コンテキストから現在のユーザーとJWTトークンを取得
   const { currentUser, jwtToken } = useAuth();
   const router = useRouter();
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
@@ -103,163 +30,89 @@ const YoutubeVideosPage: React.FC = () => {
     next_page: null,
     prev_page: null,
   });
-  const [sortOption, setSortOption] = useState<string>('created_at_desc');
-  const [flashMessage, setFlashMessage] = useState<string | null>(null);
-  const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
+  const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプション
+  const [flashMessage, setFlashMessage] = useState<string | null>(null); // フラッシュメッセージ
+  const [showSnackbar, setShowSnackbar] = useState<boolean>(false); // スナックバーの表示状態
 
-  const query = router.query.query as string || '';
+  const query = router.query.query as string || ''; // クエリパラメータの取得
 
+  // YouTube動画をフェッチする関数
   const fetchData = async () => {
-    setLoading(true);
+    setLoading(true); // ローディング状態をtrueに設定
     const result = await fetchYoutubeVideos(query, pagination.current_page, ITEMS_PER_PAGE, sortOption);
 
     if (result) {
       const updatedVideos = result.videos.map((video: YoutubeVideo) => ({
         ...video,
-        liked: video.likes?.some((like: Like) => like.user_id === Number(currentUser?.id)) || false,
-        likeId: video.likes?.find((like: Like) => like.user_id === Number(currentUser?.id))?.id || undefined,
+        liked: video.likes?.some((like: Like) => like.user_id === Number(currentUser?.id)) || false, // 現在のユーザーがいいねしたかどうか
+        likeId: video.likes?.find((like: Like) => like.user_id === Number(currentUser?.id))?.id || undefined, // 現在のユーザーのいいねID
       }));
-      setYoutubeVideos(updatedVideos);
-      setPagination(result.pagination);
-      setError(null);
+      setYoutubeVideos(updatedVideos); // フェッチした動画を状態に設定
+      setPagination(result.pagination); // ページネーション情報を状態に設定
+      setError(null); // エラーメッセージをクリア
     } else {
-      setError('YouTube動画を取得できませんでした');
+      setError('YouTube動画を取得できませんでした'); // エラーメッセージを設定
     }
-    setLoading(false);
+    setLoading(false); // ローディング状態をfalseに設定
   };
 
+  // コンポーネントがマウントされたときと、ページやソートオプションが変わったときに動画をフェッチ
   useEffect(() => {
     fetchData();
   }, [pagination.current_page, query, sortOption]);
 
+  // フラッシュメッセージを表示
   useEffect(() => {
     if (router.query.flashMessage) {
-      setFlashMessage(router.query.flashMessage as string);
-      setShowSnackbar(true);
-      // クエリパラメータからフラッシュメッセージを削除
+      setFlashMessage(router.query.flashMessage as string); // フラッシュメッセージを設定
+      setShowSnackbar(true); // スナックバーを表示
       const { flashMessage, ...rest } = router.query;
       router.replace({
         pathname: router.pathname,
         query: rest,
-      }, undefined, { shallow: true });
+      }, undefined, { shallow: true }); // クエリパラメータからフラッシュメッセージを削除
     }
   }, [router.query]);
 
+  // タイトルクリック時に動画詳細ページに遷移する関数
   const handleTitleClick = async (id: number) => {
     const cleanUrl = `/youtube_videos/${id}`;
     await router.push(cleanUrl);
   };
 
+  // ソートオプション変更時にソートオプションを設定し、ページをリセットする関数
   const handleSortChange = (newSortOption: string) => {
     setSortOption(newSortOption);
     setPagination({ ...pagination, current_page: 1 });
   };
 
-  const handleLike = async (id: number) => {
-    if (!currentUser) {
-      router.push('/login');
-      return;
-    }
-
-    setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
-      prevVideos.map((video: YoutubeVideo) =>
-        video.id === id ? { ...video, likes_count: video.likes_count + 1, liked: true } : video
-      )
-    );
-
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          likeable_type: 'YoutubeVideo',
-          likeable_id: id,
-        }),
-      });
-
-      if (!res.ok) {
-        console.error('Like error:', res.status, res.statusText);
-        return;
-      }
-
-      const data = await res.json();
-      if (!data.success) {
-        console.error('Like error:', data.message);
-      } else {
-        const likeData = await fetchVideoLikes(id);
-        if (likeData) {
-          setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
-            prevVideos.map((video: YoutubeVideo) =>
-              video.id === id ? { ...video, likes_count: likeData.likes_count, likes: likeData.likes, liked: true } : video
-            )
-          );
-        }
-      }
-    } catch (error) {
-      console.error('Like exception:', error);
-    }
+  // いいねボタンのクリック時にいいねを処理する関数
+  const handleLikeVideoWrapper = async (id: number) => {
+    await handleLikeVideo(id, jwtToken!, currentUser, setYoutubeVideos);
   };
 
-  const handleUnlike = async (youtubeVideoId: number, likeId: number) => {
-    if (!currentUser) {
-      router.push('/login');
-      return;
-    }
-
-    setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
-      prevVideos.map((video: YoutubeVideo) =>
-        video.id === youtubeVideoId ? { ...video, likes_count: video.likes_count - 1, liked: false } : video
-      )
-    );
-
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${youtubeVideoId}/likes/${likeId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!res.ok) {
-        console.error('Unlike error:', res.status, res.statusText);
-        return;
-      }
-
-      const data = await res.json();
-      if (!data.success) {
-        console.error('Unlike error:', data.message);
-      } else {
-        const likeData = await fetchVideoLikes(youtubeVideoId);
-        if (likeData) {
-          setYoutubeVideos((prevVideos: YoutubeVideo[]) =>
-            prevVideos.map((video: YoutubeVideo) =>
-              video.id === youtubeVideoId ? { ...video, likes_count: likeData.likes_count, likes: likeData.likes, liked: false } : video
-            )
-          );
-        }
-      }
-    } catch (error) {
-      console.error('Unlike exception:', error);
-    }
+  // いいね解除ボタンのクリック時にいいね解除を処理する関数
+  const handleUnlikeVideoWrapper = async (youtubeVideoId: number, likeId: number) => {
+    await handleUnlikeVideo(youtubeVideoId, likeId, jwtToken!, currentUser, setYoutubeVideos);
   };
 
+  // スナックバーを閉じる関数
   const handleCloseSnackbar = () => {
     setShowSnackbar(false);
     setFlashMessage(null);
   };
 
+  // ローディング中の場合の表示
   if (loading) {
     return <LoadingSpinner loading={loading} />;
   }
 
+  // エラーが発生した場合の表示
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="container mx-auto py-8">
+      {/* ソートオプションのセレクトボックス */}
       <div className="flex justify-end mb-4">
         <select
           value={sortOption}
@@ -271,76 +124,21 @@ const YoutubeVideosPage: React.FC = () => {
           <option value="notes_desc">メモ数順</option>
         </select>
       </div>
+      {/* 動画リストの表示 */}
       {youtubeVideos.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {youtubeVideos.map((video: YoutubeVideo) => (
-              <div key={video.id} className="bg-white shadow-lg rounded-lg overflow-hidden">
-                <div className="relative pb-56.25%">
-                  <iframe
-                    className="absolute top-0 left-0 w-full h-full"
-                    src={`https://www.youtube.com/embed/${video.youtube_id}`}
-                    frameBorder="0"
-                    allowFullScreen
-                  />
-                </div>
-                <div className="p-4">
-                  <h2
-                    onClick={() => handleTitleClick(video.id)}
-                    className="text-xl font-bold text-blue-600 cursor-pointer hover:underline"
-                  >
-                    {video.title}
-                  </h2>
-                  <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-                  <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-                  <div className="flex items-center">
-                    <FavoriteIcon className="text-red-500 mr-1" />
-                    <p className="text-gray-600">{video.likes_count}</p>
-                  </div>
-                  <div className="flex items-center">
-                    <NoteIcon className="text-blue-500 mr-1" />
-                    <p className="text-gray-600">{video.notes_count}</p>
-                  </div>
-                  {currentUser && (
-                    <div className="flex items-center mt-2">
-                      {video.liked ? (
-                        <Tooltip title="いいね解除">
-                          <div className="flex items-center cursor-pointer" onClick={async () => {
-                            if (currentUser) {
-                              const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
-                              if (like) {
-                                await handleUnlike(video.id, like.id);
-                              }
-                            }
-                          }}>
-                            <IconButton
-                              color="secondary"
-                            >
-                              <FavoriteIcon style={{ color: 'red' }} />
-                            </IconButton>
-                            <span style={{ color: 'black' }}>いいね解除</span>
-                          </div>
-                        </Tooltip>
-                      ) : (
-                        <Tooltip title="いいね">
-                          <div className="flex items-center cursor-pointer" onClick={async () => {
-                            await handleLike(video.id);
-                          }}>
-                            <IconButton
-                              color="primary"
-                            >
-                              <FavoriteBorderIcon />
-                            </IconButton>
-                            <span style={{ color: 'black' }}>いいねする</span>
-                          </div>
-                        </Tooltip>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
+              <YoutubeVideoCard
+                key={video.id}
+                video={video}
+                handleTitleClick={handleTitleClick}
+                handleLikeVideo={handleLikeVideoWrapper}
+                handleUnlikeVideo={handleUnlikeVideoWrapper}
+              />
             ))}
           </div>
+          {/* ページネーションコンポーネント */}
           <PaginationComponent
             count={pagination.total_pages}
             page={pagination.current_page}
@@ -348,6 +146,7 @@ const YoutubeVideosPage: React.FC = () => {
           />
         </>
       ) : <p>動画がありません。</p>}
+      {/* スナックバーの表示 */}
       {flashMessage && (
         <Snackbar
           open={showSnackbar}
@@ -360,21 +159,6 @@ const YoutubeVideosPage: React.FC = () => {
           </Alert>
         </Snackbar>
       )}
-      <style jsx>{`
-        .relative {
-          position: relative;
-          padding-bottom: 56.25%;
-          height: 0;
-          overflow: hidden;
-        }
-        .absolute {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-      `}</style>
     </div>
   );
 };

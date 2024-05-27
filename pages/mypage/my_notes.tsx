@@ -100,20 +100,20 @@ const MyNotesPage: React.FC = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">MYメモ一覧</h1>
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">MYメモ一覧</h1>
         <select
           value={sortOption}
           onChange={handleSortChange}
-          className="form-select form-select-lg text-white bg-gray-800 border-gray-600"
+          className="form-select form-select-lg text-white bg-gray-800 border-gray-600 rounded-md"
         >
           <option value="created_at_desc">デフォルト（新しい順）</option>
           <option value="created_at_asc">古い順</option>
         </select>
       </div>
       {notes.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {notes.map((note) => (
             <NoteCard
               key={note.id}
@@ -127,13 +127,15 @@ const MyNotesPage: React.FC = () => {
           ))}
         </div>
       ) : (
-        <p>メモがありません。</p>
+        <p className="text-lg text-gray-600">メモがありません。</p>
       )}
-      <PaginationComponent
-        count={totalPages}
-        page={page}
-        onChange={handlePageChange}
-      />
+      <div className="mt-8">
+        <PaginationComponent
+          count={totalPages}
+          page={page}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

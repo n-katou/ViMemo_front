@@ -4,115 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { Tabs } from '../components/Tabs'; // Tabsコンポーネントをインポート
 import { WavyBackground } from '../components/WavyBackground'; // WavyBackgroundコンポーネントをインポート
-import Footer from '../components/Footer'; // Footerコンポーネントをインポーネート
-
-const tabs = [
-  {
-    title: "アカウント管理",
-    value: "account_management",
-    content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white' }}>
-        <p>Googleアカウントを利用すれば、登録不要でログインが可能です。</p>
-        <div className="mt-4">
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-            <video
-              src="/video/login.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-            />
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "メモ操作",
-    value: "video_and_notes",
-    content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white' }}>
-        <p>動画再生中にメモを追加し、重要なポイントを記録。後で簡単にアクセスできます。</p>
-        <div className="mt-4">
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-            <video
-              src="/video/sousa.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-            />
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "検索機能",
-    value: "video_search",
-    content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white' }}>
-        <p>キーワードで動画を検索し、サジェスト機能を利用できます。</p>
-        <div className="mt-4">
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-            <video
-              src="/video/search.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-            />
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "動画取得",
-    value: "video_get",
-    content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white' }}>
-        <p>マイページから動画を取得できます。取得権限が必要な場合はお問い合わせください。</p>
-        <div className="mt-4">
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-            <video
-              src="/video/get.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-            />
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "プレイリスト",
-    value: "video_playlist",
-    content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white' }}>
-        <p>いいねした動画でプレイリストを作成し、シャッフル再生が可能です。</p>
-        <div className="mt-4">
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-            <video
-              src="/video/playlist.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-            />
-          </div>
-        </div>
-      </div>
-    ),
-  },
-];
+import tabs from '../components/Root/tabs'; // tabsをインポート
 
 const RootPage = () => {
   const router = useRouter();
@@ -183,22 +75,23 @@ const RootPage = () => {
               <Tabs tabs={tabs} />
             </Box>
             {!currentUser && (
-              <Button
-                onClick={() => router.push('/login')}
-                variant="contained"
-                className="bg-gradient-rainbow"
-                sx={{
-                  marginTop: 4,
-                  color: 'white',
-                  marginBottom: 4, // ここで間隔を追加
-                }}
-              >
-                ログインページへ
-              </Button>
+              <Box display="flex" justifyContent="center">
+                <Button
+                  onClick={() => router.push('/login')}
+                  variant="contained"
+                  className="bg-gradient-rainbow"
+                  sx={{
+                    marginTop: 4,
+                    color: 'white',
+                    marginBottom: 4, // ここで間隔を追加
+                  }}
+                >
+                  ログインページへ
+                </Button>
+              </Box>
             )}
           </div>
         </div>
-        {/* <Footer /> */}
         <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
           <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
             {snackbarMessage}

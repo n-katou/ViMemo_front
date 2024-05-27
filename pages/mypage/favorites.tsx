@@ -1,197 +1,62 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
 import { YoutubeVideo } from '../../types/youtubeVideo';
-import { Like } from '../../types/like';
-import PaginationComponent from '../../components/Pagination';  // 共通コンポーネントをインポート
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import NoteIcon from '@mui/icons-material/Note';
+import PaginationComponent from '../../components/Pagination';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { fetchFavorites, fetchVideoLikes, fetchUserLikeStatus, handleLike, handleUnlike } from '../../src/favorites'; // API操作関数をインポート
+import VideoCard from '../../components/Mypage/FavoriteVideoCard'; // ビデオカードコンポーネントをインポート
 
-interface PaginationData {
-  current_page: number;
-  total_pages: number;
-  next_page: number | null;
-  prev_page: number | null;
-}
-
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 9; // 一ページあたりのアイテム数を定義
 
 const FavoritesPage: React.FC = () => {
-  const { currentUser, jwtToken } = useAuth();
-  const router = useRouter();
-  const [videos, setVideos] = useState<YoutubeVideo[]>([]);
+  const { currentUser, jwtToken } = useAuth(); // 現在のユーザーとJWTトークンを取得
+  const [videos, setVideos] = useState<YoutubeVideo[]>([]); // お気に入り動画の状態を管理
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationData>({
-    current_page: 1,
-    total_pages: 1,
-    next_page: null,
-    prev_page: null,
+  const [pagination, setPagination] = useState({
+    current_page: 1, // 現在のページ
+    total_pages: 1, // 総ページ数
+    next_page: null, // 次のページ
+    prev_page: null, // 前のページ
   });
-  const [sortOption, setSortOption] = useState<string>('created_at_desc');
+  const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションの状態を管理
 
-  const fetchFavorites = async (page = 1, sort = sortOption) => {
-    setLoading(true);
+  // お気に入り動画をフェッチして状態にセットする関数
+  const fetchAndSetFavorites = async (page = 1, sort = sortOption) => {
+    setLoading(true); // ローディングを開始
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/favorites`, {
-        params: { page, per_page: ITEMS_PER_PAGE, sort },
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-
-      if (res.data) {
-        setVideos(res.data.videos.map((video: YoutubeVideo) => ({
-          ...video,
-          liked: video.likes.some((like: Like) => like.user_id === Number(currentUser?.id)),
-          likeId: video.likes.find((like: Like) => like.user_id === Number(currentUser?.id))?.id || undefined,
-        })));
-        setPagination(res.data.pagination);
+      const result = await fetchFavorites(page, sort, jwtToken, currentUser, ITEMS_PER_PAGE); // APIからお気に入り動画を取得
+      if (result) {
+        setVideos(result.videos); // 取得した動画を状態にセット
+        setPagination(result.pagination); // ページネーション情報を状態にセット
       }
     } catch (err) {
-      console.error('Error fetching favorites:', err);
-      setError('お気に入りの動画を取得できませんでした。');
+      if (err instanceof Error) {
+        setError(err.message); // エラーメッセージを状態にセット
+      } else {
+        setError('不明なエラーが発生しました。'); // 不明なエラーの場合のメッセージ
+      }
     } finally {
-      setLoading(false);
+      setLoading(false); // ローディングを終了
     }
   };
 
-  const fetchVideoLikes = async (videoId: number) => {
-    try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-      return res.data;
-    } catch (err) {
-      console.error('Error fetching video likes:', err);
-      return null;
-    }
-  };
-
-  const fetchUserLikeStatus = async (videoId: number) => {
-    try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/favorites_count`, {
-        params: {
-          likeable_type: 'YoutubeVideo',
-          likeable_id: videoId,
-        },
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-      return res.data.length > 0 ? res.data[0] : null;
-    } catch (err) {
-      console.error('Error fetching like status:', err);
-      return null;
-    }
-  };
-
+  // コンポーネントがマウントされたときにお気に入り動画をフェッチする
   useEffect(() => {
-    fetchFavorites(pagination.current_page);
-  }, [pagination.current_page, sortOption]);
+    fetchAndSetFavorites(pagination.current_page); // 現在のページに基づいて動画をフェッチ
+  }, [pagination.current_page, sortOption]); // ページまたはソートオプションが変わるたびにフェッチ
 
-  const handleLike = async (id: number) => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          likeable_type: 'YoutubeVideo',
-          likeable_id: id,
-        }),
-      });
-
-      if (!res.ok) {
-        console.error('Like error:', res.status, res.statusText);
-        return;
-      }
-
-      const data = await res.json();
-      if (!data.success) {
-        console.error('Like error:', data.message);
-        return;
-      }
-
-      const likeData = await fetchVideoLikes(id);
-      const userLikeStatus = await fetchUserLikeStatus(id);
-      if (likeData && userLikeStatus) {
-        setVideos((prevVideos) =>
-          prevVideos.map((video) =>
-            video.id === id ? {
-              ...video,
-              likes_count: likeData.likes_count,
-              likes: likeData.likes,
-              liked: true,
-              likeId: userLikeStatus.id,
-            } : video
-          )
-        );
-      }
-    } catch (error) {
-      console.error('Like exception:', error);
-    }
+  // いいねを処理する関数
+  const handleLikeVideo = async (id: number) => {
+    await handleLike(id, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos);
   };
 
-  const handleUnlike = async (youtubeVideoId: number, likeId: number | undefined) => {
-    if (!likeId) {
-      console.error('Unlike error: likeId is undefined');
-      return;
-    }
-
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${youtubeVideoId}/likes/${likeId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          likeable_type: 'YoutubeVideo',
-          likeable_id: youtubeVideoId,
-        }),
-      });
-
-      if (!res.ok) {
-        console.error('Unlike error:', res.status, res.statusText);
-        return;
-      }
-
-      const data = await res.json();
-      if (!data.success) {
-        console.error('Unlike error:', data.message);
-        return;
-      }
-
-      const likeData = await fetchVideoLikes(youtubeVideoId);
-      const userLikeStatus = await fetchUserLikeStatus(youtubeVideoId);
-      if (likeData) {
-        setVideos((prevVideos) =>
-          prevVideos.map((video) =>
-            video.id === youtubeVideoId ? {
-              ...video,
-              likes_count: likeData.likes_count,
-              likes: likeData.likes,
-              liked: userLikeStatus !== null,
-              likeId: userLikeStatus ? userLikeStatus.id : undefined,
-            } : video
-          )
-        );
-      }
-    } catch (error) {
-      console.error('Unlike exception:', error);
-    }
+  // いいね解除を処理する関数
+  const handleUnlikeVideo = async (youtubeVideoId: number, likeId: number | undefined) => {
+    await handleUnlike(youtubeVideoId, likeId, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos);
   };
 
+  // ページ変更時に呼ばれる関数
   const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
     setPagination((prev) => ({
       ...prev,
@@ -199,22 +64,17 @@ const FavoritesPage: React.FC = () => {
     }));
   };
 
+  // ソートオプション変更時に呼ばれる関数
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(event.target.value);
     setPagination((prev) => ({
       ...prev,
-      current_page: 1,
+      current_page: 1, // 新しいソートオプションに基づいて最初のページを表示
     }));
   };
 
-  const formatDuration = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}分${remainingSeconds}秒`;
-  };
-
-  if (loading) return <LoadingSpinner loading={loading} />;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <LoadingSpinner loading={loading} />; // ローディング中はスピナーを表示
+  if (error) return <p>Error: {error}</p>; // エラーが発生した場合はエラーメッセージを表示
 
   return (
     <div className="container mx-auto py-8">
@@ -230,65 +90,13 @@ const FavoritesPage: React.FC = () => {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {videos.map((video: YoutubeVideo) => (
-              <div key={video.id} className="bg-white shadow-lg rounded-lg overflow-hidden">
-                <div className="relative pb-56.25%">
-                  <iframe
-                    className="absolute top-0 left-0 w-full h-full"
-                    src={`https://www.youtube.com/embed/${video.youtube_id}`}
-                    frameBorder="0"
-                    allowFullScreen
-                  />
-                </div>
-                <div className="p-4">
-                  <h2
-                    className="text-xl font-bold text-blue-600 cursor-pointer hover:underline"
-                    onClick={() => router.push(`/youtube_videos/${video.id}`)}
-                  >
-                    {video.title}
-                  </h2>
-                  <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-                  <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-                  <div className="flex items-center">
-                    <FavoriteIcon className="text-red-500 mr-1" />
-                    <p className="text-gray-600">{video.likes_count}</p>
-                  </div>
-                  <div className="flex items-center">
-                    <NoteIcon className="text-blue-500 mr-1" />
-                    <p className="text-gray-600">{video.notes_count}</p>
-                  </div>
-                  <div className="flex items-center mt-2">
-                    {video.liked ? (
-                      <Tooltip title="いいね解除">
-                        <div className="flex items-center cursor-pointer" onClick={async () => {
-                          if (currentUser && video.likeId) {
-                            await handleUnlike(video.id, video.likeId);
-                          }
-                        }}>
-                          <IconButton
-                            color="secondary"
-                          >
-                            <FavoriteIcon style={{ color: 'red' }} />
-                          </IconButton>
-                          <span style={{ color: 'black' }}>いいね解除</span>
-                        </div>
-                      </Tooltip>
-                    ) : (
-                      <Tooltip title="いいね">
-                        <div className="flex items-center cursor-pointer" onClick={async () => {
-                          await handleLike(video.id);
-                        }}>
-                          <IconButton
-                            color="primary"
-                          >
-                            <FavoriteBorderIcon />
-                          </IconButton>
-                          <span style={{ color: 'black' }}>いいねする</span>
-                        </div>
-                      </Tooltip>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <VideoCard
+                key={video.id}
+                video={video}
+                currentUser={currentUser}
+                handleLikeVideo={handleLikeVideo}
+                handleUnlikeVideo={handleUnlikeVideo}
+              />
             ))}
           </div>
           <PaginationComponent
@@ -298,20 +106,6 @@ const FavoritesPage: React.FC = () => {
           />
         </>
       ) : <p>お気に入りの動画はありません。</p>}
-      <style jsx>{`
-        .relative {
-          position: relative;
-          padding-bottom: 56.25%; /* 16:9 aspect ratio */
-          height: 0;
-        }
-        .absolute {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-      `}</style>
     </div>
   );
 };

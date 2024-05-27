@@ -1,188 +1,72 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
-import debounce from 'lodash/debounce';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import UserCard from '../../components/Mypage/UserCard';
-import YoutubeLikesAccordion from '../../components/Mypage/YoutubeLikesAccordion';
-import NoteLikesAccordion from '../../components/Mypage/NoteLikesAccordion';
-import SearchForm from '../../components/Mypage/SearchForm';
-import { CustomUser } from '../../types/user';
-import { Like } from '../../types/like';
+import UserCard from '../../components/Mypage/UserCard'; // ユーザーカードコンポーネントをインポート
+import YoutubeLikesAccordion from '../../components/Mypage/YoutubeLikesAccordion'; // ノートいいねアコーディオンコンポーネントをインポート
+import NoteLikesAccordion from '../../components/Mypage/NoteLikesAccordion'; // ノートいいねアコーディオンコンポーネントをインポート
+import SearchForm from '../../components/Mypage/SearchForm'; // 検索フォームコンポーネントをインポート
+import { fetchData, fetchVideosByGenre, debouncedFetchSuggestions, shufflePlaylist } from '../../src/dashboard'; // データフェッチ用の関数をインポート
 
-const Dashboard: React.FC = () => {
-  const { currentUser, jwtToken, loading, setAuthState } = useAuth();
+const Dashboard = () => {
+  const { currentUser, jwtToken, loading, setAuthState } = useAuth(); // 認証コンテキストから必要な情報を取得
   const router = useRouter();
-  const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
-  const [noteLikes, setNoteLikes] = useState<Like[]>([]);
-  const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
-  const [youtubeVideos, setYoutubeVideos] = useState([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [flashMessage, setFlashMessageState] = useState<string>('');
-  const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
+  const [youtubeVideoLikes, setYoutubeVideoLikes] = useState([]); // YouTube動画のいいねリストの状態を管理
+  const [noteLikes, setNoteLikes] = useState([]); // ノートのいいねリストの状態を管理
+  const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState(''); // YouTubeプレイリストのURLの状態を管理
+  const [youtubeVideos, setYoutubeVideos] = useState([]); // YouTube動画のリストの状態を管理
+  const [searchQuery, setSearchQuery] = useState(''); // 検索クエリの状態を管理
+  const [suggestions, setSuggestions] = useState([]); // 検索サジェスチョンの状態を管理
+  const [flashMessage, setFlashMessageState] = useState(''); // フラッシュメッセージの状態を管理
+  const [showSnackbar, setShowSnackbar] = useState(false); // Snackbarの表示状態を管理
 
-  const fetchData = useCallback(async () => {
-    if (!jwtToken) {
-      console.error('Token is undefined');
-      return;
-    }
-
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mypage`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-
-      const { youtube_video_likes, note_likes, youtube_playlist_url, avatar_url, role, email, name } = response.data;
-      setYoutubeVideoLikes(youtube_video_likes);
-      setNoteLikes(note_likes);
-      setYoutubePlaylistUrl(youtube_playlist_url);
-
-      if (currentUser) {
-        const updatedUser: CustomUser = {
-          ...currentUser,
-          avatar_url,
-          role,
-          email,
-          name,
-        };
-
-        // ユーザー情報の更新が不要な場合は更新しない
-        if (
-          currentUser.avatar_url !== avatar_url ||
-          currentUser.role !== role ||
-          currentUser.email !== email ||
-          currentUser.name !== name
-        ) {
-          setAuthState({
-            currentUser: updatedUser,
-            jwtToken,
-          });
-          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-        }
-      }
-
-      const flashMessageFromQuery = router.query.flashMessage;
-      if (flashMessageFromQuery) {
-        setFlashMessageState(flashMessageFromQuery as string);
-        setShowSnackbar(true);
-        // フラッシュメッセージを表示した後、URLから削除する
-        const { flashMessage, ...rest } = router.query;
-        router.replace({
-          pathname: router.pathname,
-          query: rest,
-        }, undefined, { shallow: true });
-      }
-    } catch (error) {
-      console.error('Error fetching mypage data:', error);
-    }
+  // データをフェッチするコールバック関数を定義
+  const fetchDataCallback = useCallback(() => {
+    fetchData(jwtToken, currentUser, setAuthState, setYoutubeVideoLikes, setNoteLikes, setYoutubePlaylistUrl, setFlashMessageState, setShowSnackbar, router);
   }, [jwtToken, currentUser, setAuthState, router]);
 
+  // コンポーネントがマウントされた時とjwtTokenまたはcurrentUserが変更された時にデータをフェッチ
   useEffect(() => {
     if (jwtToken && currentUser) {
-      fetchData();
+      fetchDataCallback();
     }
-  }, [jwtToken, currentUser, fetchData]);
+  }, [jwtToken, currentUser, fetchDataCallback]);
 
-  const fetchVideosByGenre = async (genre: string) => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/fetch_videos_by_genre`, {
-        params: { genre },
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-
-      if (response.status === 200) {
-        const { youtube_videos_data, newly_created_count } = response.data;
-        setYoutubeVideos(youtube_videos_data);
-        const flashMessage = `動画を ${newly_created_count} 件取得しました`;
-
-        router.push({
-          pathname: '/youtube_videos',
-          query: { flashMessage }
-        });
-      }
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        console.error('Error fetching YouTube videos:', error.response?.data || error.message);
-      } else {
-        console.error('Unknown error:', error);
-      }
-    }
-  };
-
-  const debouncedFetchSuggestions = useCallback(debounce(async (query: string) => {
-    if (!query) return;
-
-    try {
-      const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
-        params: {
-          part: 'snippet',
-          q: query,
-          type: 'video',
-          key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY,
-        },
-      });
-
-      if (response.status === 200) {
-        const items = response.data.items;
-        const titles = items.map((item: any) => item.snippet.title);
-        setSuggestions(titles);
-      }
-    } catch (error) {
-      console.error('Error fetching YouTube suggestions:', error);
-    }
-  }, 1000), []);
-
+  // 検索クエリが変更された時にサジェスチョンをフェッチ
   useEffect(() => {
-    debouncedFetchSuggestions(searchQuery);
-  }, [searchQuery, debouncedFetchSuggestions]);
+    debouncedFetchSuggestions(searchQuery, setSuggestions);
+  }, [searchQuery]);
 
-  const shufflePlaylist = async () => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/generate_shuffle_playlist`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-
-      if (response.status === 200) {
-        const { shuffled_youtube_playlist_url } = response.data;
-        setYoutubePlaylistUrl(shuffled_youtube_playlist_url);
-      }
-    } catch (error) {
-      console.error('Error generating shuffled playlist:', error);
-    }
-  };
-
+  // Snackbarを閉じるハンドラー関数
   const handleCloseSnackbar = () => {
     setShowSnackbar(false);
     setFlashMessageState('');
   };
 
+  // ローディング中の場合にスピナーを表示
   if (loading) {
     return <LoadingSpinner loading={loading} />;
   }
 
+  // ユーザーがログインしていない場合にログインを促すメッセージを表示
   if (!currentUser) {
-    return <div className="flex justify-center items-center h-screen"><p className="text-xl">Please log in to access the dashboard.</p></div>;
+    return <div className="flex justify-center items-center h-screen"><p className="text-xl">ログインして下さい。</p></div>;
   }
 
+  // 管理者ユーザーかどうかを判定
   const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-1/4 mb-8 md:mb-0">
+          {/* ユーザー情報カードを表示 */}
           <UserCard currentUser={currentUser} isAdmin={isAdmin} />
         </div>
         <div className="w-full md:flex-1 md:pl-8">
+          {/* 管理者ユーザーの場合に検索フォームを表示 */}
           {currentUser.role === 'admin' && (
             <SearchForm
               searchQuery={searchQuery}
@@ -190,18 +74,21 @@ const Dashboard: React.FC = () => {
               suggestions={suggestions}
               handleSearch={(e) => {
                 e.preventDefault();
-                fetchVideosByGenre(searchQuery);
+                fetchVideosByGenre(searchQuery, jwtToken, setYoutubeVideos, router);
               }}
             />
           )}
+          {/* YouTube動画のいいねアコーディオンを表示 */}
           <YoutubeLikesAccordion
             youtubeVideoLikes={youtubeVideoLikes}
             youtubePlaylistUrl={youtubePlaylistUrl}
-            shufflePlaylist={shufflePlaylist}
+            shufflePlaylist={() => shufflePlaylist(jwtToken, setYoutubePlaylistUrl)}
           />
+          {/* ノートのいいねアコーディオンを表示 */}
           <NoteLikesAccordion noteLikes={noteLikes} />
         </div>
       </div>
+      {/* フラッシュメッセージがある場合にSnackbarを表示 */}
       {flashMessage && (
         <Snackbar
           open={showSnackbar}
