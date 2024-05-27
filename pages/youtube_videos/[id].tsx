@@ -13,47 +13,34 @@ import { fetchYoutubeVideo } from '../../src/api';
 import { addNote, handleDeleteNote, handleEditNote, handleLikeVideo, handleUnlikeVideo, videoTimestampToSeconds, playFromTimestamp, formatDuration } from '../../src/youtubeShowUtils';
 
 const YoutubeVideoShowPage: React.FC = () => {
-  // 状態変数の宣言: 動画データ、ノートリスト、いいねエラーメッセージ、いいね状態、ノートフォームの表示状態
   const [video, setVideo] = useState<YoutubeVideo & { formattedDuration?: string } | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [likeError, setLikeError] = useState<string | null>(null);
   const [liked, setLiked] = useState<boolean>(false);
   const [isNoteFormVisible, setIsNoteFormVisible] = useState<boolean>(false);
 
-  // ルーターとパス名を取得
   const pathname = usePathname();
   const router = useRouter();
 
-  // 認証コンテキストから現在のユーザー、JWTトークン、ロード中の状態を取得
   const { currentUser, jwtToken, loading } = useAuth();
-
-  // データロード中の状態変数
   const [dataLoading, setDataLoading] = useState<boolean>(true);
-
-  // YouTubeプレイヤーの参照を保持するためのref
   const playerRef = useRef<any>(null);
 
-  // コンポーネントがマウントされたときに実行される副作用
   useEffect(() => {
-    // パス名が存在しない場合のエラーハンドリング
     if (!pathname) {
       console.error('Pathname is null');
       return;
     }
 
-    // パス名から動画IDを抽出
     const pathSegments = pathname.split('/');
     const videoId = parseInt(pathSegments[pathSegments.length - 1], 10);
 
-    // 動画IDが有効であり、JWTトークンが存在する場合に動画データをフェッチ
-    if (!isNaN(videoId) && jwtToken) {
+    if (!isNaN(videoId)) {
       fetchYoutubeVideo(videoId, jwtToken)
         .then(videoData => {
-          // 動画データとノートを設定
           setVideo({ ...videoData.youtube_video, formattedDuration: formatDuration(videoData.youtube_video.duration) });
           setNotes(videoData.notes);
 
-          // ユーザーがいいねしているかどうかを設定
           const likes = videoData.youtube_video.likes || [];
           setLiked(likes.some((like: any) => like.user_id === Number(currentUser?.id)));
         })
@@ -65,24 +52,21 @@ const YoutubeVideoShowPage: React.FC = () => {
           setDataLoading(false);
         });
     } else {
-      console.error('Invalid videoId or missing jwtToken');
+      console.error('Invalid videoId');
       setDataLoading(false);
     }
   }, [pathname, jwtToken, currentUser]);
 
-  // ロード中のスピナー表示
   if (loading || dataLoading) {
     return <LoadingSpinner loading={loading || dataLoading} />;
   }
 
   return (
     <div className="container mx-auto py-8">
-      {/* 動画が存在しない場合の表示 */}
       {!video && <div className="text-center">Video not found</div>}
       {video && (
         <>
           <div className="mb-8 sticky-video">
-            {/* YouTube動画の詳細を表示 */}
             <YoutubeVideoDetails
               video={video as YoutubeVideo & { formattedDuration: string }}
               handleLike={currentUser && jwtToken ? () => handleLikeVideo(video, jwtToken, setVideo, setLiked, setLikeError, currentUser) : undefined}
@@ -91,10 +75,8 @@ const YoutubeVideoShowPage: React.FC = () => {
               liked={liked}
               onPlayerReady={(player) => (playerRef.current = player)}
             />
-            {/* いいねエラーの表示 */}
             {likeError && <div className="text-red-500 text-center mt-4">{likeError}</div>}
           </div>
-          {/* ユーザーがログインしていてJWTトークンが存在する場合のノートフォームの表示 */}
           {currentUser && jwtToken && (
             <div className="mb-8">
               <button
@@ -106,7 +88,6 @@ const YoutubeVideoShowPage: React.FC = () => {
               {isNoteFormVisible && <NoteForm addNote={(content, minutes, seconds, isVisible) => addNote(content, minutes, seconds, isVisible, jwtToken, video, setNotes)} />}
             </div>
           )}
-          {/* ノートリストの表示 */}
           <NoteList
             notes={notes}
             currentUser={currentUser}
@@ -117,7 +98,6 @@ const YoutubeVideoShowPage: React.FC = () => {
             onEdit={currentUser && jwtToken ? (noteId, newContent, newMinutes, newSeconds, newIsVisible) => handleEditNote(noteId, newContent, newMinutes, newSeconds, newIsVisible, jwtToken, video, setNotes) : undefined}
           />
           <div className="text-left mt-8">
-            {/* 戻るボタン */}
             <button
               className="btn btn-outline btn-blue"
               onClick={() => router.push('/youtube_videos')}
