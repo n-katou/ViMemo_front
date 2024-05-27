@@ -36,7 +36,7 @@ export function Button({
         "relative text-xl h-16 w-40 p-[1px] overflow-hidden",
         containerClassName,
         isActive
-          ? "bg-gradient-to-r from-[#38bdf8] via-[#818cf8] via-[#c084fc] via-[#e879f9] to-[#22d3ee] text-white"
+          ? "bg-gradient-to-r from-[#38bdf8] via-[#818cf8] via-[#c084fc] via-[#e879f9] to-[#22eec5] text-white"
           : "bg-black text-white" // アクティブなタブの場合のスタイルを追加
       )}
       style={{
@@ -55,7 +55,7 @@ export function Button({
               borderClassName
             )}
             style={{
-              background: "linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee)", // レインボーグラデーションを適用
+              background: "linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5)", // レインボーグラデーションを適用
             }}
           />
         </MovingBorder>
@@ -141,7 +141,7 @@ export const MovingBorder = ({
           left: 0,
           display: "inline-block",
           transform,
-          background: "linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22d3ee)", // レインボーグラデーションを適用
+          background: "linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5)", // レインボーグラデーションを適用
           borderRadius: "50%",
           width: "20px",
           height: "20px",

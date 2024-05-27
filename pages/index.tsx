@@ -143,7 +143,7 @@ const RootPage = () => {
   const activeTabContent = tabs.find(tab => tab.value === activeTab)?.content;
 
   return (
-    <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22d3ee"]} waveOpacity={0.3}>
+    <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]} waveOpacity={0.3}>
       <div
         style={{
           display: 'flex',
@@ -190,6 +190,7 @@ const RootPage = () => {
                 sx={{
                   marginTop: 4,
                   color: 'white',
+                  marginBottom: 4, // ここで間隔を追加
                 }}
               >
                 ログインページへ
