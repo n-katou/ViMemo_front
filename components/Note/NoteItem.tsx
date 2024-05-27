@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Note } from '../../types/note'; // Note 型をインポート
+import { Note } from '../../types/note'; 
+import { Like } from '../../types/like'; 
+import { useAuth } from '../../context/AuthContext'; // 認証コンテキストをインポート
 import NoteContent from './NoteContent'; // NoteContent コンポーネントをインポート
 import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポート
 import NoteActions from './NoteActions'; // NoteActions コンポーネントをインポート
 import Modal from './Modal'; // モーダルコンポーネントをインポート
-import { handleNoteLike, handleNoteUnlike, fetchCurrentUserLike } from '../../src/api'; // API関数をインポート
-import { useAuth } from '../../context/AuthContext'; // 認証コンテキストをインポート
-import { Like } from '../../types/like'; // Like 型をインポート
-import ThumbUpIcon from '@mui/icons-material/ThumbUp'; 
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import Badge from '@mui/material/Badge';
-import { Avatar, Tooltip, IconButton } from '@mui/material'; 
+import { Avatar, Tooltip, IconButton } from '@mui/material';
+import {
+  initializeEditor,
+  updateLikeState,
+  handleLikeNote,
+  handleUnlikeNote,
+  padZero,
+} from './NoteItemFunctions'; // 外部の関数をインポート
 
 interface NoteItemProps {
   note: Note; // メモのデータ
@@ -29,8 +35,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
   videoTimestampToSeconds,
   playFromTimestamp,
   videoId,
-  onDelete = () => { }, // デフォルトの空関数
-  onEdit = () => { }, // デフォルトの空関数
+  onDelete = () => {}, // デフォルトの空関数
+  onEdit = () => {}, // デフォルトの空関数
   isOwner,
 }) => {
   const { jwtToken } = useAuth(); // 認証コンテキストからJWTトークンを取得
@@ -48,20 +54,21 @@ const NoteItem: React.FC<NoteItemProps> = ({
   // コンポーネントのマウント時と状態の変更時に実行
   useEffect(() => {
     if (isEditing) {
-      initializeEditor();
+      // 編集モードを初期化
+      initializeEditor(
+        note,
+        videoTimestampToSeconds,
+        setNewContent,
+        setNewMinutes,
+        setNewSeconds,
+        setNewIsVisible
+      );
     }
     if (note.likes) {
+      // いいねの状態を設定
       setLiked(note.likes.some((like: Like) => like.user_id === Number(currentUser?.id)));
     }
   }, [isEditing, note, videoTimestampToSeconds, currentUser]);
-
-  // 編集モードを初期化する関数
-  const initializeEditor = () => {
-    setNewContent(note.content);
-    setNewMinutes(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60));
-    setNewSeconds(videoTimestampToSeconds(note.video_timestamp) % 60);
-    setNewIsVisible(note.is_visible);
-  };
 
   // メモを削除する関数
   const handleDelete = () => {
@@ -82,76 +89,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
     playFromTimestamp(videoTimestampToSeconds(note.video_timestamp));
   };
 
-  // メモにいいねをする関数
-  const handleLikeNote = async () => {
-    if (!currentUser || !jwtToken || !note) {
-      console.error('JWT tokenやnoteが定義されていません');
-      return;
-    }
-
-    try {
-      const result = await handleNoteLike(videoId, note.id, jwtToken);
-      if (result.success) {
-        updateLikeState(true, result.like_id);
-      } else {
-        setLikeError(result.error ?? 'いいねに失敗しました。');
-      }
-    } catch (error) {
-      console.error('Failed to like the note:', error);
-      setLikeError('いいねに失敗しました。');
-    }
-  };
-
-  // メモのいいねを取り消す関数
-  const handleUnlikeNote = async () => {
-    if (!currentUser || !jwtToken || !note) {
-      console.error('JWT tokenやnoteが定義されていません');
-      return;
-    }
-
-    try {
-      const likeId = await fetchCurrentUserLike(videoId, note.id, jwtToken);
-      if (!likeId) {
-        setLikeError('いいねが見つかりませんでした。');
-        return;
-      }
-
-      const result = await handleNoteUnlike(videoId, note.id, likeId, jwtToken);
-      if (result.success) {
-        updateLikeState(false);
-      } else {
-        setLikeError(result.error ?? 'いいねの取り消しに失敗しました。');
-      }
-    } catch (error) {
-      console.error('Failed to unlike the note:', error);
-      setLikeError('いいねの取り消しに失敗しました。');
-    }
-  };
-
-  // いいねの状態を更新する関数
-  const updateLikeState = (isLiked: boolean, likeId?: number) => {
-    setLiked(isLiked);
-    setLikeError(null); // エラーをクリア
-    if (isLiked) {
-      note.likes_count += 1; // ノートのいいねカウントを更新
-      note.likes.push({
-        id: likeId!, // サーバーから返されたlikeのIDを使用する
-        user_id: currentUser.id,
-        likeable_id: note.id,
-        likeable_type: 'Note',
-      } as Like); // likes配列に追加
-    } else {
-      note.likes_count -= 1; // ノートのいいねカウントを更新
-      note.likes = note.likes.filter((like) => like.user_id !== currentUser.id); // likes配列から削除
-    }
-  };
-
-  // 数値を2桁にパディングする関数
-  const padZero = (num: number) => num.toString().padStart(2, '0');
-
-  // 編集モードを開始する関数
-  const startEditing = () => {
-    initializeEditor();
+  // 編集モーダルを開く関数
+  const openModal = () => {
     setIsEditing(true);
     setIsModalOpen(true);
   };
@@ -184,7 +123,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Tooltip title={liked ? "いいねを取り消す" : "いいね"}>
-              <IconButton onClick={liked ? handleUnlikeNote : handleLikeNote}>
+              <IconButton onClick={liked ? () => handleUnlikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError) : () => handleLikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError)}>
                 <Badge badgeContent={note.likes_count} color="primary">
                   {liked ? <ThumbUpIcon color="primary" /> : <ThumbUpOffAltIcon />}
                 </Badge>
@@ -205,7 +144,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
               newSeconds={newSeconds}
               videoTimestampToSeconds={videoTimestampToSeconds}
               handleDelete={handleDelete}
-              setIsEditing={startEditing}
+              setIsEditing={openModal} // 編集モードを開始
             />
           )}
         </div>
