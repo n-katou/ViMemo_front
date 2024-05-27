@@ -2,15 +2,6 @@ import { Note } from '../types/note'; // Note 型をインポート
 import { Like } from '../types/like'; // Like 型をインポート
 import { fetchCurrentUserLike, handleNoteLike, handleNoteUnlike } from './api'; // API 関数をインポート
 
-/**
- * エディターの初期化関数
- * @param note メモのデータ
- * @param videoTimestampToSeconds タイムスタンプを秒に変換する関数
- * @param setNewContent メモの内容を設定する関数
- * @param setNewMinutes タイムスタンプの分を設定する関数
- * @param setNewSeconds タイムスタンプの秒を設定する関数
- * @param setNewIsVisible メモの表示/非表示を設定する関数
- */
 export const initializeEditor = (
   note: Note,
   videoTimestampToSeconds: (timestamp: string) => number,
@@ -25,15 +16,6 @@ export const initializeEditor = (
   setNewIsVisible(note.is_visible);
 };
 
-/**
- * メモにいいねをする関数
- * @param videoId 動画のID
- * @param note メモのデータ
- * @param jwtToken JWT トークン
- * @param currentUser 現在のユーザー情報
- * @param setLiked いいねの状態を設定する関数
- * @param setLikeError いいねエラーの状態を設定する関数
- */
 export const handleLikeNote = async (
   videoId: number,
   note: Note,
@@ -62,15 +44,6 @@ export const handleLikeNote = async (
   }
 };
 
-/**
- * メモのいいねを取り消す関数
- * @param videoId 動画のID
- * @param note メモのデータ
- * @param jwtToken JWT トークン
- * @param currentUser 現在のユーザー情報
- * @param setLiked いいねの状態を設定する関数
- * @param setLikeError いいねエラーの状態を設定する関数
- */
 export const handleUnlikeNote = async (
   videoId: number,
   note: Note,
@@ -105,13 +78,6 @@ export const handleUnlikeNote = async (
   }
 };
 
-/**
- * いいねの状態を更新する関数
- * @param note メモのデータ
- * @param isLiked いいねの状態
- * @param likeId いいねのID
- * @param currentUser 現在のユーザー情報
- */
 export const updateLikeState = (
   note: Note,
   isLiked: boolean,
@@ -132,9 +98,4 @@ export const updateLikeState = (
   }
 };
 
-/**
- * 数値を2桁にパディングする関数
- * @param num 数値
- * @returns パディングされた文字列
- */
 export const padZero = (num: number) => num.toString().padStart(2, '0');

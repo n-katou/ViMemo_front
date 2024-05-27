@@ -16,7 +16,7 @@ import {
   handleLikeNote,
   handleUnlikeNote,
   padZero,
-} from '../../src/noteItemFunctions'; // 外部の関数をインポート
+} from '../../src/noteItemFunctions';
 
 interface NoteItemProps {
   note: Note; // メモのデータ
