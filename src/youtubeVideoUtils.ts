@@ -1,7 +1,5 @@
 import { YoutubeVideo } from '../types/youtubeVideo';
-import { Like } from '../types/like';
 import { handleLike, handleUnlike, fetchVideoLikes } from './api';
-import { formatDuration } from './videoUtils';
 
 export const fetchYoutubeVideos = async (query = '', page = 1, itemsPerPage = 9, sort = '') => {
   try {
