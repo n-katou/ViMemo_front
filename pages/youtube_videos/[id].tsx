@@ -5,12 +5,12 @@ import { Note } from '../../types/note';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/Note/NoteForm';
 import NoteList from '../../components/Note/NoteList';
-import YoutubeVideoDetails from '../../components/Youtube/YoutubeVideoDetails';
+import YoutubeVideoDetails from '../../components/YoutubeShow/YoutubeVideoDetails';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { fetchYoutubeVideo } from '../../src/api';
-import { addNote, handleDeleteNote, handleEditNote, handleLikeVideo, handleUnlikeVideo, videoTimestampToSeconds, playFromTimestamp, formatDuration } from '../../src/videoUtils';
+import { addNote, handleDeleteNote, handleEditNote, handleLikeVideo, handleUnlikeVideo, videoTimestampToSeconds, playFromTimestamp, formatDuration } from '../../src/youtubeShowUtils';
 
 const YoutubeVideoShowPage: React.FC = () => {
   // 状態変数の宣言: 動画データ、ノートリスト、いいねエラーメッセージ、いいね状態、ノートフォームの表示状態

@@ -7,7 +7,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import NoteIcon from '@mui/icons-material/Note';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import { formatDuration } from '../../src/videoUtils';
+import { formatDuration } from '../../src/youtubeShowUtils';
 
 interface YoutubeVideoCardProps {
   video: YoutubeVideo;

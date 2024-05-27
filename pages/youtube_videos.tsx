@@ -7,7 +7,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import PaginationComponent from '../components/Pagination';
-import { fetchYoutubeVideos, handleLikeVideo, handleUnlikeVideo } from '../src/youtubeVideoUtils';
+import { fetchYoutubeVideos, handleLikeVideo, handleUnlikeVideo } from '../src/youtubeIndexUtils';
 
 import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 
