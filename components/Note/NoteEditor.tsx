@@ -35,7 +35,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
         onChange={(e) => setNewContent(e.target.value)}
         placeholder="メモを編集..."
         required
-        className="textarea textarea-bordered w-full text-black"
+        className="textarea textarea-bordered w-full text-black border-2 border-gray-300"
       />
       <div className="form-control">
         <label className="label text-black">
@@ -48,7 +48,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
               min="0"
               max="59"
               placeholder="00"
-              className="input input-bordered text-center w-12 text-black"
+              className="input input-bordered text-center w-12 text-black border-2 border-gray-300"
             />
             <span>分</span>
             <input
@@ -58,7 +58,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
               min="0"
               max="59"
               placeholder="00"
-              className="input input-bordered text-center w-12 text-black"
+              className="input input-bordered text-center w-12 text-black border-2 border-gray-300"
             />
             <span>秒</span>
           </div>
@@ -70,7 +70,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
           <select
             value={newIsVisible ? 'true' : 'false'}
             onChange={(e) => setNewIsVisible(e.target.value === 'true')}
-            className="select select-bordered text-black"
+            className="select select-bordered text-black border-2 border-gray-300"
           >
             <option value="true">表示する</option>
             <option value="false">表示しない</option>
