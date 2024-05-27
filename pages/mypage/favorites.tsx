@@ -3,55 +3,60 @@ import { useAuth } from '../../context/AuthContext';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import PaginationComponent from '../../components/Pagination';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { fetchFavorites, fetchVideoLikes, fetchUserLikeStatus, handleLike, handleUnlike } from '../../src/favorites';
-import VideoCard from '../../components/Mypage/FavoriteVideoCard';
+import { fetchFavorites, fetchVideoLikes, fetchUserLikeStatus, handleLike, handleUnlike } from '../../src/favorites'; // API操作関数をインポート
+import VideoCard from '../../components/Mypage/FavoriteVideoCard'; // ビデオカードコンポーネントをインポート
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 9; // 一ページあたりのアイテム数を定義
 
 const FavoritesPage: React.FC = () => {
-  const { currentUser, jwtToken } = useAuth();
-  const [videos, setVideos] = useState<YoutubeVideo[]>([]);
+  const { currentUser, jwtToken } = useAuth(); // 現在のユーザーとJWTトークンを取得
+  const [videos, setVideos] = useState<YoutubeVideo[]>([]); // お気に入り動画の状態を管理
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState({
-    current_page: 1,
-    total_pages: 1,
-    next_page: null,
-    prev_page: null,
+    current_page: 1, // 現在のページ
+    total_pages: 1, // 総ページ数
+    next_page: null, // 次のページ
+    prev_page: null, // 前のページ
   });
-  const [sortOption, setSortOption] = useState<string>('created_at_desc');
+  const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションの状態を管理
 
+  // お気に入り動画をフェッチして状態にセットする関数
   const fetchAndSetFavorites = async (page = 1, sort = sortOption) => {
-    setLoading(true);
+    setLoading(true); // ローディングを開始
     try {
-      const result = await fetchFavorites(page, sort, jwtToken, currentUser, ITEMS_PER_PAGE);
+      const result = await fetchFavorites(page, sort, jwtToken, currentUser, ITEMS_PER_PAGE); // APIからお気に入り動画を取得
       if (result) {
-        setVideos(result.videos);
-        setPagination(result.pagination);
+        setVideos(result.videos); // 取得した動画を状態にセット
+        setPagination(result.pagination); // ページネーション情報を状態にセット
       }
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message);
+        setError(err.message); // エラーメッセージを状態にセット
       } else {
-        setError('不明なエラーが発生しました。');
+        setError('不明なエラーが発生しました。'); // 不明なエラーの場合のメッセージ
       }
     } finally {
-      setLoading(false);
+      setLoading(false); // ローディングを終了
     }
   };
 
+  // コンポーネントがマウントされたときにお気に入り動画をフェッチする
   useEffect(() => {
-    fetchAndSetFavorites(pagination.current_page);
-  }, [pagination.current_page, sortOption]);
+    fetchAndSetFavorites(pagination.current_page); // 現在のページに基づいて動画をフェッチ
+  }, [pagination.current_page, sortOption]); // ページまたはソートオプションが変わるたびにフェッチ
 
+  // いいねを処理する関数
   const handleLikeVideo = async (id: number) => {
     await handleLike(id, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos);
   };
 
+  // いいね解除を処理する関数
   const handleUnlikeVideo = async (youtubeVideoId: number, likeId: number | undefined) => {
     await handleUnlike(youtubeVideoId, likeId, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos);
   };
 
+  // ページ変更時に呼ばれる関数
   const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
     setPagination((prev) => ({
       ...prev,
@@ -59,16 +64,17 @@ const FavoritesPage: React.FC = () => {
     }));
   };
 
+  // ソートオプション変更時に呼ばれる関数
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(event.target.value);
     setPagination((prev) => ({
       ...prev,
-      current_page: 1,
+      current_page: 1, // 新しいソートオプションに基づいて最初のページを表示
     }));
   };
 
-  if (loading) return <LoadingSpinner loading={loading} />;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <LoadingSpinner loading={loading} />; // ローディング中はスピナーを表示
+  if (error) return <p>Error: {error}</p>; // エラーが発生した場合はエラーメッセージを表示
 
   return (
     <div className="container mx-auto py-8">
