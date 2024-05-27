@@ -15,7 +15,7 @@ import {
   updateLikeState,
   handleLikeNote,
   handleUnlikeNote,
-  padZero,
+  padZero
 } from '../../src/noteItemFunctions';
 
 interface NoteItemProps {
