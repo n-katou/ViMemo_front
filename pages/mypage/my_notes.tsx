@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import NoteCard from '../../components/Note/NoteCard';
+import NoteCard from '../../components/MyNote/NoteCard';
 import { Note } from '../../types/note';
 import PaginationComponent from '../../components/Pagination';  // 共通コンポーネントをインポート
 
