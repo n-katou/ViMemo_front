@@ -34,27 +34,27 @@ const NoteLikesAccordion: React.FC<NoteLikesAccordionProps> = ({ noteLikes }) =>
                 const youtubeVideoTitle = note.youtube_video_title || 'タイトルを取得できませんでした';
                 return (
                   <Card key={note.id} className="col-span-1 bg-white shadow-lg rounded-lg transition-transform transform hover:scale-105">
-                    <CardContent className="flex flex-col h-full">
+                    <CardContent className="flex flex-col h-64 overflow-hidden">
                       {note.user && (
-                        <div className="flex items-center mb-4">
+                        <div className="flex items-center mb-2">
                           {note.user.avatar_url && (
-                            <Avatar src={note.user.avatar_url} alt="User Avatar" sx={{ width: 40, height: 40, mr: 2 }} />
+                            <Avatar src={note.user.avatar_url} alt="User Avatar" sx={{ width: 32, height: 32, mr: 2 }} />
                           )}
-                          <div>
-                            <Typography variant="body1" className="font-bold">{note.user.name}</Typography>
-                          </div>
+                          <Typography variant="body2" className="font-bold">{note.user.name}</Typography>
                         </div>
                       )}
-                      <Typography variant="h6" color="textPrimary" className="mb-2">
+                      <Typography variant="subtitle1" color="textPrimary" className="mb-1">
                         {youtubeVideoTitle}
                       </Typography>
-                      <Typography variant="body2" color="textSecondary" className="flex-grow note-content mb-4">
+                      <Typography variant="body2" color="textSecondary" className="flex-grow overflow-auto mb-2">
                         {note.content}
                       </Typography>
-                      <Typography variant="body2" color="textSecondary">いいね数: {note.likes_count}</Typography>
+                      <Typography variant="body2" color="textSecondary" className="mb-2">
+                        いいね数: {note.likes_count}
+                      </Typography>
                       {note.youtube_video_id && (
-                        <Box mt={2} textAlign="center">
-                          <Link href={`/youtube_videos/${note.youtube_video_id}`} passHref>
+                        <Box textAlign="center">
+                          <Link href={`/youtube_videos/${note.youtube_video_id}`} passHref legacyBehavior>
                             <Button variant="contained" className="btn btn-outline btn-darkpink" size="small">この動画を見る</Button>
                           </Link>
                         </Box>
