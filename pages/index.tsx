@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { Tabs } from '../components/Root/Tabs'; // Tabsコンポーネントをインポート
 import { WavyBackground } from '../components/Root/WavyBackground'; // WavyBackgroundコンポーネントをインポート
-import tabs from '../components/Root/tabs'; // tabsをインポート
+import tabs from '../components/Root/tab'; // tabsをインポート
 
 const RootPage = () => {
   const router = useRouter();
