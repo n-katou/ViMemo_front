@@ -101,6 +101,27 @@ footer {
   overflow-y: auto;
 }
 
+.note-card {
+  width: 100%;
+  height: 300px; /* 固定高さ */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.note-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.note-card-title,
+.note-card-likes,
+.note-card-content {
+  margin-bottom: 8px;
+}
+
+
 /* Button Styles */
 .btn-outline {
   border: 1px solid #ccc; /* アウトラインボタンの境界線 */
@@ -227,6 +248,19 @@ input[type="text"] {
 
 .duration-300 {
   transition-duration: 300ms; /* トランジションの継続時間 */
+}
+
+.fixed-button-container {
+  margin-top: auto;
+  text-align: center;
+}
+
+.fixed-bottom {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
 }
 
 /* Gradient Backgrounds */
