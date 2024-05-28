@@ -124,7 +124,7 @@ const FavoriteNotesPage: React.FC = () => {
               return null; // likeableがNoteでない場合はnullを返す
             })}
           </Grid>
-          <Box mt={4} display="flex" justifyContent="center">
+          <Box mt={4} display="flex" justifyContent="left">
             <Pagination
               count={Math.ceil(noteLikes.length / itemsPerPage)} // 総ページ数を計算
               page={currentPage} // 現在のページ
