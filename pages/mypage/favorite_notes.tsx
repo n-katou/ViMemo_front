@@ -4,16 +4,10 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import { Like } from '../../types/like';
 import { Note } from '../../types/note';
 import axios from 'axios';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { FaTrashAlt } from 'react-icons/fa';
-import Link from 'next/link';
 import Pagination from '../../components/Pagination';
+import NoteCard from '../../components/FavoriteNote/NoteCard';
 
 export const fetchNoteLikes = async (
   jwtToken: string,
@@ -103,36 +97,7 @@ const FavoriteNotesPage: React.FC = () => {
               if (isNote(note)) {
                 return (
                   <Grid item xs={12} sm={6} md={4} key={like.id}>
-                    <Card className="note-card">
-                      <CardContent className="note-card-content">
-                        {note.user && (
-                          <div className="flex items-center mb-2">
-                            {note.user.avatar_url && (
-                              <Avatar src={note.user.avatar_url} alt="User Avatar" sx={{ width: 32, height: 32, mr: 2 }} />
-                            )}
-                            <Typography variant="body2" className="font-bold">{note.user.name}</Typography>
-                          </div>
-                        )}
-                        <Typography variant="subtitle1" color="textPrimary" className="note-card-title">
-                          {note.youtube_video_title || 'タイトルを取得できませんでした'}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" className="note-content">
-                          {note.content}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" className="note-card-likes">
-                          いいね数: {note.likes_count}
-                        </Typography>
-                        {note.youtube_video_id && (
-                          <Box className="fixed-button-container">
-                            <Link href={`/youtube_videos/${note.youtube_video_id}`} passHref legacyBehavior>
-                              <Button variant="contained" className="btn btn-outline btn-darkpink" size="small">
-                                この動画を見る
-                              </Button>
-                            </Link>
-                          </Box>
-                        )}
-                      </CardContent>
-                    </Card>
+                    <NoteCard note={note} jwtToken={jwtToken || ''} currentUser={currentUser} />
                   </Grid>
                 );
               }
