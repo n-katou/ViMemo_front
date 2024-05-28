@@ -1,5 +1,5 @@
-import { YoutubeVideo } from '../types/youtubeVideo';
-import { handleLike, handleUnlike, fetchVideoLikes } from './api';
+import { YoutubeVideo } from '../../types/youtubeVideo';
+import { handleLike, handleUnlike, fetchVideoLikes } from '../../src/api';
 
 // YouTube動画を取得する関数
 export const fetchYoutubeVideos = async (query = '', page = 1, itemsPerPage = 9, sort = '') => {
