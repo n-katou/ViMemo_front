@@ -10,7 +10,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { fetchYoutubeVideo } from '../../src/api';
-import { addNote, handleDeleteNote, handleEditNote, handleLikeVideo, handleUnlikeVideo, videoTimestampToSeconds, playFromTimestamp, formatDuration } from '../../src/youtubeShowUtils';
+import { addNote, handleDeleteNote, handleEditNote, handleLikeVideo, handleUnlikeVideo, videoTimestampToSeconds, playFromTimestamp, formatDuration } from '../../components/YoutubeShow/youtubeShowUtils';
 
 const YoutubeVideoShowPage: React.FC = () => {
   const [video, setVideo] = useState<YoutubeVideo & { formattedDuration?: string } | null>(null);
