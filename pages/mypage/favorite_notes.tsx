@@ -50,6 +50,7 @@ const FavoriteNotesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1); // 現在のページを管理する状態
+  const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションを追加
   const itemsPerPage = 12; // 1ページあたりのアイテム数を設定
 
   // コンポーネントがマウントされたときにノートのいいねを取得するための副作用
@@ -66,7 +67,24 @@ const FavoriteNotesPage: React.FC = () => {
       .catch((err) => {
         console.error("Error fetching note likes:", err);
       });
-  }, [currentUser, jwtToken]); // currentUserとjwtTokenが変更されるたびに実行
+  }, [currentUser, jwtToken, currentPage, sortOption]); // currentUser、jwtToken、currentPage、sortOptionが変更されるたびに実行
+
+  // ノートのリストをソートする関数
+  const sortNotes = (notes: Like[]) => {
+    switch (sortOption) {
+      case 'created_at_asc':
+        return notes.slice().sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      case 'most_liked':
+        return notes.slice().sort((a, b) => b.likeable.likes_count - a.likeable.likes_count);
+      default:
+        return notes.slice().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+  };
+
+  // ページネーションのためのアイテムのスライス
+  const startIndex = (currentPage - 1) * itemsPerPage; // 開始インデックスを計算
+  const endIndex = startIndex + itemsPerPage; // 終了インデックスを計算
+  const currentItems = sortNotes(noteLikes).slice(startIndex, endIndex); // 現在のページに表示するアイテムをスライス
 
   if (loading) {
     console.log("Loading state: ", loading);
@@ -77,14 +95,20 @@ const FavoriteNotesPage: React.FC = () => {
     return <p>{error}</p>;
   }
 
-  // ページネーションのためのアイテムのスライス
-  const startIndex = (currentPage - 1) * itemsPerPage; // 開始インデックスを計算
-  const endIndex = startIndex + itemsPerPage; // 終了インデックスを計算
-  const currentItems = noteLikes.slice(startIndex, endIndex); // 現在のページに表示するアイテムをスライス
-
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">いいねしたメモ一覧</h1>
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">いいねしたメモ一覧</h1>
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          className="form-select form-select-lg text-white bg-gray-800 border-gray-600 rounded-md"
+        >
+          <option value="created_at_desc">デフォルト（新しい順）</option>
+          <option value="created_at_asc">古い順</option>
+          <option value="most_liked">いいね数順</option>
+        </select>
+      </div>
       {currentItems.length > 0 ? (
         <>
           <Grid container spacing={4}>
