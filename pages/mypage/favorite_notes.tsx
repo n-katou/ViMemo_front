@@ -11,6 +11,7 @@ import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import { FaTrashAlt } from 'react-icons/fa';
 import Link from 'next/link';
 import Pagination from '../../components/Pagination';
 
@@ -124,7 +125,7 @@ const FavoriteNotesPage: React.FC = () => {
                         {note.youtube_video_id && (
                           <Box className="fixed-button-container">
                             <Link href={`/youtube_videos/${note.youtube_video_id}`} passHref legacyBehavior>
-                              <Button variant="contained" color="primary" size="small">
+                              <Button variant="contained" className="btn btn-outline btn-darkpink" size="small">
                                 この動画を見る
                               </Button>
                             </Link>
