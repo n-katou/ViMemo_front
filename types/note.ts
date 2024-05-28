@@ -15,4 +15,6 @@ export interface Note {
   youtube_video_title: string;
   likes_count: number; // いいねのカウントを追加
   likes: Like[];
+  liked_by_current_user: boolean;
+  current_user_like_id?: number;
 }

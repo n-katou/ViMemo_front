@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import PaginationComponent from '../../components/Pagination';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { fetchFavorites, fetchVideoLikes, fetchUserLikeStatus, handleLike, handleUnlike } from '../../src/favorites'; // API操作関数をインポート
+import { fetchFavorites, fetchVideoLikes, fetchUserLikeStatus, handleLike, handleUnlike } from '../../components/Mypage/favorites'; // API操作関数をインポート
 import VideoCard from '../../components/Mypage/FavoriteVideoCard'; // ビデオカードコンポーネントをインポート
 
 const ITEMS_PER_PAGE = 9; // 一ページあたりのアイテム数を定義

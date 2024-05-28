@@ -11,6 +11,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LoginIcon from '@mui/icons-material/Login';
 import NoteIcon from '@mui/icons-material/Note';
+import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import HomeIcon from '@mui/icons-material/Home'; // HomeIcon をインポート
 import { CustomUser } from '../../types/user';
@@ -68,15 +69,21 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               </ListItemIcon>
               <Typography>マイページ</Typography>
             </ListItem>
-            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/favorites">
+            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/favorite_videos">
               <ListItemIcon>
                 <FavoriteIcon />
               </ListItemIcon>
               <Typography>いいねした動画</Typography>
             </ListItem>
-            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/my_notes">
+            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/favorite_notes">
               <ListItemIcon>
                 <NoteIcon />
+              </ListItemIcon>
+              <Typography>いいねしたメモ</Typography>
+            </ListItem>
+            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/my_notes">
+              <ListItemIcon>
+                <EditIcon />
               </ListItemIcon>
               <Typography>MYメモ</Typography>
             </ListItem>

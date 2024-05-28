@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button, Snackbar, Alert, Typography, Box, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
-import { Tabs } from '../components/Tabs'; // Tabsコンポーネントをインポート
-import { WavyBackground } from '../components/WavyBackground'; // WavyBackgroundコンポーネントをインポート
+import { Tabs } from '../components/Root/Tabs'; // Tabsコンポーネントをインポート
+import { WavyBackground } from '../components/Root/WavyBackground'; // WavyBackgroundコンポーネントをインポート
 import tabs from '../components/Root/tabs'; // tabsをインポート
 
 const RootPage = () => {

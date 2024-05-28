@@ -1,6 +1,6 @@
-import { YoutubeVideo } from '../types/youtubeVideo';
-import { Note } from '../types/note';
-import { fetchYoutubeVideo, handleLike, handleUnlike, addNoteToVideo, deleteNoteFromVideo, editNoteInVideo } from './api';
+import { YoutubeVideo } from '../../types/youtubeVideo';
+import { Note } from '../../types/note';
+import { fetchYoutubeVideo, handleLike, handleUnlike, addNoteToVideo, deleteNoteFromVideo, editNoteInVideo } from '../../src/api';
 
 // タイムスタンプを秒に変換する関数
 export const videoTimestampToSeconds = (timestamp: string): number => {

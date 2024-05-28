@@ -20,15 +20,18 @@ interface NoteLikesAccordionProps {
 const isNote = (likeable: any): likeable is Note => likeable !== undefined && likeable.content !== undefined;
 
 const NoteLikesAccordion: React.FC<NoteLikesAccordionProps> = ({ noteLikes }) => {
+  // 最初の6件のnoteLikesを取得
+  const limitedNoteLikes = noteLikes.slice(0, 6);
+
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography variant="h6">最新「いいね」したメモ一覧</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        {noteLikes.length > 0 ? (
+        {limitedNoteLikes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {noteLikes.map((like) => {
+            {limitedNoteLikes.map((like) => {
               if (like.likeable && isNote(like.likeable)) {
                 const note = like.likeable;
                 const youtubeVideoTitle = note.youtube_video_title || 'タイトルを取得できませんでした';
@@ -45,9 +48,6 @@ const NoteLikesAccordion: React.FC<NoteLikesAccordionProps> = ({ noteLikes }) =>
                       )}
                       <Typography variant="subtitle1" color="textPrimary" className="mb-1">
                         {youtubeVideoTitle}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary" className="flex-grow overflow-auto mb-2">
-                        {note.content}
                       </Typography>
                       <Typography variant="body2" color="textSecondary" className="mb-2">
                         いいね数: {note.likes_count}

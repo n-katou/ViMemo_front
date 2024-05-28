@@ -6,7 +6,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import NoteIcon from '@mui/icons-material/Note';
-import { formatDuration } from '../../src/youtubeShowUtils'; // 動画の再生時間をフォーマットする関数をインポート
+import { formatDuration } from '../YoutubeShow/youtubeShowUtils'; // 動画の再生時間をフォーマットする関数をインポート
 
 // VideoCardコンポーネントのプロパティ型を定義
 interface VideoCardProps {
