@@ -8,7 +8,7 @@ import UserCard from '../../components/Mypage/UserCard'; // ユーザーカー�
 import YoutubeLikesAccordion from '../../components/Mypage/YoutubeLikesAccordion'; // ノートいいねアコーディオンコンポーネントをインポート
 import NoteLikesAccordion from '../../components/Mypage/NoteLikesAccordion'; // ノートいいねアコーディオンコンポーネントをインポート
 import SearchForm from '../../components/Mypage/SearchForm'; // 検索フォームコンポーネントをインポート
-import { fetchData, fetchVideosByGenre, debouncedFetchSuggestions, shufflePlaylist } from '../../src/dashboard'; // データフェッチ用の関数をインポート
+import { fetchData, fetchVideosByGenre, debouncedFetchSuggestions, shufflePlaylist } from '../../components/Mypage/dashboard'; // データフェッチ用の関数をインポート
 
 const Dashboard = () => {
   const { currentUser, jwtToken, loading, setAuthState } = useAuth(); // 認証コンテキストから必要な情報を取得
