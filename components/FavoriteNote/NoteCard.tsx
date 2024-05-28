@@ -15,6 +15,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, jwtToken, currentUser }) => {
   const [liked, setLiked] = useState(false);
   const [likeError, setLikeError] = useState<string | null>(null);
   const [likeId, setLikeId] = useState<number | null>(null); // likeIdを追加
+  const [likesCount, setLikesCount] = useState(note.likes_count); // likes_countを状態として管理
 
   const fetchLikeStatus = async () => {
     if (jwtToken) {
@@ -45,6 +46,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, jwtToken, currentUser }) => {
       if (result.success) {
         setLiked(false);
         setLikeId(null);
+        setLikesCount(prevCount => prevCount - 1); // いいね解除時にカウントを減少
         setLikeError(null);
       } else {
         setLikeError(result.error);
@@ -54,6 +56,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, jwtToken, currentUser }) => {
       if (result.success) {
         setLiked(true);
         setLikeId(result.like_id);
+        setLikesCount(prevCount => prevCount + 1); // いいね時にカウントを増加
         setLikeError(null);
       } else {
         setLikeError(result.error);
@@ -82,7 +85,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, jwtToken, currentUser }) => {
         <Typography variant="body2" color="textSecondary" className="note-card-likes">
           <Tooltip title={liked ? "いいねを取り消す" : "いいね"}>
             <IconButton onClick={handleLike}>
-              <Badge badgeContent={note.likes_count} color="primary">
+              <Badge badgeContent={likesCount} color="primary">
                 {liked ? <ThumbUp color="primary" /> : <ThumbUpOffAlt />}
               </Badge>
             </IconButton>
@@ -91,7 +94,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, jwtToken, currentUser }) => {
         {note.youtube_video_id && (
           <Box className="fixed-button-container">
             <Link href={`/youtube_videos/${note.youtube_video_id}`} passHref legacyBehavior>
-              <Button variant="contained" color="primary" size="small">
+              <Button variant="contained" className="btn btn-outline btn-darkpink" size="small">
                 この動画を見る
               </Button>
             </Link>
