@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "yarn next build",
+    "build": "next build",
+    "export": "next export",
+    "postbuild": "next-sitemap",
     "sitemap": "next-sitemap",
     "start": "next start",
     "lint": "next lint"
