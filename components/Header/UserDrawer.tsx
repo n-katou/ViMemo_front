@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -24,6 +25,8 @@ interface UserDrawerProps {
 }
 
 const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, currentUser, handleLogout }) => {
+  const router = useRouter(); // useRouterフックを使用して現在のパスを取得
+
   return (
     <Drawer
       anchor="right"
@@ -57,31 +60,71 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
                 こんにちは、{currentUser.name}さん
               </Typography>
             </ListItem>
-            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/">
+            <ListItem
+              button
+              onClick={toggleDrawer(false)}
+              component={Link}
+              href="/"
+              sx={{
+                backgroundColor: router.pathname === '/' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+              }}
+            >
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>
               <Typography>ホーム</Typography>
             </ListItem>
-            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/dashboard">
+            <ListItem
+              button
+              onClick={toggleDrawer(false)}
+              component={Link}
+              href="/mypage/dashboard"
+              sx={{
+                backgroundColor: router.pathname === '/mypage/dashboard' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+              }}
+            >
               <ListItemIcon>
                 <PersonIcon />
               </ListItemIcon>
               <Typography>マイページ</Typography>
             </ListItem>
-            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/favorite_videos">
+            <ListItem
+              button
+              onClick={toggleDrawer(false)}
+              component={Link}
+              href="/mypage/favorite_videos"
+              sx={{
+                backgroundColor: router.pathname === '/mypage/favorite_videos' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+              }}
+            >
               <ListItemIcon>
                 <FavoriteIcon />
               </ListItemIcon>
               <Typography>いいねした動画</Typography>
             </ListItem>
-            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/favorite_notes">
+            <ListItem
+              button
+              onClick={toggleDrawer(false)}
+              component={Link}
+              href="/mypage/favorite_notes"
+              sx={{
+                backgroundColor: router.pathname === '/mypage/favorite_notes' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+              }}
+            >
               <ListItemIcon>
                 <NoteIcon />
               </ListItemIcon>
               <Typography>いいねしたメモ</Typography>
             </ListItem>
-            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/mypage/my_notes">
+            <ListItem
+              button
+              onClick={toggleDrawer(false)}
+              component={Link}
+              href="/mypage/my_notes"
+              sx={{
+                backgroundColor: router.pathname === '/mypage/my_notes' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+              }}
+            >
               <ListItemIcon>
                 <EditIcon />
               </ListItemIcon>
@@ -96,13 +139,29 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
           </>
         ) : (
           <>
-            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/">
+            <ListItem
+              button
+              onClick={toggleDrawer(false)}
+              component={Link}
+              href="/"
+              sx={{
+                backgroundColor: router.pathname === '/' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+              }}
+            >
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>
               <Typography>ホーム</Typography>
             </ListItem>
-            <ListItem button onClick={toggleDrawer(false)} component={Link} href="/login">
+            <ListItem
+              button
+              onClick={toggleDrawer(false)}
+              component={Link}
+              href="/login"
+              sx={{
+                backgroundColor: router.pathname === '/login' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+              }}
+            >
               <ListItemIcon>
                 <LoginIcon />
               </ListItemIcon>

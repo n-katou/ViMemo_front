@@ -36,8 +36,8 @@ const NoteLikesAccordion: React.FC<NoteLikesAccordionProps> = ({ noteLikes }) =>
                 const note = like.likeable;
                 const youtubeVideoTitle = note.youtube_video_title || 'タイトルを取得できませんでした';
                 return (
-                  <Card key={note.id} className="col-span-1 bg-white shadow-lg rounded-lg transition-transform transform hover:scale-105">
-                    <CardContent className="flex flex-col h-64 overflow-hidden">
+                  <Card key={note.id} className="col-span-1 bg-white shadow-lg rounded-lg transition-transform transform hover:scale-105 flex flex-col justify-between h-full">
+                    <CardContent className="flex flex-col flex-grow overflow-hidden">
                       {note.user && (
                         <div className="flex items-center mb-2">
                           {note.user.avatar_url && (
@@ -49,17 +49,17 @@ const NoteLikesAccordion: React.FC<NoteLikesAccordionProps> = ({ noteLikes }) =>
                       <Typography variant="subtitle1" color="textPrimary" className="mb-1">
                         {youtubeVideoTitle}
                       </Typography>
-                      <Typography variant="body2" color="textSecondary" className="mb-2">
+                      <Typography variant="body2" color="textSecondary" className="mb-2 flex-grow">
                         いいね数: {note.likes_count}
                       </Typography>
-                      {note.youtube_video_id && (
-                        <Box textAlign="center">
-                          <Link href={`/youtube_videos/${note.youtube_video_id}`} passHref legacyBehavior>
-                            <Button variant="contained" className="btn btn-outline btn-darkpink" size="small">この動画を見る</Button>
-                          </Link>
-                        </Box>
-                      )}
                     </CardContent>
+                    {note.youtube_video_id && (
+                      <Box textAlign="center" p={2}>
+                        <Link href={`/youtube_videos/${note.youtube_video_id}`} passHref legacyBehavior>
+                          <Button variant="contained" className="btn btn-outline btn-darkpink" size="small">この動画を見る</Button>
+                        </Link>
+                      </Box>
+                    )}
                   </Card>
                 );
               }

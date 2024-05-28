@@ -6,6 +6,7 @@ import 'swiper/css'; // SwiperのCSSをインポート
 import 'swiper/css/pagination'; // Swiperのpagination用CSSをインポート
 import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポート
 import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポート
+import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポート
 
 interface NoteListProps {
   notes: Note[]; // メモの配列
@@ -27,6 +28,8 @@ const NoteList: React.FC<NoteListProps> = ({
   onEdit,
 }) => {
   const [isMobile, setIsMobile] = useState(false); // モバイル表示かどうかの状態を管理
+  const [currentPage, setCurrentPage] = useState(1); // 現在のページを管理
+  const itemsPerPage = 6; // 1ページあたりのメモの数
 
   useEffect(() => {
     // 画面サイズが変更されたときのハンドラ
@@ -42,10 +45,15 @@ const NoteList: React.FC<NoteListProps> = ({
   // メモを作成日時でソートする
   const sortedNotes = [...notes].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
+  // ページネーションのためのメモのスライス
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedNotes = sortedNotes.slice(startIndex, endIndex);
+
   return (
     <div id="notes_list" className="mt-5">
       <h2 className="text-xl font-bold mb-4">メモ一覧</h2>
-      {sortedNotes.length > 0 ? ( // メモがある場合
+      {paginatedNotes.length > 0 ? ( // メモがある場合
         isMobile ? ( // モバイル表示の場合
           <Swiper
             spaceBetween={10} // スライド間のスペース
@@ -54,7 +62,7 @@ const NoteList: React.FC<NoteListProps> = ({
             navigation // ナビゲーションの有効化
             modules={[Pagination, Navigation]} // 使用するモジュールの指定
           >
-            {sortedNotes.map((note) => {
+            {paginatedNotes.map((note) => {
               const isOwner = currentUser?.id === note.user?.id; // 現在のユーザーがメモの所有者かどうかを判定
               return (
                 <SwiperSlide key={note.id}>
@@ -73,24 +81,31 @@ const NoteList: React.FC<NoteListProps> = ({
             })}
           </Swiper>
         ) : ( // デスクトップ表示の場合
-          <div className="flex flex-wrap -mx-2">
-            {sortedNotes.map((note) => {
-              const isOwner = currentUser?.id === note.user?.id; // 現在のユーザーがメモの所有者かどうかを判定
-              return (
-                <div key={note.id} className="p-2 w-full sm:w-1/2 lg:w-1/3">
-                  <NoteItem
-                    note={note} // メモの情報
-                    currentUser={currentUser} // 現在のユーザー情報
-                    videoTimestampToSeconds={videoTimestampToSeconds} // タイムスタンプを秒に変換する関数
-                    playFromTimestamp={playFromTimestamp} // 指定の秒数から再生を開始する関数
-                    videoId={videoId} // 動画のID
-                    onDelete={onDelete} // メモを削除する関数
-                    onEdit={onEdit} // メモを編集する関数
-                    isOwner={isOwner} // メモの所有者かどうか
-                  />
-                </div>
-              );
-            })}
+          <div>
+            <div className="flex flex-wrap -mx-2">
+              {paginatedNotes.map((note) => {
+                const isOwner = currentUser?.id === note.user?.id; // 現在のユーザーがメモの所有者かどうかを判定
+                return (
+                  <div key={note.id} className="p-2 w-full sm:w-1/2 lg:w-1/3">
+                    <NoteItem
+                      note={note} // メモの情報
+                      currentUser={currentUser} // 現在のユーザー情報
+                      videoTimestampToSeconds={videoTimestampToSeconds} // タイムスタンプを秒に変換する関数
+                      playFromTimestamp={playFromTimestamp} // 指定の秒数から再生を開始する関数
+                      videoId={videoId} // 動画のID
+                      onDelete={onDelete} // メモを削除する関数
+                      onEdit={onEdit} // メモを編集する関数
+                      isOwner={isOwner} // メモの所有者かどうか
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <PaginationComponent
+              count={Math.ceil(sortedNotes.length / itemsPerPage)} // 総ページ数を計算
+              page={currentPage} // 現在のページ
+              onChange={(event, value) => setCurrentPage(value)} // ページ変更時の処理
+            />
           </div>
         )
       ) : ( // メモがない場合
