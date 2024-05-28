@@ -1,5 +1,5 @@
 // src/tabs.js
-const tabs = [
+const tab = [
   {
     title: "アカウント管理",
     value: "account_management",
@@ -107,4 +107,4 @@ const tabs = [
   },
 ];
 
-export default tabs;
+export default tab;

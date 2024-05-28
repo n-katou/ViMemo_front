@@ -11,9 +11,9 @@ class MyDocument extends Document {
           <meta property="og:title" content="ViMemo" />
           <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
           <meta property="og:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
-          <meta property="og:url" content="https://vimemo.vercel.app" />
+          <meta property="og:url" content="https://vi-memo.com" />
           <meta property="og:type" content="website" />
-          <link rel="canonical" href="https://vimemo.vercel.app" />
+          <link rel="canonical" href="https://vi-memo.com" />
           <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
           <meta name="apple-mobile-web-app-title" content="ViMemo" />
           <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />

@@ -82,9 +82,9 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
         <meta property="og:title" content="ViMemo" />
         <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
         <meta property="og:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
-        <meta property="og:url" content="https://vimemo.vercel.app" />
+        <meta property="og:url" content="https://vi-memo.com" />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://vimemo.vercel.app" />
+        <link rel="canonical" href="https://vi-memo.com" />
       </Head>
       <FlashMessageProvider>
         <AuthProvider>
