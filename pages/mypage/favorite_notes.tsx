@@ -98,7 +98,7 @@ const FavoriteNotesPage: React.FC = () => {
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold text-white-900">いいねしたメモ一覧</h1>
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-8">
         <select
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}

@@ -4,10 +4,10 @@ import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import NoteCard from '../../components/MyNote/NoteCard';
 import { Note } from '../../types/note';
-import PaginationComponent from '../../components/Pagination';  // 共通コンポーネントをインポート
+import PaginationComponent from '../../components/Pagination';
 
 interface NoteWithVideoTitle extends Note {
-  video_title?: string;
+  video_title: string;
 }
 
 const MyNotesPage: React.FC = () => {
@@ -15,52 +15,32 @@ const MyNotesPage: React.FC = () => {
   const [notes, setNotes] = useState<NoteWithVideoTitle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sortOption, setSortOption] = useState<string>('created_at_desc');  // ソートオプションを追加
+  const [sortOption, setSortOption] = useState<string>('created_at_desc');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     if (!currentUser) {
-      console.log("Current user is missing.");
       setLoading(false);
       return;
     }
 
     const fetchNotes = async (page: number, sort: string) => {
       try {
-        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notes?filter=my_notes&page=${page}&sort=${sort}`;
-        console.log(`Request URL for user notes: ${userNotesUrl}`);
-
+        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/notes_with_videos?page=${page}&sort=${sort}`;
         const res = await axios.get(userNotesUrl, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
           },
         });
 
-        console.log('User notes API response:', res);
-
         if (res.data.notes) {
-          const notesWithTitles = await Promise.all(res.data.notes.map(async (note: Note) => {
-            const videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${note.youtube_video_id}`;
-            const videoRes = await axios.get(videoUrl, {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`,
-              },
-            });
-            console.log('Video API response:', videoRes);
-            return {
-              ...note,
-              video_title: videoRes.data.youtube_video.title,
-            };
-          }));
-          setNotes(notesWithTitles);
+          setNotes(res.data.notes);
           setTotalPages(res.data.total_pages);
         } else {
-          console.error('No data returned from API');
           setError('メモの取得に失敗しました。');
         }
       } catch (err) {
-        console.error('Error fetching notes:', err);
         setError('メモの取得に失敗しました。');
       } finally {
         setLoading(false);
@@ -68,7 +48,7 @@ const MyNotesPage: React.FC = () => {
     };
 
     fetchNotes(page, sortOption);
-  }, [currentUser, jwtToken, page, sortOption]);  // sortOptionを依存配列に追加
+  }, [currentUser, jwtToken, page, sortOption]);
 
   const handleDeleteNote = async (noteId: number) => {
     try {
@@ -86,7 +66,7 @@ const MyNotesPage: React.FC = () => {
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(event.target.value);
-    setPage(1);  // ソートオプションが変更された場合、ページをリセット
+    setPage(1);
   };
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, newPage: number) => {
@@ -102,7 +82,7 @@ const MyNotesPage: React.FC = () => {
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold text-white-900">MYメモ一覧</h1>
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-8">
         <select
           value={sortOption}
           onChange={handleSortChange}
@@ -117,7 +97,7 @@ const MyNotesPage: React.FC = () => {
           {notes.map((note) => (
             <NoteCard
               key={note.id}
-              videoTitle={note.video_title || 'タイトルなし'}
+              videoTitle={note.video_title}
               content={note.content}
               videoTimestamp={note.video_timestamp}
               youtubeVideoId={note.youtube_video_id}
