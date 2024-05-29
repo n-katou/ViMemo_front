@@ -4,7 +4,7 @@ const tab = [
     title: "アカウント管理",
     value: "account_management",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'black', textAlign: 'left' }}>
+      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
         <div className="note-container">
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px' }}>Googleアカウントを利用すれば、登録不要でログインが可能です。</p>
@@ -25,7 +25,7 @@ const tab = [
     title: "検索機能",
     value: "search",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'black', textAlign: 'left' }}>
+      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
         <p style={{ color: '#22eec5', fontWeight: 'bold', textAlign: 'center' }}>非会員でも利用可能な機能です</p>
         <div className="note-container">
           <div className="note-item mt-4">
@@ -55,7 +55,7 @@ const tab = [
     value: "memo",
     content: (
       <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
-        <p style={{ color: 'yellow', fontWeight: 'bold', textAlign: 'center' }}>このセクションは会員限定です</p>
+        <p style={{ color: 'yellow', fontWeight: 'bold', textAlign: 'center' }}>このセクションは会員限定です(一部除く)</p>
         <div className="note-container">
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px' }}>再生中にメモ追加が可能です。</p>
@@ -76,6 +76,7 @@ const tab = [
             />
           </div>
           <div className="note-item mt-4">
+            <p style={{ color: '#22eec5', fontWeight: 'bold', textAlign: 'center', marginBottom: '30px' }}>非会員でも利用可能な機能です</p>
             <p style={{ marginBottom: '30px' }}>タイムスタンプクリックで、時間軸が移動します。</p>
             <img
               src="https://i.gyazo.com/9aef836642f1cfa60a35f809c098bffb.gif"
