@@ -100,7 +100,7 @@ const YoutubeVideoShowPage: React.FC = () => {
           <div className="text-left mt-8">
             <button
               className="btn btn-outline btn-blue"
-              onClick={() => router.push('/youtube_videos')}
+              onClick={() => router.back()}
             >
               戻る
             </button>
