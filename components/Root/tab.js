@@ -4,7 +4,7 @@ const tab = [
     title: "アカウント管理",
     value: "account_management",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
+      <div className="p-4 text-xl md:text-2xl" style={{ color: 'black', textAlign: 'left' }}>
         <div className="note-container">
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px' }}>Googleアカウントを利用すれば、登録不要でログインが可能です。</p>
@@ -13,9 +13,38 @@ const tab = [
                 src="https://i.gyazo.com/b9226792089d148f0b1dcc659786d536.gif"
                 width="100%"
                 alt="ログイン方法の説明"
-                style={{ display: 'block', margin: 'auto' }} // 追加
+                style={{ display: 'block', margin: 'auto' }}
               />
             </div>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    title: "検索機能",
+    value: "search",
+    content: (
+      <div className="p-4 text-xl md:text-2xl" style={{ color: 'black', textAlign: 'left' }}>
+        <p style={{ color: '#22eec5', fontWeight: 'bold', textAlign: 'center' }}>非会員でも利用可能な機能です</p>
+        <div className="note-container">
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>タイトルの部分一致で検索可能です。</p>
+            <img
+              src="https://i.gyazo.com/79f4e2662fa4667c3221350f530fb8a8.gif"
+              width="100%"
+              alt="全件検索"
+              style={{ display: 'block', margin: 'auto' }}
+            />
+          </div>
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>サジェストから選択したら動画詳細に遷移します。</p>
+            <img
+              src="https://i.gyazo.com/bb98f75c7fa57d3a48af8625a30b52b2.gif"
+              width="100%"
+              alt="サジェスト"
+              style={{ display: 'block', margin: 'auto' }}
+            />
           </div>
         </div>
       </div>
@@ -26,6 +55,7 @@ const tab = [
     value: "memo",
     content: (
       <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
+        <p style={{ color: 'yellow', fontWeight: 'bold', textAlign: 'center' }}>このセクションは会員限定です</p>
         <div className="note-container">
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px' }}>再生中にメモ追加が可能です。</p>
@@ -59,38 +89,11 @@ const tab = [
     ),
   },
   {
-    title: "検索機能",
-    value: "search",
-    content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
-        <div className="note-container">
-          <div className="note-item mt-4">
-            <p style={{ marginBottom: '30px' }}>タイトルの部分一致で検索可能です。</p>
-            <img
-              src="https://i.gyazo.com/79f4e2662fa4667c3221350f530fb8a8.gif"
-              width="100%"
-              alt="全件検索"
-              style={{ display: 'block', margin: 'auto' }}
-            />
-          </div>
-          <div className="note-item mt-4">
-            <p style={{ marginBottom: '30px' }}>サジェストから選択したら動画詳細に遷移します。</p>
-            <img
-              src="https://i.gyazo.com/bb98f75c7fa57d3a48af8625a30b52b2.gif"
-              width="100%"
-              alt="サジェスト"
-              style={{ display: 'block', margin: 'auto' }}
-            />
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
     title: "動画取得",
     value: "video_get",
     content: (
       <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
+        <p style={{ color: 'yellow', fontWeight: 'bold', textAlign: 'center' }}>このセクションは会員限定です</p>
         <div className="note-container">
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px' }}>マイページから動画取得可能です。取得権限が必要な方はお問い合わせ下さい。</p>
@@ -110,6 +113,7 @@ const tab = [
     value: "video_playlist",
     content: (
       <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
+        <p style={{ color: 'yellow', fontWeight: 'bold', textAlign: 'center' }}>このセクションは会員限定です</p>
         <div className="note-container">
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px' }}>いいねした動画でプレイリストを作成します。シャッフル再生も可能です。</p>
