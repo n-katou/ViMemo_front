@@ -39,6 +39,16 @@ const Dashboard = () => {
     debouncedFetchSuggestions(searchQuery, setSuggestions);
   }, [searchQuery]);
 
+  // フラッシュメッセージをチェックして表示
+  useEffect(() => {
+    const flashMessage = localStorage.getItem('flashMessage');
+    if (flashMessage) {
+      setFlashMessageState(flashMessage);
+      setShowSnackbar(true);
+      localStorage.removeItem('flashMessage'); // フラッシュメッセージを一度表示したら削除
+    }
+  }, []);
+
   // Snackbarを閉じるハンドラー関数
   const handleCloseSnackbar = () => {
     setShowSnackbar(false);
