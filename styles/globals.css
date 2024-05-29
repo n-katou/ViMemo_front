@@ -125,10 +125,10 @@ footer {
 
 .note-card-normal {
   width: 100%;
-  height: 300px;
-  display: flex;
+  height: auto;
   flex-direction: column;
   justify-content: space-between;
+  white-space: pre-line;
 }
 
 .note-card {
@@ -169,6 +169,27 @@ footer {
 .note-card-likes,
 .note-card-content {
   margin-bottom: 8px;
+}
+
+.note-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.note-items {
+  flex: 1 1 45%;
+  max-width: 45%;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .note-items {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
 }
 
 

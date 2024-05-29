@@ -4,18 +4,18 @@ const tab = [
     title: "アカウント管理",
     value: "account_management",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white' }}>
-        <p>Googleアカウントを利用すれば、登録不要でログインが可能です。</p>
-        <div className="mt-4">
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-            <video
-              src="/video/login.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-            />
+      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
+        <div className="note-container">
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>Googleアカウントを利用すれば、登録不要でログインが可能です。</p>
+            <div className="mt-4">
+              <img
+                src="https://i.gyazo.com/b9226792089d148f0b1dcc659786d536.gif"
+                width="100%"
+                alt="ログイン方法の説明"
+                style={{ display: 'block', margin: 'auto' }} // 追加
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -23,19 +23,35 @@ const tab = [
   },
   {
     title: "メモ操作",
-    value: "video_and_notes",
+    value: "memo",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white' }}>
-        <p>動画再生中にメモを追加し、重要なポイントを記録。後で簡単にアクセスできます。</p>
-        <div className="mt-4">
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-            <video
-              src="/video/sousa.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
+        <div className="note-container">
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>再生中にメモ追加が可能です。</p>
+            <img
+              src="https://i.gyazo.com/7976fa8f168a82669aff26214fe9d70c.gif"
+              width="100%"
+              alt="メモ作成"
+              style={{ display: 'block', margin: 'auto' }}
+            />
+          </div>
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>再生中にメモ編集が可能です。</p>
+            <img
+              src="https://i.gyazo.com/a1c63d00c74953b5e27393f7b2611da0.gif"
+              width="100%"
+              alt="メモ編集"
+              style={{ display: 'block', margin: 'auto' }}
+            />
+          </div>
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>タイムスタンプクリックで、時間軸が移動します。</p>
+            <img
+              src="https://i.gyazo.com/9aef836642f1cfa60a35f809c098bffb.gif"
+              width="100%"
+              alt="タイムスタンプ"
+              style={{ display: 'block', margin: 'auto' }}
             />
           </div>
         </div>
@@ -44,19 +60,26 @@ const tab = [
   },
   {
     title: "検索機能",
-    value: "video_search",
+    value: "search",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white' }}>
-        <p>キーワードで動画を検索し、サジェスト機能を利用できます。</p>
-        <div className="mt-4">
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-            <video
-              src="/video/search.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
+        <div className="note-container">
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>タイトルの部分一致で検索可能です。</p>
+            <img
+              src="https://i.gyazo.com/79f4e2662fa4667c3221350f530fb8a8.gif"
+              width="100%"
+              alt="全件検索"
+              style={{ display: 'block', margin: 'auto' }}
+            />
+          </div>
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>サジェストから選択したら動画詳細に遷移します。</p>
+            <img
+              src="https://i.gyazo.com/bb98f75c7fa57d3a48af8625a30b52b2.gif"
+              width="100%"
+              alt="サジェスト"
+              style={{ display: 'block', margin: 'auto' }}
             />
           </div>
         </div>
@@ -67,17 +90,15 @@ const tab = [
     title: "動画取得",
     value: "video_get",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white' }}>
-        <p>マイページから動画を取得できます。取得権限が必要な場合はお問い合わせください。</p>
-        <div className="mt-4">
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-            <video
-              src="/video/get.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
+        <div className="note-container">
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>マイページから動画取得可能です。取得権限が必要な方はお問い合わせ下さい。</p>
+            <img
+              src="https://i.gyazo.com/05ceda3f173adf006c3e34ae2bf92400.gif"
+              width="100%"
+              alt="動画取得方法"
+              style={{ display: 'block', margin: 'auto' }}
             />
           </div>
         </div>
@@ -88,17 +109,15 @@ const tab = [
     title: "プレイリスト",
     value: "video_playlist",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white' }}>
-        <p>いいねした動画でプレイリストを作成し、シャッフル再生が可能です。</p>
-        <div className="mt-4">
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-            <video
-              src="/video/playlist.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+      <div className="p-4 text-xl md:text-2xl" style={{ color: 'white', textAlign: 'left' }}>
+        <div className="note-container">
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>いいねした動画でプレイリストを作成します。シャッフル再生も可能です。</p>
+            <img
+              src="https://i.gyazo.com/52ed84887624b7f6a45a824c888adf3d.gif"
+              width="100%"
+              alt="プレイリスト"
+              style={{ display: 'block', margin: 'auto' }}
             />
           </div>
         </div>
