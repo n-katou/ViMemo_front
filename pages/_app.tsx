@@ -89,7 +89,7 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
       <FlashMessageProvider>
         <AuthProvider>
           <Box id="root" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <Box sx={{ flexShrink: 0 }}>
+            <Box sx={{ flexShrink: 0, backgroundColor: 'black' }}>
               <Header />
             </Box>
             <Box component="main" sx={{ flex: 1, backgroundColor: 'black', color: 'white' }}>
