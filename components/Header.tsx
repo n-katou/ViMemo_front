@@ -56,7 +56,7 @@ const Header: React.FC = () => {
   return (
     <>
       <AppBar position="fixed" sx={{ backgroundColor: 'black', zIndex: 1300 }}>
-        <Toolbar disableGutters>
+        <Toolbar>
           <span
             className="bg-gradient-rainbow-header"
             onClick={navigateToHome}
@@ -121,7 +121,7 @@ const Header: React.FC = () => {
           </div>
         </Toolbar>
       </AppBar>
-      <Toolbar sx={{ height: '64px' }} /> {/* ヘッダーの高さと一致するスペースを作成 */}
+      <Toolbar /> {/* この行はコンテンツの上にスペースを作ります */}
       <FlashMessage /> {/* フラッシュメッセージコンポーネントを追加 */}
     </>
   );
