@@ -20,6 +20,7 @@ header {
   top: 0;
   width: 100%;
   z-index: 1300;
+  background-color: black;
 }
 
 .app-layout {
@@ -30,6 +31,10 @@ header {
 
 footer {
   margin-top: auto;
+}
+
+header + main {
+  padding-top: 64px; /* ヘッダーの高さに応じて調整 */
 }
 
 /* Video Styles */

@@ -19,7 +19,7 @@ interface AuthenticatedAppProps {
   appRouter: AppProps['router'];
 }
 
-const protectedRoutes = ['/mypage/dashboard', '/mypage/edit', '/mypage/favorites', '/mypage/my_notes'];
+const protectedRoutes = ['/mypage/dashboard', '/mypage/edit', '/mypage/favorite_videos', '/mypage/favorite_notes', '/mypage/my_notes'];
 
 function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppProps) {
   const { currentUser, loading } = useAuth();
