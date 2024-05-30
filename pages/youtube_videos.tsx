@@ -112,6 +112,7 @@ const YoutubeVideosPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8">
+    <h1 className="text-3xl font-bold text-white-900">Youtube一覧</h1>
       {/* ソートオプションのセレクトボックス */}
       <div className="flex justify-end mb-4">
         <select

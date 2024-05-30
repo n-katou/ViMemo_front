@@ -78,7 +78,7 @@ const FavoritesPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold text-white-900">いいねした動画一覧</h1>
+      <h1 className="text-3xl font-bold text-white-900">いいねしたYoutube一覧</h1>
       <div className="flex justify-end mb-4">
         <select value={sortOption} onChange={handleSortChange} className="form-select text-white bg-gray-800 border-gray-600">
           <option value="created_at_desc">デフォルト（新しい順）</option>
