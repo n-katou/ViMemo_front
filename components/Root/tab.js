@@ -97,7 +97,7 @@ const tab = [
         <p style={{ color: 'yellow', fontWeight: 'bold', textAlign: 'center' }}>このセクションは会員限定です</p>
         <div className="note-container">
           <div className="note-item mt-4">
-            <p style={{ marginBottom: '30px' }}>マイページから動画取得可能です。取得権限が必要な方はお問い合わせ下さい。</p>
+            <p style={{ marginBottom: '30px' }}>マイページから1日1回まで取得可能です。取得を無制限にされたい方はお問い合わせ下さい。</p>
             <img
               src="https://i.gyazo.com/05ceda3f173adf006c3e34ae2bf92400.gif"
               width="100%"
