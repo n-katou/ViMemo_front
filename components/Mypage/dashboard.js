@@ -64,9 +64,10 @@ export const fetchData = async (jwtToken, currentUser, setAuthState, setYoutubeV
   }
 };
 
-export const fetchVideosByGenre = async (genre, jwtToken, setYoutubeVideos, router) => {
+
+export const fetchVideosByGenre = async (genre, jwtToken, setYoutubeVideos, setFlashMessageState, setShowSnackbar, router) => {
+  console.log('Fetching videos with genre:', genre);
   try {
-    // APIエンドポイントにGETリクエストを送信してジャンル別の動画を取得
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/fetch_videos_by_genre`, {
       params: { genre },
       headers: {
@@ -74,11 +75,11 @@ export const fetchVideosByGenre = async (genre, jwtToken, setYoutubeVideos, rout
       },
     });
 
+    console.log('Response:', response);
+
     if (response.status === 200) {
-      // レスポンスデータから動画情報を取得
       const { youtube_videos_data, newly_created_count } = response.data;
-      console.log('Fetched videos:', youtube_videos_data); // デバッグ用のログ
-      setYoutubeVideos(youtube_videos_data); // YouTube動画のリストを設定
+      setYoutubeVideos(youtube_videos_data);
       const flashMessage = `動画を ${newly_created_count} 件取得しました`;
 
       console.log('Navigating to /youtube_videos with flashMessage:', flashMessage); // デバッグ用のログ
@@ -88,12 +89,18 @@ export const fetchVideosByGenre = async (genre, jwtToken, setYoutubeVideos, rout
       }); // 画面遷移を実行
     }
   } catch (error) {
-    // エラーハンドリング
+    let errorMessage = 'ビデオを取得できませんでした。';
     if (axios.isAxiosError(error)) {
       console.error('Error fetching YouTube videos:', error.response?.data || error.message);
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
     } else {
       console.error('Unknown error:', error);
+      errorMessage = '不明なエラーが発生しました。';
     }
+    setFlashMessageState(errorMessage);
+    setShowSnackbar(true);
   }
 };
 

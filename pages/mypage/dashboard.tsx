@@ -4,23 +4,26 @@ import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import UserCard from '../../components/Mypage/UserCard'; // ユーザーカードコンポーネントをインポート
-import YoutubeLikesAccordion from '../../components/Mypage/YoutubeLikesAccordion'; // ノートいいねアコーディオンコンポーネントをインポート
-import NoteLikesAccordion from '../../components/Mypage/NoteLikesAccordion'; // ノートいいねアコーディオンコンポーネントをインポート
-import SearchForm from '../../components/Mypage/SearchForm'; // 検索フォームコンポーネントをインポート
-import { fetchData, fetchVideosByGenre, debouncedFetchSuggestions, shufflePlaylist } from '../../components/Mypage/dashboard'; // データフェッチ用の関数をインポート
+import UserCard from '../../components/Mypage/UserCard';
+import YoutubeLikesAccordion from '../../components/Mypage/YoutubeLikesAccordion';
+import NoteLikesAccordion from '../../components/Mypage/NoteLikesAccordion';
+import SearchForm from '../../components/Mypage/SearchForm';
+import { fetchData, fetchVideosByGenre, debouncedFetchSuggestions, shufflePlaylist } from '../../components/Mypage/dashboard';
 
 const Dashboard = () => {
-  const { currentUser, jwtToken, loading, setAuthState } = useAuth(); // 認証コンテキストから必要な情報を取得
+  // 認証コンテキストから必要な情報を取得
+  const { currentUser, jwtToken, loading, setAuthState } = useAuth();
   const router = useRouter();
-  const [youtubeVideoLikes, setYoutubeVideoLikes] = useState([]); // YouTube動画のいいねリストの状態を管理
-  const [noteLikes, setNoteLikes] = useState([]); // ノートのいいねリストの状態を管理
-  const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState(''); // YouTubeプレイリストのURLの状態を管理
-  const [youtubeVideos, setYoutubeVideos] = useState([]); // YouTube動画のリストの状態を管理
-  const [searchQuery, setSearchQuery] = useState(''); // 検索クエリの状態を管理
-  const [suggestions, setSuggestions] = useState([]); // 検索サジェスチョンの状態を管理
-  const [flashMessage, setFlashMessageState] = useState(''); // フラッシュメッセージの状態を管理
-  const [showSnackbar, setShowSnackbar] = useState(false); // Snackbarの表示状態を管理
+
+  // コンポーネントの状態を管理するためのuseStateフックを使用
+  const [youtubeVideoLikes, setYoutubeVideoLikes] = useState([]);
+  const [noteLikes, setNoteLikes] = useState([]);
+  const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
+  const [youtubeVideos, setYoutubeVideos] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [flashMessage, setFlashMessageState] = useState('');
+  const [showSnackbar, setShowSnackbar] = useState(false);
 
   // データをフェッチするコールバック関数を定義
   const fetchDataCallback = useCallback(() => {
@@ -35,9 +38,9 @@ const Dashboard = () => {
   }, [jwtToken, currentUser, fetchDataCallback]);
 
   // 検索クエリが変更された時にサジェスチョンをフェッチ
-  useEffect(() => {
-    debouncedFetchSuggestions(searchQuery, setSuggestions);
-  }, [searchQuery]);
+  // useEffect(() => {
+  //   debouncedFetchSuggestions(searchQuery, setSuggestions);
+  // }, [searchQuery]);
 
   // フラッシュメッセージをチェックして表示
   useEffect(() => {
@@ -45,7 +48,7 @@ const Dashboard = () => {
     if (flashMessage) {
       setFlashMessageState(flashMessage);
       setShowSnackbar(true);
-      localStorage.removeItem('flashMessage'); // フラッシュメッセージを一度表示したら削除
+      localStorage.removeItem('flashMessage');
     }
   }, []);
 
@@ -66,7 +69,7 @@ const Dashboard = () => {
   }
 
   // 管理者ユーザーかどうかを判定
-  const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const isAdmin = currentUser.role === 'admin';
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -76,18 +79,23 @@ const Dashboard = () => {
           <UserCard currentUser={currentUser} isAdmin={isAdmin} />
         </div>
         <div className="w-full md:flex-1 md:pl-8">
-          {/* 管理者ユーザーの場合に検索フォームを表示 */}
-          {currentUser.role === 'admin' && (
-            <SearchForm
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              suggestions={suggestions}
-              handleSearch={(e) => {
-                e.preventDefault();
-                fetchVideosByGenre(searchQuery, jwtToken, setYoutubeVideos, router);
-              }}
-            />
-          )}
+          {/* 検索フォームを表示 */}
+          <SearchForm
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            suggestions={suggestions}
+            handleSearch={async (e) => {
+              e.preventDefault();
+              console.log('Searching for genre:', searchQuery);
+              try {
+                await fetchVideosByGenre(searchQuery, jwtToken, setYoutubeVideos, setFlashMessageState, setShowSnackbar, router);
+              } catch (error) {
+                console.error('Error fetching videos:', error);
+                setFlashMessageState('ビデオを取得できませんでした。');
+                setShowSnackbar(true);
+              }
+            }}
+          />
           {/* YouTube動画のいいねアコーディオンを表示 */}
           <YoutubeLikesAccordion
             youtubeVideoLikes={youtubeVideoLikes}
