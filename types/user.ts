@@ -5,7 +5,7 @@ export interface CustomUser extends FirebaseUser {
   name: string;
   email: string;
   avatar: string;
-  avatar_url?: string;  // ここに追加
+  avatar_url?: string;
   token?: string;
   role?: string;
 }
