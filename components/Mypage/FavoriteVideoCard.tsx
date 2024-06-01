@@ -21,7 +21,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVid
   const router = useRouter();
 
   return (
-    <div key={video.id} className="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div key={video.id} className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group">
       <div className="video-container relative"> {/* 動画のアスペクト比を維持するためのコンテナ */}
         <iframe
           className="video absolute top-0 left-0 w-full h-full" // フレームを絶対位置に配置
@@ -32,7 +32,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVid
       </div>
       <div className="p-4"> {/* カードのコンテンツ部分 */}
         <h2
-          className="text-xl font-bold text-blue-600 cursor-pointer hover:underline"
+          className="text-xl font-bold text-blue-600 cursor-pointer hover:underline group-hover:text-blue-700"
           onClick={() => router.push(`/youtube_videos/${video.id}`)}
         >
           {video.title}
@@ -55,7 +55,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVid
                   await handleUnlikeVideo(video.id, video.likeId); // いいね解除の処理を呼び出す
                 }
               }}>
-                <IconButton color="secondary">
+                <IconButton color="secondary" className="like-button">
                   <FavoriteIcon style={{ color: 'red' }} /> {/* いいね済みアイコン */}
                 </IconButton>
                 <span style={{ color: 'black' }}>いいね解除</span> {/* いいね解除のラベル */}
@@ -66,7 +66,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVid
               <div className="flex items-center cursor-pointer" onClick={async () => {
                 await handleLikeVideo(video.id); // いいねの処理を呼び出す
               }}>
-                <IconButton color="primary">
+                <IconButton color="primary" className="like-button">
                   <FavoriteBorderIcon /> {/* いいねアイコン */}
                 </IconButton>
                 <span style={{ color: 'black' }}>いいねする</span> {/* いいねのラベル */}
