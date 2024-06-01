@@ -46,7 +46,7 @@ export const fetchVideoLikes = async (videoId, jwtToken) => {
   }
 };
 
-// 特定の動画に対するユーザーのいいねステータスをフェッチする関数
+// 特定のyoutubeに対するcurrent_userのいいねステータスをフェッチする関数
 export const fetchUserLikeStatus = async (videoId, jwtToken) => {
   try {
     // APIエンドポイントにGETリクエストを送信して特定の動画に対するユーザーのいいねステータスを取得
