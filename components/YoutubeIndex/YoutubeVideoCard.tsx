@@ -22,7 +22,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   const { currentUser } = useAuth(); // 認証コンテキストから現在のユーザー情報を取得
 
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card">
       <div className="video-container"> {/* 動画のアスペクト比を維持するためのラッパー */}
         <iframe
           className="video" // フレームを絶対配置
@@ -62,6 +62,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
                 }}>
                   <IconButton
                     color="secondary"
+                    className="like-button"
                   >
                     <FavoriteIcon style={{ color: 'red' }} /> {/* いいね済みアイコンを表示 */}
                   </IconButton>
@@ -75,6 +76,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
                 }}>
                   <IconButton
                     color="primary"
+                    className="like-button"
                   >
                     <FavoriteBorderIcon /> {/* いいねアイコンを表示 */}
                   </IconButton>

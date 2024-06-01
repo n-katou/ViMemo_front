@@ -377,3 +377,20 @@ input[type="text"] {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+
+.youtube-video-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.youtube-video-card:hover {
+  transform: scale(1.05);
+}
+
+.like-button {
+  transition: transform 0.2s ease-in-out;
+}
+
+.like-button:active {
+  transform: scale(1.2);
+}
