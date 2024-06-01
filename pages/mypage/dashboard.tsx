@@ -69,7 +69,7 @@ const Dashboard = () => {
   }
 
   // 管理者ユーザーかどうかを判定
-  const isAdmin = currentUser.role === 'admin';
+  const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
   return (
     <div className="container mx-auto px-4 py-8">
