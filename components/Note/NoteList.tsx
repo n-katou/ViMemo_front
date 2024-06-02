@@ -53,33 +53,40 @@ const NoteList: React.FC<NoteListProps> = ({
   return (
     <div id="notes_list" className="mt-5">
       <h2 className="text-xl font-bold mb-4">メモ一覧</h2>
-      {paginatedNotes.length > 0 ? ( // メモがある場合
+      {sortedNotes.length > 0 ? ( // メモがある場合
         isMobile ? ( // モバイル表示の場合
-          <Swiper
-            spaceBetween={10} // スライド間のスペース
-            slidesPerView={1} // 1画面に表示するスライド数
-            pagination={{ clickable: true }} // ページネーションの設定
-            navigation // ナビゲーションの有効化
-            modules={[Pagination, Navigation]} // 使用するモジュールの指定
-          >
-            {paginatedNotes.map((note) => {
-              const isOwner = currentUser?.id === note.user?.id; // 現在のユーザーがメモの所有者かどうかを判定
-              return (
-                <SwiperSlide key={note.id}>
-                  <NoteItem
-                    note={note} // メモの情報
-                    currentUser={currentUser} // 現在のユーザー情報
-                    videoTimestampToSeconds={videoTimestampToSeconds} // タイムスタンプを秒に変換する関数
-                    playFromTimestamp={playFromTimestamp} // 指定の秒数から再生を開始する関数
-                    videoId={videoId} // 動画のID
-                    onDelete={onDelete} // メモを削除する関数
-                    onEdit={onEdit} // メモを編集する関数
-                    isOwner={isOwner} // メモの所有者かどうか
-                  />
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
+          <>
+            <Swiper
+              spaceBetween={10} // スライド間のスペース
+              slidesPerView={1} // 1画面に表示するスライド数
+              pagination={{ clickable: true }} // ページネーションの設定
+              navigation // ナビゲーションの有効化
+              modules={[Pagination, Navigation]} // 使用するモジュールの指定
+            >
+              {paginatedNotes.map((note) => {
+                const isOwner = currentUser?.id === note.user?.id; // 現在のユーザーがメモの所有者かどうかを判定
+                return (
+                  <SwiperSlide key={note.id}>
+                    <NoteItem
+                      note={note} // メモの情報
+                      currentUser={currentUser} // 現在のユーザー情報
+                      videoTimestampToSeconds={videoTimestampToSeconds} // タイムスタンプを秒に変換する関数
+                      playFromTimestamp={playFromTimestamp} // 指定の秒数から再生を開始する関数
+                      videoId={videoId} // 動画のID
+                      onDelete={onDelete} // メモを削除する関数
+                      onEdit={onEdit} // メモを編集する関数
+                      isOwner={isOwner} // メモの所有者かどうか
+                    />
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+            <PaginationComponent
+              count={Math.ceil(sortedNotes.length / itemsPerPage)} // 総ページ数を計算
+              page={currentPage} // 現在のページ
+              onChange={(event, value) => setCurrentPage(value)} // ページ変更時の処理
+            />
+          </>
         ) : ( // デスクトップ表示の場合
           <div>
             <div className="flex flex-wrap -mx-2">
