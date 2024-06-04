@@ -29,23 +29,6 @@ export const fetchFavorites = async (page, sort, jwtToken, currentUser, ITEMS_PE
   }
 };
 
-// 特定の動画のいいね情報をフェッチする関数
-export const fetchVideoLikes = async (videoId, jwtToken) => {
-  try {
-    // APIエンドポイントにGETリクエストを送信して特定の動画のいいね情報を取得
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes`, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`, // ヘッダーにJWTトークンを含める
-      },
-    });
-    return res.data; // レスポンスデータを返す
-  } catch (err) {
-    // エラーハンドリング
-    console.error('Error fetching video likes:', err);
-    return null; // エラーの場合はnullを返す
-  }
-};
-
 // 特定のyoutubeに対するcurrent_userのいいねステータスをフェッチする関数
 export const fetchUserLikeStatus = async (videoId, jwtToken) => {
   try {
@@ -68,7 +51,7 @@ export const fetchUserLikeStatus = async (videoId, jwtToken) => {
 };
 
 // 動画にいいねを付ける関数
-export const handleLike = async (id, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos) => {
+export const favoriteVideoHandleLike = async (id, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos) => {
   try {
     // APIエンドポイントにPOSTリクエストを送信して動画にいいねを追加
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
@@ -120,7 +103,7 @@ export const handleLike = async (id, jwtToken, fetchVideoLikes, fetchUserLikeSta
 };
 
 // 動画のいいねを解除する関数
-export const handleUnlike = async (youtubeVideoId, likeId, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos) => {
+export const favoriteVideoHandleUnlike = async (youtubeVideoId, likeId, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos) => {
   if (!likeId) {
     // いいねIDが未定義の場合のエラーハンドリング
     console.error('Unlike error: likeId is undefined');

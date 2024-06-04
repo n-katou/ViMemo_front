@@ -3,12 +3,14 @@ import { useAuth } from '../../context/AuthContext';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import PaginationComponent from '../../components/Pagination';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { fetchFavorites, fetchVideoLikes, fetchUserLikeStatus, handleLike, handleUnlike } from '../../components/Mypage/favorite_videos/favorites'; // API操作関数をインポート
+import { fetchVideoLikes } from '../../src/api';
+import { fetchFavorites, fetchUserLikeStatus, favoriteVideoHandleLike, favoriteVideoHandleUnlike } from '../../components/Mypage/favorite_videos/favoriteVidoesUtils'; // API操作関数をインポート
+
 import VideoCard from '../../components/Mypage/favorite_videos/FavoriteVideoCard'; // ビデオカードコンポーネントをインポート
 
 const ITEMS_PER_PAGE = 9; // 一ページあたりのアイテム数を定義
 
-const FavoritesPage: React.FC = () => {
+const FavoriteVideosPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth(); // 現在のユーザーとJWTトークンを取得
   const [videos, setVideos] = useState<YoutubeVideo[]>([]); // お気に入り動画の状態を管理
   const [loading, setLoading] = useState<boolean>(true);
@@ -48,12 +50,12 @@ const FavoritesPage: React.FC = () => {
 
   // いいねを処理する関数
   const handleLikeVideo = async (id: number) => {
-    await handleLike(id, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos);
+    await favoriteVideoHandleLike(id, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos);
   };
 
   // いいね解除を処理する関数
   const handleUnlikeVideo = async (youtubeVideoId: number, likeId: number | undefined) => {
-    await handleUnlike(youtubeVideoId, likeId, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos);
+    await favoriteVideoHandleUnlike(youtubeVideoId, likeId, jwtToken, fetchVideoLikes, fetchUserLikeStatus, setVideos);
   };
 
   // ページ変更時に呼ばれる関数
@@ -110,4 +112,4 @@ const FavoritesPage: React.FC = () => {
   );
 };
 
-export default FavoritesPage;
+export default FavoriteVideosPage;
