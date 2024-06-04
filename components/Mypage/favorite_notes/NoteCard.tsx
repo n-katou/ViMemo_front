@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Avatar, Button, Box, Tooltip, IconButton, Badge } from '@mui/material';
 import { ThumbUp, ThumbUpOffAlt } from '@mui/icons-material';
 import Link from 'next/link';
-import { Note } from '../../types/note';
-import { handleNoteLike, handleNoteUnlike, fetchCurrentUserLike } from '../../src/api';
+import { Note } from '../../../types/note';
+import { handleNoteLike, handleNoteUnlike, fetchCurrentUserLike } from '../../../src/api';
 
 interface NoteCardProps {
   note: Note;
