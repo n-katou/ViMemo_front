@@ -7,7 +7,7 @@ import axios from 'axios';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Pagination from '../../components/Pagination';
-import NoteCard from '../../components/FavoriteNote/NoteCard'; // NoteCardコンポーネントをインポート
+import NoteCard from '../../components/Mypage/favorite_notes/NoteCard'; // NoteCardコンポーネントをインポート
 
 // ノートのいいねを取得するための非同期関数
 export const fetchNoteLikes = async (

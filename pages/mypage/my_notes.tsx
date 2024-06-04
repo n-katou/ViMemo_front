@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import NoteCard from '../../components/MyNote/NoteCard';
+import NoteCard from '../../components/Mypage/my_notes/NoteCard';
 import { Note } from '../../types/note';
 import PaginationComponent from '../../components/Pagination';
 
