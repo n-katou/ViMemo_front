@@ -4,13 +4,13 @@ import { YoutubeVideo } from '../../types/youtubeVideo';
 import PaginationComponent from '../../components/Pagination';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { fetchVideoLikes } from '../../src/api';
-import { fetchFavorites, fetchUserLikeStatus, favoriteVideoHandleLike, favoriteVideoHandleUnlike } from '../../components/Mypage/favorite_videos/favorites'; // API操作関数をインポート
+import { fetchFavorites, fetchUserLikeStatus, favoriteVideoHandleLike, favoriteVideoHandleUnlike } from '../../components/Mypage/favorite_videos/favoriteVidoesUtils'; // API操作関数をインポート
 
 import VideoCard from '../../components/Mypage/favorite_videos/FavoriteVideoCard'; // ビデオカードコンポーネントをインポート
 
 const ITEMS_PER_PAGE = 9; // 一ページあたりのアイテム数を定義
 
-const FavoritesPage: React.FC = () => {
+const FavoriteVideosPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth(); // 現在のユーザーとJWTトークンを取得
   const [videos, setVideos] = useState<YoutubeVideo[]>([]); // お気に入り動画の状態を管理
   const [loading, setLoading] = useState<boolean>(true);
@@ -112,4 +112,4 @@ const FavoritesPage: React.FC = () => {
   );
 };
 
-export default FavoritesPage;
+export default FavoriteVideosPage;
