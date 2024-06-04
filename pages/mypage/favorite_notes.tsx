@@ -3,41 +3,11 @@ import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { Like } from '../../types/like';
 import { Note } from '../../types/note';
-import axios from 'axios';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Pagination from '../../components/Pagination';
 import NoteCard from '../../components/Mypage/favorite_notes/NoteCard'; // NoteCardコンポーネントをインポート
-
-// ノートのいいねを取得するための非同期関数
-export const fetchNoteLikes = async (
-  jwtToken: string,
-  setNoteLikes: (data: Like[]) => void,
-  setError: (error: string | null) => void,
-  setLoading: (loading: boolean) => void
-) => {
-  setLoading(true);
-  setError(null); // エラー状態をリセット
-
-  try {
-    // APIリクエストを実行
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mypage`, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
-
-    if (!response.data.note_likes) {
-      throw new Error('Failed to fetch note likes');
-    }
-
-    setNoteLikes(response.data.note_likes); // 取得したデータを状態に設定
-  } catch (error) {
-    setError('メモのいいねの取得に失敗しました。'); // エラーメッセージを状態に設定
-  } finally {
-    setLoading(false); // ローディング状態を終了
-  }
-};
+import { fetchNoteLikes } from '../../components/Mypage/favorite_notes/favoriteNotesUtils'; // noteUtilsから関数をインポート
 
 // likeableがNote型かどうかをチェックするためのタイプガード関数
 const isNote = (likeable: any): likeable is Note => {
