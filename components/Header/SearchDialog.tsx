@@ -10,6 +10,7 @@ import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
+import GradientButton from '../../styles/GradientButton'; // GradientButton をインポート
 
 interface Video {
   id: number;
@@ -170,9 +171,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
               </StyledMenuItem>
             ))}
           </ul>
-          <Button type="submit" variant="contained" className="bg-gradient-rainbow" fullWidth sx={{ marginTop: 2 }}>
+          <GradientButton type="submit" variant="contained" fullWidth sx={{ marginTop: 2 }}>
             検索
-          </Button>
+          </GradientButton>
         </form>
       </DialogContent>
     </Dialog>
