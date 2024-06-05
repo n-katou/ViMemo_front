@@ -50,9 +50,9 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
 
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card">
-      <div className="video-container"> {/* 動画のアスペクト比を維持するためのラッパー */}
+      <div className="video-container relative"> {/* 動画のアスペクト比を維持するためのラッパー */}
         <iframe
-          className="video" // フレームを絶対配置
+          className="video absolute top-0 left-0 w-full h-full" // フレームを絶対配置
           src={`https://www.youtube.com/embed/${video.youtube_id}`} // YouTube動画のURLを設定
           frameBorder="0"
           allowFullScreen
@@ -63,13 +63,23 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
         <h2
           onClick={() => handleTitleClick(video.id)}
           className="text-xl font-bold text-blue-600 cursor-pointer hover:underline"
-          aria-owns={open ? 'mouse-over-popover' : undefined}
-          aria-haspopup="true"
-          onMouseEnter={handlePopoverOpen}
-          onMouseLeave={handlePopoverClose}
         >
           {video.title}
         </h2>
+        <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+        <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
+        <div className="flex items-center">
+          <FavoriteIcon className="text-red-500 mr-1" />
+          <p className="text-gray-600">{video.likes_count}</p>
+        </div>
+        <div
+          className="flex items-center"
+          onMouseEnter={handlePopoverOpen}
+          onMouseLeave={handlePopoverClose}
+        >
+          <NoteIcon className="text-blue-500 mr-1" />
+          <p className="text-gray-600">{video.notes_count}</p>
+        </div>
         <Popover
           id="mouse-over-popover"
           sx={{
@@ -97,16 +107,6 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
         >
           {renderNoteList()}
         </Popover>
-        <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-        <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-        <div className="flex items-center">
-          <FavoriteIcon className="text-red-500 mr-1" />
-          <p className="text-gray-600">{video.likes_count}</p>
-        </div>
-        <div className="flex items-center">
-          <NoteIcon className="text-blue-500 mr-1" />
-          <p className="text-gray-600">{video.notes_count}</p>
-        </div>
         {currentUser && ( // ユーザーがログインしている場合にのみいいね機能を表示
           <div className="flex items-center mt-2">
             {video.liked ? ( // 動画がいいねされている場合
