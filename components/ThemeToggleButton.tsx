@@ -1,5 +1,6 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import IconButton from '@mui/material/IconButton';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
@@ -14,6 +15,7 @@ interface ThemeToggleButtonProps {
 const ThemeToggleButton: React.FC<ThemeToggleButtonProps> = ({ sx }) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -22,7 +24,13 @@ const ThemeToggleButton: React.FC<ThemeToggleButtonProps> = ({ sx }) => {
   if (!mounted) return null;
 
   const handleToggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+
+    // ルートパスの場合のみリロード
+    if (router.pathname === '/') {
+      window.location.reload();
+    }
   };
 
   return (

@@ -1,6 +1,12 @@
 import React from 'react';
 
-const tab = (isLightTheme) => [
+type TabContent = {
+  title: string;
+  value: string;
+  content: React.ReactNode;
+};
+
+const tab = (isLightTheme: boolean): TabContent[] => [
   {
     title: "アカウント管理",
     value: "account_management",

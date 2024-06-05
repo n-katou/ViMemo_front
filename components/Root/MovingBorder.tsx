@@ -1,12 +1,8 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useTransform,
-} from "framer-motion";
+import { motion, useMotionTemplate, useMotionValue, useTransform } from "framer-motion";
 import { cn } from "@/utils/cn";
+import { useTheme } from "next-themes";
 
 export function Button({
   borderRadius = "1.75rem",
@@ -29,14 +25,19 @@ export function Button({
   isActive?: boolean;
   [key: string]: any;
 }) {
+  const { resolvedTheme } = useTheme();
+  const isLightTheme = resolvedTheme === 'light';
+
   return (
     <Component
       className={cn(
         "relative text-xl h-16 w-40 p-[1px] overflow-hidden",
         containerClassName,
         isActive
-          ? "bg-gradient-to-r from-[#38bdf8] via-[#818cf8] via-[#c084fc] via-[#e879f9] to-[#22eec5] text-white"
-          : "bg-black text-white"
+          ? "bg-gradient-to-r from-[#38bdf8] via-[#818cf8] via-[#c084fc] via-[#e879f9] to-[#22eec5]"
+          : isLightTheme
+            ? "bg-white text-white"
+            : "bg-black text-white"
       )}
       style={{
         borderRadius: borderRadius,
