@@ -73,7 +73,7 @@ const tab = (isLightTheme) => [
     value: "memo",
     content: (
       <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
-        <p style={{ color: 'yellow', fontWeight: 'bold', textAlign: 'center' }}>
+        <p style={{ color: '#e879f9', fontWeight: 'bold', textAlign: 'center' }}>
           このセクションは会員限定です(一部除く)
         </p>
         <div className="note-container">
@@ -122,7 +122,7 @@ const tab = (isLightTheme) => [
     value: "video_get",
     content: (
       <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
-        <p style={{ color: 'yellow', fontWeight: 'bold', textAlign: 'center' }}>
+        <p style={{ color: '#e879f9', fontWeight: 'bold', textAlign: 'center' }}>
           このセクションは会員限定です
         </p>
         <div className="note-container">
@@ -146,7 +146,7 @@ const tab = (isLightTheme) => [
     value: "video_playlist",
     content: (
       <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
-        <p style={{ color: 'yellow', fontWeight: 'bold', textAlign: 'center' }}>
+        <p style={{ color: '#e879f9', fontWeight: 'bold', textAlign: 'center' }}>
           このセクションは会員限定です
         </p>
         <div className="note-container">

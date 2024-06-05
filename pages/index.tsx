@@ -4,25 +4,32 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../context/AuthContext';
 import { Tabs } from '../components/Root/Tabs';
 import { WavyBackground } from '../components/Root/WavyBackground';
-import { useTheme } from 'next-themes'; // next-themesのuseThemeをインポート
+import { useTheme } from 'next-themes';
 import GradientButton from '../styles/GradientButton';
-import tab from '../components/Root/tab'; // tabをインポート
+import tab from '../components/Root/tab';
 
 const RootPage = () => {
   const router = useRouter();
   const { currentUser } = useAuth();
-  const { theme } = useTheme(); // テーマを取得
-  const isLightTheme = theme === 'light'; // テーマがライトかどうかを判定
+  const { theme, resolvedTheme } = useTheme();
+  const isLightTheme = resolvedTheme === 'light';
 
   const [tabs, setTabs] = useState(tab(isLightTheme));
   const [activeTab, setActiveTab] = useState(tabs[0].value);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'info' | 'success' | 'warning' | 'error'>('info');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setTabs(tab(isLightTheme));
-  }, [isLightTheme]);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      setTabs(tab(isLightTheme));
+    }
+  }, [isLightTheme, mounted]);
 
   useEffect(() => {
     const logoutMessage = localStorage.getItem('logoutMessage');
@@ -43,6 +50,8 @@ const RootPage = () => {
   };
 
   const activeTabContent = tabs.find(tab => tab.value === activeTab)?.content;
+
+  if (!mounted) return null;
 
   return (
     <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]} waveOpacity={0.3}>
@@ -70,7 +79,7 @@ const RootPage = () => {
               ViMemoは、動画視聴中に直感的にメモを追加できるサービスです
             </Typography>
             <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? 'black' : 'white' }}>機能説明</Typography>
-            <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5 }}>
+            <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? 'black' : 'white' }}>
               <Select value={activeTab} onChange={handleTabChange} fullWidth sx={{ color: isLightTheme ? 'black' : 'white' }}>
                 {tabs.map((tab) => (
                   <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
@@ -82,7 +91,7 @@ const RootPage = () => {
                 {activeTabContent}
               </Box>
             </Box>
-            <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8 }}>
+            <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8, color: isLightTheme ? 'black' : 'white' }}>
               <Tabs tabs={tabs} />
             </Box>
             {!currentUser && (
