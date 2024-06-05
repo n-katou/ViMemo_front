@@ -45,7 +45,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   console.log('Related notes:', relatedNotes);
 
   const renderNoteList = () => (
-    <div style={{ padding: '10px', maxWidth: '400px' }}>
+    <div style={{ padding: '10px', maxWidth: '600px' }}> {/* maxWidthを600pxに変更 */}
       <NoteList
         notes={relatedNotes} // 動画に関連するメモをフィルタリング
         currentUser={currentUser}
@@ -84,6 +84,9 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
           id="mouse-over-popover"
           sx={{
             pointerEvents: 'none',
+            '.MuiPopover-paper': {
+              width: '600px' // ポップオーバーの幅を600pxに設定
+            }
           }}
           open={open}
           anchorEl={anchorEl}
