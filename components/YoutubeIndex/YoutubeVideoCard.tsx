@@ -45,7 +45,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   console.log('Related notes:', relatedNotes);
 
   const renderNoteList = () => (
-    <RelatedNotesList notes={relatedNotes} playerRef={playerRef} />
+    <RelatedNotesList notes={relatedNotes.slice(0, 3)} playerRef={playerRef} />
   );
 
   return (
@@ -75,18 +75,19 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
           sx={{
             pointerEvents: 'none',
             '.MuiPopover-paper': {
-              width: '600px' // ポップオーバーの幅を600pxに設定
+              width: '600px', // ポップオーバーの幅を600pxに設定
+              marginTop: '10px' // タイトルの下に表示するためにマージンを追加
             }
           }}
           open={open}
           anchorEl={anchorEl}
           anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+            vertical: 'bottom', // ポップオーバーをターゲットの下に表示
+            horizontal: 'center', // 水平方向の位置を中央に設定
           }}
           transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
+            vertical: 'top', // ポップオーバーの基点を上に設定
+            horizontal: 'center', // 水平方向の基点を中央に設定
           }}
           onClose={handlePopoverClose}
           disableRestoreFocus

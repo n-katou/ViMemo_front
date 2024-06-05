@@ -14,7 +14,7 @@ interface RelatedNotesListProps {
 const RelatedNotesList: React.FC<RelatedNotesListProps> = ({ notes, playerRef }) => {
   // 最新の6件のメモを取得
   const sortedNotes = [...notes].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-  const displayNotes = sortedNotes.slice(0, 6);
+  const displayNotes = sortedNotes.slice(0, 3);
 
   return (
     <div style={{ padding: '20px', maxWidth: '600px' }}>
