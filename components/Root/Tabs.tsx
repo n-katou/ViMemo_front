@@ -39,7 +39,7 @@ export const Tabs = ({
             containerClassName={cn(
               "relative px-4 py-2 mx-2 rounded-full",
               tabClassName,
-              isLightTheme ? "text-black" : "text-white" // テーマに応じて文字色を変更
+              isLightTheme ? "text-white" : "text-white" // テーマに応じて文字色を変更
             )}
             borderClassName={cn(
               "absolute inset-0 bg-blue-500 rounded-full",
