@@ -16,6 +16,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import HomeIcon from '@mui/icons-material/Home'; // HomeIcon をインポート
 import { CustomUser } from '../../types/user';
+import ThemeToggleButton from '../ThemeToggleButton'; // ThemeToggleButton をインポート
 
 interface UserDrawerProps {
   drawerOpen: boolean;
@@ -136,6 +137,9 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               </ListItemIcon>
               <Typography>ログアウト</Typography>
             </ListItem>
+            <ListItem>
+              <ThemeToggleButton />
+            </ListItem>
           </>
         ) : (
           <>
@@ -166,6 +170,9 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
                 <LoginIcon />
               </ListItemIcon>
               <Typography>ログインページ</Typography>
+            </ListItem>
+            <ListItem>
+              <ThemeToggleButton />
             </ListItem>
           </>
         )}

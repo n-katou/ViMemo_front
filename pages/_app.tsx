@@ -12,6 +12,7 @@ import { Alert, Container, Box } from '@mui/material';
 import { useRouter } from 'next/router';
 import { analytics } from '../lib/initFirebase';
 import { logEvent } from 'firebase/analytics';
+import { ThemeProvider } from "@/components/theme-provider"; // ThemeProvider をインポート
 
 interface AuthenticatedAppProps {
   Component: AppProps['Component'];
@@ -88,17 +89,19 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
       </Head>
       <FlashMessageProvider>
         <AuthProvider>
-          <Box id="root" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <Box sx={{ flexShrink: 0, backgroundColor: 'black' }}>
-              <Header />
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <Box id="root" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+              <Box sx={{ flexShrink: 0, backgroundColor: 'black' }}>
+                <Header />
+              </Box>
+              <Box component="main" sx={{ flex: 1, backgroundColor: 'black', color: 'white' }}>
+                <AuthenticatedApp Component={Component} pageProps={pageProps} appRouter={router} />
+              </Box>
+              <Box sx={{ flexShrink: 0 }}>
+                <Footer />
+              </Box>
             </Box>
-            <Box component="main" sx={{ flex: 1, backgroundColor: 'black', color: 'white' }}>
-              <AuthenticatedApp Component={Component} pageProps={pageProps} appRouter={router} />
-            </Box>
-            <Box sx={{ flexShrink: 0 }}>
-              <Footer />
-            </Box>
-          </Box>
+          </ThemeProvider>
         </AuthProvider>
       </FlashMessageProvider>
     </>
