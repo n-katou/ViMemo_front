@@ -15,7 +15,6 @@ export const videoTimestampToSeconds = (timestamp: string): number => {
     return 0;
   }
 
-  console.log('Converting timestamp:', timestamp); // タイムスタンプの変換をログに出力
   return minutes * 60 + seconds; // タイムスタンプを秒に変換して返す
 };
 
