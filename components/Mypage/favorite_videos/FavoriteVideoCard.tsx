@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { YoutubeVideo } from '../../../types/youtubeVideo';
+import { Note } from '../../../types/note';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import NoteIcon from '@mui/icons-material/Note';
-import { formatDuration } from '../../YoutubeShow/youtubeShowUtils'; // 動画の再生時間をフォーマットする関数をインポート
+import Popover from '@mui/material/Popover';
+import { formatDuration, videoTimestampToSeconds, playFromTimestamp } from '../../YoutubeShow/youtubeShowUtils'; // 動画の再生時間をフォーマットする関数をインポート
+import RelatedNotesList from '../../YoutubeIndex/RelatedNotesList'; // RelatedNotesListコンポーネントをインポート
 
 // VideoCardコンポーネントのプロパティ型を定義
 interface VideoCardProps {
@@ -14,11 +17,32 @@ interface VideoCardProps {
   currentUser: any; // 現在のユーザー情報
   handleLikeVideo: (id: number) => void; // いいねクリック時のハンドラ
   handleUnlikeVideo: (id: number, likeId: number | undefined) => void; // いいね解除クリック時のハンドラ
+  notes?: Note[]; // 動画に関連するノート
 }
 
 // VideoCardコンポーネントを定義
-const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVideo, handleUnlikeVideo }) => {
+const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVideo, handleUnlikeVideo, notes = [] }) => {
   const router = useRouter();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const playerRef = useRef<HTMLIFrameElement | null>(null); // Playerの参照を管理
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  const relatedNotes = notes?.filter(note => note.youtube_video_id === video.id) || [];
+  console.log('Video ID:', video.id);
+  console.log('Related notes:', relatedNotes);
+
+  const renderNoteList = () => (
+    <RelatedNotesList notes={relatedNotes.slice(0, 3)} playerRef={playerRef} />
+  );
 
   return (
     <div key={video.id} className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group">
@@ -28,15 +52,47 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVid
           src={`https://www.youtube.com/embed/${video.youtube_id}`}
           frameBorder="0"
           allowFullScreen
+          ref={playerRef}
         />
       </div>
       <div className="p-4"> {/* カードのコンテンツ部分 */}
         <h2
           className="text-xl font-bold text-blue-600 cursor-pointer hover:underline group-hover:text-blue-700"
           onClick={() => router.push(`/youtube_videos/${video.id}`)}
+          aria-owns={open ? 'mouse-over-popover' : undefined}
+          aria-haspopup="true"
+          onMouseEnter={handlePopoverOpen}
+          onMouseLeave={handlePopoverClose}
         >
           {video.title}
         </h2>
+        <Popover
+          id="mouse-over-popover"
+          sx={{
+            pointerEvents: 'none',
+            '.MuiPopover-paper': {
+              width: '600px', // ポップオーバーの幅を600pxに設定
+              marginTop: '10px', // タイトルの下に表示するためにマージンを追加
+              padding: '20px', // 内部の余白を追加
+              borderRadius: '8px', // 角を丸くする
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // シャドウを追加
+            }
+          }}
+          open={open}
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'bottom', // ポップオーバーをターゲットの下に表示
+            horizontal: 'center', // 水平方向の位置を中央に設定
+          }}
+          transformOrigin={{
+            vertical: 'top', // ポップオーバーの基点を上に設定
+            horizontal: 'center', // 水平方向の基点を中央に設定
+          }}
+          onClose={handlePopoverClose}
+          disableRestoreFocus
+        >
+          {renderNoteList()}
+        </Popover>
         <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
         <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
         <div className="flex items-center">

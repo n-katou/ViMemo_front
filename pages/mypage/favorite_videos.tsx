@@ -110,6 +110,7 @@ const FavoriteVideosPage: React.FC = () => {
                 currentUser={currentUser}
                 handleLikeVideo={handleLikeVideo}
                 handleUnlikeVideo={handleUnlikeVideo}
+                notes={video.notes} // `notes` プロパティを渡す
               />
             ))}
           </div>

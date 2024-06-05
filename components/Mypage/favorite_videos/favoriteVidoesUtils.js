@@ -11,6 +11,8 @@ export const fetchFavorites = async (page, sort, jwtToken, currentUser, ITEMS_PE
       },
     });
 
+    console.log('API Response:', res.data); // ここでAPIレスポンスを確認
+
     if (res.data) {
       // レスポンスデータが存在する場合、動画リストとページネーション情報を返す
       return {
@@ -18,6 +20,7 @@ export const fetchFavorites = async (page, sort, jwtToken, currentUser, ITEMS_PE
           ...video,
           liked: video.likes.some((like) => like.user_id === Number(currentUser?.id)), // 現在のユーザーがいいねしているかを確認
           likeId: video.likes.find((like) => like.user_id === Number(currentUser?.id))?.id || undefined, // いいねIDを取得
+          notes: video.notes || [], // メモ情報を追加
         })),
         pagination: res.data.pagination, // ページネーション情報をセット
       };
