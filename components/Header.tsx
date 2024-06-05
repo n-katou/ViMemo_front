@@ -37,7 +37,7 @@ const Header: React.FC = () => {
       await logout();
       setDrawerOpen(false); // ドロワーを閉じる
       localStorage.setItem('isMessageDisplayed', 'false');
-      router.push('/?flash_message=ログアウトしました');
+      router.push('/login?flash_message=ログアウトしました');
     }
   };
 

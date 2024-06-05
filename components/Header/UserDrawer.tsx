@@ -25,15 +25,37 @@ interface UserDrawerProps {
   handleLogout: () => void;
 }
 
+const clearCacheAndCookies = () => {
+  if (window.caches) {
+    caches.keys().then((names) => {
+      for (let name of names) caches.delete(name);
+    });
+  }
+  document.cookie.split(";").forEach(function (c) {
+    document.cookie = c
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+  });
+};
+
 const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, currentUser, handleLogout }) => {
   const router = useRouter();
 
   const handleLogoutClick = async () => {
-    // ユーザーを迅速にログアウト状態に更新し、Drawerを閉じる
+    // UIをすぐに更新してDrawerを閉じる
     toggleDrawer(false)();
-    await handleLogout();
-    // ログアウト処理後にリダイレクト
-    router.push('/');
+
+    // キャッシュとCookieをクリア
+    clearCacheAndCookies();
+
+    // ログアウトリクエストを非同期に送信
+    try {
+      await handleLogout();
+      // ログアウト処理が完了した後にリダイレクト
+      router.push('/login');
+    } catch (error) {
+      console.error('ログアウトエラー:', error);
+    }
   };
 
   return (
