@@ -14,9 +14,9 @@ import LoginIcon from '@mui/icons-material/Login';
 import NoteIcon from '@mui/icons-material/Note';
 import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
-import HomeIcon from '@mui/icons-material/Home'; // HomeIcon をインポート
+import HomeIcon from '@mui/icons-material/Home';
 import { CustomUser } from '../../types/user';
-import ThemeToggleButton from '../ThemeToggleButton'; // ThemeToggleButton をインポート
+import ThemeToggleButton from '../ThemeToggleButton';
 
 interface UserDrawerProps {
   drawerOpen: boolean;
@@ -26,7 +26,15 @@ interface UserDrawerProps {
 }
 
 const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, currentUser, handleLogout }) => {
-  const router = useRouter(); // useRouterフックを使用して現在のパスを取得
+  const router = useRouter();
+
+  const handleLogoutClick = async () => {
+    // ユーザーを迅速にログアウト状態に更新し、Drawerを閉じる
+    toggleDrawer(false)();
+    await handleLogout();
+    // ログアウト処理後にリダイレクト
+    router.push('/');
+  };
 
   return (
     <Drawer
@@ -39,8 +47,8 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
           position: 'fixed',
           right: 0,
           height: '100%',
-          zIndex: 1400, // zIndexをHeaderより高く設定
-          marginTop: '75px', // Headerの高さ分マージンを追加
+          zIndex: 1400,
+          marginTop: '75px',
         },
       }}
     >
@@ -131,7 +139,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               </ListItemIcon>
               <Typography>MYメモ</Typography>
             </ListItem>
-            <ListItem button onClick={handleLogout}>
+            <ListItem button onClick={handleLogoutClick}>
               <ListItemIcon>
                 <ExitToAppIcon />
               </ListItemIcon>
