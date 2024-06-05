@@ -4,8 +4,27 @@ import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button, TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
+import { styled } from '@mui/system';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';  // LoadingSpinner をインポート
+import GradientButton from '../styles/GradientButton';
+
+const GoogleButton = styled(Button)({
+  backgroundColor: '#4285F4',
+  color: 'white',
+  textTransform: 'none',
+  fontSize: '16px',
+  padding: '10px 24px',
+  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+  '&:hover': {
+    backgroundColor: '#357ae8',
+    transform: 'scale(1.05)', // ホバー時に拡大
+    boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)', // ホバー時にシャドウを追加
+  },
+  '&:active': {
+    transform: 'scale(0.95)', // クリック時に縮小
+  },
+});
 
 const LoginPage = () => {
   const router = useRouter();
@@ -114,20 +133,19 @@ const LoginPage = () => {
             margin="normal"
             required
           />
-          <Button
+          <GradientButton
             type="submit"
             disabled={loading}
             variant="contained"
-            color="primary"
             fullWidth
             className="bg-gradient-rainbow"
-            style={{
+            sx={{
               marginTop: '20px',
               color: '#fff'
             }}
           >
             {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'ログイン'}
-          </Button>
+          </GradientButton>
         </form>
         <div className="text-center mt-4">
           <Link href="/register" passHref>
@@ -137,9 +155,8 @@ const LoginPage = () => {
           </Link>
         </div>
         <div className="flex justify-center mt-4">
-          <Button
+          <GoogleButton
             variant="contained"
-            color="secondary"
             onClick={handleGoogleLogin}
             disabled={loading}
             startIcon={
@@ -151,16 +168,9 @@ const LoginPage = () => {
                 />
               )
             }
-            style={{
-              backgroundColor: '#4285F4',
-              color: 'white',
-              textTransform: 'none',
-              fontSize: '16px',
-              padding: '10px 24px',
-            }}
           >
             {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Googleでログイン'}
-          </Button>
+          </GoogleButton>
         </div>
         <div className="text-center mt-4">
           <Link href="/password_reset" passHref>

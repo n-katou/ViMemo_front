@@ -2,7 +2,6 @@
 import React, { useEffect, useRef } from "react";
 import {
   motion,
-  useAnimationFrame,
   useMotionTemplate,
   useMotionValue,
   useTransform,
@@ -17,7 +16,7 @@ export function Button({
   borderClassName,
   duration,
   className,
-  isActive = false, // 新しく追加したプロパティ
+  isActive = false,
   ...otherProps
 }: {
   borderRadius?: string;
@@ -27,7 +26,7 @@ export function Button({
   borderClassName?: string;
   duration?: number;
   className?: string;
-  isActive?: boolean; // 新しく追加したプロパティ
+  isActive?: boolean;
   [key: string]: any;
 }) {
   return (
@@ -37,7 +36,7 @@ export function Button({
         containerClassName,
         isActive
           ? "bg-gradient-to-r from-[#38bdf8] via-[#818cf8] via-[#c084fc] via-[#e879f9] to-[#22eec5] text-white"
-          : "bg-black text-white" // アクティブなタブの場合のスタイルを追加
+          : "bg-black text-white"
       )}
       style={{
         borderRadius: borderRadius,
@@ -48,14 +47,14 @@ export function Button({
         className="absolute inset-0"
         style={{ borderRadius: `calc(${borderRadius} * 0.96)` }}
       >
-        <MovingBorder duration={duration} rx="30%" ry="30%" isActive={isActive}>
+        <MovingBorder duration={duration} rx="50%" ry="25%">
           <div
             className={cn(
               "h-20 w-20 opacity-[0.8]",
               borderClassName
             )}
             style={{
-              background: "linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5)", // レインボーグラデーションを適用
+              background: "linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5)",
             }}
           />
         </MovingBorder>
@@ -78,20 +77,18 @@ export function Button({
 
 export const MovingBorder = ({
   children,
-  duration = 7000,
+  duration = 8000,
   rx,
   ry,
-  isActive = false, // 新しく追加したプロパティ
   ...otherProps
 }: {
   children: React.ReactNode;
   duration?: number;
   rx?: string;
   ry?: string;
-  isActive?: boolean; // 新しく追加したプロパティ
   [key: string]: any;
 }) => {
-  const pathRef = useRef<any>();
+  const pathRef = useRef<SVGPathElement | null>(null);
   const progress = useMotionValue<number>(0);
   const lengthRef = useRef<number | null>(null);
 
@@ -99,21 +96,24 @@ export const MovingBorder = ({
     if (pathRef.current) {
       lengthRef.current = pathRef.current.getTotalLength();
     }
-  }, []);
 
-  useAnimationFrame((time) => {
-    if (isActive || !lengthRef.current) return; // isActiveの場合は動きを止める
-    const pxPerMillisecond = lengthRef.current / duration;
-    progress.set((time * pxPerMillisecond) % lengthRef.current);
-  });
+    const animate = (time: number) => {
+      if (!lengthRef.current) return;
+      const pxPerMillisecond = lengthRef.current / duration;
+      progress.set((time * pxPerMillisecond) % lengthRef.current);
+      requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  }, [duration, progress]);
 
   const x = useTransform(
     progress,
-    (val) => pathRef.current?.getPointAtLength(val).x
+    (val) => pathRef.current?.getPointAtLength(val).x || 0
   );
   const y = useTransform(
     progress,
-    (val) => pathRef.current?.getPointAtLength(val).y
+    (val) => pathRef.current?.getPointAtLength(val).y || 0
   );
 
   const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px) translateX(-50%) translateY(-50%)`;
@@ -130,7 +130,7 @@ export const MovingBorder = ({
       >
         <path
           fill="none"
-          d="M 0,0 L 100,0 L 100,100 L 0,100 Z"
+          d={`M 50,0 A 50,25 0 1,1 49.9,0 Z`}
           ref={pathRef}
         />
       </svg>
@@ -141,7 +141,7 @@ export const MovingBorder = ({
           left: 0,
           display: "inline-block",
           transform,
-          background: "linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5)", // レインボーグラデーションを適用
+          background: "linear-gradient(45deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5)",
           borderRadius: "50%",
           width: "20px",
           height: "20px",

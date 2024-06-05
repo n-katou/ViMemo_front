@@ -5,6 +5,9 @@ import { useAuth } from '../context/AuthContext';
 import { Tabs } from '../components/Root/Tabs'; // Tabsコンポーネントをインポート
 import { WavyBackground } from '../components/Root/WavyBackground'; // WavyBackgroundコンポーネントをインポート
 import tabs from '../components/Root/tab'; // tabsをインポート
+import { styled } from '@mui/system';
+import GradientButton from '../styles/GradientButton';
+
 
 const RootPage = () => {
   const router = useRouter();
@@ -76,18 +79,16 @@ const RootPage = () => {
             </Box>
             {!currentUser && (
               <Box display="flex" justifyContent="center">
-                <Button
+                <GradientButton
                   onClick={() => router.push('/login')}
                   variant="contained"
-                  className="bg-gradient-rainbow"
                   sx={{
                     marginTop: 4,
-                    color: 'white',
-                    marginBottom: 4, // ここで間隔を追加
+                    marginBottom: 4,
                   }}
                 >
                   ログインページへ
-                </Button>
+                </GradientButton>
               </Box>
             )}
           </div>

@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { YoutubeVideo } from '../../../types/youtubeVideo';
 import { Note } from '../../../types/note';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import SearchIcon from '@mui/icons-material/Search';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
@@ -84,7 +85,9 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
           onMouseLeave={handleNotePopoverClose}
         >
           <NoteIcon className="text-blue-500 mr-1" />
-          <p className="text-gray-600">{video.notes_count}</p>
+          <p className="text-gray-600 flex items-center">
+            {video.notes_count} <SearchIcon className="ml-1" />
+          </p>
         </div>
         <Popover
           id="mouse-over-popover"

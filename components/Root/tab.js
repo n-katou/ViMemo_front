@@ -38,9 +38,18 @@ const tab = [
             />
           </div>
           <div className="note-item mt-4">
-            <p style={{ marginBottom: '30px' }}>サジェストから選択したら動画詳細に遷移します。</p>
+            <p style={{ marginBottom: '30px' }}>サジェストから選択で動画詳細に遷移します。</p>
             <img
               src="https://i.gyazo.com/bb98f75c7fa57d3a48af8625a30b52b2.gif"
+              width="100%"
+              alt="サジェスト"
+              style={{ display: 'block', margin: 'auto' }}
+            />
+          </div>
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px' }}>虫眼鏡にマウスホバーしたら、最新のメモ3件確認できます。</p>
+            <img
+              src="https://i.gyazo.com/09a9adb8ea7a2c51e31f83c90e96c42e.gif"
               width="100%"
               alt="サジェスト"
               style={{ display: 'block', margin: 'auto' }}
