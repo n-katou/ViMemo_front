@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext'; // 認証コンテキスト
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import NoteIcon from '@mui/icons-material/Note';
+import SearchIcon from '@mui/icons-material/Search';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
@@ -78,7 +79,9 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
           onMouseLeave={handlePopoverClose}
         >
           <NoteIcon className="text-blue-500 mr-1" />
-          <p className="text-gray-600">{video.notes_count}</p>
+          <p className="text-gray-600 flex items-center">
+            {video.notes_count} <SearchIcon className="ml-1" />
+          </p>
         </div>
         <Popover
           id="mouse-over-popover"
