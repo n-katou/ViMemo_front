@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { TextField, Button, Card, Typography, Snackbar, Alert, Box } from '@mui/material';
+import { TextField, Card, Typography, Snackbar, Alert, Box } from '@mui/material';
 import { useRouter } from 'next/router';
+import GradientButton from '../styles/GradientButton';
 
 const PasswordResetForm = () => {
   const [email, setEmail] = useState('');
@@ -43,16 +44,14 @@ const PasswordResetForm = () => {
             margin="normal"
             required
           />
-          <Button
+          <GradientButton
             type="submit"
             variant="contained"
-            color="primary"
             fullWidth
             style={{ marginTop: '20px', color: '#fff' }}
-            className="bg-gradient-rainbow"
           >
             送信
-          </Button>
+          </GradientButton>
         </form>
         {message && (
           <Snackbar

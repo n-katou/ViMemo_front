@@ -8,6 +8,36 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.light {
+  --bg-color: white;
+  --text-color: black;
+  --header-bg-color: white;
+  /* 追加: ライトモードのヘッダー背景色 */
+  --header-text-color: black;
+  /* 追加: ライトモードのヘッダーテキスト色 */
+  --card-bg-color: #f5f5f5;
+  --card-shadow: rgba(0, 0, 0, 0.1);
+  --card-hover-shadow: rgba(0, 0, 0, 0.2);
+}
+
+body.dark {
+  --bg-color: black;
+  --text-color: white;
+  --header-bg-color: black;
+  /* 追加: ダークモードのヘッダー背景色 */
+  --header-text-color: white;
+  /* 追加: ダークモードのヘッダーテキスト色 */
+  --card-bg-color: #333;
+  --card-shadow: rgba(255, 255, 255, 0.1);
+  --card-hover-shadow: rgba(255, 255, 255, 0.2);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 #root {
@@ -27,7 +57,10 @@ footer {
 }
 
 header {
-  background-color: black;
+  background-color: var(--header-bg-color);
+  /* 変更: テーマに応じたヘッダー背景色 */
+  color: var(--header-text-color);
+  /* 変更: テーマに応じたヘッダーテキスト色 */
 }
 
 /* Video Styles */
@@ -52,18 +85,18 @@ header {
 
 /* Card Styles */
 .card {
-  background-color: #f5f5f5;
+  background-color: var(--card-bg-color);
   /* カードの背景色 */
   border-radius: 0.5rem;
   /* カードの角を丸くする */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--card-shadow);
   /* カードの影 */
   transition: box-shadow 0.3s;
   /* ホバー時の影のトランジション */
 }
 
 .card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px var(--card-hover-shadow);
   /* ホバー時の影 */
 }
 
@@ -101,7 +134,7 @@ header {
   /* 40pxに相当 */
   font-weight: bold;
   /* 太字にする */
-  color: #333;
+  color: var(--text-color);
   /* 色を暗めのグレーに設定 */
   margin-bottom: 20px;
   /* 下の要素との間隔 */
@@ -195,7 +228,6 @@ header {
     max-width: 100%;
   }
 }
-
 
 /* Button Styles */
 .btn-outline {

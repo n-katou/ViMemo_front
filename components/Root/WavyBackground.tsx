@@ -2,6 +2,7 @@
 import { cn } from "@/utils/cn";
 import React, { useEffect, useRef, useState } from "react";
 import { createNoise3D } from "simplex-noise";
+import { useTheme } from "next-themes";
 
 export const WavyBackground = ({
   children,
@@ -35,6 +36,9 @@ export const WavyBackground = ({
     ctx: any,
     canvas: any;
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { resolvedTheme } = useTheme(); // テーマを取得
+  const isLightTheme = resolvedTheme === 'light';
+
   const getSpeed = () => {
     switch (speed) {
       case "slow":
@@ -85,7 +89,7 @@ export const WavyBackground = ({
 
   let animationId: number;
   const render = () => {
-    ctx.fillStyle = backgroundFill || "black";
+    ctx.fillStyle = backgroundFill || (isLightTheme ? "white" : "black");
     ctx.globalAlpha = waveOpacity || 0.5;
     ctx.fillRect(0, 0, w, h);
     drawWave(5);
@@ -97,7 +101,7 @@ export const WavyBackground = ({
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, []);
+  }, [isLightTheme]); // テーマが変わるたびにリレンダリング
 
   const [isSafari, setIsSafari] = useState(false);
   useEffect(() => {

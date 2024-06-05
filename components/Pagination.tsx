@@ -1,6 +1,7 @@
 import React from 'react';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import { useTheme } from 'next-themes';
 
 interface PaginationComponentProps {
   count: number;
@@ -9,6 +10,8 @@ interface PaginationComponentProps {
 }
 
 const PaginationComponent: React.FC<PaginationComponentProps> = ({ count, page, onChange }) => {
+  const { resolvedTheme } = useTheme();
+
   return (
     <Stack spacing={2} className="mt-8">
       <Pagination
@@ -21,10 +24,10 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({ count, page, 
         size="large"
         sx={{
           '& .MuiPaginationItem-root': {
-            color: 'white',
+            color: resolvedTheme === 'light' ? 'black' : 'white',
           },
           '& .MuiPaginationItem-root.Mui-selected': {
-            backgroundColor: 'rgba(255, 255, 255, 0.12)',
+            backgroundColor: resolvedTheme === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)',
           },
         }}
       />

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
 import { Button } from "./MovingBorder";
+import { useTheme } from 'next-themes';
 
 type Tab = {
   title: string;
@@ -24,6 +24,9 @@ export const Tabs = ({
   tabClassName?: string;
   contentClassName?: string;
 }) => {
+  const { theme, resolvedTheme } = useTheme();
+  const isLightTheme = resolvedTheme === 'light';
+
   const [activeTab, setActiveTab] = useState<Tab>(tabs[0]);
 
   return (
@@ -33,8 +36,15 @@ export const Tabs = ({
           <Button
             key={tab.value}
             onClick={() => setActiveTab(tab)}
-            containerClassName={cn("relative px-4 py-2 mx-2 rounded-full", tabClassName)}
-            borderClassName={cn("absolute inset-0 bg-blue-500 rounded-full", activeTabClassName)}
+            containerClassName={cn(
+              "relative px-4 py-2 mx-2 rounded-full",
+              tabClassName,
+              isLightTheme ? "text-black" : "text-white" // テーマに応じて文字色を変更
+            )}
+            borderClassName={cn(
+              "absolute inset-0 bg-blue-500 rounded-full",
+              activeTabClassName
+            )}
             className={cn("relative block")}
             isActive={activeTab.value === tab.value}
           >
@@ -52,7 +62,8 @@ export const Tabs = ({
             }
           }}
           className="form-select form-select-lg border border-white-300 rounded-md shadow-sm focus:border-white-500 focus:ring focus:ring-white-200 focus:ring-opacity-50"
-        // ボーダーのスタイルを追加
+          // ボーダーのスタイルを追加
+          style={{ color: isLightTheme ? 'black' : 'white' }} // テーマに応じて文字色を変更
         >
           {tabs.map((tab) => (
             <option key={tab.value} value={tab.value}>
