@@ -1,4 +1,5 @@
 import { Like } from './like';
+import { Note } from './note';
 
 export interface YoutubeVideo {
   id: number;
@@ -9,6 +10,7 @@ export interface YoutubeVideo {
   likes_count: number;
   notes_count: number;
   likes: Like[];
+  notes: Note[];
   formattedDuration?: string;
   liked?: boolean;
   likeId?: number;

@@ -1,48 +1,46 @@
 import { YoutubeVideo } from '../../types/youtubeVideo';
+import { Note } from '../../types/note';
 import { handleLike, handleUnlike, fetchVideoLikes } from '../../src/api';
 
 // YouTube動画を取得する関数
 export const fetchYoutubeVideos = async (query = '', page = 1, itemsPerPage = 9, sort = '') => {
   try {
-    // ローカルストレージから認証トークンを取得
     const authToken = localStorage.getItem('authToken');
 
-    // リクエストヘッダーを設定
     const headers: Record<string, string> = {
       'Accept': 'application/json',
     };
 
-    // 認証トークンが存在する場合、Authorizationヘッダーを追加
     if (authToken) {
       headers['Authorization'] = `Bearer ${authToken}`;
     }
 
-    // YouTube動画APIにリクエストを送信
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos?q[title_cont]=${query}&page=${page}&per_page=${itemsPerPage}&sort=${sort}`, {
       method: 'GET',
       headers: headers,
       credentials: 'include',
     });
 
-    // レスポンスが正常でない場合、エラーログを出力してnullを返す
     if (!res.ok) {
       console.error('Fetch error:', res.status, res.statusText);
       return null;
     }
 
-    // レスポンスをJSON形式で取得
     const data = await res.json();
 
-    // 取得したデータが動画リスト形式である場合、動画データとページネーション情報を返す
     if (data && Array.isArray(data.videos)) {
-      return { videos: data.videos, pagination: data.pagination };
+      console.log('Fetched videos:', data.videos);  // デバッグ用
+      console.log('Fetched notes:', data.videos.flatMap((video: YoutubeVideo) => video.notes));  // デバッグ用
+      return {
+        videos: data.videos as YoutubeVideo[], // 動画データの型を明示的に指定
+        notes: data.videos.flatMap((video: YoutubeVideo) => video.notes) as Note[], // メモデータの型を明示的に指定
+        pagination: data.pagination
+      };
     } else {
-      // データ形式が無効な場合、エラーログを出力してnullを返す
       console.error('Invalid data format');
       return null;
     }
   } catch (error) {
-    // リクエスト例外が発生した場合、エラーログを出力してnullを返す
     console.error('Fetch exception:', error);
     return null;
   }
