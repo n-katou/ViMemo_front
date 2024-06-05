@@ -10,8 +10,8 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
-import { formatDuration, videoTimestampToSeconds, playFromTimestamp, handleDeleteNote, handleEditNote } from '../YoutubeShow/youtubeShowUtils';
-import NoteList from '../../components/Note/NoteList'; // NoteListコンポーネントのインポート
+import { formatDuration, videoTimestampToSeconds, playFromTimestamp } from '../YoutubeShow/youtubeShowUtils';
+import RelatedNotesList from './RelatedNotesList'; // RelatedNotesListコンポーネントのインポート
 
 // YoutubeVideoCardコンポーネントのプロパティ型を定義
 interface YoutubeVideoCardProps {
@@ -45,17 +45,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   console.log('Related notes:', relatedNotes);
 
   const renderNoteList = () => (
-    <div style={{ padding: '10px', maxWidth: '600px' }}> {/* maxWidthを600pxに変更 */}
-      <NoteList
-        notes={relatedNotes} // 動画に関連するメモをフィルタリング
-        currentUser={currentUser}
-        videoTimestampToSeconds={videoTimestampToSeconds}
-        playFromTimestamp={(seconds) => playFromTimestamp(seconds, playerRef)}
-        videoId={video.id}
-        onDelete={currentUser && jwtToken ? (noteId) => handleDeleteNote(noteId, jwtToken, video, setNotes) : undefined}
-        onEdit={currentUser && jwtToken ? (noteId, newContent, newMinutes, newSeconds, newIsVisible) => handleEditNote(noteId, newContent, newMinutes, newSeconds, newIsVisible, jwtToken, video, setNotes) : undefined}
-      />
-    </div>
+    <RelatedNotesList notes={relatedNotes} playerRef={playerRef} />
   );
 
   return (
