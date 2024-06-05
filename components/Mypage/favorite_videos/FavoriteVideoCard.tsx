@@ -21,9 +21,10 @@ interface VideoCardProps {
 }
 
 // VideoCardコンポーネントを定義
-const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVideo, handleUnlikeVideo, notes = [] }) => {
+const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVideo, handleUnlikeVideo, notes = [] }) => {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [noteAnchorEl, setNoteAnchorEl] = useState<HTMLElement | null>(null); // NoteのPopover用
   const playerRef = useRef<HTMLIFrameElement | null>(null); // Playerの参照を管理
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -34,7 +35,16 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVid
     setAnchorEl(null);
   };
 
+  const handleNotePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setNoteAnchorEl(event.currentTarget);
+  };
+
+  const handleNotePopoverClose = () => {
+    setNoteAnchorEl(null);
+  };
+
   const open = Boolean(anchorEl);
+  const noteOpen = Boolean(noteAnchorEl); // NoteのPopoverの状態
 
   const relatedNotes = notes?.filter(note => note.youtube_video_id === video.id) || [];
   console.log('Video ID:', video.id);
@@ -59,13 +69,23 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVid
         <h2
           className="text-xl font-bold text-blue-600 cursor-pointer hover:underline group-hover:text-blue-700"
           onClick={() => router.push(`/youtube_videos/${video.id}`)}
-          aria-owns={open ? 'mouse-over-popover' : undefined}
-          aria-haspopup="true"
-          onMouseEnter={handlePopoverOpen}
-          onMouseLeave={handlePopoverClose}
         >
           {video.title}
         </h2>
+        <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+        <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
+        <div className="flex items-center">
+          <FavoriteIcon className="text-red-500 mr-1" />
+          <p className="text-gray-600">{video.likes_count}</p>
+        </div>
+        <div
+          className="flex items-center"
+          onMouseEnter={handleNotePopoverOpen}
+          onMouseLeave={handleNotePopoverClose}
+        >
+          <NoteIcon className="text-blue-500 mr-1" />
+          <p className="text-gray-600">{video.notes_count}</p>
+        </div>
         <Popover
           id="mouse-over-popover"
           sx={{
@@ -78,8 +98,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVid
               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // シャドウを追加
             }
           }}
-          open={open}
-          anchorEl={anchorEl}
+          open={noteOpen}
+          anchorEl={noteAnchorEl}
           anchorOrigin={{
             vertical: 'bottom', // ポップオーバーをターゲットの下に表示
             horizontal: 'center', // 水平方向の位置を中央に設定
@@ -88,21 +108,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVid
             vertical: 'top', // ポップオーバーの基点を上に設定
             horizontal: 'center', // 水平方向の基点を中央に設定
           }}
-          onClose={handlePopoverClose}
+          onClose={handleNotePopoverClose}
           disableRestoreFocus
         >
           {renderNoteList()}
         </Popover>
-        <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-        <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-        <div className="flex items-center">
-          <FavoriteIcon className="text-red-500 mr-1" />
-          <p className="text-gray-600">{video.likes_count}</p>
-        </div>
-        <div className="flex items-center">
-          <NoteIcon className="text-blue-500 mr-1" />
-          <p className="text-gray-600">{video.notes_count}</p>
-        </div>
         <div className="flex items-center mt-2">
           {video.liked ? ( // 動画がいいねされている場合
             <Tooltip title="いいね解除">
@@ -135,4 +145,4 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVid
   );
 };
 
-export default VideoCard;
+export default FavoriteVideoCard;
