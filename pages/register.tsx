@@ -3,8 +3,10 @@ import axios from 'axios';
 import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
+import { TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
+import GradientButton from '../styles/GradientButton';
+
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -155,16 +157,15 @@ const RegisterPage = () => {
             error={!!validationErrors.find(error => error.includes('パスワード確認'))}
             helperText={validationErrors.find(error => error.includes('パスワード確認'))}
           />
-          <Button
+          <GradientButton
             type="submit"
             variant="contained"
-            className="bg-gradient-rainbow"
             fullWidth
-            style={{ marginTop: '20px' }}
+            style={{ marginTop: '20px', color: '#fff' }}
             disabled={loading}
           >
             {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : '登録'}
-          </Button>
+          </GradientButton>
         </form>
       </Card>
       <Snackbar open={!!error || validationErrors.length > 0} autoHideDuration={6000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
