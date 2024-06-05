@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import NoteCard from '../../components/Mypage/my_notes/NoteCard';
@@ -12,6 +13,7 @@ interface NoteWithVideoTitle extends Note {
 
 const MyNotesPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth();
+  const router = useRouter();
   const [notes, setNotes] = useState<NoteWithVideoTitle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,8 +49,13 @@ const MyNotesPage: React.FC = () => {
       }
     };
 
-    fetchNotes(page, sortOption);
-  }, [currentUser, jwtToken, page, sortOption]);
+    const queryPage = parseInt(router.query.page as string, 10) || 1;
+    const querySort = router.query.sort as string || 'created_at_desc';
+
+    setPage(queryPage);
+    setSortOption(querySort);
+    fetchNotes(queryPage, querySort);
+  }, [currentUser, jwtToken, router.query.page, router.query.sort]);
 
   const handleDeleteNote = async (noteId: number) => {
     try {
@@ -65,15 +72,22 @@ const MyNotesPage: React.FC = () => {
   };
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortOption(event.target.value);
+    const newSortOption = event.target.value;
+    setSortOption(newSortOption);
     setPage(1);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, sort: newSortOption, page: 1 },
+    }, undefined, { shallow: true });
   };
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-      setLoading(true);
-    }
+    setPage(newPage);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, page: newPage },
+    }, undefined, { shallow: true });
+    setLoading(true);
   };
 
   if (loading) return <LoadingSpinner loading={loading} />;

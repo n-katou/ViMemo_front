@@ -36,9 +36,9 @@ const YoutubeVideosPage: React.FC = () => {
 
   const query = router.query.query as string || '';
 
-  const fetchData = async () => {
+  const fetchData = async (page: number, sort: string) => {
     setLoading(true);
-    const result = await fetchYoutubeVideos(query, pagination.current_page, ITEMS_PER_PAGE, sortOption);
+    const result = await fetchYoutubeVideos(query, page, ITEMS_PER_PAGE, sort);
 
     if (result) {
       const updatedVideos = result.videos.map((video: YoutubeVideo) => ({
@@ -57,8 +57,13 @@ const YoutubeVideosPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [pagination.current_page, query, sortOption]);
+    const currentPage = parseInt(router.query.page as string, 10) || 1;
+    const currentSortOption = router.query.sort as string || 'created_at_desc';
+
+    setPagination(prev => ({ ...prev, current_page: currentPage }));
+    setSortOption(currentSortOption);
+    fetchData(currentPage, currentSortOption);
+  }, [router.query.page, router.query.sort, query]);
 
   useEffect(() => {
     if (router.query.flashMessage) {
@@ -78,8 +83,17 @@ const YoutubeVideosPage: React.FC = () => {
   };
 
   const handleSortChange = (newSortOption: string) => {
-    setSortOption(newSortOption);
-    setPagination({ ...pagination, current_page: 1 });
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, sort: newSortOption, page: 1 },
+    });
+  };
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, page: value },
+    });
   };
 
   const handleLikeVideoWrapper = async (id: number) => {
@@ -110,7 +124,7 @@ const YoutubeVideosPage: React.FC = () => {
           onChange={(e) => handleSortChange(e.target.value)}
           className="form-select form-select-lg text-white bg-gray-800 border-gray-600"
         >
-          <option value="created_at_desc">デフォルト（新しい順）</option>
+          <option value="created_at_desc">デフォルト（投稿順）</option>
           <option value="likes_desc">いいね数順</option>
           <option value="notes_desc">メモ数順</option>
         </select>
@@ -134,7 +148,7 @@ const YoutubeVideosPage: React.FC = () => {
           <PaginationComponent
             count={pagination.total_pages}
             page={pagination.current_page}
-            onChange={(event, value) => setPagination({ ...pagination, current_page: value })}
+            onChange={handlePageChange}
           />
         </>
       ) : <p>動画がありません。</p>}

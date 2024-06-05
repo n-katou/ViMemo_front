@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { Like } from '../../types/like';
@@ -16,12 +17,21 @@ const isNote = (likeable: any): likeable is Note => {
 
 const FavoriteNotesPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth(); // 認証コンテキストから現在のユーザーとJWTトークンを取得
+  const router = useRouter();
   const [noteLikes, setNoteLikes] = useState<Like[]>([]); // ノートのいいねリストを管理する状態
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1); // 現在のページを管理する状態
+  const [currentPage, setCurrentPage] = useState<number>(1); // 現在のページを管理する状態
   const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションを追加
   const itemsPerPage = 12; // 1ページあたりのアイテム数を設定
+
+  // クエリパラメータを更新する関数
+  const updateQueryParams = (page: number, sort: string) => {
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, page, sort },
+    }, undefined, { shallow: true });
+  };
 
   // コンポーネントがマウントされたときにノートのいいねを取得するための副作用
   useEffect(() => {
@@ -30,14 +40,28 @@ const FavoriteNotesPage: React.FC = () => {
       return;
     }
 
-    fetchNoteLikes(jwtToken, setNoteLikes, setError, setLoading) // ノートのいいねを取得
-      .then(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        await fetchNoteLikes(jwtToken, setNoteLikes, setError, setLoading);
         console.log("Note likes fetched successfully");
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching note likes:", err);
-      });
-  }, [currentUser, jwtToken, currentPage, sortOption]); // currentUser、jwtToken、currentPage、sortOptionが変更されるたびに実行
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [currentUser, jwtToken]);
+
+  useEffect(() => {
+    const page = parseInt(router.query.page as string, 10) || 1;
+    const sort = router.query.sort as string || 'created_at_desc';
+
+    setCurrentPage(page);
+    setSortOption(sort);
+  }, [router.query.page, router.query.sort]);
 
   // ノートのリストをソートする関数
   const sortNotes = (notes: Like[]) => {
@@ -56,6 +80,17 @@ const FavoriteNotesPage: React.FC = () => {
   const endIndex = startIndex + itemsPerPage; // 終了インデックスを計算
   const currentItems = sortNotes(noteLikes).slice(startIndex, endIndex); // 現在のページに表示するアイテムをスライス
 
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+    updateQueryParams(value, sortOption);
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSortOption = e.target.value;
+    setSortOption(newSortOption);
+    updateQueryParams(1, newSortOption);
+  };
+
   if (loading) {
     console.log("Loading state: ", loading);
     return <LoadingSpinner loading={loading} />;
@@ -71,7 +106,7 @@ const FavoriteNotesPage: React.FC = () => {
       <div className="flex justify-end mb-8">
         <select
           value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)}
+          onChange={handleSortChange}
           className="form-select form-select-lg text-white bg-gray-800 border-gray-600 rounded-md"
         >
           <option value="created_at_desc">デフォルト（新しい順）</option>
@@ -98,7 +133,7 @@ const FavoriteNotesPage: React.FC = () => {
             <Pagination
               count={Math.ceil(noteLikes.length / itemsPerPage)} // 総ページ数を計算
               page={currentPage} // 現在のページ
-              onChange={(event, value) => setCurrentPage(value)} // ページ変更時の処理
+              onChange={handlePageChange} // ページ変更時の処理
             />
           </Box>
         </>
