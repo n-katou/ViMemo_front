@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Snackbar, Alert, Typography, Box, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { Snackbar, Alert, Typography, Box, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { useRouter } from 'next/router';
 import { useAuth } from '../context/AuthContext';
-import { Tabs } from '../components/Root/Tabs'; // Tabsコンポーネントをインポート
-import { WavyBackground } from '../components/Root/WavyBackground'; // WavyBackgroundコンポーネントをインポート
-import tabs from '../components/Root/tab'; // tabsをインポート
-import { styled } from '@mui/system';
+import { Tabs } from '../components/Root/Tabs';
+import { WavyBackground } from '../components/Root/WavyBackground';
+import { useTheme } from 'next-themes'; // next-themesのuseThemeをインポート
 import GradientButton from '../styles/GradientButton';
-
+import tab from '../components/Root/tab'; // tabをインポート
 
 const RootPage = () => {
   const router = useRouter();
+  const { currentUser } = useAuth();
+  const { theme } = useTheme(); // テーマを取得
+  const isLightTheme = theme === 'light'; // テーマがライトかどうかを判定
+
+  const [tabs, setTabs] = useState(tab(isLightTheme));
+  const [activeTab, setActiveTab] = useState(tabs[0].value);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'info' | 'success' | 'warning' | 'error'>('info');
-  const [activeTab, setActiveTab] = useState(tabs[0].value);
-  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    setTabs(tab(isLightTheme));
+  }, [isLightTheme]);
 
   useEffect(() => {
     const logoutMessage = localStorage.getItem('logoutMessage');
@@ -50,20 +57,21 @@ const RootPage = () => {
         }}
       >
         <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '100px' }}>
-          <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: 'white', boxShadow: 'none' }}>
+          <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? 'black' : 'white', boxShadow: 'none' }}>
             <Typography
               variant="h1"
               gutterBottom
               sx={{
                 fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
                 margin: 0,
+                color: isLightTheme ? 'black' : 'white'
               }}
             >
               ViMemoは、動画視聴中に直感的にメモを追加できるサービスです
             </Typography>
-            <Typography variant="h5" sx={{ marginTop: 10 }}>機能説明</Typography>
+            <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? 'black' : 'white' }}>機能説明</Typography>
             <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5 }}>
-              <Select value={activeTab} onChange={handleTabChange} fullWidth sx={{ color: 'white' }}>
+              <Select value={activeTab} onChange={handleTabChange} fullWidth sx={{ color: isLightTheme ? 'black' : 'white' }}>
                 {tabs.map((tab) => (
                   <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
                     {tab.title}
