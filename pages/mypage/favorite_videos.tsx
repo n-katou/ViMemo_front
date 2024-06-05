@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { useAuth } from '../../context/AuthContext';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import PaginationComponent from '../../components/Pagination';
@@ -12,6 +13,7 @@ const ITEMS_PER_PAGE = 9; // 一ページあたりのアイテム数を定義
 
 const FavoriteVideosPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth(); // 現在のユーザーとJWTトークンを取得
+  const router = useRouter();
   const [videos, setVideos] = useState<YoutubeVideo[]>([]); // お気に入り動画の状態を管理
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,8 +25,16 @@ const FavoriteVideosPage: React.FC = () => {
   });
   const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションの状態を管理
 
+  // クエリパラメータを更新する関数
+  const updateQueryParams = (page: number, sort: string) => {
+    router.push({
+      pathname: router.pathname,
+      query: { page, sort },
+    }, undefined, { shallow: true });
+  };
+
   // お気に入り動画をフェッチして状態にセットする関数
-  const fetchAndSetFavorites = async (page = 1, sort = sortOption) => {
+  const fetchAndSetFavorites = async (page: number, sort: string) => {
     setLoading(true); // ローディングを開始
     try {
       const result = await fetchFavorites(page, sort, jwtToken, currentUser, ITEMS_PER_PAGE); // APIからお気に入り動画を取得
@@ -45,8 +55,15 @@ const FavoriteVideosPage: React.FC = () => {
 
   // コンポーネントがマウントされたときにお気に入り動画をフェッチする
   useEffect(() => {
-    fetchAndSetFavorites(pagination.current_page); // 現在のページに基づいて動画をフェッチ
-  }, [pagination.current_page, sortOption]); // ページまたはソートオプションが変わるたびにフェッチ
+    const page = parseInt(router.query.page as string, 10) || 1;
+    const sort = router.query.sort as string || 'created_at_desc';
+    setPagination((prev) => ({
+      ...prev,
+      current_page: page,
+    }));
+    setSortOption(sort);
+    fetchAndSetFavorites(page, sort); // 現在のページとソートオプションに基づいて動画をフェッチ
+  }, [router.query.page, router.query.sort]); // ページまたはソートオプションが変わるたびにフェッチ
 
   // いいねを処理する関数
   const handleLikeVideo = async (id: number) => {
@@ -60,19 +77,14 @@ const FavoriteVideosPage: React.FC = () => {
 
   // ページ変更時に呼ばれる関数
   const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
-    setPagination((prev) => ({
-      ...prev,
-      current_page: page,
-    }));
+    updateQueryParams(page, sortOption);
   };
 
   // ソートオプション変更時に呼ばれる関数
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortOption(event.target.value);
-    setPagination((prev) => ({
-      ...prev,
-      current_page: 1, // 新しいソートオプションに基づいて最初のページを表示
-    }));
+    const newSortOption = event.target.value;
+    setSortOption(newSortOption);
+    updateQueryParams(1, newSortOption);
   };
 
   if (loading) return <LoadingSpinner loading={loading} />; // ローディング中はスピナーを表示
@@ -83,7 +95,7 @@ const FavoriteVideosPage: React.FC = () => {
       <h1 className="text-3xl font-bold text-white-900">いいねしたYoutube一覧</h1>
       <div className="flex justify-end mb-8">
         <select value={sortOption} onChange={handleSortChange} className="form-select text-white bg-gray-800 border-gray-600">
-          <option value="created_at_desc">デフォルト（新しい順）</option>
+          <option value="created_at_desc">デフォルト（投稿順）</option>
           <option value="likes_desc">いいね数順</option>
           <option value="notes_desc">メモ数順</option>
         </select>
@@ -98,6 +110,7 @@ const FavoriteVideosPage: React.FC = () => {
                 currentUser={currentUser}
                 handleLikeVideo={handleLikeVideo}
                 handleUnlikeVideo={handleUnlikeVideo}
+                notes={video.notes} // `notes` プロパティを渡す
               />
             ))}
           </div>

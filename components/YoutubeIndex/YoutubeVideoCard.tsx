@@ -10,8 +10,8 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
-import { formatDuration, videoTimestampToSeconds, playFromTimestamp, handleDeleteNote, handleEditNote } from '../YoutubeShow/youtubeShowUtils';
-import NoteList from '../../components/Note/NoteList'; // NoteListコンポーネントのインポート
+import { formatDuration, videoTimestampToSeconds, playFromTimestamp } from '../YoutubeShow/youtubeShowUtils';
+import RelatedNotesList from './RelatedNotesList'; // RelatedNotesListコンポーネントのインポート
 
 // YoutubeVideoCardコンポーネントのプロパティ型を定義
 interface YoutubeVideoCardProps {
@@ -45,17 +45,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   console.log('Related notes:', relatedNotes);
 
   const renderNoteList = () => (
-    <div style={{ padding: '10px', maxWidth: '600px' }}> {/* maxWidthを600pxに変更 */}
-      <NoteList
-        notes={relatedNotes} // 動画に関連するメモをフィルタリング
-        currentUser={currentUser}
-        videoTimestampToSeconds={videoTimestampToSeconds}
-        playFromTimestamp={(seconds) => playFromTimestamp(seconds, playerRef)}
-        videoId={video.id}
-        onDelete={currentUser && jwtToken ? (noteId) => handleDeleteNote(noteId, jwtToken, video, setNotes) : undefined}
-        onEdit={currentUser && jwtToken ? (noteId, newContent, newMinutes, newSeconds, newIsVisible) => handleEditNote(noteId, newContent, newMinutes, newSeconds, newIsVisible, jwtToken, video, setNotes) : undefined}
-      />
-    </div>
+    <RelatedNotesList notes={relatedNotes.slice(0, 3)} playerRef={playerRef} />
   );
 
   return (
@@ -85,18 +75,22 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
           sx={{
             pointerEvents: 'none',
             '.MuiPopover-paper': {
-              width: '600px' // ポップオーバーの幅を600pxに設定
+              width: '600px', // ポップオーバーの幅を600pxに設定
+              marginTop: '10px', // タイトルの下に表示するためにマージンを追加
+              padding: '20px', // 内部の余白を追加
+              borderRadius: '8px', // 角を丸くする
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // シャドウを追加
             }
           }}
           open={open}
           anchorEl={anchorEl}
           anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+            vertical: 'bottom', // ポップオーバーをターゲットの下に表示
+            horizontal: 'center', // 水平方向の位置を中央に設定
           }}
           transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
+            vertical: 'top', // ポップオーバーの基点を上に設定
+            horizontal: 'center', // 水平方向の基点を中央に設定
           }}
           onClose={handlePopoverClose}
           disableRestoreFocus
