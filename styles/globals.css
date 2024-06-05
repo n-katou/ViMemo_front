@@ -14,6 +14,10 @@ body {
 body.light {
   --bg-color: white;
   --text-color: black;
+  --header-bg-color: white;
+  /* 追加: ライトモードのヘッダー背景色 */
+  --header-text-color: black;
+  /* 追加: ライトモードのヘッダーテキスト色 */
   --card-bg-color: #f5f5f5;
   --card-shadow: rgba(0, 0, 0, 0.1);
   --card-hover-shadow: rgba(0, 0, 0, 0.2);
@@ -22,6 +26,10 @@ body.light {
 body.dark {
   --bg-color: black;
   --text-color: white;
+  --header-bg-color: black;
+  /* 追加: ダークモードのヘッダー背景色 */
+  --header-text-color: white;
+  /* 追加: ダークモードのヘッダーテキスト色 */
   --card-bg-color: #333;
   --card-shadow: rgba(255, 255, 255, 0.1);
   --card-hover-shadow: rgba(255, 255, 255, 0.2);
@@ -49,8 +57,10 @@ footer {
 }
 
 header {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  background-color: var(--header-bg-color);
+  /* 変更: テーマに応じたヘッダー背景色 */
+  color: var(--header-text-color);
+  /* 変更: テーマに応じたヘッダーテキスト色 */
 }
 
 /* Video Styles */
@@ -58,6 +68,7 @@ header {
 .video-container {
   position: relative;
   padding-top: 56.25%;
+  /* 16:9アスペクト比 */
   height: 0;
   overflow: hidden;
   z-index: 10;
@@ -75,25 +86,33 @@ header {
 /* Card Styles */
 .card {
   background-color: var(--card-bg-color);
+  /* カードの背景色 */
   border-radius: 0.5rem;
+  /* カードの角を丸くする */
   box-shadow: 0 2px 8px var(--card-shadow);
+  /* カードの影 */
   transition: box-shadow 0.3s;
+  /* ホバー時の影のトランジション */
 }
 
 .card:hover {
   box-shadow: 0 4px 16px var(--card-hover-shadow);
+  /* ホバー時の影 */
 }
 
 .card-body {
   padding: 1rem;
+  /* カードの内部余白 */
 }
 
 .fixed-card-size {
   height: 340px;
+  /* 固定の高さを設定 */
 }
 
 .custom-card-size {
   height: 250px;
+  /* 固定の高さを設定 */
   overflow: hidden;
 }
 
@@ -107,13 +126,18 @@ header {
 /* Text Styles */
 .font-bold {
   font-weight: bold;
+  /* 太字 */
 }
 
 .video-title {
   font-size: 2.5rem;
+  /* 40pxに相当 */
   font-weight: bold;
+  /* 太字にする */
   color: var(--text-color);
+  /* 色を暗めのグレーに設定 */
   margin-bottom: 20px;
+  /* 下の要素との間隔 */
 }
 
 .text-container {
@@ -132,6 +156,7 @@ header {
 }
 
 .note-content-normal {
+  /* white-space: pre-wrap; */
   overflow-y: auto;
 }
 
@@ -146,6 +171,7 @@ header {
 .note-card {
   width: 100%;
   height: 300px;
+  /* 固定高さ */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -206,11 +232,14 @@ header {
 /* Button Styles */
 .btn-outline {
   border: 1px solid #ccc;
+  /* アウトラインボタンの境界線 */
   padding: 0.5rem 1rem;
+  /* アウトラインボタンの余白 */
 }
 
 .btn-outline:hover {
   background-color: #f0f0f0;
+  /* ホバー時の背景色 */
 }
 
 .btn-outline.btn-blue {
@@ -288,18 +317,23 @@ header {
 /* Badge Styles */
 .badge-error {
   background-color: #e3342f;
+  /* エラーバッジの背景色 */
   color: #fff;
+  /* エラーバッジの文字色 */
 }
 
 /* Link Styles */
 .link-hover:hover {
   text-decoration: underline;
+  /* ホバー時の下線 */
 }
 
 /* Input Styles */
 input[type="text"] {
   background-color: white;
+  /* 背景色を白に設定 */
   color: black;
+  /* テキスト色を黒に設定 */
 }
 
 /* Scrollbar Styles */
@@ -321,14 +355,17 @@ input[type="text"] {
 
 .mb-3 {
   margin-bottom: 1rem;
+  /* 下の余白 */
 }
 
 .transition-shadow {
   transition: box-shadow 0.3s;
+  /* 影のトランジション */
 }
 
 .duration-300 {
   transition-duration: 300ms;
+  /* トランジションの継続時間 */
 }
 
 .fixed-button-container {
@@ -372,6 +409,7 @@ input[type="text"] {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 
 .youtube-video-card {
   transition: transform 0.2s ease-in-out;

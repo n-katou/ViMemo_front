@@ -1,61 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LoadingSpinner from '../components/LoadingSpinner';
 import "../styles/globals.css";
-import { AuthProvider, useAuth } from "../context/AuthContext";
-import { FlashMessageProvider, useFlashMessage } from '../context/FlashMessageContext';
-import FlashMessage from '../components/FlashMessage';
-import { Alert, Container, Box } from '@mui/material';
+import { AuthProvider } from "../context/AuthContext";
+import { FlashMessageProvider } from '../context/FlashMessageContext';
 import { useRouter } from 'next/router';
 import { analytics } from '../lib/initFirebase';
 import { logEvent } from 'firebase/analytics';
 import { ThemeProvider } from 'next-themes'; // 修正: ThemeProvider の正しいインポートパス
-
-interface AuthenticatedAppProps {
-  Component: AppProps['Component'];
-  pageProps: AppProps['pageProps'];
-  appRouter: AppProps['router'];
-}
-
-const protectedRoutes = ['/mypage/dashboard', '/mypage/edit', '/mypage/favorite_videos', '/mypage/favorite_notes', '/mypage/my_notes'];
-
-function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppProps) {
-  const { currentUser, loading } = useAuth();
-  const { setFlashMessage } = useFlashMessage();
-  const [showLoginMessage, setShowLoginMessage] = useState(false);
-
-  const isProtectedRoute = protectedRoutes.includes(appRouter.pathname);
-
-  useEffect(() => {
-    if (!loading && !currentUser && isProtectedRoute) {
-      setFlashMessage('ログインしてください', 'warning');
-      setShowLoginMessage(true);
-    } else {
-      setShowLoginMessage(false);
-    }
-  }, [currentUser, loading, appRouter.pathname, isProtectedRoute, setFlashMessage]);
-
-  if (loading) {
-    return <LoadingSpinner loading={loading} />;
-  }
-
-  if (isProtectedRoute && !currentUser) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Container maxWidth="sm">
-          <Alert severity="warning" variant="filled" sx={{ fontSize: '1.25rem', textAlign: 'center' }}>
-            ログインが必要です
-          </Alert>
-        </Container>
-      </Box>
-    );
-  }
-
-  return <Component {...pageProps} />;
-}
 
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
   const nextRouter = useRouter();
@@ -90,17 +45,13 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
       <FlashMessageProvider>
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            <Box id="root" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-              <Box sx={{ flexShrink: 0, backgroundColor: 'black' }}>
-                <Header />
-              </Box>
-              <Box component="main" sx={{ flex: 1 }}>
-                <AuthenticatedApp Component={Component} pageProps={pageProps} appRouter={router} />
-              </Box>
-              <Box sx={{ flexShrink: 0 }}>
-                <Footer />
-              </Box>
-            </Box>
+            <div id="root" className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-grow">
+                <Component {...pageProps} />
+              </main>
+              <Footer />
+            </div>
           </ThemeProvider>
         </AuthProvider>
       </FlashMessageProvider>

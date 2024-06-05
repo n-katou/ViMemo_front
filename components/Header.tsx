@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
+import { useTheme } from 'next-themes';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -18,10 +19,13 @@ const Header: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
   const { setFlashMessage } = useFlashMessage(); // フラッシュメッセージの使用
+  const { theme, resolvedTheme } = useTheme(); // テーマを取得
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const isMessageDisplayed = localStorage.getItem('isMessageDisplayed');
     if (isMessageDisplayed === 'true') {
       setFlashMessage('ロード中です。');
@@ -53,9 +57,11 @@ const Header: React.FC = () => {
     router.push('/');
   };
 
+  if (!mounted) return null;
+
   return (
     <>
-      <AppBar position="fixed" sx={{ backgroundColor: 'black', zIndex: 1300 }}>
+      <AppBar position="fixed" sx={{ backgroundColor: resolvedTheme === 'light' ? 'white' : 'black', zIndex: 1300 }}>
         <Toolbar>
           <span
             className="bg-gradient-rainbow-header"
@@ -85,9 +91,9 @@ const Header: React.FC = () => {
           </span>
           <div style={{ flexGrow: 1 }} /> {/* ダミーのスペースを追加 */}
           <div className="flex items-center">
-            <IconButton onClick={toggleSearch} color="inherit">
+            <IconButton onClick={toggleSearch} sx={{ color: resolvedTheme === 'light' ? 'black' : 'white' }}>
               <SearchIcon />
-              <Typography variant="body1" sx={{ marginLeft: 1 }}>
+              <Typography variant="body1" sx={{ marginLeft: 1, color: resolvedTheme === 'light' ? 'black' : 'white' }}>
                 検索
               </Typography>
             </IconButton>
@@ -96,7 +102,11 @@ const Header: React.FC = () => {
               toggleSearch={toggleSearch}
             />
           </div>
-          <Button color="inherit" onClick={navigateToYoutubeVideos} startIcon={<YouTubeIcon />}>
+          <Button
+            onClick={navigateToYoutubeVideos}
+            startIcon={<YouTubeIcon sx={{ color: resolvedTheme === 'light' ? 'black' : 'white' }} />}
+            sx={{ color: resolvedTheme === 'light' ? 'black' : 'white' }}
+          >
             <Typography variant="body1">
               YouTube
             </Typography>
@@ -108,7 +118,7 @@ const Header: React.FC = () => {
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={toggleDrawer(true)}
-              color="inherit"
+              sx={{ color: resolvedTheme === 'light' ? 'black' : 'white' }}
             >
               <AccountCircle />
             </IconButton>
