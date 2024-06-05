@@ -76,7 +76,10 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
             pointerEvents: 'none',
             '.MuiPopover-paper': {
               width: '600px', // ポップオーバーの幅を600pxに設定
-              marginTop: '10px' // タイトルの下に表示するためにマージンを追加
+              marginTop: '10px', // タイトルの下に表示するためにマージンを追加
+              padding: '20px', // 内部の余白を追加
+              borderRadius: '8px', // 角を丸くする
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // シャドウを追加
             }
           }}
           open={open}
