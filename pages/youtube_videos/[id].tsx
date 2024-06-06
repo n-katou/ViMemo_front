@@ -18,6 +18,7 @@ const YoutubeVideoShowPage: React.FC = () => {
   const [likeError, setLikeError] = useState<string | null>(null);
   const [liked, setLiked] = useState<boolean>(false);
   const [isNoteFormVisible, setIsNoteFormVisible] = useState<boolean>(false);
+  const [showMyNotes, setShowMyNotes] = useState<boolean>(true); // 新しい状態
 
   const pathname = usePathname();
   const router = useRouter();
@@ -61,6 +62,10 @@ const YoutubeVideoShowPage: React.FC = () => {
     return <LoadingSpinner loading={loading || dataLoading} />;
   }
 
+  const filteredNotes = showMyNotes
+    ? notes.filter(note => note.user.id === currentUser?.id)
+    : notes;
+
   return (
     <div className="container mx-auto py-8">
       {!video && <div className="text-center">Video not found</div>}
@@ -88,8 +93,16 @@ const YoutubeVideoShowPage: React.FC = () => {
               {isNoteFormVisible && <NoteForm addNote={(content, minutes, seconds, isVisible) => addNote(content, minutes, seconds, isVisible, jwtToken, video, setNotes)} />}
             </div>
           )}
+          <div className="mb-8">
+            <button
+              onClick={() => setShowMyNotes(!showMyNotes)}
+              className="btn btn-secondary mb-4"
+            >
+              {showMyNotes ? '全てのメモを表示' : '自分のメモのみを表示'}
+            </button>
+          </div>
           <NoteList
-            notes={notes}
+            notes={filteredNotes}
             currentUser={currentUser}
             videoTimestampToSeconds={videoTimestampToSeconds}
             playFromTimestamp={(seconds) => playFromTimestamp(seconds, playerRef)}
