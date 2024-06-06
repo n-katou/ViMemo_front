@@ -20,6 +20,7 @@ interface NoteItemProps {
   onDelete?: (noteId: number) => void; // メモを削除する関数（オプション）
   onEditClick: (note: Note) => void; // 編集クリック時の関数
   isOwner: boolean; // ユーザーがメモの所有者かどうか
+  index: number; // メモのインデックス
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({
@@ -31,6 +32,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   onDelete = () => { }, // デフォルトの空関数
   onEditClick,
   isOwner,
+  index,
 }) => {
   const { jwtToken } = useAuth(); // 認証コンテキストからJWTトークンを取得
   const [isEditing, setIsEditing] = useState(false); // 編集モードの状態を管理
@@ -83,16 +85,14 @@ const NoteItem: React.FC<NoteItemProps> = ({
     <motion.div
       className="note-item fixed-card-size border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6"
       style={{ background: 'linear-gradient(90deg, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5)', animation: 'gradient 1s ease infinite' }}
-      whileHover={{ scale: 1.05, boxShadow: "0px 0px 20px rgba(0,0,0,0.3)" }}
       initial={{ opacity: 0, rotateY: -90 }}
       animate={{ opacity: 1, rotateY: 0 }}
-      transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+      transition={{ duration: 0.5, type: "spring", stiffness: 100, delay: index * 0.2 }}
     >
       <motion.div
         className="p-6 text-black"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.3 }}
       >
         <div className="flex text-white items-center mb-4">
           {avatarUrl && (
@@ -101,7 +101,6 @@ const NoteItem: React.FC<NoteItemProps> = ({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
           >
             <p className="text-xl font-bold">{note.user?.name || 'Unknown User'}</p>
             {/* タイムスタンプをクリックすると再生が開始 */}
@@ -119,11 +118,9 @@ const NoteItem: React.FC<NoteItemProps> = ({
           <div className="flex items-center">
             <Tooltip title={liked ? "いいねを取り消す" : "いいね"}>
               <motion.div
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ rotate: 20 }}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
               >
                 <IconButton onClick={liked ? () => handleUnlikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError) : () => handleLikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError)}>
                   <Badge badgeContent={note.likes_count} color="primary">

@@ -82,7 +82,7 @@ const NoteList: React.FC<NoteListProps> = ({
               navigation // ナビゲーションの有効化
               modules={[Pagination, Navigation]} // 使用するモジュールの指定
             >
-              {paginatedNotes.map((note) => {
+              {paginatedNotes.map((note, index) => {
                 const isOwner = currentUser?.id === note.user?.id; // 現在のユーザーがメモの所有者かどうかを判定
                 return (
                   <SwiperSlide key={note.id}>
@@ -95,6 +95,7 @@ const NoteList: React.FC<NoteListProps> = ({
                       onDelete={onDelete} // メモを削除する関数
                       onEditClick={handleEditClick} // 編集クリック時の関数
                       isOwner={isOwner} // メモの所有者かどうか
+                      index={index} // メモのインデックス
                     />
                   </SwiperSlide>
                 );
@@ -109,7 +110,7 @@ const NoteList: React.FC<NoteListProps> = ({
         ) : ( // デスクトップ表示の場合
           <div>
             <div className="flex flex-wrap -mx-2">
-              {paginatedNotes.map((note) => {
+              {paginatedNotes.map((note, index) => {
                 const isOwner = currentUser?.id === note.user?.id; // 現在のユーザーがメモの所有者かどうかを判定
                 return (
                   <div key={note.id} className="p-2 w-full sm:w-1/2 lg:w-1/3">
@@ -122,6 +123,7 @@ const NoteList: React.FC<NoteListProps> = ({
                       onDelete={onDelete} // メモを削除する関数
                       onEditClick={handleEditClick} // 編集クリック時の関数
                       isOwner={isOwner} // メモの所有者かどうか
+                      index={index} // メモのインデックス
                     />
                   </div>
                 );
