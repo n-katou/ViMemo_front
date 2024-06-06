@@ -399,13 +399,13 @@ input[type="text"] {
 .bg-gradient-rainbow {
   background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5);
   background-size: 200% 200%;
-  animation: rainbow 7s ease infinite;
+  animation: rainbow 5s ease infinite;
 }
 
 .bg-gradient-rainbow-header {
   background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc, #e879f9, #22eec5);
   background-size: 200% 200%;
-  animation: rainbow 7s ease infinite;
+  animation: rainbow 5s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -456,4 +456,94 @@ input[type="text"] {
     width: 90%;
     height: auto;
   }
+}
+
+@keyframes gradientAnimation1 {
+  0% {
+    background-color: #38bdf8;
+  }
+
+  50% {
+    background-color: #818cf8;
+  }
+
+  100% {
+    background-color: #38bdf8;
+  }
+}
+
+@keyframes gradientAnimation2 {
+  0% {
+    background-color: #818cf8;
+  }
+
+  50% {
+    background-color: #c084fc;
+  }
+
+  100% {
+    background-color: #818cf8;
+  }
+}
+
+@keyframes gradientAnimation3 {
+  0% {
+    background-color: #c084fc;
+  }
+
+  50% {
+    background-color: #e879f9;
+  }
+
+  100% {
+    background-color: #c084fc;
+  }
+}
+
+@keyframes gradientAnimation4 {
+  0% {
+    background-color: #e879f9;
+  }
+
+  50% {
+    background-color: #22eec5;
+  }
+
+  100% {
+    background-color: #e879f9;
+  }
+}
+
+@keyframes gradientAnimation5 {
+  0% {
+    background-color: #22eec5;
+  }
+
+  50% {
+    background-color: #38bdf8;
+  }
+
+  100% {
+    background-color: #22eec5;
+  }
+}
+
+.animation1 {
+  animation: gradientAnimation1 5s infinite;
+}
+
+.animation2 {
+  animation: gradientAnimation2 5s infinite;
+}
+
+.animation3 {
+  animation: gradientAnimation3 5s infinite;
+}
+
+.animation4 {
+  animation: gradientAnimation4 5s infinite;
+}
+
+.animation5 {
+  animation: gradientAnimation5 5s infinite;
 }

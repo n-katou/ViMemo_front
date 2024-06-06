@@ -1,7 +1,7 @@
 import React from 'react';
 import { Note } from '../../types/note';
 import { BsTwitterX } from "react-icons/bs";
-import EditIcon from '@mui/icons-material/Edit'; 
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 
@@ -27,7 +27,7 @@ const NoteActions: React.FC<NoteActionsProps> = ({
 }) => {
   // 数値を2桁にパディングする関数
   const padZero = (num: number) => num.toString().padStart(2, '0');
-  
+
   // YouTube動画のIDを取得
   const youtubeId = note.youtube_video?.youtube_id;
 
@@ -48,16 +48,17 @@ const NoteActions: React.FC<NoteActionsProps> = ({
               href={shareUrl}
               target="_blank"
               className="btn btn-outline btn-primary share-button"
+              style={{ color: 'white' }}
             >
               <BsTwitterX />
             </IconButton>
           ) : (
             <p>YouTube IDが見つかりません</p>)}
-          <IconButton onClick={() => setIsEditing(true)} className="btn btn-outline btn-info edit-button">
-            <EditIcon />
+          <IconButton onClick={() => setIsEditing(true)} className="btn btn-outline btn-info edit-button" style={{ color: 'white' }}>
+            <EditIcon style={{ color: 'white' }} />
           </IconButton>
-          <IconButton onClick={handleDelete} className="btn btn-outline btn-error delete-button">
-            <DeleteIcon />
+          <IconButton onClick={handleDelete} className="btn btn-outline btn-error delete-button" style={{ color: 'white' }}>
+            <DeleteIcon style={{ color: 'white' }} />
           </IconButton>
         </>
       )}

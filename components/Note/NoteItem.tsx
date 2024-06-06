@@ -9,6 +9,7 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import Badge from '@mui/material/Badge';
 import { Avatar, Tooltip, IconButton } from '@mui/material';
 import { initializeEditor, handleLikeNote, handleUnlikeNote, padZero } from './noteItemFunctions';
+import { motion } from 'framer-motion';
 
 interface NoteItemProps {
   note: Note; // メモのデータ
@@ -19,6 +20,7 @@ interface NoteItemProps {
   onDelete?: (noteId: number) => void; // メモを削除する関数（オプション）
   onEditClick: (note: Note) => void; // 編集クリック時の関数
   isOwner: boolean; // ユーザーがメモの所有者かどうか
+  index: number; // メモのインデックス
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({
@@ -30,6 +32,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   onDelete = () => { }, // デフォルトの空関数
   onEditClick,
   isOwner,
+  index,
 }) => {
   const { jwtToken } = useAuth(); // 認証コンテキストからJWTトークンを取得
   const [isEditing, setIsEditing] = useState(false); // 編集モードの状態を管理
@@ -41,6 +44,10 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const [likeError, setLikeError] = useState<string | null>(null); // いいねエラーの状態
   const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL; // デフォルトのアバターURL
   const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl; // ユーザーのアバターURL
+
+  // ランダムなアニメーションクラスを選択
+  const animationClasses = ['animation1', 'animation2', 'animation3', 'animation4', 'animation5'];
+  const randomClass = animationClasses[Math.floor(Math.random() * animationClasses.length)];
 
   // コンポーネントのマウント時と状態の変更時に実行
   useEffect(() => {
@@ -79,21 +86,33 @@ const NoteItem: React.FC<NoteItemProps> = ({
   }
 
   return (
-    <div className="note-item fixed-card-size bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 mb-6">
-      <div className="p-6 text-black">
-        <div className="flex items-center mb-4">
+    <motion.div
+      className={`note-item fixed-card-size border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6 ${randomClass}`}
+      initial={{ opacity: 0, rotateY: -90 }}
+      animate={{ opacity: 1, rotateY: 0 }}
+      transition={{ duration: 0.5, type: "spring", stiffness: 100, delay: index * 0.2 }}
+    >
+      <motion.div
+        className="p-6 text-black"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <div className="flex text-white items-center mb-4">
           {avatarUrl && (
             <Avatar src={avatarUrl} alt="User Avatar" sx={{ width: 48, height: 48, mr: 2 }} />
           )}
-          <div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
             <p className="text-xl font-bold">{note.user?.name || 'Unknown User'}</p>
             {/* タイムスタンプをクリックすると再生が開始 */}
-            <button onClick={handleTimestampClick} className="text-blue-500 hover:underline">
-              {padZero(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60))}:{padZero(videoTimestampToSeconds(note.video_timestamp) % 60)}
+            <button onClick={handleTimestampClick} className="text-blue-700 hover:underline">
+              タイムスタンプ:{padZero(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60))}:{padZero(videoTimestampToSeconds(note.video_timestamp) % 60)}
             </button>
             {/* 投稿日時の表示 */}
-            <p className="text-gray-500 text-sm">{new Date(note.created_at).toLocaleString()}</p>
-          </div>
+            <p className="text-white text-sm">{new Date(note.created_at).toLocaleString()}</p>
+          </motion.div>
         </div>
         <div className="h-40 overflow-y-auto mb-1">
           <NoteContent note={note} />
@@ -101,15 +120,21 @@ const NoteItem: React.FC<NoteItemProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Tooltip title={liked ? "いいねを取り消す" : "いいね"}>
-              <IconButton onClick={liked ? () => handleUnlikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError) : () => handleLikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError)}>
-                <Badge badgeContent={note.likes_count} color="primary">
-                  {liked ? <ThumbUpIcon color="primary" /> : <ThumbUpOffAltIcon />}
-                </Badge>
-              </IconButton>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+              >
+                <IconButton onClick={liked ? () => handleUnlikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError) : () => handleLikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError)}>
+                  <Badge badgeContent={note.likes_count} color="primary">
+                    {liked ? <ThumbUpIcon style={{ color: 'white' }} /> : <ThumbUpOffAltIcon style={{ color: 'white' }} />}
+                  </Badge>
+                </IconButton>
+              </motion.div>
             </Tooltip>
             {/* メモが非表示の場合のメッセージ */}
             {!note.is_visible && isOwner && (
-              <p className="text-red-500 ml-2">非表示中</p>
+              <p className="text-yellow-400 ml-2">非表示中</p>
             )}
           </div>
           {/* メモの所有者である場合、編集・削除ボタンを表示 */}
@@ -122,14 +147,14 @@ const NoteItem: React.FC<NoteItemProps> = ({
               newSeconds={newSeconds}
               videoTimestampToSeconds={videoTimestampToSeconds}
               handleDelete={handleDelete}
-              setIsEditing={() => onEditClick(note)} // モーダルを開く関数を呼び出す
+              setIsEditing={() => onEditClick(note)}
             />
           )}
         </div>
-      </div>
+      </motion.div>
       {/* いいねエラーの表示 */}
       {likeError && <div className="p-4 text-red-500">{likeError}</div>}
-    </div>
+    </motion.div>
   );
 };
 
