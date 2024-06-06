@@ -32,6 +32,16 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
     setIsModalOpen(false);
   };
 
+  // キャンセルボタンの処理
+  const handleCancel = () => {
+    // フォームの状態をリセット
+    setNoteContent('');
+    setTimestampMinutes('');
+    setTimestampSeconds('');
+    setIsVisible(true);
+    setIsModalOpen(false);
+  };
+
   // フォームの内容を定義
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-6 p-4 bg-white shadow-md rounded-md text-black dark:bg-gray-800">
@@ -81,9 +91,12 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
           <option value="false">表示しない</option>
         </select>
       </div>
-      <div className="form-control">
-        <button type="submit" className="btn btn-outline btn-pink w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
+      <div className="form-control flex justify-end space-x-4">
+        <button type="submit" className="btn btn-outline btn-pink py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
           メモを追加
+        </button>
+        <button type="button" onClick={handleCancel} className="btn btn-secondary py-2 px-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition duration-200">
+          キャンセル
         </button>
       </div>
     </form>

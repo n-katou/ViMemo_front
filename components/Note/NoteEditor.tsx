@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from 'next-themes';
 
 interface NoteEditorProps {
   newContent: string; // 新しいメモの内容
@@ -27,20 +28,23 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
   setIsEditing,
   padZero
 }) => {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
+
   return (
-    <form onSubmit={(e) => { e.preventDefault(); handleEdit(); }} className="space-y-4 text-black">
+    <form onSubmit={(e) => { e.preventDefault(); handleEdit(); }} className={`space-y-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
       {/* メモの内容を入力するテキストエリア */}
-      <span className="text-black">メモ：</span>
+      <span>メモ：</span>
       <textarea
         value={newContent}
         onChange={(e) => setNewContent(e.target.value)}
         placeholder="メモを編集..."
         required
-        className="textarea textarea-bordered w-full bg-white text-black border border-gray-300 placeholder-black"
+        className={`textarea textarea-bordered w-full ${isDarkMode ? 'bg-gray-800 text-white border-white placeholder-gray-400' : 'bg-white text-black border-gray-300 placeholder-black'}`}
       />
       {/* タイムスタンプを入力する部分 */}
       <div className="form-control">
-        <label className="label text-black">
+        <label className="label">
           <span>タイムスタンプ:</span>
           <div className="flex gap-2 items-center">
             <input
@@ -50,9 +54,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
               min="0"
               max="59"
               placeholder="00"
-              className="input input-bordered text-center w-12 bg-white text-black border border-gray-300 placeholder-black"
+              className={`input input-bordered text-center w-12 ${isDarkMode ? 'bg-gray-800 text-black border-white placeholder-gray-400' : 'bg-white text-black border-gray-300 placeholder-black'}`}
             />
-            <span className="text-black">分</span>
+            <span>分</span>
             <input
               type="number"
               value={newSeconds || ''}
@@ -60,20 +64,20 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
               min="0"
               max="59"
               placeholder="00"
-              className="input input-bordered text-center w-12 bg-white text-black border border-gray-300 placeholder-black"
+              className={`input input-bordered text-center w-12 ${isDarkMode ? 'bg-gray-800 text-black border-white placeholder-gray-400' : 'bg-white text-black border-gray-300 placeholder-black'}`}
             />
-            <span className="text-black">秒</span>
+            <span>秒</span>
           </div>
         </label>
       </div>
       {/* メモの表示/非表示を選択する部分 */}
       <div className="form-control">
-        <label className="label text-black">
+        <label className="label">
           <span>表示:</span>
           <select
             value={newIsVisible ? 'true' : 'false'}
             onChange={(e) => setNewIsVisible(e.target.value === 'true')}
-            className="select select-bordered bg-white text-black border border-gray-300"
+            className={`select select-bordered ${isDarkMode ? 'bg-gray-800 text-white border-white' : 'bg-white text-black border-gray-300'}`}
           >
             <option value="true">表示する</option>
             <option value="false">表示しない</option>
