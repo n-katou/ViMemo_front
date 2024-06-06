@@ -7,6 +7,8 @@ import 'swiper/css/pagination'; // Swiperのpagination用CSSをインポート
 import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポート
 import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポート
 import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポート
+import Modal from './Modal'; // モーダルコンポーネントをインポート
+import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポート
 
 interface NoteListProps {
   notes: Note[]; // メモの配列
@@ -29,6 +31,8 @@ const NoteList: React.FC<NoteListProps> = ({
 }) => {
   const [isMobile, setIsMobile] = useState(false); // モバイル表示かどうかの状態を管理
   const [currentPage, setCurrentPage] = useState(1); // 現在のページを管理
+  const [isModalOpen, setIsModalOpen] = useState(false); // モーダルの表示/非表示の状態
+  const [editNote, setEditNote] = useState<Note | null>(null); // 編集するメモの状態
   const itemsPerPage = 6; // 1ページあたりのメモの数
 
   useEffect(() => {
@@ -41,6 +45,19 @@ const NoteList: React.FC<NoteListProps> = ({
     window.addEventListener('resize', handleResize); // リサイズイベントを監視
     return () => window.removeEventListener('resize', handleResize); // クリーンアップ
   }, []);
+
+  const handleEditClick = (note: Note) => {
+    setEditNote(note);
+    setIsModalOpen(true);
+  };
+
+  const handleEditSubmit = (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => {
+    if (onEdit) {
+      onEdit(noteId, newContent, newMinutes, newSeconds, newIsVisible);
+    }
+    setIsModalOpen(false);
+    setEditNote(null);
+  };
 
   // メモを作成日時でソートする
   const sortedNotes = [...notes].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -74,7 +91,7 @@ const NoteList: React.FC<NoteListProps> = ({
                       playFromTimestamp={playFromTimestamp} // 指定の秒数から再生を開始する関数
                       videoId={videoId} // 動画のID
                       onDelete={onDelete} // メモを削除する関数
-                      onEdit={onEdit} // メモを編集する関数
+                      onEditClick={handleEditClick} // 編集クリック時の関数
                       isOwner={isOwner} // メモの所有者かどうか
                     />
                   </SwiperSlide>
@@ -101,7 +118,7 @@ const NoteList: React.FC<NoteListProps> = ({
                       playFromTimestamp={playFromTimestamp} // 指定の秒数から再生を開始する関数
                       videoId={videoId} // 動画のID
                       onDelete={onDelete} // メモを削除する関数
-                      onEdit={onEdit} // メモを編集する関数
+                      onEditClick={handleEditClick} // 編集クリック時の関数
                       isOwner={isOwner} // メモの所有者かどうか
                     />
                   </div>
@@ -117,6 +134,23 @@ const NoteList: React.FC<NoteListProps> = ({
         )
       ) : ( // メモがない場合
         <p id="no_notes_message">メモがありません。</p>
+      )}
+      {editNote && (
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <NoteEditor
+            newContent={editNote.content}
+            newMinutes={Math.floor(videoTimestampToSeconds(editNote.video_timestamp) / 60)}
+            newSeconds={videoTimestampToSeconds(editNote.video_timestamp) % 60}
+            newIsVisible={editNote.is_visible}
+            setNewContent={(value) => setEditNote(prev => prev ? { ...prev, content: value } : prev)}
+            setNewMinutes={(value) => setEditNote(prev => prev ? { ...prev, newMinutes: value } : prev)}
+            setNewSeconds={(value) => setEditNote(prev => prev ? { ...prev, newSeconds: value } : prev)}
+            setNewIsVisible={(value) => setEditNote(prev => prev ? { ...prev, newIsVisible: value } : prev)}
+            handleEdit={() => handleEditSubmit(editNote.id, editNote.content, Math.floor(videoTimestampToSeconds(editNote.video_timestamp) / 60), videoTimestampToSeconds(editNote.video_timestamp) % 60, editNote.is_visible)}
+            setIsEditing={(value) => setIsModalOpen(value)}
+            padZero={(num) => num.toString().padStart(2, '0')}
+          />
+        </Modal>
       )}
     </div>
   );
