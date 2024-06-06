@@ -82,7 +82,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
         </select>
       </div>
       <div className="form-control">
-        <button type="submit" className="btn btn-outline btn-perple w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
+        <button type="submit" className="btn btn-outline btn-pink w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
           メモを追加
         </button>
       </div>

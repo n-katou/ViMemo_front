@@ -3,20 +3,12 @@ import { Note } from '../../types/note';
 import { Like } from '../../types/like';
 import { useAuth } from '../../context/AuthContext'; // 認証コンテキストをインポート
 import NoteContent from './NoteContent'; // NoteContent コンポーネントをインポート
-import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポート
 import NoteActions from './NoteActions'; // NoteActions コンポーネントをインポート
-import Modal from './Modal'; // モーダルコンポーネントをインポート
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import Badge from '@mui/material/Badge';
 import { Avatar, Tooltip, IconButton } from '@mui/material';
-import {
-  initializeEditor,
-  updateLikeState,
-  handleLikeNote,
-  handleUnlikeNote,
-  padZero
-} from './noteItemFunctions';
+import { initializeEditor, handleLikeNote, handleUnlikeNote, padZero } from './noteItemFunctions';
 
 interface NoteItemProps {
   note: Note; // メモのデータ
@@ -25,7 +17,7 @@ interface NoteItemProps {
   playFromTimestamp: (seconds: number) => void; // タイムスタンプから再生を開始する関数
   videoId: number; // 動画のID
   onDelete?: (noteId: number) => void; // メモを削除する関数（オプション）
-  onEdit?: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void; // メモを編集する関数（オプション）
+  onEditClick: (note: Note) => void; // 編集クリック時の関数
   isOwner: boolean; // ユーザーがメモの所有者かどうか
 }
 
@@ -36,7 +28,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   playFromTimestamp,
   videoId,
   onDelete = () => { }, // デフォルトの空関数
-  onEdit = () => { }, // デフォルトの空関数
+  onEditClick,
   isOwner,
 }) => {
   const { jwtToken } = useAuth(); // 認証コンテキストからJWTトークンを取得
@@ -45,7 +37,6 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const [newMinutes, setNewMinutes] = useState(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60)); // 新しいタイムスタンプの分
   const [newSeconds, setNewSeconds] = useState(videoTimestampToSeconds(note.video_timestamp) % 60); // 新しいタイムスタンプの秒
   const [newIsVisible, setNewIsVisible] = useState(note.is_visible); // メモの表示/非表示の状態
-  const [isModalOpen, setIsModalOpen] = useState(false); // モーダルの表示/非表示の状態
   const [liked, setLiked] = useState<boolean>(false); // いいねの状態
   const [likeError, setLikeError] = useState<string | null>(null); // いいねエラーの状態
   const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL; // デフォルトのアバターURL
@@ -77,23 +68,9 @@ const NoteItem: React.FC<NoteItemProps> = ({
     }
   };
 
-  // メモを編集する関数
-  const handleEdit = () => {
-    onEdit(note.id, newContent, newMinutes, newSeconds, newIsVisible);
-    setIsEditing(false);
-    setIsModalOpen(false);
-  };
-
   // タイムスタンプをクリックした時に再生を開始する関数
   const handleTimestampClick = () => {
     playFromTimestamp(videoTimestampToSeconds(note.video_timestamp));
-  };
-
-  // 編集モーダルを開く関数
-  const openModal = () => {
-    console.log('openModal called');
-    setIsEditing(true);
-    setIsModalOpen(true);
   };
 
   // メモが非表示で所有者でない場合、何も表示しない
@@ -145,35 +122,11 @@ const NoteItem: React.FC<NoteItemProps> = ({
               newSeconds={newSeconds}
               videoTimestampToSeconds={videoTimestampToSeconds}
               handleDelete={handleDelete}
-              setIsEditing={openModal} // 編集モードを開始
+              setIsEditing={() => onEditClick(note)} // モーダルを開く関数を呼び出す
             />
           )}
         </div>
       </div>
-      {/* 編集用のモーダル */}
-      {isModalOpen && (
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <div className="max-w-full overflow-y-auto p-4">
-            <NoteEditor
-              newContent={newContent}
-              newMinutes={newMinutes}
-              newSeconds={newSeconds}
-              newIsVisible={newIsVisible}
-              setNewContent={setNewContent}
-              setNewMinutes={setNewMinutes}
-              setNewSeconds={setNewSeconds}
-              setNewIsVisible={setNewIsVisible}
-              handleEdit={handleEdit}
-              setIsEditing={(value) => {
-                setIsEditing(value);
-                setIsModalOpen(value);
-                console.log('Modal visibility toggled:', value);
-              }}
-              padZero={padZero}
-            />
-          </div>
-        </Modal>
-      )}
       {/* いいねエラーの表示 */}
       {likeError && <div className="p-4 text-red-500">{likeError}</div>}
     </div>
