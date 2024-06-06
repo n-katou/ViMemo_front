@@ -52,7 +52,7 @@ const NoteList: React.FC<NoteListProps> = ({
   };
 
   const handleEditSubmit = (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => {
-    if (onEdit) {
+    if (onEdit && editNote) {
       onEdit(noteId, newContent, newMinutes, newSeconds, newIsVisible);
     }
     setIsModalOpen(false);
@@ -60,7 +60,9 @@ const NoteList: React.FC<NoteListProps> = ({
   };
 
   // メモを作成日時でソートする
-  const sortedNotes = [...notes].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  const sortedNotes = React.useMemo(() => {
+    return [...notes].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }, [notes]);
 
   // ページネーションのためのメモのスライス
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -143,9 +145,9 @@ const NoteList: React.FC<NoteListProps> = ({
             newSeconds={videoTimestampToSeconds(editNote.video_timestamp) % 60}
             newIsVisible={editNote.is_visible}
             setNewContent={(value) => setEditNote(prev => prev ? { ...prev, content: value } : prev)}
-            setNewMinutes={(value) => setEditNote(prev => prev ? { ...prev, newMinutes: value } : prev)}
-            setNewSeconds={(value) => setEditNote(prev => prev ? { ...prev, newSeconds: value } : prev)}
-            setNewIsVisible={(value) => setEditNote(prev => prev ? { ...prev, newIsVisible: value } : prev)}
+            setNewMinutes={(value) => setEditNote(prev => prev ? { ...prev, video_timestamp: `${value}:${editNote.video_timestamp.split(':')[1]}` } : prev)}
+            setNewSeconds={(value) => setEditNote(prev => prev ? { ...prev, video_timestamp: `${editNote.video_timestamp.split(':')[0]}:${value}` } : prev)}
+            setNewIsVisible={(value) => setEditNote(prev => prev ? { ...prev, is_visible: value } : prev)}
             handleEdit={() => handleEditSubmit(editNote.id, editNote.content, Math.floor(videoTimestampToSeconds(editNote.video_timestamp) / 60), videoTimestampToSeconds(editNote.video_timestamp) % 60, editNote.is_visible)}
             setIsEditing={(value) => setIsModalOpen(value)}
             padZero={(num) => num.toString().padStart(2, '0')}

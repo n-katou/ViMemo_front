@@ -116,21 +116,23 @@ const YoutubeVideoShowPage: React.FC = () => {
               {isNoteFormVisible && <NoteForm addNote={(content, minutes, seconds, isVisible) => addNote(content, minutes, seconds, isVisible, jwtToken, video, setNotes)} />}
             </div>
           )}
-          <div className="mb-8">
-            <ToggleButtonGroup
-              value={showMyNotes ? 'myNotes' : 'allNotes'}
-              exclusive
-              onChange={() => setShowMyNotes(!showMyNotes)}
-              aria-label="メモの表示切替"
-            >
-              <CustomToggleButton value="allNotes" aria-label="全てのメモ">
-                全てのメモを表示
-              </CustomToggleButton>
-              <CustomToggleButton value="myNotes" aria-label="自分のメモ">
-                自分のメモのみ表示
-              </CustomToggleButton>
-            </ToggleButtonGroup>
-          </div>
+          {currentUser && ( // ログインしている場合にのみ表示
+            <div className="mb-8">
+              <ToggleButtonGroup
+                value={showMyNotes ? 'myNotes' : 'allNotes'}
+                exclusive
+                onChange={() => setShowMyNotes(!showMyNotes)}
+                aria-label="メモの表示切替"
+              >
+                <CustomToggleButton value="allNotes" aria-label="全てのメモ">
+                  全てのメモを表示
+                </CustomToggleButton>
+                <CustomToggleButton value="myNotes" aria-label="自分のメモ">
+                  自分のメモのみ表示
+                </CustomToggleButton>
+              </ToggleButtonGroup>
+            </div>
+          )}
           <NoteList
             notes={filteredNotes}
             currentUser={currentUser}
