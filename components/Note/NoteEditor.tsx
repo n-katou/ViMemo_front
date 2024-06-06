@@ -40,7 +40,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
         onChange={(e) => setNewContent(e.target.value)}
         placeholder="メモを編集..."
         required
-        className={`textarea textarea-bordered w-full ${isDarkMode ? 'bg-gray-800 text-white border-white placeholder-gray-400' : 'bg-white text-black border-gray-300 placeholder-black'}`}
+        className={`textarea textarea-bordered w-full ${isDarkMode ? 'bg-gray-800 text-white border border-white placeholder-gray-400' : 'bg-white text-black border border-gray-300 placeholder-black'}`}
       />
       {/* タイムスタンプを入力する部分 */}
       <div className="form-control">
@@ -54,7 +54,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
               min="0"
               max="59"
               placeholder="00"
-              className={`input input-bordered text-center w-12 ${isDarkMode ? 'bg-gray-800 text-black border-white placeholder-gray-400' : 'bg-white text-black border-gray-300 placeholder-black'}`}
+              className={`input input-bordered text-center w-12 ${isDarkMode ? 'bg-gray-800 text-white border border-white placeholder-gray-400' : 'bg-white text-black border border-gray-300 placeholder-black'}`}
             />
             <span>分</span>
             <input
@@ -64,7 +64,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
               min="0"
               max="59"
               placeholder="00"
-              className={`input input-bordered text-center w-12 ${isDarkMode ? 'bg-gray-800 text-black border-white placeholder-gray-400' : 'bg-white text-black border-gray-300 placeholder-black'}`}
+              className={`input input-bordered text-center w-12 ${isDarkMode ? 'bg-gray-800 text-white border border-white placeholder-gray-400' : 'bg-white text-black border border-gray-300 placeholder-black'}`}
             />
             <span>秒</span>
           </div>
@@ -77,7 +77,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
           <select
             value={newIsVisible ? 'true' : 'false'}
             onChange={(e) => setNewIsVisible(e.target.value === 'true')}
-            className={`select select-bordered ${isDarkMode ? 'bg-gray-800 text-white border-white' : 'bg-white text-black border-gray-300'}`}
+            className={`select select-bordered ${isDarkMode ? 'bg-gray-800 text-white border border-white' : 'bg-white text-black border border-gray-300'}`}
           >
             <option value="true">表示する</option>
             <option value="false">表示しない</option>
