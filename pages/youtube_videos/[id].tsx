@@ -13,16 +13,27 @@ import { fetchYoutubeVideo } from '../../src/api';
 import { addNote, handleDeleteNote, handleEditNote, handleLikeVideo, handleUnlikeVideo, videoTimestampToSeconds, playFromTimestamp, formatDuration } from '../../components/YoutubeShow/youtubeShowUtils';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { styled } from '@mui/system';
+import { useTheme } from 'next-themes';
 
-const CustomToggleButton = styled(ToggleButton)(({ theme }) => ({
-  '&.Mui-selected': {
-    backgroundColor: '#818cf8',
-    color: 'white',
-    '&:hover': {
-      backgroundColor: '#6366f1',
+const CustomToggleButton = styled(ToggleButton)(({ theme }) => {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
+
+  return {
+    backgroundColor: isDarkMode ? '#1f2937' : '#e5e7eb', // 非選択時の背景色
+    color: isDarkMode ? '#e5e7eb' : '#1f2937', // 非選択時のテキスト色
+    '&.Mui-selected': {
+      backgroundColor: isDarkMode ? '#6366f1' : '#818cf8',
+      color: 'white',
+      '&:hover': {
+        backgroundColor: isDarkMode ? '#818cf8' : '#6366f1',
+      },
     },
-  },
-}));
+    '&:hover': {
+      backgroundColor: isDarkMode ? '#2d3748' : '#d1d5db',
+    },
+  };
+});
 
 const YoutubeVideoShowPage: React.FC = () => {
   const [video, setVideo] = useState<YoutubeVideo & { formattedDuration?: string } | null>(null);
@@ -30,7 +41,7 @@ const YoutubeVideoShowPage: React.FC = () => {
   const [likeError, setLikeError] = useState<string | null>(null);
   const [liked, setLiked] = useState<boolean>(false);
   const [isNoteFormVisible, setIsNoteFormVisible] = useState<boolean>(false);
-  const [showMyNotes, setShowMyNotes] = useState<boolean>(true); // 新しい状態
+  const [showMyNotes, setShowMyNotes] = useState<boolean>(true);
 
   const pathname = usePathname();
   const router = useRouter();
