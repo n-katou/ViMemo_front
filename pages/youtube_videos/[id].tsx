@@ -11,6 +11,18 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { fetchYoutubeVideo } from '../../src/api';
 import { addNote, handleDeleteNote, handleEditNote, handleLikeVideo, handleUnlikeVideo, videoTimestampToSeconds, playFromTimestamp, formatDuration } from '../../components/YoutubeShow/youtubeShowUtils';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { styled } from '@mui/system';
+
+const CustomToggleButton = styled(ToggleButton)(({ theme }) => ({
+  '&.Mui-selected': {
+    backgroundColor: '#818cf8',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#6366f1',
+    },
+  },
+}));
 
 const YoutubeVideoShowPage: React.FC = () => {
   const [video, setVideo] = useState<YoutubeVideo & { formattedDuration?: string } | null>(null);
@@ -94,12 +106,19 @@ const YoutubeVideoShowPage: React.FC = () => {
             </div>
           )}
           <div className="mb-8">
-            <button
-              onClick={() => setShowMyNotes(!showMyNotes)}
-              className="btn btn-secondary mb-4"
+            <ToggleButtonGroup
+              value={showMyNotes ? 'myNotes' : 'allNotes'}
+              exclusive
+              onChange={() => setShowMyNotes(!showMyNotes)}
+              aria-label="メモの表示切替"
             >
-              {showMyNotes ? '全てのメモを表示' : '自分のメモのみを表示'}
-            </button>
+              <CustomToggleButton value="myNotes" aria-label="自分のメモ">
+                自分のメモのみ表示
+              </CustomToggleButton>
+              <CustomToggleButton value="allNotes" aria-label="全てのメモ">
+                全てのメモを表示
+              </CustomToggleButton>
+            </ToggleButtonGroup>
           </div>
           <NoteList
             notes={filteredNotes}
