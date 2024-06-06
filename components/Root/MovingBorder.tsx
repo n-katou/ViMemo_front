@@ -41,6 +41,7 @@ export function Button({
       )}
       style={{
         borderRadius: borderRadius,
+        border: isActive ? "2px solid lightgray" : "1px solid gray",
       }}
       {...otherProps}
     >
