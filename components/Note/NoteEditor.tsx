@@ -30,13 +30,13 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
   return (
     <form onSubmit={(e) => { e.preventDefault(); handleEdit(); }} className="space-y-4 text-black">
       {/* メモの内容を入力するテキストエリア */}
-      <span>メモ：</span>
+      <span className="text-black">メモ：</span>
       <textarea
         value={newContent}
         onChange={(e) => setNewContent(e.target.value)}
         placeholder="メモを編集..."
         required
-        className="textarea textarea-bordered w-full text-black border-2 border-gray-300"
+        className="textarea textarea-bordered w-full bg-white text-black border border-gray-300 placeholder-black"
       />
       {/* タイムスタンプを入力する部分 */}
       <div className="form-control">
@@ -50,9 +50,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
               min="0"
               max="59"
               placeholder="00"
-              className="input input-bordered text-center w-12 text-black border-2 border-gray-300"
+              className="input input-bordered text-center w-12 bg-white text-black border border-gray-300 placeholder-black"
             />
-            <span>分</span>
+            <span className="text-black">分</span>
             <input
               type="number"
               value={newSeconds || ''}
@@ -60,9 +60,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
               min="0"
               max="59"
               placeholder="00"
-              className="input input-bordered text-center w-12 text-black border-2 border-gray-300"
+              className="input input-bordered text-center w-12 bg-white text-black border border-gray-300 placeholder-black"
             />
-            <span>秒</span>
+            <span className="text-black">秒</span>
           </div>
         </label>
       </div>
@@ -73,7 +73,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
           <select
             value={newIsVisible ? 'true' : 'false'}
             onChange={(e) => setNewIsVisible(e.target.value === 'true')}
-            className="select select-bordered text-black border-2 border-gray-300"
+            className="select select-bordered bg-white text-black border border-gray-300"
           >
             <option value="true">表示する</option>
             <option value="false">表示しない</option>

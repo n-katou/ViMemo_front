@@ -41,7 +41,7 @@ const YoutubeVideoShowPage: React.FC = () => {
   const [likeError, setLikeError] = useState<string | null>(null);
   const [liked, setLiked] = useState<boolean>(false);
   const [isNoteFormVisible, setIsNoteFormVisible] = useState<boolean>(false);
-  const [showMyNotes, setShowMyNotes] = useState<boolean>(true);
+  const [showMyNotes, setShowMyNotes] = useState<boolean>(false); // デフォルトをfalseに設定
 
   const pathname = usePathname();
   const router = useRouter();
@@ -123,11 +123,11 @@ const YoutubeVideoShowPage: React.FC = () => {
               onChange={() => setShowMyNotes(!showMyNotes)}
               aria-label="メモの表示切替"
             >
-              <CustomToggleButton value="myNotes" aria-label="自分のメモ">
-                自分のメモのみ表示
-              </CustomToggleButton>
               <CustomToggleButton value="allNotes" aria-label="全てのメモ">
                 全てのメモを表示
+              </CustomToggleButton>
+              <CustomToggleButton value="myNotes" aria-label="自分のメモ">
+                自分のメモのみ表示
               </CustomToggleButton>
             </ToggleButtonGroup>
           </div>
