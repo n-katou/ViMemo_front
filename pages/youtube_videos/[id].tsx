@@ -11,6 +11,29 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { fetchYoutubeVideo } from '../../src/api';
 import { addNote, handleDeleteNote, handleEditNote, handleLikeVideo, handleUnlikeVideo, videoTimestampToSeconds, playFromTimestamp, formatDuration } from '../../components/YoutubeShow/youtubeShowUtils';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { styled } from '@mui/system';
+import { useTheme } from 'next-themes';
+
+const CustomToggleButton = styled(ToggleButton)(({ theme }) => {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
+
+  return {
+    backgroundColor: isDarkMode ? '#1f2937' : '#e5e7eb', // 非選択時の背景色
+    color: isDarkMode ? '#e5e7eb' : '#1f2937', // 非選択時のテキスト色
+    '&.Mui-selected': {
+      backgroundColor: isDarkMode ? '#6366f1' : '#818cf8',
+      color: 'white',
+      '&:hover': {
+        backgroundColor: isDarkMode ? '#818cf8' : '#6366f1',
+      },
+    },
+    '&:hover': {
+      backgroundColor: isDarkMode ? '#2d3748' : '#d1d5db',
+    },
+  };
+});
 
 const YoutubeVideoShowPage: React.FC = () => {
   const [video, setVideo] = useState<YoutubeVideo & { formattedDuration?: string } | null>(null);
@@ -18,6 +41,7 @@ const YoutubeVideoShowPage: React.FC = () => {
   const [likeError, setLikeError] = useState<string | null>(null);
   const [liked, setLiked] = useState<boolean>(false);
   const [isNoteFormVisible, setIsNoteFormVisible] = useState<boolean>(false);
+  const [showMyNotes, setShowMyNotes] = useState<boolean>(true);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -61,6 +85,10 @@ const YoutubeVideoShowPage: React.FC = () => {
     return <LoadingSpinner loading={loading || dataLoading} />;
   }
 
+  const filteredNotes = showMyNotes
+    ? notes.filter(note => note.user.id === currentUser?.id)
+    : notes;
+
   return (
     <div className="container mx-auto py-8">
       {!video && <div className="text-center">Video not found</div>}
@@ -88,8 +116,23 @@ const YoutubeVideoShowPage: React.FC = () => {
               {isNoteFormVisible && <NoteForm addNote={(content, minutes, seconds, isVisible) => addNote(content, minutes, seconds, isVisible, jwtToken, video, setNotes)} />}
             </div>
           )}
+          <div className="mb-8">
+            <ToggleButtonGroup
+              value={showMyNotes ? 'myNotes' : 'allNotes'}
+              exclusive
+              onChange={() => setShowMyNotes(!showMyNotes)}
+              aria-label="メモの表示切替"
+            >
+              <CustomToggleButton value="myNotes" aria-label="自分のメモ">
+                自分のメモのみ表示
+              </CustomToggleButton>
+              <CustomToggleButton value="allNotes" aria-label="全てのメモ">
+                全てのメモを表示
+              </CustomToggleButton>
+            </ToggleButtonGroup>
+          </div>
           <NoteList
-            notes={notes}
+            notes={filteredNotes}
             currentUser={currentUser}
             videoTimestampToSeconds={videoTimestampToSeconds}
             playFromTimestamp={(seconds) => playFromTimestamp(seconds, playerRef)}
