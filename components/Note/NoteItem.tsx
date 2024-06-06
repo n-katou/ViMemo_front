@@ -91,6 +91,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
   // 編集モーダルを開く関数
   const openModal = () => {
+    console.log('openModal called');
     setIsEditing(true);
     setIsModalOpen(true);
   };
@@ -150,26 +151,29 @@ const NoteItem: React.FC<NoteItemProps> = ({
         </div>
       </div>
       {/* 編集用のモーダル */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="max-w-full overflow-y-auto p-4">
-          <NoteEditor
-            newContent={newContent}
-            newMinutes={newMinutes}
-            newSeconds={newSeconds}
-            newIsVisible={newIsVisible}
-            setNewContent={setNewContent}
-            setNewMinutes={setNewMinutes}
-            setNewSeconds={setNewSeconds}
-            setNewIsVisible={setNewIsVisible}
-            handleEdit={handleEdit}
-            setIsEditing={(value) => {
-              setIsEditing(value);
-              setIsModalOpen(value);
-            }}
-            padZero={padZero}
-          />
-        </div>
-      </Modal>
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <div className="max-w-full overflow-y-auto p-4">
+            <NoteEditor
+              newContent={newContent}
+              newMinutes={newMinutes}
+              newSeconds={newSeconds}
+              newIsVisible={newIsVisible}
+              setNewContent={setNewContent}
+              setNewMinutes={setNewMinutes}
+              setNewSeconds={setNewSeconds}
+              setNewIsVisible={setNewIsVisible}
+              handleEdit={handleEdit}
+              setIsEditing={(value) => {
+                setIsEditing(value);
+                setIsModalOpen(value);
+                console.log('Modal visibility toggled:', value);
+              }}
+              padZero={padZero}
+            />
+          </div>
+        </Modal>
+      )}
       {/* いいねエラーの表示 */}
       {likeError && <div className="p-4 text-red-500">{likeError}</div>}
     </div>

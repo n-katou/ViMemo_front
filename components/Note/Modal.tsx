@@ -14,11 +14,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out"
+      className="modal-overlay"
       onClick={onClose} // 背景をクリックした場合にモーダルを閉じる
     >
       <div
-        className="bg-white rounded-lg shadow-lg z-50 p-6 relative w-full max-w-md mx-auto"
+        className="modal-content"
         onClick={(e) => e.stopPropagation()} // モーダルの内部をクリックしても背景クリックイベントが発動しないようにする
       >
         <IconButton
