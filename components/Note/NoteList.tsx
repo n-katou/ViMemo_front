@@ -33,7 +33,7 @@ const NoteList: React.FC<NoteListProps> = ({
   const [currentPage, setCurrentPage] = useState(1); // 現在のページを管理
   const [isModalOpen, setIsModalOpen] = useState(false); // モーダルの表示/非表示の状態
   const [editNote, setEditNote] = useState<Note | null>(null); // 編集するメモの状態
-  const itemsPerPage = 6; // 1ページあたりのメモの数
+  const itemsPerPage = 9; // 1ページあたりのメモの数
 
   useEffect(() => {
     // 画面サイズが変更されたときのハンドラ
