@@ -45,9 +45,9 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL; // デフォルトのアバターURL
   const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl; // ユーザーのアバターURL
 
-  // ランダムなアニメーションクラスを選択
-  const animationClasses = ['animation1', 'animation2', 'animation3', 'animation4', 'animation5'];
-  const randomClass = animationClasses[Math.floor(Math.random() * animationClasses.length)];
+  // 背景色をランダムに選択し、初期レンダリング時に一度だけ設定
+  const backgroundColors = ['#38bdf8', '#818cf8', '#c084fc', '#e879f9', '#22eec5'];
+  const [randomBgColor] = useState(() => backgroundColors[Math.floor(Math.random() * backgroundColors.length)]);
 
   // コンポーネントのマウント時と状態の変更時に実行
   useEffect(() => {
@@ -87,7 +87,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
   return (
     <motion.div
-      className={`note-item fixed-card-size border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6 ${randomClass}`}
+      className="note-item fixed-card-size border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6"
+      style={{ backgroundColor: randomBgColor }} // ランダムな背景色を適用
       initial={{ opacity: 0, rotateY: -90 }}
       animate={{ opacity: 1, rotateY: 0 }}
       transition={{ duration: 0.5, type: "spring", stiffness: 100, delay: index * 0.2 }}
