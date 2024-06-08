@@ -91,10 +91,10 @@ const FavoriteVideosPage: React.FC = () => {
   if (error) return <p>Error: {error}</p>; // エラーが発生した場合はエラーメッセージを表示
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold text-white-900">いいねしたYoutube一覧</h1>
+    <div className="container mx-auto py-8 px-4">
+      <h1 className="text-3xl font-bold text-gray-900">いいねしたYoutube一覧</h1>
       <div className="flex justify-end mb-8">
-        <select value={sortOption} onChange={handleSortChange} className="form-select text-white bg-gray-800 border-gray-600">
+        <select value={sortOption} onChange={handleSortChange} className="form-select text-gray-800 bg-gray-200 border-gray-600">
           <option value="created_at_desc">デフォルト（投稿順）</option>
           <option value="likes_desc">いいね数順</option>
           <option value="notes_desc">メモ数順</option>
@@ -102,7 +102,7 @@ const FavoriteVideosPage: React.FC = () => {
       </div>
       {videos && videos.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {videos.map((video: YoutubeVideo) => (
               <VideoCard
                 key={video.id}
