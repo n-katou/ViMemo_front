@@ -18,6 +18,7 @@ const MyNotesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<string>('created_at_desc');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -74,10 +75,14 @@ const MyNotesPage: React.FC = () => {
     }, undefined, { shallow: true });
   };
 
+  const filteredNotes = notes.filter(note =>
+    note.video_title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>{error}</p>;
 
-  const groupedNotes = groupNotesByVideoId(notes);
+  const groupedNotes = groupNotesByVideoId(filteredNotes);
   const videoIds = Object.keys(groupedNotes);
   const paginatedVideoIds = videoIds.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
   const totalPages = Math.ceil(videoIds.length / ITEMS_PER_PAGE);
@@ -85,6 +90,13 @@ const MyNotesPage: React.FC = () => {
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold text-white-900 mb-4">MYメモ一覧</h1>
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="YouTubeタイトルで検索"
+        className="mb-4 p-2 border rounded-md w-full"
+      />
       {paginatedVideoIds.length > 0 ? (
         paginatedVideoIds.map((videoId) => (
           <Accordion key={videoId} title={groupedNotes[Number(videoId)].video_title}>
