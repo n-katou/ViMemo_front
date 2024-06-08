@@ -9,6 +9,8 @@ import PaginationComponent from '../../components/Pagination';
 import Accordion from '../../components/Mypage/my_notes/Accordion'; // 追加
 import { groupNotesByVideoId } from '../../utils/groupNotesByVideoId'; // 追加
 
+const ITEMS_PER_PAGE = 10;
+
 const MyNotesPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth();
   const router = useRouter();
@@ -17,7 +19,6 @@ const MyNotesPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<string>('created_at_desc');
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     if (!currentUser) {
@@ -25,9 +26,9 @@ const MyNotesPage: React.FC = () => {
       return;
     }
 
-    const fetchNotes = async (page: number, sort: string) => {
+    const fetchNotes = async (sort: string) => {
       try {
-        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/notes_with_videos?page=${page}&sort=${sort}`;
+        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/notes_with_videos?sort=${sort}`;
         const res = await axios.get(userNotesUrl, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
@@ -36,7 +37,6 @@ const MyNotesPage: React.FC = () => {
 
         if (res.data.notes) {
           setNotes(res.data.notes);
-          setTotalPages(res.data.total_pages);
         } else {
           setError('メモの取得に失敗しました。');
         }
@@ -47,13 +47,10 @@ const MyNotesPage: React.FC = () => {
       }
     };
 
-    const queryPage = parseInt(router.query.page as string, 10) || 1;
     const querySort = router.query.sort as string || 'created_at_desc';
-
-    setPage(queryPage);
     setSortOption(querySort);
-    fetchNotes(queryPage, querySort);
-  }, [currentUser, jwtToken, router.query.page, router.query.sort]);
+    fetchNotes(querySort);
+  }, [currentUser, jwtToken, router.query.sort]);
 
   const handleDeleteNote = async (noteId: number) => {
     try {
@@ -85,13 +82,15 @@ const MyNotesPage: React.FC = () => {
       pathname: router.pathname,
       query: { ...router.query, page: newPage },
     }, undefined, { shallow: true });
-    setLoading(true);
   };
 
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>{error}</p>;
 
   const groupedNotes = groupNotesByVideoId(notes);
+  const videoIds = Object.keys(groupedNotes);
+  const paginatedVideoIds = videoIds.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(videoIds.length / ITEMS_PER_PAGE);
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -106,8 +105,8 @@ const MyNotesPage: React.FC = () => {
           <option value="created_at_asc">古い順</option>
         </select>
       </div>
-      {Object.keys(groupedNotes).length > 0 ? (
-        Object.keys(groupedNotes).map((videoId) => (
+      {paginatedVideoIds.length > 0 ? (
+        paginatedVideoIds.map((videoId) => (
           <Accordion key={videoId} title={groupedNotes[Number(videoId)].video_title}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {groupedNotes[Number(videoId)].notes.map((note: NoteWithVideoTitle) => (
