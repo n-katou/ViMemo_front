@@ -8,7 +8,7 @@ import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポート
 import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポート
 import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポート
 import Modal from './Modal'; // モーダルコンポーネントをインポート
-import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポーネット
+import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポート
 
 interface NoteListProps {
   notes: Note[]; // メモの配列
@@ -74,6 +74,18 @@ const NoteList: React.FC<NoteListProps> = ({
   const endIndex = startIndex + itemsPerPage;
   const paginatedNotes = sortedNotes.slice(startIndex, endIndex);
 
+  const downloadNotes = () => {
+    const noteContent = notes.map(note => `Content: ${note.content}\nTimestamp: ${note.video_timestamp}`).join('\n\n');
+    const blob = new Blob([noteContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'notes.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   return (
     <div id="notes_list" className="mt-5">
       <div className="flex justify-between items-center mb-4">
@@ -88,6 +100,7 @@ const NoteList: React.FC<NoteListProps> = ({
             <option value="desc">新しい順</option>
             <option value="asc">古い順</option>
           </select>
+          <button onClick={downloadNotes} className="ml-4 px-4 py-2 btn-outline btn-skyblue">ダウンロード</button>
         </div>
       </div>
       {sortedNotes.length > 0 ? ( // メモがある場合
