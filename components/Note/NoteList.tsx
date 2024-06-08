@@ -88,19 +88,20 @@ const NoteList: React.FC<NoteListProps> = ({
 
   return (
     <div id="notes_list" className="mt-5">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">メモ一覧</h2>
-        <div>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+        <h2 className="text-xl font-bold mb-2 md:mb-0">メモ一覧</h2>
+        <div className="flex items-center">
           <label htmlFor="sortOrder" className="mr-2">並び替え:</label>
           <select
             id="sortOrder"
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+            className="mr-4 p-2 border rounded-md"
           >
             <option value="desc">新しい順</option>
             <option value="asc">古い順</option>
           </select>
-          <button onClick={downloadNotes} className="ml-4 px-4 py-2 btn-outline btn-skyblue">ダウンロード</button>
+          <button onClick={downloadNotes} className="px-4 py-2 btn-outline btn-skyblue">ダウンロード</button>
         </div>
       </div>
       {sortedNotes.length > 0 ? ( // メモがある場合
