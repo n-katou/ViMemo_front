@@ -84,7 +84,7 @@ const MyNotesPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-white-900">MYメモ一覧</h1>
+      <h1 className="text-3xl font-bold text-white-900 mb-4">MYメモ一覧</h1>
       {paginatedVideoIds.length > 0 ? (
         paginatedVideoIds.map((videoId) => (
           <Accordion key={videoId} title={groupedNotes[Number(videoId)].video_title}>
