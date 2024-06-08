@@ -4,12 +4,10 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import NoteCard from '../../components/Mypage/my_notes/NoteCard';
-import { Note } from '../../types/note';
+import { Note, NoteWithVideoTitle } from '../../types/note'; // 必要に応じてインポートパスを調整
 import PaginationComponent from '../../components/Pagination';
-
-interface NoteWithVideoTitle extends Note {
-  video_title: string;
-}
+import Accordion from '../../components/Mypage/my_notes/Accordion'; // 追加
+import { groupNotesByVideoId } from '../../utils/groupNotesByVideoId'; // 追加
 
 const MyNotesPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth();
@@ -93,6 +91,8 @@ const MyNotesPage: React.FC = () => {
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>{error}</p>;
 
+  const groupedNotes = groupNotesByVideoId(notes);
+
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold text-white-900">MYメモ一覧</h1>
@@ -106,20 +106,24 @@ const MyNotesPage: React.FC = () => {
           <option value="created_at_asc">古い順</option>
         </select>
       </div>
-      {notes.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {notes.map((note) => (
-            <NoteCard
-              key={note.id}
-              videoTitle={note.video_title}
-              content={note.content}
-              videoTimestamp={note.video_timestamp}
-              youtubeVideoId={note.youtube_video_id}
-              createdAt={note.created_at}
-              onDelete={() => handleDeleteNote(note.id)}
-            />
-          ))}
-        </div>
+      {Object.keys(groupedNotes).length > 0 ? (
+        Object.keys(groupedNotes).map((videoId) => (
+          <Accordion key={videoId} title={groupedNotes[Number(videoId)].video_title}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {groupedNotes[Number(videoId)].notes.map((note: NoteWithVideoTitle) => (
+                <NoteCard
+                  key={note.id}
+                  videoTitle={note.video_title}
+                  content={note.content}
+                  videoTimestamp={note.video_timestamp}
+                  youtubeVideoId={note.youtube_video_id}
+                  createdAt={note.created_at}
+                  onDelete={() => handleDeleteNote(note.id)}
+                />
+              ))}
+            </div>
+          </Accordion>
+        ))
       ) : (
         <p className="text-lg text-gray-600">メモがありません。</p>
       )}
