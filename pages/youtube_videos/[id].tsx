@@ -117,7 +117,7 @@ const YoutubeVideoShowPage: React.FC = () => {
             </div>
           )}
           {currentUser && ( // ログインしている場合にのみ表示
-            <div className="mb-8">
+            <div className="mb-8 rounded-md">
               <ToggleButtonGroup
                 value={showMyNotes ? 'myNotes' : 'allNotes'}
                 exclusive
@@ -144,7 +144,7 @@ const YoutubeVideoShowPage: React.FC = () => {
           />
           <div className="text-left mt-8">
             <button
-              className="btn btn-outline btn-darkpink"
+              className="btn btn-outline btn-darkpink border rounded-md"
               onClick={() => router.back()}
             >
               戻る

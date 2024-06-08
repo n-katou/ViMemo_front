@@ -8,7 +8,7 @@ import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポート
 import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポート
 import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポート
 import Modal from './Modal'; // モーダルコンポーネントをインポート
-import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポート
+import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポーネット
 
 interface NoteListProps {
   notes: Note[]; // メモの配列
@@ -31,10 +31,10 @@ const NoteList: React.FC<NoteListProps> = ({
 }) => {
   const [isMobile, setIsMobile] = useState(false); // モバイル表示かどうかの状態を管理
   const [currentPage, setCurrentPage] = useState(1); // 現在のページを管理
+  const [itemsPerPage, setItemsPerPage] = useState(9); // 1ページあたりのメモの数を管理
   const [isModalOpen, setIsModalOpen] = useState(false); // モーダルの表示/非表示の状態
   const [editNote, setEditNote] = useState<Note | null>(null); // 編集するメモの状態
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc'); // ソート順序の状態を管理
-  const itemsPerPage = 9; // 1ページあたりのメモの数
 
   useEffect(() => {
     // 画面サイズが変更されたときのハンドラ
@@ -75,7 +75,13 @@ const NoteList: React.FC<NoteListProps> = ({
   const paginatedNotes = sortedNotes.slice(startIndex, endIndex);
 
   const downloadNotes = () => {
-    const noteContent = notes.map(note => `Content: ${note.content}\nTimestamp: ${note.video_timestamp}`).join('\n\n');
+    const sortedForDownload = [...notes].sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
+      return dateA - dateB; // 常に古い順にソート
+    });
+
+    const noteContent = sortedForDownload.map(note => `Content: ${note.content}\nTimestamp: ${note.video_timestamp}`).join('\n\n');
     const blob = new Blob([noteContent], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -88,20 +94,36 @@ const NoteList: React.FC<NoteListProps> = ({
 
   return (
     <div id="notes_list" className="mt-5">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-2 md:space-y-0 md:space-x-4">
         <h2 className="text-xl font-bold mb-2 md:mb-0">メモ一覧</h2>
-        <div className="flex items-center">
-          <label htmlFor="sortOrder" className="mr-2">並び替え:</label>
-          <select
-            id="sortOrder"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
-            className="mr-4 p-2 border rounded-md"
-          >
-            <option value="desc">新しい順</option>
-            <option value="asc">古い順</option>
-          </select>
-          <button onClick={downloadNotes} className="px-4 py-2 btn-outline btn-skyblue">ダウンロード</button>
+        <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
+          <div className="flex items-center">
+            <label htmlFor="sortOrder" className="mr-2">並び替え:</label>
+            <select
+              id="sortOrder"
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+              className="p-2 border rounded-md"
+            >
+              <option value="desc">新しい順</option>
+              <option value="asc">古い順</option>
+            </select>
+          </div>
+          <div className="flex items-center">
+            <label htmlFor="itemsPerPage" className="mr-2">表示件数:</label>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+              className="p-2 border rounded-md"
+            >
+              <option value={6}>6件</option>
+              <option value={9}>9件</option>
+              <option value={12}>12件</option>
+              <option value={15}>15件</option>
+            </select>
+          </div>
+          <button onClick={downloadNotes} className="px-4 py-2 btn-outline btn-skyblue border rounded-md">ダウンロード</button>
         </div>
       </div>
       {sortedNotes.length > 0 ? ( // メモがある場合
