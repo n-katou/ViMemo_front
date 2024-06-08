@@ -18,3 +18,7 @@ export interface Note {
   liked_by_current_user: boolean;
   current_user_like_id?: number;
 }
+
+export interface NoteWithVideoTitle extends Note {
+  video_title: string;
+}
