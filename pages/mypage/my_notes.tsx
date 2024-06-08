@@ -66,16 +66,6 @@ const MyNotesPage: React.FC = () => {
     }
   };
 
-  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSortOption = event.target.value;
-    setSortOption(newSortOption);
-    setPage(1);
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, sort: newSortOption, page: 1 },
-    }, undefined, { shallow: true });
-  };
-
   const handlePageChange = (_event: React.ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage);
     router.push({
@@ -95,16 +85,6 @@ const MyNotesPage: React.FC = () => {
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold text-white-900">MYメモ一覧</h1>
-      <div className="flex justify-end mb-8">
-        <select
-          value={sortOption}
-          onChange={handleSortChange}
-          className="form-select form-select-lg text-white bg-gray-800 border-gray-600 rounded-md"
-        >
-          <option value="created_at_desc">デフォルト（新しい順）</option>
-          <option value="created_at_asc">古い順</option>
-        </select>
-      </div>
       {paginatedVideoIds.length > 0 ? (
         paginatedVideoIds.map((videoId) => (
           <Accordion key={videoId} title={groupedNotes[Number(videoId)].video_title}>
