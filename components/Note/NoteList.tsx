@@ -8,7 +8,7 @@ import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポート
 import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポート
 import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポート
 import Modal from './Modal'; // モーダルコンポーネントをインポート
-import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポート
+import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポーネット
 
 interface NoteListProps {
   notes: Note[]; // メモの配列
@@ -33,6 +33,7 @@ const NoteList: React.FC<NoteListProps> = ({
   const [currentPage, setCurrentPage] = useState(1); // 現在のページを管理
   const [isModalOpen, setIsModalOpen] = useState(false); // モーダルの表示/非表示の状態
   const [editNote, setEditNote] = useState<Note | null>(null); // 編集するメモの状態
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc'); // ソート順序の状態を管理
   const itemsPerPage = 9; // 1ページあたりのメモの数
 
   useEffect(() => {
@@ -61,8 +62,12 @@ const NoteList: React.FC<NoteListProps> = ({
 
   // メモを作成日時でソートする
   const sortedNotes = React.useMemo(() => {
-    return [...notes].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-  }, [notes]);
+    return [...notes].sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
+      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+    });
+  }, [notes, sortOrder]);
 
   // ページネーションのためのメモのスライス
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -71,7 +76,20 @@ const NoteList: React.FC<NoteListProps> = ({
 
   return (
     <div id="notes_list" className="mt-5">
-      <h2 className="text-xl font-bold mb-4">メモ一覧</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">メモ一覧</h2>
+        <div>
+          <label htmlFor="sortOrder" className="mr-2">並び替え:</label>
+          <select
+            id="sortOrder"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+          >
+            <option value="desc">新しい順</option>
+            <option value="asc">古い順</option>
+          </select>
+        </div>
+      </div>
       {sortedNotes.length > 0 ? ( // メモがある場合
         isMobile ? ( // モバイル表示の場合
           <>
