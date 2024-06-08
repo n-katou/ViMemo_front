@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import NoteCard from '../../components/Mypage/my_notes/NoteCard';
-import { Note, NoteWithVideoTitle } from '../../types/note'; // 必要に応じてインポートパスを調整
+import { NoteWithVideoTitle } from '../../types/note'; // 必要に応じてインポートパスを調整
 import PaginationComponent from '../../components/Pagination';
 import Accordion from '../../components/Mypage/my_notes/Accordion'; // 追加
 import { groupNotesByVideoId } from '../../utils/groupNotesByVideoId'; // 追加
