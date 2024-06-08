@@ -75,7 +75,13 @@ const NoteList: React.FC<NoteListProps> = ({
   const paginatedNotes = sortedNotes.slice(startIndex, endIndex);
 
   const downloadNotes = () => {
-    const noteContent = notes.map(note => `Content: ${note.content}\nTimestamp: ${note.video_timestamp}`).join('\n\n');
+    const sortedForDownload = [...notes].sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
+      return dateA - dateB; // 常に古い順にソート
+    });
+
+    const noteContent = sortedForDownload.map(note => `Content: ${note.content}\nTimestamp: ${note.video_timestamp}`).join('\n\n');
     const blob = new Blob([noteContent], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
