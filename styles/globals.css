@@ -267,9 +267,9 @@ header {
 }
 
 .btn-outline.btn-perple {
-  border: 1px solid #c084fc;
-  color: #c084fc;
-  background-color: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: #c084fc;
 }
 
 .btn-outline.btn-perple:hover {

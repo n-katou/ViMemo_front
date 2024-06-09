@@ -108,7 +108,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
       {isMobile ? (
         <>
           {/* モバイルデバイスの場合、モーダルを開くボタンを表示 */}
-          <button onClick={() => setIsModalOpen(true)} className="btn btn-outline btn-skyblue flex items-center justify-center gap-2 px-4 py-2 text-white rounded-md hover:bg-blue-600 transition duration-200">
+          <button onClick={() => setIsModalOpen(true)} className="btn btn-outline btn-perple flex items-center justify-center gap-2 px-4 py-2 text-white rounded-md hover:bg-blue-600 transition duration-200">
             <FaPlus />
             メモを追加
           </button>
