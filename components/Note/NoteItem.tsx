@@ -44,9 +44,10 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl;
   const ref = useRef<HTMLDivElement>(null);
 
-  // 背景色をランダムに選択し、初期レンダリング時に一度だけ設定
-  const backgroundColors = ['#38bdf8'];
-  const [randomBgColor] = useState(() => backgroundColors[Math.floor(Math.random() * backgroundColors.length)]);
+  // 背景色を設定
+  const ownerBgColor = '#38bdf8';
+  const otherUserBgColor = '#e879f9';
+  const bgColor = isOwner ? ownerBgColor : otherUserBgColor;
 
   useEffect(() => {
     if (note.likes) {
@@ -100,9 +101,14 @@ const NoteItem: React.FC<NoteItemProps> = ({
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: isOwner, // 所有者のみドラッグ可能にする
   });
 
-  drag(drop(ref));
+  if (isOwner) {
+    drag(drop(ref));
+  } else {
+    drop(ref);
+  }
 
   if (!note.is_visible && !isOwner) {
     return null;
@@ -115,7 +121,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
     <motion.div
       ref={ref}
       className="note-item fixed-card-size border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6"
-      style={{ backgroundColor: randomBgColor, opacity: isDragging ? 0.5 : 1 }}
+      style={{ backgroundColor: bgColor, opacity: isDragging ? 0.5 : 1 }}
       initial={{ opacity: 0, rotateY: -90 }}
       animate={{ opacity: 1, rotateY: 0 }}
       transition={{ duration: 0.5, type: "spring", stiffness: 100, delay: index * 0.2 }}
