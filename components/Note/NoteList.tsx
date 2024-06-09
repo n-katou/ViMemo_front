@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import NoteItem from './NoteItem'; // NoteItemコンポーネントをインポート
-import { Note } from '../../types/note'; // Note型をインポート
+import { Note } from '../../types/note'; // Note型をインポーネート
 import { Swiper, SwiperSlide } from 'swiper/react'; // Swiperコンポーネントをインポーネート
 import 'swiper/css'; // SwiperのCSSをインポーネート
 import 'swiper/css/pagination'; // Swiperのpagination用CSSをインポーネート
 import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポーネート
 import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポーネート
-import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポーネート
-import Modal from './Modal'; // モーダルコンポーネントをインポーネート
-import NoteEditor from './NoteEditor'; // NoteEditor コンポーネーネート
+import PaginationComponent from '../Pagination'; // ページネーションコンポーネート
+import Modal from './Modal'; // モーダルコンポーネート
+import NoteEditor from './NoteEditor'; // NoteEditor コンポーネート
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
@@ -37,7 +37,6 @@ const NoteList: React.FC<NoteListProps> = ({
   const [itemsPerPage, setItemsPerPage] = useState(9); // 1ページあたりのメモの数を管理
   const [isModalOpen, setIsModalOpen] = useState(false); // モーダルの表示/非表示の状態
   const [editNote, setEditNote] = useState<Note | null>(null); // 編集するメモの状態
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc'); // ソート順序の状態を管理
   const [sortedNotes, setSortedNotes] = useState<Note[]>([]); // ソートされたメモの配列
 
   useEffect(() => {
@@ -76,13 +75,7 @@ const NoteList: React.FC<NoteListProps> = ({
   const paginatedNotes = sortedNotes.slice(startIndex, endIndex);
 
   const downloadNotes = () => {
-    const sortedForDownload = [...notes].sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime();
-      const dateB = new Date(b.created_at).getTime();
-      return dateA - dateB; // 常に古い順にソート
-    });
-
-    const noteContent = sortedForDownload.map(note => `Content: ${note.content}\nTimestamp: ${note.video_timestamp}`).join('\n\n');
+    const noteContent = sortedNotes.map(note => `Content: ${note.content}\nTimestamp: ${note.video_timestamp}`).join('\n\n');
     const blob = new Blob([noteContent], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -138,18 +131,6 @@ const NoteList: React.FC<NoteListProps> = ({
           <h2 className="text-xl font-bold mb-2 md:mb-0">メモ一覧</h2>
           <div className="flex flex-col md:flex-row items中心">
             <div className="flex items-center">
-              <label htmlFor="sortOrder" className="mr-2">並び替え:</label>
-              <select
-                id="sortOrder"
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
-                className="p-2 border rounded-md"
-              >
-                <option value="desc">新しい順</option>
-                <option value="asc">古い順</option>
-              </select>
-            </div>
-            <div className="flex items中心">
               <label htmlFor="itemsPerPage" className="mr-2">表示件数:</label>
               <select
                 id="itemsPerPage"
