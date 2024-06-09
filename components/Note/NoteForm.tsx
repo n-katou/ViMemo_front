@@ -94,10 +94,10 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
             className={`input input-bordered text-center w-12 ${isDarkMode ? 'bg-gray-700 text-white' : 'text-black'}`}
           />
           <span className={isDarkMode ? 'text-white' : ''}>秒</span>
-          <button type="button" onClick={setTimestamp} className="btn btn-outline btn-pink py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
-            現在のタイムスタンプを取得
-          </button>
         </div>
+        <button type="button" onClick={setTimestamp} className="btn btn-outline btn-lightperple mt-2 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
+          現在のタイムスタンプを取得
+        </button>
       </div>
       <div className="form-control">
         <label className="label font-semibold text-gray-700 dark:text-gray-300">表示:</label>
