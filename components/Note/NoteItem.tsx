@@ -100,9 +100,14 @@ const NoteItem: React.FC<NoteItemProps> = ({
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: isOwner, // 所有者のみドラッグ可能にする
   });
 
-  drag(drop(ref));
+  if (isOwner) {
+    drag(drop(ref));
+  } else {
+    drop(ref);
+  }
 
   if (!note.is_visible && !isOwner) {
     return null;
