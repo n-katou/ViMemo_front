@@ -221,7 +221,7 @@ const tab = (isLightTheme: boolean): TabContent[] => [
           </div>
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px', color: isLightTheme ? 'black' : 'white' }}>
-              自分の書いたメモの管理。
+              自分の書いたメモの管理と活用。
             </p>
             <img
               src="https://i.gyazo.com/946ae5cc9aa7311b6aec0ea25fcb23c0.gif"
