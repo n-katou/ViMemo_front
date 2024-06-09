@@ -6,9 +6,10 @@ import { useTheme } from 'next-themes';
 
 type NoteFormProps = {
   addNote: (content: string, minutes: number, seconds: number, isVisible: boolean) => Promise<void>; // メモを追加する関数の型
+  player: any; // YouTubeプレーヤーのインスタンス
 };
 
-const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
+const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
   // コンポーネントの状態を定義
   const [noteContent, setNoteContent] = useState(''); // メモの内容
   const [timestampMinutes, setTimestampMinutes] = useState(''); // タイムスタンプの分
@@ -40,6 +41,21 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
     setTimestampSeconds('');
     setIsVisible(true);
     setIsModalOpen(false);
+  };
+
+  // タイムスタンプを取得してフォームに設定する関数
+  const setTimestamp = () => {
+    if (player && player.getCurrentTime) {
+      const currentTime = player.getCurrentTime();
+      console.log('Current Time:', currentTime); // デバッグ用のログ
+      const minutes = Math.floor(currentTime / 60);
+      const seconds = Math.floor(currentTime % 60);
+      console.log('Minutes:', minutes, 'Seconds:', seconds); // デバッグ用のログ
+      setTimestampMinutes(minutes.toString());
+      setTimestampSeconds(seconds.toString());
+    } else {
+      console.log('Player or getCurrentTime is not available'); // プレーヤーが利用できない場合のログ
+    }
   };
 
   // フォームの内容を定義
@@ -78,6 +94,9 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote }) => {
             className={`input input-bordered text-center w-12 ${isDarkMode ? 'bg-gray-700 text-white' : 'text-black'}`}
           />
           <span className={isDarkMode ? 'text-white' : ''}>秒</span>
+          <button type="button" onClick={setTimestamp} className="btn btn-outline btn-pink py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
+            現在のタイムスタンプを取得
+          </button>
         </div>
       </div>
       <div className="form-control">
