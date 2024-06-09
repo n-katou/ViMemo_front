@@ -10,7 +10,7 @@ import Badge from '@mui/material/Badge';
 import { Avatar, Tooltip, IconButton } from '@mui/material';
 import { initializeEditor, handleLikeNote, handleUnlikeNote, padZero } from './noteItemFunctions';
 import { motion } from 'framer-motion';
-import { useDrag, useDrop, DragSourceMonitor, DropTargetMonitor } from 'react-dnd';
+import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 
 interface NoteItemProps {
   note: Note; // メモのデータ
@@ -93,15 +93,37 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
   const [, drop] = useDrop({
     accept: 'note',
-    hover: (draggedItem: { index: number }) => {
-      if (draggedItem.index !== index) {
-        moveNote(draggedItem.index, index);
-        draggedItem.index = index;
+    hover: (draggedItem: { index: number }, monitor: DropTargetMonitor) => {
+      if (!ref.current) {
+        return;
       }
+      const dragIndex = draggedItem.index;
+      const hoverIndex = index;
+
+      // 自身の位置にドロップしないようにする
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      // ドロップ領域の中央を超えたら移動する
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = clientOffset ? clientOffset.y - hoverBoundingRect.top : 0;
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+
+      moveNote(dragIndex, hoverIndex);
+      draggedItem.index = hoverIndex;
     },
   });
 
-  const [{ isDragging }, drag, preview] = useDrag({
+  const [{ isDragging }, drag] = useDrag({
     type: 'note',
     item: { index },
     collect: (monitor) => ({
