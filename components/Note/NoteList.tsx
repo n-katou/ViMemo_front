@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import NoteItem from './NoteItem'; // NoteItemコンポーネントをインポート
-import { Note } from '../../types/note'; // Note型をインポーネート
-import { Swiper, SwiperSlide } from 'swiper/react'; // Swiperコンポーネントをインポーネート
-import 'swiper/css'; // SwiperのCSSをインポーネート
-import 'swiper/css/pagination'; // Swiperのpagination用CSSをインポーネート
-import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポーネート
-import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポーネート
-import PaginationComponent from '../Pagination'; // ページネーションコンポーネート
-import Modal from './Modal'; // モーダルコンポーネート
-import NoteEditor from './NoteEditor'; // NoteEditor コンポーネート
+import { Note } from '../../types/note'; // Note型をインポート
+import { Swiper, SwiperSlide } from 'swiper/react'; // Swiperコンポーネントをインポート
+import 'swiper/css'; // SwiperのCSSをインポート
+import 'swiper/css/pagination'; // Swiperのpagination用CSSをインポート
+import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポート
+import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポート
+import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポート
+import Modal from './Modal'; // モーダルコンポーネントをインポート
+import NoteEditor from './NoteEditor'; // NoteEditor コンポーネント
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
@@ -89,6 +89,9 @@ const NoteList: React.FC<NoteListProps> = ({
   // ノートを移動する関数
   const moveNote = (dragIndex: number, hoverIndex: number) => {
     const draggedNote = sortedNotes[dragIndex];
+    if (draggedNote.user.id !== currentUser.id) {
+      return; // 他のユーザーのメモは並び替えできないようにする
+    }
     const newSortedNotes = update(sortedNotes, {
       $splice: [
         [dragIndex, 1],
@@ -129,7 +132,7 @@ const NoteList: React.FC<NoteListProps> = ({
       <div id="notes_list" className="mt-5">
         <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-2 md:space-y-0 md:space-x-4">
           <h2 className="text-xl font-bold mb-2 md:mb-0">メモ一覧</h2>
-          <div className="flex flex-col md:flex-row items中心">
+          <div className="flex flex-col md:flex-row items-center">
             <div className="flex items-center">
               <label htmlFor="itemsPerPage" className="mr-2">表示件数:</label>
               <select
