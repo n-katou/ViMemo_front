@@ -148,7 +148,7 @@ const YoutubeVideoShowPage: React.FC = () => {
           />
           <div className="text-left mt-8">
             <button
-              className="btn btn-outline btn-darkpink border rounded-md"
+              className="btn btn-outline btn-lightperple border rounded-md"
               onClick={() => router.back()}
             >
               戻る
