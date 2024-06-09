@@ -51,6 +51,12 @@ const NoteList: React.FC<NoteListProps> = ({
     return () => window.removeEventListener('resize', handleResize); // クリーンアップ
   }, []);
 
+  useEffect(() => {
+    // 並び替えられたノートをセットする
+    const sorted = [...notes].sort((a, b) => a.sort_order - b.sort_order);
+    setSortedNotes(sorted);
+  }, [notes]);
+
   const handleEditClick = (note: Note) => {
     setEditNote(note);
     setIsModalOpen(true);
@@ -63,20 +69,6 @@ const NoteList: React.FC<NoteListProps> = ({
     setIsModalOpen(false);
     setEditNote(null);
   };
-
-  // メモを作成日時でソートする関数
-  const sortNotes = useCallback(() => {
-    const sorted = [...notes].sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime();
-      const dateB = new Date(b.created_at).getTime();
-      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
-    });
-    setSortedNotes(sorted);
-  }, [notes, sortOrder]);
-
-  useEffect(() => {
-    sortNotes();
-  }, [sortNotes]);
 
   // ページネーションのためのメモのスライス
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -104,12 +96,39 @@ const NoteList: React.FC<NoteListProps> = ({
   // ノートを移動する関数
   const moveNote = (dragIndex: number, hoverIndex: number) => {
     const draggedNote = sortedNotes[dragIndex];
-    setSortedNotes(update(sortedNotes, {
+    const newSortedNotes = update(sortedNotes, {
       $splice: [
         [dragIndex, 1],
         [hoverIndex, 0, draggedNote],
       ],
-    }));
+    });
+
+    setSortedNotes(newSortedNotes);
+    saveSortOrder(newSortedNotes); // 並び替え後の順序を保存
+  };
+
+  const saveSortOrder = async (sortedNotes: Note[]) => {
+    const sortedNoteIds = sortedNotes.map(note => ({ id: note.id }));
+    const token = localStorage.getItem('token'); // JWTトークンをローカルストレージから取得
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes/save_sort_order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // JWTトークンをヘッダーに追加
+        },
+        body: JSON.stringify({ sorted_notes: sortedNoteIds }),
+      });
+
+      if (!response.ok) {
+        throw new Error('順序の保存に失敗しました。');
+      }
+
+      console.log('順序が正常に保存されました。');
+    } catch (error) {
+      console.error('順序の保存中にエラーが発生しました:', error);
+    }
   };
 
   return (
@@ -117,7 +136,7 @@ const NoteList: React.FC<NoteListProps> = ({
       <div id="notes_list" className="mt-5">
         <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-2 md:space-y-0 md:space-x-4">
           <h2 className="text-xl font-bold mb-2 md:mb-0">メモ一覧</h2>
-          <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
+          <div className="flex flex-col md:flex-row items中心">
             <div className="flex items-center">
               <label htmlFor="sortOrder" className="mr-2">並び替え:</label>
               <select
@@ -130,7 +149,7 @@ const NoteList: React.FC<NoteListProps> = ({
                 <option value="asc">古い順</option>
               </select>
             </div>
-            <div className="flex items-center">
+            <div className="flex items中心">
               <label htmlFor="itemsPerPage" className="mr-2">表示件数:</label>
               <select
                 id="itemsPerPage"

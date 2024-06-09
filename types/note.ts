@@ -17,6 +17,7 @@ export interface Note {
   likes: Like[];
   liked_by_current_user: boolean;
   current_user_like_id?: number;
+  sort_order: number;
 }
 
 export interface NoteWithVideoTitle extends Note {
