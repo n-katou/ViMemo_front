@@ -185,7 +185,7 @@ const tab = (isLightTheme: boolean): TabContent[] => [
         <div className="note-container">
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px', color: isLightTheme ? 'black' : 'white' }}>
-              メモ移動（自分のメモのみ移動可能）。
+              メモの移動は、ご自身のメモに限定して可能です。
             </p>
             <img
               src="https://i.gyazo.com/5f2639d40a12aa11b08e69aeb56e353c.gif"
@@ -196,7 +196,7 @@ const tab = (isLightTheme: boolean): TabContent[] => [
           </div>
           <div className="note-item mt-4">
             <p style={{ marginBottom: '60px', color: isLightTheme ? 'black' : 'white' }}>
-              CUEシートのダウンロード。
+              表示しているメモリストでダウンロード可能です。
             </p>
             <img
               src="https://i.gyazo.com/a63c81ec8f56498300b95970c5b855a1.gif"
@@ -210,7 +210,7 @@ const tab = (isLightTheme: boolean): TabContent[] => [
               全ユーザーの使用イメージ
             </p>
             <p style={{ marginBottom: '30px', color: isLightTheme ? 'black' : 'white' }}>
-              Xへお気に入り場面のシェア。
+              Xへお気に入り場面のシェアが可能です。
             </p>
             <img
               src="https://i.gyazo.com/985d8401bbc0fe3ed4b24206ff2ed83d.gif"
@@ -221,7 +221,7 @@ const tab = (isLightTheme: boolean): TabContent[] => [
           </div>
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px', color: isLightTheme ? 'black' : 'white' }}>
-              自分の書いたメモの管理と活用。
+              自分で書いたメモを管理し、活用することができます。
             </p>
             <img
               src="https://i.gyazo.com/946ae5cc9aa7311b6aec0ea25fcb23c0.gif"
