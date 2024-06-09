@@ -41,7 +41,11 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
 
   const open = Boolean(anchorEl);
 
-  const relatedNotes = notes.filter(note => note.youtube_video_id === video.id);
+  // 関連するメモを取得し、作成日時の降順でソート
+  const relatedNotes = notes
+    .filter(note => note.youtube_video_id === video.id)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
   console.log('Video ID:', video.id);
   console.log('Related notes:', relatedNotes);
 
