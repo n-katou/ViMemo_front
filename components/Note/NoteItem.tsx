@@ -1,28 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Note } from '../../types/note';
 import { Like } from '../../types/like';
-import { useAuth } from '../../context/AuthContext'; // 認証コンテキストをインポート
-import NoteContent from './NoteContent'; // NoteContent コンポーネントをインポート
-import NoteActions from './NoteActions'; // NoteActions コンポーネントをインポート
+import { useAuth } from '../../context/AuthContext';
+import NoteContent from './NoteContent';
+import NoteActions from './NoteActions';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import Badge from '@mui/material/Badge';
 import { Avatar, Tooltip, IconButton } from '@mui/material';
-import { initializeEditor, handleLikeNote, handleUnlikeNote, padZero } from './noteItemFunctions';
+import { handleLikeNote, handleUnlikeNote, padZero } from './noteItemFunctions';
 import { motion } from 'framer-motion';
 import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 
 interface NoteItemProps {
-  note: Note; // メモのデータ
-  currentUser: any; // 現在のユーザー情報
-  videoTimestampToSeconds: (timestamp: string) => number; // タイムスタンプを秒に変換する関数
-  playFromTimestamp: (seconds: number) => void; // タイムスタンプから再生を開始する関数
-  videoId: number; // 動画のID
-  onDelete?: (noteId: number) => void; // メモを削除する関数（オプション）
-  onEditClick: (note: Note) => void; // 編集クリック時の関数
-  isOwner: boolean; // ユーザーがメモの所有者かどうか
-  index: number; // メモのインデックス
-  moveNote: (dragIndex: number, hoverIndex: number) => void; // ドラッグ＆ドロップのための関数
+  note: Note;
+  currentUser: any;
+  videoTimestampToSeconds: (timestamp: string) => number;
+  playFromTimestamp: (seconds: number) => void;
+  videoId: number;
+  onDelete?: (noteId: number) => void;
+  onEditClick: (note: Note) => void;
+  isOwner: boolean;
+  index: number;
+  moveNote: (dragIndex: number, hoverIndex: number) => void;
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({
@@ -31,61 +31,38 @@ const NoteItem: React.FC<NoteItemProps> = ({
   videoTimestampToSeconds,
   playFromTimestamp,
   videoId,
-  onDelete = () => { }, // デフォルトの空関数
+  onDelete = () => { },
   onEditClick,
   isOwner,
   index,
   moveNote,
 }) => {
-  const { jwtToken } = useAuth(); // 認証コンテキストからJWTトークンを取得
-  const [isEditing, setIsEditing] = useState(false); // 編集モードの状態を管理
-  const [newContent, setNewContent] = useState(note.content); // 新しいメモの内容
-  const [newMinutes, setNewMinutes] = useState(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60)); // 新しいタイムスタンプの分
-  const [newSeconds, setNewSeconds] = useState(videoTimestampToSeconds(note.video_timestamp) % 60); // 新しいタイムスタンプの秒
-  const [newIsVisible, setNewIsVisible] = useState(note.is_visible); // メモの表示/非表示の状態
-  const [liked, setLiked] = useState<boolean>(false); // いいねの状態
-  const [likeError, setLikeError] = useState<string | null>(null); // いいねエラーの状態
-  const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL; // デフォルトのアバターURL
-  const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl; // ユーザーのアバターURL
+  const { jwtToken } = useAuth();
+  const [liked, setLiked] = useState<boolean>(false);
+  const [likeError, setLikeError] = useState<string | null>(null);
+  const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL;
+  const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl;
+  const ref = useRef<HTMLDivElement>(null);
 
-  // コンポーネントのマウント時と状態の変更時に実行
+  // 背景色をランダムに選択し、初期レンダリング時に一度だけ設定
+  const backgroundColors = ['#38bdf8'];
+  const [randomBgColor] = useState(() => backgroundColors[Math.floor(Math.random() * backgroundColors.length)]);
+
   useEffect(() => {
-    if (isEditing) {
-      // 編集モードを初期化
-      initializeEditor(
-        note,
-        videoTimestampToSeconds,
-        setNewContent,
-        setNewMinutes,
-        setNewSeconds,
-        setNewIsVisible
-      );
-    }
     if (note.likes) {
-      // いいねの状態を設定
       setLiked(note.likes.some((like: Like) => like.user_id === Number(currentUser?.id)));
     }
-  }, [isEditing, note, videoTimestampToSeconds, currentUser]);
+  }, [note, currentUser]);
 
-  // メモを削除する関数
   const handleDelete = () => {
     if (confirm('このメモを削除しますか？')) {
       onDelete(note.id);
     }
   };
 
-  // タイムスタンプをクリックした時に再生を開始する関数
   const handleTimestampClick = () => {
     playFromTimestamp(videoTimestampToSeconds(note.video_timestamp));
   };
-
-  // メモが非表示で所有者でない場合、何も表示しない
-  if (!note.is_visible && !isOwner) {
-    return null;
-  }
-
-  // DnD用の設定
-  const ref = useRef<HTMLDivElement>(null);
 
   const [, drop] = useDrop({
     accept: 'note',
@@ -96,12 +73,10 @@ const NoteItem: React.FC<NoteItemProps> = ({
       const dragIndex = draggedItem.index;
       const hoverIndex = index;
 
-      // 自身の位置にドロップしないようにする
       if (dragIndex === hoverIndex) {
         return;
       }
 
-      // ドロップ領域の中央を超えたら移動する
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
       const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       const clientOffset = monitor.getClientOffset();
@@ -129,34 +104,30 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
   drag(drop(ref));
 
+  if (!note.is_visible && !isOwner) {
+    return null;
+  }
+
+  const newMinutes = Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60);
+  const newSeconds = videoTimestampToSeconds(note.video_timestamp) % 60;
+
   return (
     <motion.div
       ref={ref}
       className="note-item fixed-card-size border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6"
-      style={{ backgroundColor: '#38bdf8', opacity: isDragging ? 0.5 : 1 }} // ランダムな背景色を適用
+      style={{ backgroundColor: randomBgColor, opacity: isDragging ? 0.5 : 1 }}
       initial={{ opacity: 0, rotateY: -90 }}
       animate={{ opacity: 1, rotateY: 0 }}
       transition={{ duration: 0.5, type: "spring", stiffness: 100, delay: index * 0.2 }}
     >
-      <motion.div
-        className="p-6 text-black"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
+      <motion.div className="p-6 text-black" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <div className="flex text-white items-center mb-4">
-          {avatarUrl && (
-            <Avatar src={avatarUrl} alt="User Avatar" sx={{ width: 48, height: 48, mr: 2 }} />
-          )}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
+          {avatarUrl && <Avatar src={avatarUrl} alt="User Avatar" sx={{ width: 48, height: 48, mr: 2 }} />}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <p className="text-xl font-bold">{note.user?.name || 'Unknown User'}</p>
-            {/* タイムスタンプをクリックすると再生が開始 */}
             <button onClick={handleTimestampClick} className="text-blue-700 hover:underline">
               タイムスタンプ:{padZero(Math.floor(videoTimestampToSeconds(note.video_timestamp) / 60))}:{padZero(videoTimestampToSeconds(note.video_timestamp) % 60)}
             </button>
-            {/* 投稿日時の表示 */}
             <p className="text-white text-sm">{new Date(note.created_at).toLocaleString()}</p>
           </motion.div>
         </div>
@@ -166,11 +137,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Tooltip title={liked ? "いいねを取り消す" : "いいね"}>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-              >
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5, delay: index * 0.2 }}>
                 <IconButton onClick={liked ? () => handleUnlikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError) : () => handleLikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError)}>
                   <Badge badgeContent={note.likes_count} color="primary">
                     {liked ? <ThumbUpIcon style={{ color: 'white' }} /> : <ThumbUpOffAltIcon style={{ color: 'white' }} />}
@@ -178,27 +145,24 @@ const NoteItem: React.FC<NoteItemProps> = ({
                 </IconButton>
               </motion.div>
             </Tooltip>
-            {/* メモが非表示の場合のメッセージ */}
             {!note.is_visible && isOwner && (
               <p className="text-yellow-400 ml-2">非表示中</p>
             )}
           </div>
-          {/* メモの所有者である場合、編集・削除ボタンを表示 */}
           {isOwner && (
             <NoteActions
               note={note}
               currentUser={currentUser}
               videoId={videoId}
+              handleDelete={handleDelete}
+              setIsEditing={() => onEditClick(note)}
               newMinutes={newMinutes}
               newSeconds={newSeconds}
               videoTimestampToSeconds={videoTimestampToSeconds}
-              handleDelete={handleDelete}
-              setIsEditing={() => onEditClick(note)}
             />
           )}
         </div>
       </motion.div>
-      {/* いいねエラーの表示 */}
       {likeError && <div className="p-4 text-red-500">{likeError}</div>}
     </motion.div>
   );
