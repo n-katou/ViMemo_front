@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import NoteItem from './NoteItem'; // NoteItemコンポーネントをインポート
 import { Note } from '../../types/note'; // Note型をインポート
-import { Swiper, SwiperSlide } from 'swiper/react'; // Swiperコンポーネントをインポート
-import 'swiper/css'; // SwiperのCSSをインポート
-import 'swiper/css/pagination'; // Swiperのpagination用CSSをインポート
-import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポート
-import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポート
-import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポート
-import Modal from './Modal'; // モーダルコンポーネントをインポート
-import NoteEditor from './NoteEditor'; // NoteEditor コンポーネントをインポーネット
+import { Swiper, SwiperSlide } from 'swiper/react'; // Swiperコンポーネントをインポーネート
+import 'swiper/css'; // SwiperのCSSをインポーネート
+import 'swiper/css/pagination'; // Swiperのpagination用CSSをインポーネート
+import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポーネート
+import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポーネート
+import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポーネート
+import Modal from './Modal'; // モーダルコンポーネントをインポーネート
+import NoteEditor from './NoteEditor'; // NoteEditor コンポーネーネート
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
