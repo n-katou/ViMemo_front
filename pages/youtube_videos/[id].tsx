@@ -51,35 +51,39 @@ const YoutubeVideoShowPage: React.FC = () => {
   const playerRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!pathname) {
-      console.error('Pathname is null');
-      return;
-    }
+    const fetchData = () => {
+      if (!pathname) {
+        console.error('Pathname is null');
+        return;
+      }
 
-    const pathSegments = pathname.split('/');
-    const videoId = parseInt(pathSegments[pathSegments.length - 1], 10);
+      const pathSegments = pathname.split('/');
+      const videoId = parseInt(pathSegments[pathSegments.length - 1], 10);
 
-    if (!isNaN(videoId)) {
-      fetchYoutubeVideo(videoId, jwtToken)
-        .then(videoData => {
-          setVideo({ ...videoData.youtube_video, formattedDuration: formatDuration(videoData.youtube_video.duration) });
-          setNotes(videoData.notes);
+      if (!isNaN(videoId)) {
+        fetchYoutubeVideo(videoId, jwtToken)
+          .then(videoData => {
+            setVideo({ ...videoData.youtube_video, formattedDuration: formatDuration(videoData.youtube_video.duration) });
+            setNotes(videoData.notes);
 
-          const likes = videoData.youtube_video.likes || [];
-          setLiked(likes.some((like: any) => like.user_id === Number(currentUser?.id)));
-        })
-        .catch(error => {
-          console.error('Error loading the video:', error);
-          setVideo(null);
-        })
-        .finally(() => {
-          setDataLoading(false);
-        });
-    } else {
-      console.error('Invalid videoId');
-      setDataLoading(false);
-    }
-  }, [pathname, jwtToken, currentUser]);
+            const likes = videoData.youtube_video.likes || [];
+            setLiked(likes.some((like: any) => like.user_id === Number(currentUser?.id)));
+          })
+          .catch(error => {
+            console.error('Error loading the video:', error);
+            setVideo(null);
+          })
+          .finally(() => {
+            setDataLoading(false);
+          });
+      } else {
+        console.error('Invalid videoId');
+        setDataLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [pathname, jwtToken, currentUser, showMyNotes]);
 
   if (loading || dataLoading) {
     return <LoadingSpinner loading={loading || dataLoading} />;
@@ -144,7 +148,7 @@ const YoutubeVideoShowPage: React.FC = () => {
           />
           <div className="text-left mt-8">
             <button
-              className="btn btn-outline btn-darkpink border rounded-md"
+              className="btn btn-outline btn-lightperple border rounded-md"
               onClick={() => router.back()}
             >
               戻る

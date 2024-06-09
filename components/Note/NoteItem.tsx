@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Note } from '../../types/note';
 import { Like } from '../../types/like';
 import { useAuth } from '../../context/AuthContext'; // 認証コンテキストをインポート
@@ -10,6 +10,7 @@ import Badge from '@mui/material/Badge';
 import { Avatar, Tooltip, IconButton } from '@mui/material';
 import { initializeEditor, handleLikeNote, handleUnlikeNote, padZero } from './noteItemFunctions';
 import { motion } from 'framer-motion';
+import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 
 interface NoteItemProps {
   note: Note; // メモのデータ
@@ -21,6 +22,7 @@ interface NoteItemProps {
   onEditClick: (note: Note) => void; // 編集クリック時の関数
   isOwner: boolean; // ユーザーがメモの所有者かどうか
   index: number; // メモのインデックス
+  moveNote: (dragIndex: number, hoverIndex: number) => void; // ドラッグ＆ドロップのための関数
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({
@@ -33,6 +35,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   onEditClick,
   isOwner,
   index,
+  moveNote,
 }) => {
   const { jwtToken } = useAuth(); // 認証コンテキストからJWTトークンを取得
   const [isEditing, setIsEditing] = useState(false); // 編集モードの状態を管理
@@ -44,10 +47,6 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const [likeError, setLikeError] = useState<string | null>(null); // いいねエラーの状態
   const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL; // デフォルトのアバターURL
   const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl; // ユーザーのアバターURL
-
-  // 背景色をランダムに選択し、初期レンダリング時に一度だけ設定
-  const backgroundColors = ['#38bdf8', '#818cf8', '#c084fc', '#e879f9', '#22eec5'];
-  const [randomBgColor] = useState(() => backgroundColors[Math.floor(Math.random() * backgroundColors.length)]);
 
   // コンポーネントのマウント時と状態の変更時に実行
   useEffect(() => {
@@ -85,10 +84,56 @@ const NoteItem: React.FC<NoteItemProps> = ({
     return null;
   }
 
+  // DnD用の設定
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [, drop] = useDrop({
+    accept: 'note',
+    hover: (draggedItem: { index: number }, monitor: DropTargetMonitor) => {
+      if (!ref.current) {
+        return;
+      }
+      const dragIndex = draggedItem.index;
+      const hoverIndex = index;
+
+      // 自身の位置にドロップしないようにする
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      // ドロップ領域の中央を超えたら移動する
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = clientOffset ? clientOffset.y - hoverBoundingRect.top : 0;
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+
+      moveNote(dragIndex, hoverIndex);
+      draggedItem.index = hoverIndex;
+    },
+  });
+
+  const [{ isDragging }, drag] = useDrag({
+    type: 'note',
+    item: { index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  drag(drop(ref));
+
   return (
     <motion.div
+      ref={ref}
       className="note-item fixed-card-size border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6"
-      style={{ backgroundColor: randomBgColor }} // ランダムな背景色を適用
+      style={{ backgroundColor: '#38bdf8', opacity: isDragging ? 0.5 : 1 }} // ランダムな背景色を適用
       initial={{ opacity: 0, rotateY: -90 }}
       animate={{ opacity: 1, rotateY: 0 }}
       transition={{ duration: 0.5, type: "spring", stiffness: 100, delay: index * 0.2 }}
