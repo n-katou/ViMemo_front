@@ -130,24 +130,26 @@ const NoteList: React.FC<NoteListProps> = ({
   return (
     <DndProvider backend={HTML5Backend}>
       <div id="notes_list" className="mt-5">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-2 md:space-y-0 md:space-x-4">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0 md:space-x-4">
           <h2 className="text-xl font-bold mb-2 md:mb-0">メモ一覧</h2>
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="flex items-center">
-              <label htmlFor="itemsPerPage" className="mr-2">表示件数:</label>
-              <select
-                id="itemsPerPage"
-                value={itemsPerPage}
-                onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
-                className="p-2 border rounded-md"
-              >
-                <option value={6}>6件</option>
-                <option value={9}>9件</option>
-                <option value={12}>12件</option>
-                <option value={15}>15件</option>
-              </select>
+          <div className="flex flex-col md:flex-row items-center md:space-x-4">
+            <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
+              <div className="flex items-center">
+                <label htmlFor="itemsPerPage" className="mr-2">表示件数:</label>
+                <select
+                  id="itemsPerPage"
+                  value={itemsPerPage}
+                  onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+                  className="p-2 border rounded-md"
+                >
+                  <option value={6}>6件</option>
+                  <option value={9}>9件</option>
+                  <option value={12}>12件</option>
+                  <option value={15}>15件</option>
+                </select>
+              </div>
+              <button onClick={downloadNotes} className="px-4 py-2 btn-outline btn-skyblue border rounded-md">ダウンロード</button>
             </div>
-            <button onClick={downloadNotes} className="px-4 py-2 btn-outline btn-skyblue border rounded-md">ダウンロード</button>
           </div>
         </div>
         {sortedNotes.length > 0 ? ( // メモがある場合
