@@ -71,7 +71,7 @@ const NoteList: React.FC<NoteListProps> = ({
 
   // ページネーションのためのメモのスライス
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
+  const endIndex = itemsPerPage === -1 ? sortedNotes.length : startIndex + itemsPerPage;
   const paginatedNotes = sortedNotes.slice(startIndex, endIndex);
 
   const downloadNotes = () => {
@@ -145,7 +145,7 @@ const NoteList: React.FC<NoteListProps> = ({
                   <option value={6}>6件</option>
                   <option value={9}>9件</option>
                   <option value={12}>12件</option>
-                  <option value={15}>15件</option>
+                  <option value={-1}>全件表示</option>
                 </select>
               </div>
               <button onClick={downloadNotes} className="px-4 py-2 btn-outline btn-skyblue border rounded-md">ダウンロード</button>
@@ -182,11 +182,13 @@ const NoteList: React.FC<NoteListProps> = ({
                   );
                 })}
               </Swiper>
-              <PaginationComponent
-                count={Math.ceil(sortedNotes.length / itemsPerPage)} // 総ページ数を計算
-                page={currentPage} // 現在のページ
-                onChange={(event, value) => setCurrentPage(value)} // ページ変更時の処理
-              />
+              {itemsPerPage !== -1 && (
+                <PaginationComponent
+                  count={Math.ceil(sortedNotes.length / itemsPerPage)} // 総ページ数を計算
+                  page={currentPage} // 現在のページ
+                  onChange={(event, value) => setCurrentPage(value)} // ページ変更時の処理
+                />
+              )}
             </>
           ) : ( // デスクトップ表示の場合
             <div>
@@ -211,11 +213,13 @@ const NoteList: React.FC<NoteListProps> = ({
                   );
                 })}
               </div>
-              <PaginationComponent
-                count={Math.ceil(sortedNotes.length / itemsPerPage)} // 総ページ数を計算
-                page={currentPage} // 現在のページ
-                onChange={(event, value) => setCurrentPage(value)} // ページ変更時の処理
-              />
+              {itemsPerPage !== -1 && (
+                <PaginationComponent
+                  count={Math.ceil(sortedNotes.length / itemsPerPage)} // 総ページ数を計算
+                  page={currentPage} // 現在のページ
+                  onChange={(event, value) => setCurrentPage(value)} // ページ変更時の処理
+                />
+              )}
             </div>
           )
         ) : ( // メモがない場合
