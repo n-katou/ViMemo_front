@@ -47,6 +47,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   // 背景色を設定
   const ownerBgColor = '#38bdf8';
   const otherUserBgColor = '#e879f9';
+  const dragBgColor = '#22eec5'; // ドラッグ中の背景色
   const bgColor = isOwner ? ownerBgColor : otherUserBgColor;
 
   useEffect(() => {
@@ -121,10 +122,10 @@ const NoteItem: React.FC<NoteItemProps> = ({
     <motion.div
       ref={ref}
       className="note-item fixed-card-size border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6"
-      style={{ backgroundColor: bgColor, opacity: isDragging ? 0.5 : 1 }}
-      initial={{ opacity: 0, rotateY: -90 }}
-      animate={{ opacity: 1, rotateY: 0 }}
-      transition={{ duration: 0.5, type: "spring", stiffness: 100, delay: index * 0.2 }}
+      style={{ backgroundColor: isDragging ? dragBgColor : bgColor, opacity: isDragging ? 0.8 : 1 }}
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
     >
       <motion.div className="p-6 text-black" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <div className="flex text-white items-center mb-4">
