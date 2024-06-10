@@ -104,8 +104,9 @@ const YoutubeVideoShowPage: React.FC = () => {
         autoHideDuration={5000} // 5秒後に自動で閉じる
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 上部中央に表示
+        sx={{ top: '20px' }} // 画面上部に少しスペースを確保
       >
-        <Alert onClose={handleSnackbarClose} severity="info" sx={{ width: '100%' }}>
+        <Alert onClose={handleSnackbarClose} severity="info" sx={{ width: '100%', fontSize: '1.2rem', fontWeight: 'bold', boxShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>
           動画を再生してからメモを作成・編集してください。
         </Alert>
       </Snackbar>
