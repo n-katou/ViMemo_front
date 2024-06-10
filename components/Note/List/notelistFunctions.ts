@@ -1,6 +1,6 @@
 import update from 'immutability-helper';
-import { Note } from '../../types/note';
-import { CustomUser } from '../../types/user';
+import { Note } from '../../../types/note';
+import { CustomUser } from '../../../types/user';
 
 export const downloadNotes = (sortedNotes: Note[]) => {
   const noteContent = sortedNotes.map(note => `Content: ${note.content}\nTimestamp: ${note.video_timestamp}`).join('\n\n');

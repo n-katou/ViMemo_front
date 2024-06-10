@@ -2,9 +2,9 @@ import React from 'react';
 import { Note } from '../../types/note';
 import { Avatar, Typography, Card, CardContent, CardHeader, Button } from '@mui/material';
 import { videoTimestampToSeconds, playFromTimestamp } from '../YoutubeShow/youtubeShowUtils';
-import { padZero } from '../Note/noteItemFunctions';
+import { padZero } from '../Note/Item/noteItemFunctions';
 
-import NoteContent from '../Note/NoteContent'; // NoteContent コンポーネントをインポート
+import NoteContent from '../Note/Item/NoteContent'; // NoteContent コンポーネントをインポート
 
 interface RelatedNotesListProps {
   notes: Note[];

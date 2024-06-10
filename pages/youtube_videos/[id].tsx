@@ -4,7 +4,7 @@ import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Note } from '../../types/note';
 import { useAuth } from '../../context/AuthContext';
 import NoteForm from '../../components/Note/NoteForm';
-import NoteList from '../../components/Note/NoteList';
+import NoteList from '../../components/Note/List/NoteList';
 import YoutubeVideoDetails from '../../components/YoutubeShow/YoutubeVideoDetails';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import AddIcon from '@mui/icons-material/Add';

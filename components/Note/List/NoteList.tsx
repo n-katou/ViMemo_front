@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import NoteItem from './NoteItem'; // NoteItemコンポーネントをインポート
-import { Note } from '../../types/note'; // Note型をインポート
+import NoteItem from '../Item/NoteItem'; // NoteItemコンポーネントをインポート
+import { Note } from '../../../types/note'; // Note型をインポート
 import { Swiper, SwiperSlide } from 'swiper/react'; // Swiperコンポーネントをインポート
 import 'swiper/css'; // SwiperのCSSをインポート
 import 'swiper/css/pagination'; // Swiperのpagination用CSSをインポート
 import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポート
 import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポート
-import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポート
-import Modal from './Modal'; // モーダルコンポーネントをインポート
-import NoteEditor from './NoteEditor'; // NoteEditor コンポーネント
+import PaginationComponent from '../../Pagination'; // ページネーションコンポーネントをインポート
+import Modal from '../Modal'; // モーダルコンポーネントをインポート
+import NoteEditor from '../Item/NoteEditor'; // NoteEditor コンポーネント
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { downloadNotes, moveNote, saveSortOrder } from './notelistFunctions'; // 関数をインポート
