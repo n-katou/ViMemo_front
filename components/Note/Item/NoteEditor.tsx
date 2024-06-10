@@ -13,6 +13,8 @@ interface NoteEditorProps {
   handleEdit: () => void; // 編集をハンドルする関数
   setIsEditing: (isEditing: boolean) => void; // 編集モードを設定する関数
   padZero: (num: number) => string; // 数字を2桁にパディングする関数
+  setTimestamp: () => void; // タイムスタンプを取得する関数
+  player: any; // 追加: YouTubeプレーヤーのインスタンス
 }
 
 const NoteEditor: React.FC<NoteEditorProps> = ({
@@ -26,7 +28,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
   setNewIsVisible,
   handleEdit,
   setIsEditing,
-  padZero
+  padZero,
+  setTimestamp,
+  player
 }) => {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
@@ -69,6 +73,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
             <span>秒</span>
           </div>
         </label>
+        <button type="button" onClick={setTimestamp} className="btn btn-outline btn-lightperple mt-2 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
+          現在のタイムスタンプを取得
+        </button>
       </div>
       {/* メモの表示/非表示を選択する部分 */}
       <div className="form-control">
