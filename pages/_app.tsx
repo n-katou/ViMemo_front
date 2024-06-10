@@ -10,7 +10,7 @@ import { FlashMessageProvider } from '../context/FlashMessageContext';
 import { useRouter } from 'next/router';
 import { analytics } from '../lib/initFirebase';
 import { logEvent } from 'firebase/analytics';
-import { ThemeProvider } from 'next-themes'; // 修正: ThemeProvider の正しいインポートパス
+import { ThemeProvider } from 'next-themes';
 
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
   const nextRouter = useRouter();
@@ -40,6 +40,8 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
         <meta property="og:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
         <meta property="og:url" content="https://vi-memo.com" />
         <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
         <link rel="canonical" href="https://vi-memo.com" />
       </Head>
       <FlashMessageProvider>
