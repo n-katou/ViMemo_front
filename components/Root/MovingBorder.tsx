@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import { motion, useMotionTemplate, useMotionValue, useTransform } from "framer-motion";
-import { cn } from "@/utils/cn";
+import { cn } from "../../utils/cn";
 import { useTheme } from "next-themes";
 
 export function Button({
