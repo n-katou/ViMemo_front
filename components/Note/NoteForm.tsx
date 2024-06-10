@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import Modal from './Modal'; // モーダルコンポーネントのインポート
 import useMediaQuery from '../../hooks/useMediaQuery'; // カスタムフックをインポート
@@ -28,6 +28,40 @@ export const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
     setTimestampSeconds,
     setTimestamp,
   } = useTimestamp(player);
+
+  // プレーヤーの準備完了を待つ関数
+  const waitForPlayerReady = (maxRetries = 5, delay = 1000) => {
+    return new Promise<void>((resolve, reject) => {
+      let retries = 0;
+
+      const checkReady = () => {
+        if (player && player.getPlayerState) {
+          if (player.getPlayerState() !== -1) { // プレーヤーが未初期化状態でない
+            resolve();
+          } else if (retries < maxRetries) {
+            retries++;
+            setTimeout(checkReady, delay);
+          } else {
+            reject('Player is not ready after maximum retries');
+          }
+        } else {
+          reject('Player is not initialized');
+        }
+      };
+
+      checkReady();
+    });
+  };
+
+  // タイムスタンプを取得してフォームに設定する関数
+  const handleSetTimestamp = async () => {
+    try {
+      await waitForPlayerReady();
+      setTimestamp();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // フォームの送信を処理する関数
   const handleSubmit = (e: React.FormEvent) => {
@@ -88,7 +122,11 @@ export const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
           />
           <span className={isDarkMode ? 'text-white' : ''}>秒</span>
         </div>
-        <button type="button" onClick={setTimestamp} className="btn btn-outline btn-lightperple mt-2 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
+        <button
+          type="button"
+          onClick={handleSetTimestamp}
+          className="btn btn-outline btn-lightperple mt-2 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
+        >
           現在のタイムスタンプを取得
         </button>
       </div>
