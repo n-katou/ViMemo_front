@@ -185,7 +185,7 @@ const tab = (isLightTheme: boolean): TabContent[] => [
         <div className="note-container">
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px', color: isLightTheme ? 'black' : 'white' }}>
-              メモの移動は、ご自身のメモに限定して可能です。
+              メモの移動は、ご自身のメモに限定して可能です。（PCのみ）
             </p>
             <img
               src="https://i.gyazo.com/5f2639d40a12aa11b08e69aeb56e353c.gif"
