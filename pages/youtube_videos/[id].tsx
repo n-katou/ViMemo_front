@@ -53,7 +53,6 @@ const YoutubeVideoShowPage: React.FC = () => {
   useEffect(() => {
     const fetchData = () => {
       if (!pathname) {
-        console.error('Pathname is null');
         return;
       }
 
@@ -145,6 +144,7 @@ const YoutubeVideoShowPage: React.FC = () => {
             videoId={video.id}
             onDelete={currentUser && jwtToken ? (noteId) => handleDeleteNote(noteId, jwtToken, video, setNotes) : undefined}
             onEdit={currentUser && jwtToken ? (noteId, newContent, newMinutes, newSeconds, newIsVisible) => handleEditNote(noteId, newContent, newMinutes, newSeconds, newIsVisible, jwtToken, video, setNotes) : undefined}
+            player={playerRef.current}
           />
           <div className="text-left mt-8">
             <button

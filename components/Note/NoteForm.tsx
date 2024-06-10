@@ -9,7 +9,7 @@ type NoteFormProps = {
   player: any; // YouTubeプレーヤーのインスタンス
 };
 
-const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
+export const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
   // コンポーネントの状態を定義
   const [noteContent, setNoteContent] = useState(''); // メモの内容
   const [timestampMinutes, setTimestampMinutes] = useState(''); // タイムスタンプの分
@@ -20,6 +20,19 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
   const isMobile = useMediaQuery('(max-width: 768px)'); // 画面サイズがモバイルかどうかを判定するカスタムフック
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
+
+  // タイムスタンプを取得してフォームに設定する関数
+  const setTimestamp = () => {
+    if (player && player.getCurrentTime) {
+      const currentTime = player.getCurrentTime();
+      const minutes = Math.floor(currentTime / 60);
+      const seconds = Math.floor(currentTime % 60);
+      setTimestampMinutes(minutes.toString());
+      setTimestampSeconds(seconds.toString());
+    } else {
+      console.log('Player or getCurrentTime is not available'); // プレーヤーが利用できない場合のログ
+    }
+  };
 
   // フォームの送信を処理する関数
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,21 +54,6 @@ const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
     setTimestampSeconds('');
     setIsVisible(true);
     setIsModalOpen(false);
-  };
-
-  // タイムスタンプを取得してフォームに設定する関数
-  const setTimestamp = () => {
-    if (player && player.getCurrentTime) {
-      const currentTime = player.getCurrentTime();
-      console.log('Current Time:', currentTime); // デバッグ用のログ
-      const minutes = Math.floor(currentTime / 60);
-      const seconds = Math.floor(currentTime % 60);
-      console.log('Minutes:', minutes, 'Seconds:', seconds); // デバッグ用のログ
-      setTimestampMinutes(minutes.toString());
-      setTimestampSeconds(seconds.toString());
-    } else {
-      console.log('Player or getCurrentTime is not available'); // プレーヤーが利用できない場合のログ
-    }
   };
 
   // フォームの内容を定義

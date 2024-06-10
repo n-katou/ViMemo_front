@@ -21,6 +21,7 @@ interface NoteListProps {
   videoId: number; // 動画のID
   onDelete?: (noteId: number) => void; // メモを削除する関数（オプション）
   onEdit?: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void; // メモを編集する関数（オプション）
+  player: any; // 追加: YouTubeプレーヤーのインスタンス
 }
 
 const NoteList: React.FC<NoteListProps> = ({
@@ -31,6 +32,7 @@ const NoteList: React.FC<NoteListProps> = ({
   videoId,
   onDelete,
   onEdit,
+  player // 追加
 }) => {
   const [isMobile, setIsMobile] = useState(false); // モバイル表示かどうかの状態を管理
   const [currentPage, setCurrentPage] = useState(1); // 現在のページを管理
@@ -180,12 +182,30 @@ const NoteList: React.FC<NoteListProps> = ({
               newSeconds={videoTimestampToSeconds(editNote.video_timestamp) % 60}
               newIsVisible={editNote.is_visible}
               setNewContent={(value) => setEditNote(prev => prev ? { ...prev, content: value } : prev)}
-              setNewMinutes={(value) => setEditNote(prev => prev ? { ...prev, video_timestamp: `${value}:${editNote.video_timestamp.split(':')[1]}` } : prev)}
-              setNewSeconds={(value) => setEditNote(prev => prev ? { ...prev, video_timestamp: `${editNote.video_timestamp.split(':')[0]}:${value}` } : prev)}
+              setNewMinutes={(value) => setEditNote(prev => {
+                const [_, seconds] = editNote.video_timestamp.split(':').map(Number);
+                return prev ? { ...prev, video_timestamp: `${value}:${seconds}` } : prev;
+              })}
+              setNewSeconds={(value) => setEditNote(prev => {
+                const [minutes, _] = editNote.video_timestamp.split(':').map(Number);
+                return prev ? { ...prev, video_timestamp: `${minutes}:${value}` } : prev;
+              })}
               setNewIsVisible={(value) => setEditNote(prev => prev ? { ...prev, is_visible: value } : prev)}
               handleEdit={() => handleEditSubmit(editNote.id, editNote.content, Math.floor(videoTimestampToSeconds(editNote.video_timestamp) / 60), videoTimestampToSeconds(editNote.video_timestamp) % 60, editNote.is_visible)}
               setIsEditing={(value) => setIsModalOpen(value)}
               padZero={(num) => num.toString().padStart(2, '0')}
+              setTimestamp={() => {
+                if (player && player.getCurrentTime) {
+                  const currentTime = player.getCurrentTime();
+                  const minutes = Math.floor(currentTime / 60);
+                  const seconds = Math.floor(currentTime % 60);
+                  setEditNote(prev => prev ? {
+                    ...prev,
+                    video_timestamp: `${minutes}:${seconds}`
+                  } : prev);
+                }
+              }} // タイムスタンプを取得する関数
+              player={player} // プレーヤーを渡す
             />
           </Modal>
         )}
