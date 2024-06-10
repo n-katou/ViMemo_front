@@ -21,7 +21,7 @@ interface NoteListProps {
   videoId: number; // 動画のID
   onDelete?: (noteId: number) => void; // メモを削除する関数（オプション）
   onEdit?: (noteId: number, newContent: string, newMinutes: number, newSeconds: number, newIsVisible: boolean) => void; // メモを編集する関数（オプション）
-  player: any; // 追加: YouTubeプレーヤーのインスタンス
+  player: any; // YouTubeプレーヤーのインスタンス
 }
 
 const NoteList: React.FC<NoteListProps> = ({
@@ -32,7 +32,7 @@ const NoteList: React.FC<NoteListProps> = ({
   videoId,
   onDelete,
   onEdit,
-  player // 追加
+  player
 }) => {
   const [isMobile, setIsMobile] = useState(false); // モバイル表示かどうかの状態を管理
   const [currentPage, setCurrentPage] = useState(1); // 現在のページを管理
@@ -204,8 +204,8 @@ const NoteList: React.FC<NoteListProps> = ({
                     video_timestamp: `${minutes}:${seconds}`
                   } : prev);
                 }
-              }} // タイムスタンプを取得する関数
-              player={player} // プレーヤーを渡す
+              }}
+              player={player}
             />
           </Modal>
         )}
