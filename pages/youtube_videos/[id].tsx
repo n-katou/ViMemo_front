@@ -11,7 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { fetchYoutubeVideo } from '../../src/api';
 import { addNote, handleDeleteNote, handleEditNote, handleLikeVideo, handleUnlikeVideo, videoTimestampToSeconds, playFromTimestamp, formatDuration } from '../../components/YoutubeShow/youtubeShowUtils';
-import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { ToggleButton, ToggleButtonGroup, Snackbar, Alert } from '@mui/material';
 import { styled } from '@mui/system';
 import { useTheme } from 'next-themes';
 
@@ -42,6 +42,7 @@ const YoutubeVideoShowPage: React.FC = () => {
   const [liked, setLiked] = useState<boolean>(false);
   const [isNoteFormVisible, setIsNoteFormVisible] = useState<boolean>(false);
   const [showMyNotes, setShowMyNotes] = useState<boolean>(false); // デフォルトをfalseに設定
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(true); // フラッシュメッセージの状態管理
 
   const pathname = usePathname();
   const router = useRouter();
@@ -88,12 +89,26 @@ const YoutubeVideoShowPage: React.FC = () => {
     return <LoadingSpinner loading={loading || dataLoading} />;
   }
 
+  const handleSnackbarClose = () => {
+    setIsSnackbarOpen(false);
+  };
+
   const filteredNotes = showMyNotes
     ? notes.filter(note => note.user.id === currentUser?.id)
     : notes;
 
   return (
     <div className="container mx-auto py-8">
+      <Snackbar
+        open={isSnackbarOpen}
+        autoHideDuration={5000} // 5秒後に自動で閉じる
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 上部中央に表示
+      >
+        <Alert onClose={handleSnackbarClose} severity="info" sx={{ width: '100%' }}>
+          動画を再生してからメモを作成・編集してください。
+        </Alert>
+      </Snackbar>
       {!video && <div className="text-center">Video not found</div>}
       {video && (
         <>
