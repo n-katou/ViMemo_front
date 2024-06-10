@@ -7,8 +7,7 @@ import 'swiper/css/pagination'; // Swiperのpagination用CSSをインポート
 import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポート
 import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポート
 import PaginationComponent from '../../Pagination'; // ページネーションコンポーネントをインポート
-import Modal from '../Modal'; // モーダルコンポーネントをインポート
-import NoteEditor from '../Item/NoteEditor'; // NoteEditor コンポーネント
+import EditNoteModal from './EditNoteModal'; // 新しく作成した EditNoteModal コンポーネントをインポート
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { downloadNotes, moveNote, saveSortOrder } from './notelistFunctions'; // 関数をインポート
@@ -174,41 +173,15 @@ const NoteList: React.FC<NoteListProps> = ({
         ) : ( // メモがない場合
           <p id="no_notes_message">メモがありません。</p>
         )}
-        {editNote && (
-          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <NoteEditor
-              newContent={editNote.content}
-              newMinutes={Math.floor(videoTimestampToSeconds(editNote.video_timestamp) / 60)}
-              newSeconds={videoTimestampToSeconds(editNote.video_timestamp) % 60}
-              newIsVisible={editNote.is_visible}
-              setNewContent={(value) => setEditNote(prev => prev ? { ...prev, content: value } : prev)}
-              setNewMinutes={(value) => setEditNote(prev => {
-                const [_, seconds] = editNote.video_timestamp.split(':').map(Number);
-                return prev ? { ...prev, video_timestamp: `${value}:${seconds}` } : prev;
-              })}
-              setNewSeconds={(value) => setEditNote(prev => {
-                const [minutes, _] = editNote.video_timestamp.split(':').map(Number);
-                return prev ? { ...prev, video_timestamp: `${minutes}:${value}` } : prev;
-              })}
-              setNewIsVisible={(value) => setEditNote(prev => prev ? { ...prev, is_visible: value } : prev)}
-              handleEdit={() => handleEditSubmit(editNote.id, editNote.content, Math.floor(videoTimestampToSeconds(editNote.video_timestamp) / 60), videoTimestampToSeconds(editNote.video_timestamp) % 60, editNote.is_visible)}
-              setIsEditing={(value) => setIsModalOpen(value)}
-              padZero={(num) => num.toString().padStart(2, '0')}
-              setTimestamp={() => {
-                if (player && player.getCurrentTime) {
-                  const currentTime = player.getCurrentTime();
-                  const minutes = Math.floor(currentTime / 60);
-                  const seconds = Math.floor(currentTime % 60);
-                  setEditNote(prev => prev ? {
-                    ...prev,
-                    video_timestamp: `${minutes}:${seconds}`
-                  } : prev);
-                }
-              }}
-              player={player}
-            />
-          </Modal>
-        )}
+        <EditNoteModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          editNote={editNote}
+          setEditNote={setEditNote}
+          videoTimestampToSeconds={videoTimestampToSeconds}
+          handleEditSubmit={handleEditSubmit}
+          player={player}
+        />
       </div>
     </DndProvider>
   );
