@@ -3,14 +3,16 @@ import { getAuth } from "firebase/auth";
 import { getAnalytics, Analytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCLuw5BthhkLuD2hAgxy8eRyqKFmCVoEkM",
-  authDomain: "vimemo-63237.firebaseapp.com",
-  projectId: "vimemo-63237",
-  storageBucket: "vimemo-63237.appspot.com",
-  messagingSenderId: "658482743555",
-  appId: "1:658482743555:web:1e03f3a90b97f560db0136",
-  measurementId: "G-BSTSJJB3RF"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
+
+console.log('Firebase Config in code:', firebaseConfig);
 
 const getFirebaseApp = () => {
   if (getApps().length === 0) {
