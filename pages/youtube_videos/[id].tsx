@@ -101,12 +101,12 @@ const YoutubeVideoShowPage: React.FC = () => {
     <div className="container mx-auto py-8">
       <Snackbar
         open={isSnackbarOpen}
-        autoHideDuration={3000} // 5秒後に自動で閉じる
+        autoHideDuration={5000} // 5秒後に自動で閉じる
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 上部中央に表示
       >
         <Alert onClose={handleSnackbarClose} severity="info" sx={{ width: '100%' }}>
-          動画を再生してからメモを作成してください。
+          動画を再生してからメモを作成・編集してください。
         </Alert>
       </Snackbar>
       {!video && <div className="text-center">Video not found</div>}
