@@ -13,6 +13,8 @@ class MyDocument extends Document {
           <meta property="og:image" content="/pinterest_board_photo_v2.png" />
           <meta property="og:url" content="https://vi-memo.com" />
           <meta property="og:type" content="website" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:image" content="/pinterest_board_photo_v2.png" />
           <link rel="canonical" href="https://vi-memo.com" />
           <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
           <meta name="apple-mobile-web-app-title" content="ViMemo" />
