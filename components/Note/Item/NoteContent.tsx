@@ -1,5 +1,5 @@
 import React from 'react';
-import { Note } from '../../types/note';
+import { Note } from '../../../types/note';
 import NoteIcon from '@mui/icons-material/Note';
 
 // NoteContentコンポーネントを定義

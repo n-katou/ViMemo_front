@@ -1,6 +1,6 @@
-import { Note } from '../../types/note'; // Note 型をインポート
-import { Like } from '../../types/like'; // Like 型をインポート
-import { fetchCurrentUserLike, handleNoteLike, handleNoteUnlike } from '../../src/api'; // API 関数をインポート
+import { Note } from '../../../types/note'; // Note 型をインポート
+import { Like } from '../../../types/like'; // Like 型をインポート
+import { fetchCurrentUserLike, handleNoteLike, handleNoteUnlike } from '../../../src/api'; // API 関数をインポート
 
 export const initializeEditor = (
   note: Note,

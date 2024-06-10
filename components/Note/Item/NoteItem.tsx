@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Note } from '../../types/note';
-import { Like } from '../../types/like';
-import { useAuth } from '../../context/AuthContext';
+import { Note } from '../../../types/note';
+import { Like } from '../../../types/like';
+import { useAuth } from '../../../context/AuthContext';
 import NoteContent from './NoteContent';
 import NoteActions from './NoteActions';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';

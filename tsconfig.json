@@ -18,12 +18,15 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve", // JSXの処理方法を「react-jsx」に変更
+    "jsx": "preserve",
     "incremental": true,
-    "baseUrl": ".", // ベースURLを追加
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/types/*": [
+        "types/*"
       ]
     },
     "plugins": [

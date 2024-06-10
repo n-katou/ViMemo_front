@@ -1,5 +1,5 @@
 import React from 'react';
-import { Note } from '../../types/note';
+import { Note } from '../../../types/note';
 import { BsTwitterX } from "react-icons/bs";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';

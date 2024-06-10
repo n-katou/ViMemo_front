@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import NoteItem from './NoteItem'; // NoteItemコンポーネントをインポート
-import { Note } from '../../types/note'; // Note型をインポート
+import React, { useState, useEffect } from 'react';
+import NoteItem from '../Item/NoteItem'; // NoteItemコンポーネントをインポート
+import { Note } from '../../../types/note'; // Note型をインポート
 import { Swiper, SwiperSlide } from 'swiper/react'; // Swiperコンポーネントをインポート
 import 'swiper/css'; // SwiperのCSSをインポート
 import 'swiper/css/pagination'; // Swiperのpagination用CSSをインポート
 import 'swiper/css/navigation'; // Swiperのnavigation用CSSをインポート
 import { Pagination, Navigation } from 'swiper/modules'; // Swiperのモジュールをインポート
-import PaginationComponent from '../Pagination'; // ページネーションコンポーネントをインポート
-import Modal from './Modal'; // モーダルコンポーネントをインポート
-import NoteEditor from './NoteEditor'; // NoteEditor コンポーネント
+import PaginationComponent from '../../Pagination'; // ページネーションコンポーネントをインポート
+import Modal from '../Modal'; // モーダルコンポーネントをインポート
+import NoteEditor from '../Item/NoteEditor'; // NoteEditor コンポーネント
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import update from 'immutability-helper';
+import { downloadNotes, moveNote, saveSortOrder } from './notelistFunctions'; // 関数をインポート
 
 interface NoteListProps {
   notes: Note[]; // メモの配列
@@ -74,59 +74,6 @@ const NoteList: React.FC<NoteListProps> = ({
   const endIndex = itemsPerPage === -1 ? sortedNotes.length : startIndex + itemsPerPage;
   const paginatedNotes = sortedNotes.slice(startIndex, endIndex);
 
-  const downloadNotes = () => {
-    const noteContent = sortedNotes.map(note => `Content: ${note.content}\nTimestamp: ${note.video_timestamp}`).join('\n\n');
-    const blob = new Blob([noteContent], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'notes.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
-  // ノートを移動する関数
-  const moveNote = (dragIndex: number, hoverIndex: number) => {
-    const draggedNote = sortedNotes[dragIndex];
-    if (draggedNote.user.id !== currentUser.id) {
-      return; // 他のユーザーのメモは並び替えできないようにする
-    }
-    const newSortedNotes = update(sortedNotes, {
-      $splice: [
-        [dragIndex, 1],
-        [hoverIndex, 0, draggedNote],
-      ],
-    });
-
-    setSortedNotes(newSortedNotes);
-    saveSortOrder(newSortedNotes); // 並び替え後の順序を保存
-  };
-
-  const saveSortOrder = async (sortedNotes: Note[]) => {
-    const sortedNoteIds = sortedNotes.map(note => ({ id: note.id }));
-    const token = localStorage.getItem('token'); // JWTトークンをローカルストレージから取得
-
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/notes/save_sort_order`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // JWTトークンをヘッダーに追加
-        },
-        body: JSON.stringify({ sorted_notes: sortedNoteIds }),
-      });
-
-      if (!response.ok) {
-        throw new Error('順序の保存に失敗しました。');
-      }
-
-      console.log('順序が正常に保存されました。');
-    } catch (error) {
-      console.error('順序の保存中にエラーが発生しました:', error);
-    }
-  };
-
   return (
     <DndProvider backend={HTML5Backend}>
       <div id="notes_list" className="mt-5">
@@ -148,7 +95,7 @@ const NoteList: React.FC<NoteListProps> = ({
                   <option value={-1}>全件表示</option>
                 </select>
               </div>
-              <button onClick={downloadNotes} className="px-4 py-2 btn-outline btn-skyblue border rounded-md w-full md:w-auto">ダウンロード</button>
+              <button onClick={() => downloadNotes(sortedNotes)} className="px-4 py-2 btn-outline btn-skyblue border rounded-md w-full md:w-auto">ダウンロード</button>
             </div>
           </div>
         </div>
@@ -176,7 +123,7 @@ const NoteList: React.FC<NoteListProps> = ({
                         onEditClick={handleEditClick} // 編集クリック時の関数
                         isOwner={isOwner} // メモの所有者かどうか
                         index={index} // メモのインデックス
-                        moveNote={moveNote} // ノートを移動する関数
+                        moveNote={(dragIndex, hoverIndex) => moveNote(sortedNotes, setSortedNotes, dragIndex, hoverIndex, currentUser, saveSortOrder, videoId)} // ノートを移動する関数
                       />
                     </SwiperSlide>
                   );
@@ -207,7 +154,7 @@ const NoteList: React.FC<NoteListProps> = ({
                         onEditClick={handleEditClick} // 編集クリック時の関数
                         isOwner={isOwner} // メモの所有者かどうか
                         index={index} // メモのインデックス
-                        moveNote={moveNote} // ノートを移動する関数
+                        moveNote={(dragIndex, hoverIndex) => moveNote(sortedNotes, setSortedNotes, dragIndex, hoverIndex, currentUser, saveSortOrder, videoId)} // ノートを移動する関数
                       />
                     </div>
                   );
