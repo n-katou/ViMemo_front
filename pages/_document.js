@@ -6,11 +6,11 @@ class MyDocument extends Document {
       <Html lang="ja">
         <Head>
           <meta name="google-site-verification" content="54KaI2JGliTENx8T3AqO8w6ourYnwQMeiszEmIhWsVM" />
-          <link rel="icon" href="/favicon.png" />
+          <link rel="icon" href="/favicon.png" sizes="32x32" />
           <meta name="description" content="ViMemoは、動画視聴中に直感的にメモを追加できるサービスです。" />
           <meta property="og:title" content="ViMemo" />
           <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
-          <meta property="og:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo_v2.png" />
+          <meta property="og:image" content="/pinterest_board_photo_v2.png" />
           <meta property="og:url" content="https://vi-memo.com" />
           <meta property="og:type" content="website" />
           <link rel="canonical" href="https://vi-memo.com" />
