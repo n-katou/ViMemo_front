@@ -40,6 +40,8 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
         <meta property="og:image" content="/pinterest_board_photo_v2.png" />
         <meta property="og:url" content="https://vi-memo.com" />
         <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="/pinterest_board_photo_v2.png" />
         <link rel="canonical" href="https://vi-memo.com" />
       </Head>
       <FlashMessageProvider>
