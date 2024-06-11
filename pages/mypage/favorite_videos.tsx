@@ -122,11 +122,6 @@ const FavoriteVideosPage: React.FC = () => {
       <div className="container mx-auto py-8">
         <h1 className="text-3xl font-bold text-white-900">いいねしたYoutube一覧</h1>
         <div className="flex justify-end mb-8">
-          {/* <select value={sortOption} onChange={handleSortChange} className="form-select text-white bg-gray-800 border-gray-600">
-            <option value="created_at_desc">デフォルト（投稿順）</option>
-            <option value="likes_desc">いいね数順</option>
-            <option value="notes_desc">メモ数順</option>
-          </select> */}
           <select value={itemsPerPage} onChange={handleItemsPerPageChange} className="form-select text-white bg-gray-800 border-gray-600 ml-4">
             <option value={6}>6件表示</option>
             <option value={9}>9件表示</option>
