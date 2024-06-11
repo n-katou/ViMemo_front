@@ -162,3 +162,20 @@ export const favoriteVideoHandleUnlike = async (youtubeVideoId, likeId, jwtToken
     console.error('Unlike exception:', error);
   }
 };
+
+// 並び替えた動画の順序を保存する関数
+export const saveVideoOrder = async (videos, jwtToken) => {
+  const videoIds = videos.map(video => video.id);
+  console.log('JWT Token:', jwtToken); // トークンをログ出力して確認する
+  try {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/favorites/save_order`, { video_ids: videoIds }, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`, // JWTトークンをヘッダーに設定
+        'Content-Type': 'application/json', // JSON形式のリクエストを指定
+      },
+    });
+    console.log('Order saved successfully:', response.data);
+  } catch (error) {
+    console.error('Error saving video order:', error);
+  }
+};
