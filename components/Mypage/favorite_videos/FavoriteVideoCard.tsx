@@ -68,11 +68,27 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
 
   const [, dropRef] = useDrop({
     accept: 'VIDEO_CARD',
-    hover: (draggedItem: { index: number }) => {
-      if (draggedItem.index !== index) {
-        moveVideo(draggedItem.index, index);
-        draggedItem.index = index;
+    hover: (draggedItem: { index: number }, monitor) => {
+      if (!draggedItem || draggedItem.index === index) {
+        return;
       }
+      // マウスの位置を取得
+      const hoverBoundingRect = monitor.getClientOffset();
+      const hoverMiddleY = (hoverBoundingRect!.y - hoverBoundingRect!.y) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = clientOffset!.y - hoverBoundingRect!.y;
+
+      // マウスの位置が要素の中央を越えたかどうかを確認
+      if (draggedItem.index < index && hoverClientY < hoverMiddleY) {
+        return;
+      }
+      if (draggedItem.index > index && hoverClientY > hoverMiddleY) {
+        return;
+      }
+
+      // 要素を移動
+      moveVideo(draggedItem.index, index);
+      draggedItem.index = index;
     },
   });
 
@@ -174,6 +190,5 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
     </div>
   );
 };
-
 
 export default FavoriteVideoCard;
