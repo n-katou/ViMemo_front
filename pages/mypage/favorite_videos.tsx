@@ -41,8 +41,9 @@ const FavoriteVideosPage: React.FC = () => {
     try {
       const result = await fetchFavorites(page, sort, jwtToken, currentUser, ITEMS_PER_PAGE); // APIからお気に入り動画を取得
       if (result) {
-        setVideos(result.videos); // 取得した動画を状態にセット
+        setVideos(result.videos.sort((a: YoutubeVideo, b: YoutubeVideo) => a.sort_order! - b.sort_order!)); // 取得した動画をsort_orderに基づいてソートして状態にセット
         setPagination(result.pagination); // ページネーション情報を状態にセット
+        console.log('Fetched videos:', result.videos); // 追加: フェッチした動画をログ出力
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -54,6 +55,7 @@ const FavoriteVideosPage: React.FC = () => {
       setLoading(false); // ローディングを終了
     }
   };
+
 
   // コンポーネントがマウントされたときにお気に入り動画をフェッチする
   useEffect(() => {
@@ -99,7 +101,10 @@ const FavoriteVideosPage: React.FC = () => {
       ],
     });
     setVideos(newVideos);
-    saveVideoOrder(newVideos, jwtToken); // 並び替えを保存
+    console.log('Video order before saving:', newVideos); // 追加: 新しい順序をログ出力
+    saveVideoOrder(newVideos, jwtToken).then(() => {
+      // 並び替えが保存された後に動画リストを再フェッチする
+    });
   };
 
   if (loading) return <LoadingSpinner loading={loading} />; // ローディング中はスピナーを表示

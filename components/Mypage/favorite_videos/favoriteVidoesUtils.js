@@ -32,6 +32,7 @@ export const fetchFavorites = async (page, sort, jwtToken, currentUser, ITEMS_PE
   }
 };
 
+
 // 特定のyoutubeに対するcurrent_userのいいねステータスをフェッチする関数
 export const fetchUserLikeStatus = async (videoId, jwtToken) => {
   try {
@@ -174,8 +175,9 @@ export const saveVideoOrder = async (videos, jwtToken) => {
         'Content-Type': 'application/json', // JSON形式のリクエストを指定
       },
     });
-    console.log('Order saved successfully:', response.data);
+    console.log('Order saved successfully:', response.data); // 追加: レスポンスのログ出力
   } catch (error) {
     console.error('Error saving video order:', error);
   }
 };
+

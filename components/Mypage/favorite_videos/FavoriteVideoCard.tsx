@@ -175,4 +175,5 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
   );
 };
 
+
 export default FavoriteVideoCard;
