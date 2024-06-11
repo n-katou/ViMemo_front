@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useDrag, useDrop } from 'react-dnd';
 import { YoutubeVideo } from '../../../types/youtubeVideo';
 import { Note } from '../../../types/note';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -19,10 +20,12 @@ interface VideoCardProps {
   handleLikeVideo: (id: number) => void; // いいねクリック時のハンドラ
   handleUnlikeVideo: (id: number, likeId: number | undefined) => void; // いいね解除クリック時のハンドラ
   notes?: Note[]; // 動画に関連するノート
+  index: number; // 動画のインデックス
+  moveVideo: (dragIndex: number, hoverIndex: number) => void; // 動画の位置を入れ替える関数
 }
 
 // VideoCardコンポーネントを定義
-const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVideo, handleUnlikeVideo, notes = [] }) => {
+const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handleLikeVideo, handleUnlikeVideo, notes = [], index, moveVideo }) => {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [noteAnchorEl, setNoteAnchorEl] = useState<HTMLElement | null>(null); // NoteのPopover用
@@ -55,8 +58,32 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
     <RelatedNotesList notes={relatedNotes.slice(0, 3)} playerRef={playerRef} />
   );
 
+  const [{ isDragging }, dragRef] = useDrag({
+    type: 'VIDEO_CARD',
+    item: { index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [, dropRef] = useDrop({
+    accept: 'VIDEO_CARD',
+    hover: (draggedItem: { index: number }) => {
+      if (draggedItem.index !== index) {
+        moveVideo(draggedItem.index, index);
+        draggedItem.index = index;
+      }
+    },
+  });
+
+  // 複数のrefを統合する関数
+  const dragDropRef = (node: HTMLDivElement | null) => {
+    dragRef(node);
+    dropRef(node);
+  };
+
   return (
-    <div key={video.id} className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group">
+    <div ref={dragDropRef} className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group" style={{ opacity: isDragging ? 0.5 : 1 }}>
       <div className="video-container relative"> {/* 動画のアスペクト比を維持するためのコンテナ */}
         <iframe
           className="video absolute top-0 left-0 w-full h-full" // フレームを絶対位置に配置
@@ -147,5 +174,6 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
     </div>
   );
 };
+
 
 export default FavoriteVideoCard;

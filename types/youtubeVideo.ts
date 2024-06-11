@@ -11,6 +11,7 @@ export interface YoutubeVideo {
   notes_count: number;
   likes: Like[];
   notes: Note[];
+  sort_order?: number;  // sort_order プロパティを追加
   formattedDuration?: string;
   liked?: boolean;
   likeId?: number;

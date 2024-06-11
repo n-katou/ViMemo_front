@@ -5,9 +5,11 @@ import { YoutubeVideo } from '../../types/youtubeVideo';
 import PaginationComponent from '../../components/Pagination';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { fetchVideoLikes } from '../../src/api';
-import { fetchFavorites, fetchUserLikeStatus, favoriteVideoHandleLike, favoriteVideoHandleUnlike } from '../../components/Mypage/favorite_videos/favoriteVidoesUtils'; // API操作関数をインポート
-
+import { fetchFavorites, fetchUserLikeStatus, favoriteVideoHandleLike, favoriteVideoHandleUnlike, saveVideoOrder } from '../../components/Mypage/favorite_videos/favoriteVidoesUtils'; // API操作関数をインポート
 import VideoCard from '../../components/Mypage/favorite_videos/FavoriteVideoCard'; // ビデオカードコンポーネントをインポート
+import { DndProvider, useDrag, useDrop } from 'react-dnd'; // react-dndをインポート
+import update from 'immutability-helper'; // update関数をインポート
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const ITEMS_PER_PAGE = 9; // 一ページあたりのアイテム数を定義
 
@@ -39,8 +41,9 @@ const FavoriteVideosPage: React.FC = () => {
     try {
       const result = await fetchFavorites(page, sort, jwtToken, currentUser, ITEMS_PER_PAGE); // APIからお気に入り動画を取得
       if (result) {
-        setVideos(result.videos); // 取得した動画を状態にセット
+        setVideos(result.videos.sort((a: YoutubeVideo, b: YoutubeVideo) => a.sort_order! - b.sort_order!)); // 取得した動画をsort_orderに基づいてソートして状態にセット
         setPagination(result.pagination); // ページネーション情報を状態にセット
+        console.log('Fetched videos:', result.videos); // 追加: フェッチした動画をログ出力
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -52,6 +55,7 @@ const FavoriteVideosPage: React.FC = () => {
       setLoading(false); // ローディングを終了
     }
   };
+
 
   // コンポーネントがマウントされたときにお気に入り動画をフェッチする
   useEffect(() => {
@@ -87,41 +91,61 @@ const FavoriteVideosPage: React.FC = () => {
     updateQueryParams(1, newSortOption);
   };
 
+  // 動画の並び替えを処理する関数
+  const moveVideo = (dragIndex: number, hoverIndex: number) => {
+    const draggedVideo = videos[dragIndex];
+    const newVideos = update(videos, {
+      $splice: [
+        [dragIndex, 1],
+        [hoverIndex, 0, draggedVideo],
+      ],
+    });
+    setVideos(newVideos);
+    console.log('Video order before saving:', newVideos); // 追加: 新しい順序をログ出力
+    saveVideoOrder(newVideos, jwtToken).then(() => {
+      // 並び替えが保存された後に動画リストを再フェッチする
+    });
+  };
+
   if (loading) return <LoadingSpinner loading={loading} />; // ローディング中はスピナーを表示
   if (error) return <p>Error: {error}</p>; // エラーが発生した場合はエラーメッセージを表示
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold text-white-900">いいねしたYoutube一覧</h1>
-      <div className="flex justify-end mb-8">
-        <select value={sortOption} onChange={handleSortChange} className="form-select text-white bg-gray-800 border-gray-600">
-          <option value="created_at_desc">デフォルト（投稿順）</option>
-          <option value="likes_desc">いいね数順</option>
-          <option value="notes_desc">メモ数順</option>
-        </select>
+    <DndProvider backend={HTML5Backend}> {/* DndProviderでラップ */}
+      <div className="container mx-auto py-8">
+        <h1 className="text-3xl font-bold text-white-900">いいねしたYoutube一覧</h1>
+        <div className="flex justify-end mb-8">
+          <select value={sortOption} onChange={handleSortChange} className="form-select text-white bg-gray-800 border-gray-600">
+            <option value="created_at_desc">デフォルト（投稿順）</option>
+            <option value="likes_desc">いいね数順</option>
+            <option value="notes_desc">メモ数順</option>
+          </select>
+        </div>
+        {videos && videos.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {videos.map((video, index) => (
+                <VideoCard
+                  key={video.id}
+                  index={index}
+                  video={video}
+                  currentUser={currentUser}
+                  handleLikeVideo={handleLikeVideo}
+                  handleUnlikeVideo={handleUnlikeVideo}
+                  notes={video.notes} // `notes` プロパティを渡す
+                  moveVideo={moveVideo} // moveVideo関数を渡す
+                />
+              ))}
+            </div>
+            <PaginationComponent
+              count={pagination.total_pages}
+              page={pagination.current_page}
+              onChange={handlePageChange}
+            />
+          </>
+        ) : <p>お気に入りの動画はありません。</p>}
       </div>
-      {videos && videos.length > 0 ? (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {videos.map((video: YoutubeVideo) => (
-              <VideoCard
-                key={video.id}
-                video={video}
-                currentUser={currentUser}
-                handleLikeVideo={handleLikeVideo}
-                handleUnlikeVideo={handleUnlikeVideo}
-                notes={video.notes} // `notes` プロパティを渡す
-              />
-            ))}
-          </div>
-          <PaginationComponent
-            count={pagination.total_pages}
-            page={pagination.current_page}
-            onChange={handlePageChange}
-          />
-        </>
-      ) : <p>お気に入りの動画はありません。</p>}
-    </div>
+    </DndProvider> // DndProviderを閉じる
   );
 };
 
