@@ -11,8 +11,6 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd'; // react-dndをイン
 import update from 'immutability-helper'; // update関数をインポート
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-const ITEMS_PER_PAGE = 9; // 一ページあたりのアイテム数を定義
-
 const FavoriteVideosPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth(); // 現在のユーザーとJWTトークンを取得
   const router = useRouter();
@@ -26,20 +24,21 @@ const FavoriteVideosPage: React.FC = () => {
     prev_page: null, // 前のページ
   });
   const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションの状態を管理
+  const [itemsPerPage, setItemsPerPage] = useState<number>(9); // 一ページあたりのアイテム数を管理
 
   // クエリパラメータを更新する関数
-  const updateQueryParams = (page: number, sort: string) => {
+  const updateQueryParams = (page: number, sort: string, perPage: number) => {
     router.push({
       pathname: router.pathname,
-      query: { page, sort },
+      query: { page, sort, perPage },
     }, undefined, { shallow: true });
   };
 
   // お気に入り動画をフェッチして状態にセットする関数
-  const fetchAndSetFavorites = async (page: number, sort: string) => {
+  const fetchAndSetFavorites = async (page: number, sort: string, perPage: number) => {
     setLoading(true); // ローディングを開始
     try {
-      const result = await fetchFavorites(page, sort, jwtToken, currentUser, ITEMS_PER_PAGE); // APIからお気に入り動画を取得
+      const result = await fetchFavorites(page, sort, jwtToken, currentUser, perPage); // APIからお気に入り動画を取得
       if (result) {
         setVideos(result.videos.sort((a: YoutubeVideo, b: YoutubeVideo) => a.sort_order! - b.sort_order!)); // 取得した動画をsort_orderに基づいてソートして状態にセット
         setPagination(result.pagination); // ページネーション情報を状態にセット
@@ -56,18 +55,19 @@ const FavoriteVideosPage: React.FC = () => {
     }
   };
 
-
   // コンポーネントがマウントされたときにお気に入り動画をフェッチする
   useEffect(() => {
     const page = parseInt(router.query.page as string, 10) || 1;
     const sort = router.query.sort as string || 'created_at_desc';
+    const perPage = parseInt(router.query.perPage as string, 10) || itemsPerPage;
     setPagination((prev) => ({
       ...prev,
       current_page: page,
     }));
     setSortOption(sort);
-    fetchAndSetFavorites(page, sort); // 現在のページとソートオプションに基づいて動画をフェッチ
-  }, [router.query.page, router.query.sort]); // ページまたはソートオプションが変わるたびにフェッチ
+    setItemsPerPage(perPage);
+    fetchAndSetFavorites(page, sort, perPage); // 現在のページとソートオプションに基づいて動画をフェッチ
+  }, [router.query.page, router.query.sort, router.query.perPage]); // ページまたはソートオプションが変わるたびにフェッチ
 
   // いいねを処理する関数
   const handleLikeVideo = async (id: number) => {
@@ -81,14 +81,21 @@ const FavoriteVideosPage: React.FC = () => {
 
   // ページ変更時に呼ばれる関数
   const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
-    updateQueryParams(page, sortOption);
+    updateQueryParams(page, sortOption, itemsPerPage);
   };
 
   // ソートオプション変更時に呼ばれる関数
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newSortOption = event.target.value;
     setSortOption(newSortOption);
-    updateQueryParams(1, newSortOption);
+    updateQueryParams(1, newSortOption, itemsPerPage);
+  };
+
+  // 表示件数変更時に呼ばれる関数
+  const handleItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newItemsPerPage = parseInt(event.target.value, 10);
+    setItemsPerPage(newItemsPerPage);
+    updateQueryParams(1, sortOption, newItemsPerPage);
   };
 
   // 動画の並び替えを処理する関数
@@ -115,10 +122,16 @@ const FavoriteVideosPage: React.FC = () => {
       <div className="container mx-auto py-8">
         <h1 className="text-3xl font-bold text-white-900">いいねしたYoutube一覧</h1>
         <div className="flex justify-end mb-8">
-          <select value={sortOption} onChange={handleSortChange} className="form-select text-white bg-gray-800 border-gray-600">
+          {/* <select value={sortOption} onChange={handleSortChange} className="form-select text-white bg-gray-800 border-gray-600">
             <option value="created_at_desc">デフォルト（投稿順）</option>
             <option value="likes_desc">いいね数順</option>
             <option value="notes_desc">メモ数順</option>
+          </select> */}
+          <select value={itemsPerPage} onChange={handleItemsPerPageChange} className="form-select text-white bg-gray-800 border-gray-600 ml-4">
+            <option value={6}>6件表示</option>
+            <option value={9}>9件表示</option>
+            <option value={12}>12件表示</option>
+            <option value={-1}>全件表示</option>
           </select>
         </div>
         {videos && videos.length > 0 ? (
