@@ -33,14 +33,15 @@ const Header: React.FC = () => {
   }, [setFlashMessage]);
 
   const handleLogout = async () => {
-    if (window.confirm('本当にログアウトしますか？')) {
+    try {
       await logout();
       setDrawerOpen(false); // ドロワーを閉じる
       localStorage.setItem('isMessageDisplayed', 'false');
       router.push('/login?flash_message=ログアウトしました');
+    } catch (error) {
+      console.error('ログアウトに失敗しました:', error);
     }
   };
-
   const toggleDrawer = (open: boolean) => () => {
     setDrawerOpen(open);
   };
