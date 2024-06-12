@@ -23,6 +23,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { CustomUser } from '../../types/user';
 import ThemeToggleButton from '../ThemeToggleButton';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 interface UserDrawerProps {
   drawerOpen: boolean;
@@ -46,6 +48,8 @@ const clearCacheAndCookies = () => {
 
 const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, currentUser, handleLogout }) => {
   const router = useRouter();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   const handleLogoutDialogOpen = () => {
@@ -57,16 +61,10 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
   };
 
   const handleLogoutConfirm = async () => {
-    // ダイアログを閉じる
     handleLogoutDialogClose();
-
-    // キャッシュとCookieをクリア
     clearCacheAndCookies();
-
-    // ログアウトリクエストを非同期に送信
     try {
       await handleLogout();
-      // ログアウト処理が完了した後にリダイレクト
       router.push('/login');
     } catch (error) {
       console.error('ログアウトエラー:', error);
@@ -80,12 +78,12 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
       onClose={toggleDrawer(false)}
       sx={{
         '& .MuiDrawer-paper': {
-          width: '300px',
+          width: isMobile ? '70%' : '400px', // 携帯画面では幅を100%にする
           position: 'fixed',
           right: 0,
           height: '100%',
           zIndex: 1400,
-          marginTop: '75px',
+          marginTop: isMobile ? '50px' : '75px', // 携帯画面ではマージンを0にする
         },
       }}
     >
@@ -98,7 +96,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
       >
         <CloseIcon />
       </IconButton>
-      <List sx={{ marginTop: '48px' }}>
+      <List sx={{ marginTop: isMobile ? '30px' : '30px' }}>
         {currentUser ? (
           <>
             <ListItem>
