@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Drawer from '@mui/material/Drawer';
@@ -15,6 +15,12 @@ import NoteIcon from '@mui/icons-material/Note';
 import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import HomeIcon from '@mui/icons-material/Home';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import { CustomUser } from '../../types/user';
 import ThemeToggleButton from '../ThemeToggleButton';
 
@@ -40,10 +46,19 @@ const clearCacheAndCookies = () => {
 
 const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, currentUser, handleLogout }) => {
   const router = useRouter();
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
-  const handleLogoutClick = async () => {
-    // UIをすぐに更新してDrawerを閉じる
-    toggleDrawer(false)();
+  const handleLogoutDialogOpen = () => {
+    setLogoutDialogOpen(true);
+  };
+
+  const handleLogoutDialogClose = () => {
+    setLogoutDialogOpen(false);
+  };
+
+  const handleLogoutConfirm = async () => {
+    // ダイアログを閉じる
+    handleLogoutDialogClose();
 
     // キャッシュとCookieをクリア
     clearCacheAndCookies();
@@ -161,7 +176,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               </ListItemIcon>
               <Typography>MYメモ</Typography>
             </ListItem>
-            <ListItem button onClick={handleLogoutClick}>
+            <ListItem button onClick={handleLogoutDialogOpen}>
               <ListItemIcon>
                 <ExitToAppIcon />
               </ListItemIcon>
@@ -207,6 +222,24 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
           </>
         )}
       </List>
+
+      <Dialog
+        open={logoutDialogOpen}
+        onClose={handleLogoutDialogClose}
+      >
+        <DialogTitle>ログアウト確認</DialogTitle>
+        <DialogContent>
+          <DialogContentText>本当にログアウトしますか？</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleLogoutDialogClose} color="primary">
+            いいえ
+          </Button>
+          <Button onClick={handleLogoutConfirm} color="primary" autoFocus>
+            はい
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Drawer>
   );
 };
