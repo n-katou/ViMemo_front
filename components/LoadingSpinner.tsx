@@ -7,9 +7,9 @@ interface LoadingSpinnerProps {
   bgColor?: string; // 背景色をカスタマイズできるようにする
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ loading, size = 100, bgColor = 'rgba(0, 0, 0, 0.75)' }) => {
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ loading, size = 100, bgColor = 'rgba(0, 0, 0, 1)' }) => {
   const { resolvedTheme } = useTheme(); // next-themesからテーマを取得
-  const isDarkMode = resolvedTheme !== 'light'; // 初期状態をダークモードとし、ライトモードでない場合にライトモードのスピナーを表示
+  const isDarkMode = resolvedTheme === 'dark';
 
   const spinnerImage = isDarkMode ? '/black_spinner.gif' : '/white_spinner.gif';
 
