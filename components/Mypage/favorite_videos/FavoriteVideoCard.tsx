@@ -10,6 +10,8 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import NoteIcon from '@mui/icons-material/Note';
 import Popover from '@mui/material/Popover';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { formatDuration, videoTimestampToSeconds, playFromTimestamp } from '../../YoutubeShow/youtubeShowUtils'; // 動画の再生時間をフォーマットする関数をインポート
 import RelatedNotesList from '../../YoutubeIndex/RelatedNotesList'; // RelatedNotesListコンポーネントをインポート
 
@@ -29,6 +31,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [noteAnchorEl, setNoteAnchorEl] = useState<HTMLElement | null>(null); // NoteのPopover用
+  const [isCollapsed, setIsCollapsed] = useState(true); // 折りたたみ状態の管理
   const playerRef = useRef<HTMLIFrameElement | null>(null); // Playerの参照を管理
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -45,6 +48,10 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
 
   const handleNotePopoverClose = () => {
     setNoteAnchorEl(null);
+  };
+
+  const handleCollapseToggle = () => {
+    setIsCollapsed(!isCollapsed);
   };
 
   const open = Boolean(anchorEl);
@@ -113,82 +120,91 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
         />
       </div>
       <div className="p-4"> {/* カードのコンテンツ部分 */}
-        <h2
-          className="text-xl font-bold text-blue-600 cursor-pointer hover:underline group-hover:text-blue-700"
-          onClick={() => router.push(`/youtube_videos/${video.id}`)}
-        >
-          {video.title}
-        </h2>
-        <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-        <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-        <div className="flex items-center">
-          <FavoriteIcon className="text-red-500 mr-1" />
-          <p className="text-gray-600">{video.likes_count}</p>
+        <div className="flex justify-between items-center">
+          <h2
+            className="text-xl font-bold text-blue-600 cursor-pointer hover:underline group-hover:text-blue-700"
+            onClick={() => router.push(`/youtube_videos/${video.id}`)}
+          >
+            {video.title}
+          </h2>
+          <IconButton onClick={handleCollapseToggle}>
+            {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+          </IconButton>
         </div>
-        <div
-          className="flex items-center"
-          onMouseEnter={handleNotePopoverOpen}
-          onMouseLeave={handleNotePopoverClose}
-        >
-          <NoteIcon className="text-blue-500 mr-1" />
-          <p className="text-gray-600 flex items-center">
-            {video.notes_count} <SearchIcon className="ml-1" />
-          </p>
-        </div>
-        <Popover
-          id="mouse-over-popover"
-          sx={{
-            pointerEvents: 'none',
-            '.MuiPopover-paper': {
-              width: '600px', // ポップオーバーの幅を600pxに設定
-              marginTop: '10px', // タイトルの下に表示するためにマージンを追加
-              padding: '20px', // 内部の余白を追加
-              borderRadius: '8px', // 角を丸くする
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // シャドウを追加
-            }
-          }}
-          open={noteOpen}
-          anchorEl={noteAnchorEl}
-          anchorOrigin={{
-            vertical: 'bottom', // ポップオーバーをターゲットの下に表示
-            horizontal: 'center', // 水平方向の位置を中央に設定
-          }}
-          transformOrigin={{
-            vertical: 'top', // ポップオーバーの基点を上に設定
-            horizontal: 'center', // 水平方向の基点を中央に設定
-          }}
-          onClose={handleNotePopoverClose}
-          disableRestoreFocus
-        >
-          {renderNoteList()}
-        </Popover>
-        <div className="flex items-center mt-2">
-          {video.liked ? ( // 動画がいいねされている場合
-            <Tooltip title="いいね解除">
-              <div className="flex items-center cursor-pointer" onClick={async () => {
-                if (currentUser && video.likeId) { // 現在のユーザーが存在し、いいねIDがある場合
-                  await handleUnlikeVideo(video.id, video.likeId); // いいね解除の処理を呼び出す
+        {!isCollapsed && (
+          <>
+            <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+            <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
+            <div className="flex items-center">
+              <FavoriteIcon className="text-red-500 mr-1" />
+              <p className="text-gray-600">{video.likes_count}</p>
+            </div>
+            <div
+              className="flex items-center"
+              onMouseEnter={handleNotePopoverOpen}
+              onMouseLeave={handleNotePopoverClose}
+            >
+              <NoteIcon className="text-blue-500 mr-1" />
+              <p className="text-gray-600 flex items-center">
+                {video.notes_count} <SearchIcon className="ml-1" />
+              </p>
+            </div>
+            <Popover
+              id="mouse-over-popover"
+              sx={{
+                pointerEvents: 'none',
+                '.MuiPopover-paper': {
+                  width: '600px', // ポップオーバーの幅を600pxに設定
+                  marginTop: '10px', // タイトルの下に表示するためにマージンを追加
+                  padding: '20px', // 内部の余白を追加
+                  borderRadius: '8px', // 角を丸くする
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // シャドウを追加
                 }
-              }}>
-                <IconButton color="secondary" className="like-button">
-                  <FavoriteIcon style={{ color: 'red' }} /> {/* いいね済みアイコン */}
-                </IconButton>
-                <span style={{ color: 'black' }}>いいね解除</span> {/* いいね解除のラベル */}
-              </div>
-            </Tooltip>
-          ) : ( // 動画がいいねされていない場合
-            <Tooltip title="いいね">
-              <div className="flex items-center cursor-pointer" onClick={async () => {
-                await handleLikeVideo(video.id); // いいねの処理を呼び出す
-              }}>
-                <IconButton color="primary" className="like-button">
-                  <FavoriteBorderIcon /> {/* いいねアイコン */}
-                </IconButton>
-                <span style={{ color: 'black' }}>いいねする</span> {/* いいねのラベル */}
-              </div>
-            </Tooltip>
-          )}
-        </div>
+              }}
+              open={noteOpen}
+              anchorEl={noteAnchorEl}
+              anchorOrigin={{
+                vertical: 'bottom', // ポップオーバーをターゲットの下に表示
+                horizontal: 'center', // 水平方向の位置を中央に設定
+              }}
+              transformOrigin={{
+                vertical: 'top', // ポップオーバーの基点を上に設定
+                horizontal: 'center', // 水平方向の基点を中央に設定
+              }}
+              onClose={handleNotePopoverClose}
+              disableRestoreFocus
+            >
+              {renderNoteList()}
+            </Popover>
+            <div className="flex items-center mt-2">
+              {video.liked ? ( // 動画がいいねされている場合
+                <Tooltip title="いいね解除">
+                  <div className="flex items-center cursor-pointer" onClick={async () => {
+                    if (currentUser && video.likeId) { // 現在のユーザーが存在し、いいねIDがある場合
+                      await handleUnlikeVideo(video.id, video.likeId); // いいね解除の処理を呼び出す
+                    }
+                  }}>
+                    <IconButton color="secondary" className="like-button">
+                      <FavoriteIcon style={{ color: 'red' }} /> {/* いいね済みアイコン */}
+                    </IconButton>
+                    <span style={{ color: 'black' }}>いいね解除</span> {/* いいね解除のラベル */}
+                  </div>
+                </Tooltip>
+              ) : ( // 動画がいいねされていない場合
+                <Tooltip title="いいね">
+                  <div className="flex items-center cursor-pointer" onClick={async () => {
+                    await handleLikeVideo(video.id); // いいねの処理を呼び出す
+                  }}>
+                    <IconButton color="primary" className="like-button">
+                      <FavoriteBorderIcon /> {/* いいねアイコン */}
+                    </IconButton>
+                    <span style={{ color: 'black' }}>いいねする</span> {/* いいねのラベル */}
+                  </div>
+                </Tooltip>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
