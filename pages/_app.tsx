@@ -8,10 +8,12 @@ import "../styles/globals.css";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { FlashMessageProvider, useFlashMessage } from '../context/FlashMessageContext';
 import { useRouter } from 'next/router';
-import { Alert, Container, Box } from '@mui/material';
+import { Alert, Container, Box, Button } from '@mui/material';
 import { analytics } from '../lib/initFirebase';
 import { logEvent } from 'firebase/analytics';
 import { ThemeProvider } from 'next-themes';
+
+import GradientButton from '../styles/GradientButton';
 
 interface AuthenticatedAppProps {
   Component: AppProps['Component'];
@@ -25,6 +27,7 @@ function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppP
   const { currentUser, loading } = useAuth();
   const { setFlashMessage } = useFlashMessage();
   const [showLoginMessage, setShowLoginMessage] = useState(false);
+  const router = useRouter();
 
   const isProtectedRoute = protectedRoutes.includes(appRouter.pathname);
 
@@ -48,6 +51,11 @@ function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppP
           <Alert severity="warning" variant="filled" sx={{ fontSize: '1.25rem', textAlign: 'center' }}>
             ログインが必要です
           </Alert>
+          <Box sx={{ mt: 2 }}>
+            <GradientButton variant="contained" sx={{ fontSize: '1.25rem', textAlign: 'center' }} onClick={() => router.push('/login')}>
+              ログインページへ
+            </GradientButton>
+          </Box>
         </Container>
       </Box>
     );
