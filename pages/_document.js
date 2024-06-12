@@ -6,7 +6,7 @@ class MyDocument extends Document {
       <Html lang="ja">
         <Head>
           <meta name="google-site-verification" content="54KaI2JGliTENx8T3AqO8w6ourYnwQMeiszEmIhWsVM" />
-          <link rel="icon" href="/favicon.png" sizes="32x32" />
+          <link rel="icon" href="/favicon_v2.png" sizes="32x32" />
           <meta name="description" content="ViMemoは、動画視聴中に直感的にメモを追加できるサービスです。" />
           <meta property="og:title" content="ViMemo" />
           <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
