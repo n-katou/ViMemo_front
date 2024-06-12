@@ -103,7 +103,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
       <div className="drag-handle cursor-move bg-gradient-rainbow p-2 flex items-center justify-center">
         <p className="text-white text-sm">ドラッグして順番を変更</p>
       </div>
-      <div className="video-container relative hidden md:block"> {/* 携帯サイズでは非表示にする */}
+      <div className="video-container relative block md:block"> {/* 携帯サイズでも表示にする */}
         <iframe
           className="video absolute top-0 left-0 w-full h-full" // フレームを絶対位置に配置
           src={`https://www.youtube.com/embed/${video.youtube_id}`}
