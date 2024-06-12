@@ -168,6 +168,19 @@ const tab = (isLightTheme: boolean): TabContent[] => [
             />
           </div>
         </div>
+        <div className="note-container">
+          <div className="note-item mt-4">
+            <p style={{ marginBottom: '30px', color: isLightTheme ? 'black' : 'white' }}>
+              いいねした動画の並び替えが可能です。（PC推奨）
+            </p>
+            <img
+              src="https://i.gyazo.com/8a7a554f6b5874980bd2dfe200abc36d.gif"
+              width="100%"
+              alt="プレイリスト"
+              style={{ display: 'block', margin: 'auto' }}
+            />
+          </div>
+        </div>
       </div>
     ),
   },
