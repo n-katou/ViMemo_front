@@ -24,7 +24,7 @@ const FavoriteVideosPage: React.FC = () => {
     prev_page: null, // 前のページ
   });
   const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションの状態を管理
-  const [itemsPerPage, setItemsPerPage] = useState<number>(9); // 一ページあたりのアイテム数を管理
+  const [itemsPerPage, setItemsPerPage] = useState<number>(10); // 一ページあたりのアイテム数を管理
 
   // クエリパラメータを更新する関数
   const updateQueryParams = (page: number, sort: string, perPage: number) => {
@@ -123,9 +123,9 @@ const FavoriteVideosPage: React.FC = () => {
         <h1 className="text-3xl font-bold text-white-900">いいねしたYoutube一覧</h1>
         <div className="flex justify-end mb-8">
           <select value={itemsPerPage} onChange={handleItemsPerPageChange} className="form-select text-white bg-gray-800 border-gray-600 ml-4">
-            <option value={6}>6件表示</option>
-            <option value={9}>9件表示</option>
-            <option value={12}>12件表示</option>
+            <option value={10}>10件表示</option>
+            <option value={15}>15件表示</option>
+            <option value={20}>20件表示</option>
             <option value={-1}>全件表示</option>
           </select>
         </div>
