@@ -7,6 +7,8 @@ import { WavyBackground } from '../components/Root/WavyBackground';
 import { useTheme } from 'next-themes';
 import GradientButton from '../styles/GradientButton';
 import tab from '../components/Root/tab';
+import Image from 'next/image';
+import pinterestBoardPhoto from '../public/pinterest_board_photo.png'; // 画像のパスを指定
 
 const RootPage = () => {
   const router = useRouter();
@@ -54,69 +56,81 @@ const RootPage = () => {
   if (!mounted) return null;
 
   return (
-    <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]} waveOpacity={0.3}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-          backgroundColor: 'transparent',
-          padding: 0,
-          margin: 0,
-        }}
-      >
-        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '100px' }}>
-          <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? 'black' : 'white', boxShadow: 'none' }}>
-            <Typography
-              variant="h1"
-              gutterBottom
-              sx={{
-                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-                margin: 0,
-                color: isLightTheme ? 'black' : 'white'
-              }}
-            >
-              ViMemo（ビメモ）は、動画視聴中に直感的にメモを追加できるサービスです
-            </Typography>
-            <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? 'black' : 'white' }}>機能説明</Typography>
-            <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? 'black' : 'white' }}>
-              <Select value={activeTab} onChange={handleTabChange} fullWidth sx={{ color: isLightTheme ? 'black' : 'white' }}>
-                {tabs.map((tab) => (
-                  <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
-                    {tab.title}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Box sx={{ marginTop: 2 }}>
-                {activeTabContent}
+    <div style={{ position: 'relative', zIndex: 0 }}>
+      <Box display="flex" justifyContent="center" mb={4} sx={{ width: '100%', position: 'relative', zIndex: 2 }}>
+        <Image
+          src={pinterestBoardPhoto}
+          alt="Pinterest Board"
+          layout="responsive"
+          width={1500}
+          height={500} // 高さを増やす
+          style={{ width: '100%', height: 'auto', maxHeight: '650px' }}
+        />
+      </Box>
+      <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]} waveOpacity={0.3} style={{ position: 'relative', zIndex: 1 }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            backgroundColor: 'transparent',
+            padding: 0,
+            margin: 0,
+          }}
+        >
+          <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '100px' }}>
+            <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? 'black' : 'white', boxShadow: 'none' }}>
+              <Typography
+                variant="h1"
+                gutterBottom
+                sx={{
+                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+                  margin: 0,
+                  color: isLightTheme ? 'black' : 'white'
+                }}
+              >
+                ViMemo（ビメモ）は、動画視聴中に直感的にメモを追加できるサービスです
+              </Typography>
+              <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? 'black' : 'white' }}>機能説明</Typography>
+              <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? 'black' : 'white' }}>
+                <Select value={activeTab} onChange={handleTabChange} fullWidth sx={{ color: isLightTheme ? 'black' : 'white' }}>
+                  {tabs.map((tab) => (
+                    <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
+                      {tab.title}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Box sx={{ marginTop: 2 }}>
+                  {activeTabContent}
+                </Box>
               </Box>
-            </Box>
-            <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8, color: isLightTheme ? 'black' : 'white' }}>
-              <Tabs tabs={tabs} />
-            </Box>
-            {!currentUser && (
-              <Box display="flex" justifyContent="center">
-                <GradientButton
-                  onClick={() => router.push('/login')}
-                  variant="contained"
-                  sx={{
-                    marginTop: 4,
-                    marginBottom: 4,
-                  }}
-                >
-                  ログインページへ
-                </GradientButton>
+              <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8, color: isLightTheme ? 'black' : 'white' }}>
+                <Tabs tabs={tabs} />
               </Box>
-            )}
+              {!currentUser && (
+                <Box display="flex" justifyContent="center">
+                  <GradientButton
+                    onClick={() => router.push('/login')}
+                    variant="contained"
+                    sx={{
+                      marginTop: 4,
+                      marginBottom: 4,
+                    }}
+                  >
+                    ログインページへ
+                  </GradientButton>
+                </Box>
+              )}
+            </div>
           </div>
+          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+            <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
         </div>
-        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-          <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
-      </div>
-    </WavyBackground>
+      </WavyBackground>
+    </div>
   );
 };
 
