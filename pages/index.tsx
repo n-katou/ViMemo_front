@@ -57,15 +57,42 @@ const RootPage = () => {
 
   return (
     <div style={{ position: 'relative', zIndex: 0 }}>
-      <Box display="flex" justifyContent="center" mb={4} sx={{ width: '100%', position: 'relative', zIndex: 2 }}>
-        <Image
-          src={pinterestBoardPhoto}
-          alt="Pinterest Board"
-          layout="responsive"
-          width={1500}
-          height={500} // 高さを増やす
-          style={{ width: '100%', height: 'auto', maxHeight: '650px' }}
-        />
+      <Box
+        display="flex"
+        justifyContent="center"
+        mb={4}
+        sx={{
+          width: '100%',
+          maxWidth: '800px',
+          margin: '0 auto',
+          position: 'relative',
+          marginTop: '70px',
+          zIndex: 2,
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+          borderRadius: '8px',
+          overflow: 'hidden',
+        }}
+      >
+        <Box
+          className="wave-animation"
+          sx={{
+            width: '100%',
+            height: 'auto',
+          }}
+        >
+          <Image
+            src={pinterestBoardPhoto}
+            alt="Pinterest Board"
+            layout="responsive"
+            width={1500}
+            height={500}
+            style={{
+              width: '100%',
+              height: 'auto',
+              objectFit: 'contain',
+            }}
+          />
+        </Box>
       </Box>
       <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]} waveOpacity={0.3} style={{ position: 'relative', zIndex: 1 }}>
         <div
