@@ -192,9 +192,6 @@ const tab = (isLightTheme: boolean): TabContent[] => [
         <p style={{ color: '#e879f9', fontWeight: 'bold', marginBottom: '30px', textAlign: 'center' }}>
           このセクションは会員限定です
         </p>
-        <p style={{ color: '#38bdf8', fontWeight: 'bold', marginBottom: '10px', textAlign: 'center' }}>
-          照明マンの使用イメージ
-        </p>
         <div className="note-container">
           <div className="note-item mt-4">
             <p style={{ marginBottom: '30px', color: isLightTheme ? 'black' : 'white' }}>
@@ -208,7 +205,7 @@ const tab = (isLightTheme: boolean): TabContent[] => [
             />
           </div>
           <div className="note-item mt-4">
-            <p style={{ marginBottom: '60px', color: isLightTheme ? 'black' : 'white' }}>
+            <p style={{ marginBottom: '30px', color: isLightTheme ? 'black' : 'white' }}>
               表示しているメモリストでダウンロード可能です。
             </p>
             <img
@@ -219,9 +216,6 @@ const tab = (isLightTheme: boolean): TabContent[] => [
             />
           </div>
           <div className="note-item mt-4">
-            <p style={{ color: '#38bdf8', fontWeight: 'bold', textAlign: 'center', marginBottom: '30px' }}>
-              全ユーザーの使用イメージ
-            </p>
             <p style={{ marginBottom: '30px', color: isLightTheme ? 'black' : 'white' }}>
               Xへお気に入り場面のシェアが可能です。
             </p>
