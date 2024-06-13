@@ -8,6 +8,7 @@ import { styled } from '@mui/system';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';  // LoadingSpinner をインポート
 import GradientButton from '../styles/GradientButton';
+import { WavyBackground } from '../components/Root/WavyBackground'; // WavyBackground コンポーネントのインポート
 
 const GoogleButton = styled(Button)({
   backgroundColor: '#4285F4',
@@ -107,104 +108,108 @@ const LoginPage = () => {
   }
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-      <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
-        <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
-          ログイン
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="メールアドレス"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            required
-          />
-          <TextField
-            label="パスワード"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            required
-          />
-          <GradientButton
-            type="submit"
-            disabled={loading}
-            variant="contained"
-            fullWidth
-            className="bg-gradient-rainbow"
-            sx={{
-              marginTop: '20px',
-              color: '#fff'
-            }}
+    <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]} waveOpacity={0.3} style={{ position: 'relative', zIndex: 1 }}>
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
+          <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
+            ログイン
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="メールアドレス"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              required
+            />
+            <TextField
+              label="パスワード"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              required
+            />
+            <GradientButton
+              type="submit"
+              disabled={loading}
+              variant="contained"
+              fullWidth
+              className="bg-gradient-rainbow"
+              sx={{
+                marginTop: '20px',
+                color: '#fff'
+              }}
+            >
+              {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'ログイン'}
+            </GradientButton>
+          </form>
+          <div className="text-center mt-4">
+            <Link href="/register" passHref>
+              <Typography variant="body2" color="primary" style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+                新規登録はこちら
+              </Typography>
+            </Link>
+          </div>
+          <div className="flex justify-center mt-4">
+            <GoogleButton
+              variant="contained"
+              onClick={handleGoogleLogin}
+              disabled={loading}
+              startIcon={
+                !loading && (
+                  <img
+                    src="https://developers.google.com/identity/images/g-logo.png"
+                    alt="Google logo"
+                    style={{ width: 20, height: 20 }}
+                  />
+                )
+              }
+            >
+              {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Googleでログイン'}
+            </GoogleButton>
+          </div>
+          <div className="text-center mt-4">
+            <Link href="/password_reset" passHref>
+              <Typography variant="body2" color="primary" style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+                パスワードを忘れた方はこちら
+              </Typography>
+            </Link>
+          </div>
+        </Card>
+        {error && (
+          <Snackbar
+            open={!!error}
+            autoHideDuration={6000}
+            onClose={() => setError('')}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 画面中央上部に表示
+            sx={{ marginTop: '84px', zIndex: 1400 }} // マージンを追加して位置調整
           >
-            {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'ログイン'}
-          </GradientButton>
-        </form>
-        <div className="text-center mt-4">
-          <Link href="/register" passHref>
-            <Typography variant="body2" color="primary" style={{ textDecoration: 'underline', cursor: 'pointer' }}>
-              新規登録はこちら
-            </Typography>
-          </Link>
-        </div>
-        <div className="flex justify-center mt-4">
-          <GoogleButton
-            variant="contained"
-            onClick={handleGoogleLogin}
-            disabled={loading}
-            startIcon={
-              !loading && (
-                <img
-                  src="https://developers.google.com/identity/images/g-logo.png"
-                  alt="Google logo"
-                  style={{ width: 20, height: 20 }}
-                />
-              )
-            }
+            <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
+              {error}
+            </Alert>
+          </Snackbar>
+        )}
+        {successMessage && (
+          <Snackbar
+            open={!!successMessage}
+            autoHideDuration={6000}
+            onClose={() => setSuccessMessage('')}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 画面中央上部に表示
+            sx={{ marginTop: '84px', zIndex: 1400 }} // マージンを追加して位置調整
           >
-            {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Googleでログイン'}
-          </GoogleButton>
-        </div>
-        <div className="text-center mt-4">
-          <Link href="/password_reset" passHref>
-            <Typography variant="body2" color="primary" style={{ textDecoration: 'underline', cursor: 'pointer' }}>
-              パスワードを忘れた方はこちら
-            </Typography>
-          </Link>
-        </div>
-      </Card>
-      {error && (
-        <Snackbar
-          open={!!error}
-          autoHideDuration={6000}
-          onClose={() => setError('')}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 画面中央上部に表示
-        >
-          <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
-            {error}
-          </Alert>
-        </Snackbar>
-      )}
-      {successMessage && (
-        <Snackbar
-          open={!!successMessage}
-          autoHideDuration={6000}
-          onClose={() => setSuccessMessage('')}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 画面中央上部に表示
-        >
-          <Alert onClose={() => setSuccessMessage('')} severity="success" sx={{ width: '100%' }}>
-            {successMessage}
-          </Alert>
-        </Snackbar>
-      )}
-    </Box>
+            <Alert onClose={() => setSuccessMessage('')} severity="success" sx={{ width: '100%' }}>
+              {successMessage}
+            </Alert>
+          </Snackbar>
+        )}
+      </Box>
+    </WavyBackground>
   );
 };
 

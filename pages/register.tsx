@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import GradientButton from '../styles/GradientButton';
-
+import { WavyBackground } from '../components/Root/WavyBackground'; // WavyBackground コンポーネントのインポート
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -109,76 +109,84 @@ const RegisterPage = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-      <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
-        <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
-          ユーザー登録
-        </Typography>
-        <form onSubmit={handleRegister}>
-          <TextField
-            label="名前"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            error={!!validationErrors.find(error => error.includes('名前'))}
-            helperText={validationErrors.find(error => error.includes('名前'))}
-          />
-          <TextField
-            label="メールアドレス"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            error={!!validationErrors.find(error => error.includes('メールアドレス'))}
-            helperText={validationErrors.find(error => error.includes('メールアドレス'))}
-          />
-          <TextField
-            label="パスワード"
-            variant="outlined"
-            type="password"
-            fullWidth
-            margin="normal"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            error={!!validationErrors.find(error => error.includes('パスワード'))}
-            helperText={validationErrors.find(error => error.includes('パスワード'))}
-          />
-          <TextField
-            label="パスワード確認"
-            variant="outlined"
-            type="password"
-            fullWidth
-            margin="normal"
-            value={passwordConfirmation}
-            onChange={e => setPasswordConfirmation(e.target.value)}
-            error={!!validationErrors.find(error => error.includes('パスワード確認'))}
-            helperText={validationErrors.find(error => error.includes('パスワード確認'))}
-          />
-          <GradientButton
-            type="submit"
-            variant="contained"
-            fullWidth
-            style={{ marginTop: '20px', color: '#fff' }}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : '登録'}
-          </GradientButton>
-        </form>
-      </Card>
-      <Snackbar open={!!error || validationErrors.length > 0} autoHideDuration={6000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          {error}
-          <ul>
-            {validationErrors.map((err, index) => (
-              <li key={index}>{err}</li>
-            ))}
-          </ul>
-        </Alert>
-      </Snackbar>
-    </Box>
+    <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]} waveOpacity={0.3} style={{ position: 'relative', zIndex: 1 }}>
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
+          <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
+            ユーザー登録
+          </Typography>
+          <form onSubmit={handleRegister}>
+            <TextField
+              label="名前"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              error={!!validationErrors.find(error => error.includes('名前'))}
+              helperText={validationErrors.find(error => error.includes('名前'))}
+            />
+            <TextField
+              label="メールアドレス"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              error={!!validationErrors.find(error => error.includes('メールアドレス'))}
+              helperText={validationErrors.find(error => error.includes('メールアドレス'))}
+            />
+            <TextField
+              label="パスワード"
+              variant="outlined"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              error={!!validationErrors.find(error => error.includes('パスワード'))}
+              helperText={validationErrors.find(error => error.includes('パスワード'))}
+            />
+            <TextField
+              label="パスワード確認"
+              variant="outlined"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={passwordConfirmation}
+              onChange={e => setPasswordConfirmation(e.target.value)}
+              error={!!validationErrors.find(error => error.includes('パスワード確認'))}
+              helperText={validationErrors.find(error => error.includes('パスワード確認'))}
+            />
+            <GradientButton
+              type="submit"
+              variant="contained"
+              fullWidth
+              style={{ marginTop: '20px', color: '#fff' }}
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : '登録'}
+            </GradientButton>
+          </form>
+        </Card>
+        <Snackbar
+          open={!!error || validationErrors.length > 0}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // 底部中央に設定
+          sx={{ marginTop: '84px', zIndex: 1400 }} // マージンを追加して位置調整
+        >
+          <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+            {error}
+            <ul>
+              {validationErrors.map((err, index) => (
+                <li key={index}>{err}</li>
+              ))}
+            </ul>
+          </Alert>
+        </Snackbar>
+      </Box>
+    </WavyBackground>
   );
 }
 
