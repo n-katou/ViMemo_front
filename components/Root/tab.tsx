@@ -106,6 +106,17 @@ const tab = (isLightTheme: boolean): TabContent[] => [
             />
           </div>
           <div className="note-item mt-4">
+            <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              ・メモの移動を、ご自身のメモに限定して可能です。（PCのみ）
+            </p>
+            <img
+              src="https://i.gyazo.com/5f2639d40a12aa11b08e69aeb56e353c.gif"
+              width="100%"
+              alt="メモ移動"
+              style={{ display: 'block', margin: 'auto' }}
+            />
+          </div>
+          <div className="note-item mt-4">
             <p style={{ color: '#22eec5', fontWeight: 'bold', textAlign: 'center', marginBottom: '30px' }}>
               非会員でも利用可能な機能です
             </p>
@@ -116,6 +127,17 @@ const tab = (isLightTheme: boolean): TabContent[] => [
               src="https://i.gyazo.com/9aef836642f1cfa60a35f809c098bffb.gif"
               width="100%"
               alt="タイムスタンプ"
+              style={{ display: 'block', margin: 'auto' }}
+            />
+          </div>
+          <div className="note-item mt-4">
+            <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              ・表示しているメモリストでダウンロード可能です。
+            </p>
+            <img
+              src="https://i.gyazo.com/a63c81ec8f56498300b95970c5b855a1.gif"
+              width="100%"
+              alt="ダウンロード"
               style={{ display: 'block', margin: 'auto' }}
             />
           </div>
@@ -185,25 +207,14 @@ const tab = (isLightTheme: boolean): TabContent[] => [
     ),
   },
   {
-    title: "使用イメージ",
+    title: "活用方法",
     value: "play",
     content: (
       <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
         <p style={{ color: '#e879f9', fontWeight: 'bold', textAlign: 'center' }}>
-          このセクションは会員限定です（一部除く）
+          このセクションは会員限定です
         </p>
         <div className="note-container">
-          <div className="note-item mt-4">
-            <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-              ・メモの移動は、ご自身のメモに限定して可能です。（PCのみ）
-            </p>
-            <img
-              src="https://i.gyazo.com/5f2639d40a12aa11b08e69aeb56e353c.gif"
-              width="100%"
-              alt="メモ移動"
-              style={{ display: 'block', margin: 'auto' }}
-            />
-          </div>
           <div className="note-item mt-4">
             <p style={{ color: isLightTheme ? 'black' : 'white' }}>
               ・ご自身のメモに限定して、Xへお気に入り場面のシェアが可能です。
@@ -223,20 +234,6 @@ const tab = (isLightTheme: boolean): TabContent[] => [
               src="https://i.gyazo.com/946ae5cc9aa7311b6aec0ea25fcb23c0.gif"
               width="100%"
               alt="メモの管理"
-              style={{ display: 'block', margin: 'auto' }}
-            />
-          </div>
-          <div className="note-item mt-4">
-            <p style={{ color: '#22eec5', fontWeight: 'bold', textAlign: 'center', marginBottom: '20px' }}>
-              非会員でも利用可能な機能です
-            </p>
-            <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-              ・表示しているメモリストでダウンロード可能です。
-            </p>
-            <img
-              src="https://i.gyazo.com/a63c81ec8f56498300b95970c5b855a1.gif"
-              width="100%"
-              alt="ダウンロード"
               style={{ display: 'block', margin: 'auto' }}
             />
           </div>
