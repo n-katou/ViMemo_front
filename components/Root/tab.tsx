@@ -228,7 +228,7 @@ const tab = (isLightTheme: boolean): TabContent[] => [
           </div>
           <div className="note-item mt-4">
             <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-              ・自分で書いたメモを管理し、活用することができます。
+              ・自分で書いたメモを動画単位で管理できるので、一覧から簡単に管理することができます。
             </p>
             <img
               src="https://i.gyazo.com/946ae5cc9aa7311b6aec0ea25fcb23c0.gif"
