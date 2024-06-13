@@ -120,7 +120,26 @@ const RootPage = () => {
               </Typography>
               <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? 'black' : 'white' }}>機能説明</Typography>
               <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? 'black' : 'white' }}>
-                <Select value={activeTab} onChange={handleTabChange} fullWidth sx={{ color: isLightTheme ? 'black' : 'white' }}>
+                <Select
+                  value={activeTab}
+                  onChange={handleTabChange}
+                  fullWidth
+                  sx={{
+                    color: isLightTheme ? 'black' : 'white',
+                    '.MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'gray',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'gray',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'gray',
+                    },
+                    '.MuiSvgIcon-root': {
+                      color: isLightTheme ? 'black' : 'white',
+                    },
+                  }}
+                >
                   {tabs.map((tab) => (
                     <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
                       {tab.title}
