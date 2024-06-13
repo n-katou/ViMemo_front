@@ -76,7 +76,7 @@ const RootPage = () => {
                 color: isLightTheme ? 'black' : 'white'
               }}
             >
-              ViMemoは、動画視聴中に直感的にメモを追加できるサービスです
+              ViMemo（ビメモ）は、動画視聴中に直感的にメモを追加できるサービスです
             </Typography>
             <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? 'black' : 'white' }}>機能説明</Typography>
             <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? 'black' : 'white' }}>
