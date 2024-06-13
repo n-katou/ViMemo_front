@@ -119,7 +119,7 @@ const FavoriteVideosPage: React.FC = () => {
 
   return (
     <DndProvider backend={HTML5Backend}> {/* DndProviderでラップ */}
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4">
         <h1 className="text-3xl font-bold text-white-900">いいねしたYoutube一覧</h1>
         <div className="flex justify-end mb-8">
           <select value={itemsPerPage} onChange={handleItemsPerPageChange} className="form-select text-white bg-gray-800 border-gray-600 ml-4">
