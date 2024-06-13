@@ -3,6 +3,7 @@ import axios from 'axios';
 import { TextField, Card, Typography, Snackbar, Alert, Box } from '@mui/material';
 import { useRouter } from 'next/router';
 import GradientButton from '../styles/GradientButton';
+import { WavyBackground } from '../components/Root/WavyBackground'; // WavyBackground コンポーネントのインポート
 
 const PasswordResetForm = () => {
   const [email, setEmail] = useState('');
@@ -28,57 +29,61 @@ const PasswordResetForm = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-      <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
-        <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
-          パスワードリセット
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="メールアドレス"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            required
-          />
-          <GradientButton
-            type="submit"
-            variant="contained"
-            fullWidth
-            style={{ marginTop: '20px', color: '#fff' }}
-          >
-            送信
-          </GradientButton>
-        </form>
-        {message && (
-          <Snackbar
-            open={!!message}
-            autoHideDuration={6000}
-            onClose={() => setMessage('')}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          >
-            <Alert onClose={() => setMessage('')} severity="success" sx={{ width: '100%' }}>
-              {message}
-            </Alert>
-          </Snackbar>
-        )}
-        {error && (
-          <Snackbar
-            open={!!error}
-            autoHideDuration={6000}
-            onClose={() => setError('')}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          >
-            <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
-              {error}
-            </Alert>
-          </Snackbar>
-        )}
-      </Card>
-    </Box>
+    <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]} waveOpacity={0.3} style={{ position: 'relative', zIndex: 1 }}>
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Card style={{ padding: '20px', maxWidth: 400, width: '100%' }}>
+          <Typography variant="h5" component="h2" style={{ textAlign: 'center', marginBottom: '20px' }}>
+            パスワードリセット
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="メールアドレス"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              required
+            />
+            <GradientButton
+              type="submit"
+              variant="contained"
+              fullWidth
+              style={{ marginTop: '20px', color: '#fff' }}
+            >
+              送信
+            </GradientButton>
+          </form>
+          {message && (
+            <Snackbar
+              open={!!message}
+              autoHideDuration={6000}
+              onClose={() => setMessage('')}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              sx={{ marginTop: '84px', zIndex: 1400 }} // マージンを追加して位置調整
+            >
+              <Alert onClose={() => setMessage('')} severity="success" sx={{ width: '100%' }}>
+                {message}
+              </Alert>
+            </Snackbar>
+          )}
+          {error && (
+            <Snackbar
+              open={!!error}
+              autoHideDuration={6000}
+              onClose={() => setError('')}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              sx={{ marginTop: '84px', zIndex: 1400 }} // マージンを追加して位置調整
+            >
+              <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
+                {error}
+              </Alert>
+            </Snackbar>
+          )}
+        </Card>
+      </Box>
+    </WavyBackground>
   );
 };
 
