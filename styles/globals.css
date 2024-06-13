@@ -462,22 +462,38 @@ input[type="text"] {
 
   0%,
   100% {
-    transform: scale(1) rotate(0deg);
+    transform: scale(1) rotate(0deg) translate(0, 0);
+  }
+
+  12.5% {
+    transform: scale(1.05) rotate(3deg) translate(10px, -10px);
   }
 
   25% {
-    transform: scale(1.05) rotate(3deg);
+    transform: scale(1.1) rotate(0deg) translate(-10px, 10px);
+  }
+
+  37.5% {
+    transform: scale(1.05) rotate(-3deg) translate(10px, 10px);
   }
 
   50% {
-    transform: scale(1.1) rotate(0deg);
+    transform: scale(1) rotate(0deg) translate(-10px, -10px);
+  }
+
+  62.5% {
+    transform: scale(1.05) rotate(3deg) translate(15px, -15px);
   }
 
   75% {
-    transform: scale(1.05) rotate(-3deg);
+    transform: scale(1.1) rotate(0deg) translate(-15px, 15px);
+  }
+
+  87.5% {
+    transform: scale(1.05) rotate(-3deg) translate(15px, 15px);
   }
 }
 
 .wave-animation {
-  animation: wave 8s infinite ease-in-out;
+  animation: wave 20s infinite linear;
 }
