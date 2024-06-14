@@ -92,7 +92,7 @@ const Header: React.FC = () => {
           </span>
           <div style={{ flexGrow: 1 }} /> {/* ダミーのスペースを追加 */}
           <div className="flex items-center">
-            <IconButton onClick={toggleSearch} sx={{ color: resolvedTheme === 'light' ? 'black' : 'white' }}>
+            <IconButton onClick={toggleSearch} sx={{ color: '#818cf8', fontFamily: 'Volkhov', }}>
               <SearchIcon />
               <Typography variant="body1" sx={{ marginLeft: 1, color: resolvedTheme === 'light' ? 'black' : 'white' }}>
                 検索
@@ -105,8 +105,8 @@ const Header: React.FC = () => {
           </div>
           <Button
             onClick={navigateToYoutubeVideos}
-            startIcon={<YouTubeIcon sx={{ color: resolvedTheme === 'light' ? 'black' : 'white' }} />}
-            sx={{ color: resolvedTheme === 'light' ? 'black' : 'white' }}
+            startIcon={<YouTubeIcon sx={{ color: '#818cf8', fontFamily: 'Volkhov' }} />}
+            sx={{ marginLeft: 1, color: resolvedTheme === 'light' ? 'black' : 'white' }}
           >
             <Typography variant="body1">
               YouTube
@@ -119,7 +119,7 @@ const Header: React.FC = () => {
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={toggleDrawer(true)}
-              sx={{ color: resolvedTheme === 'light' ? 'black' : 'white' }}
+              sx={{ color: '#818cf8' }}
             >
               <AccountCircle />
             </IconButton>

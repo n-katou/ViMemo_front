@@ -115,7 +115,7 @@ const EditProfile = () => {
             <form onSubmit={handleSubmit}>
               <Box display="flex" flexDirection="column" gap="16px">
                 <Box display="flex" flexDirection="column" gap="8px">
-                  <label className="label text-gray-700">アバター</label>
+                  <label className="label text-gray-700" style={{ color: 'black' }}>アバター</label>
                   <Box display="flex" alignItems="center" gap="16px">
                     {user?.avatar_url && (
                       <img
@@ -132,6 +132,7 @@ const EditProfile = () => {
                       className="input-file p-2 border border-gray-300 rounded-lg"
                       accept="image/*"
                       onChange={handleFileChange}
+                      style={{ color: 'black' }}
                     />
                   </Box>
                 </Box>
@@ -143,6 +144,12 @@ const EditProfile = () => {
                   onChange={(e) => setName(e.target.value)}
                   error={!!validationErrors.find(error => error.includes('名前'))}
                   helperText={validationErrors.find(error => error.includes('名前'))}
+                  InputProps={{
+                    style: { color: 'black' },
+                  }}
+                  InputLabelProps={{
+                    style: { color: 'black' }
+                  }}
                 />
                 <Button
                   type="submit"
@@ -182,32 +189,6 @@ const EditProfile = () => {
           </Alert>
         </Snackbar>
       </WavyBackground>
-      <style jsx>{`
-        .flex-wrap {
-          flex-wrap: wrap;
-        }
-        .input-file {
-          flex: 1 1 auto;
-          min-width: 0;
-        }
-        @media (max-width: 640px) {
-          .input-file {
-            width: 100%;
-            margin-top: 0.5rem;
-          }
-        }
-        @keyframes gradientAnimation {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-      `}</style>
     </div>
   );
 };
