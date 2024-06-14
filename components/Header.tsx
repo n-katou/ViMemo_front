@@ -94,7 +94,7 @@ const Header: React.FC = () => {
           <div className="flex items-center">
             <IconButton onClick={toggleSearch} sx={{ color: '#818cf8', fontFamily: 'Volkhov', }}>
               <SearchIcon />
-              <Typography variant="body1" sx={{ marginLeft: 1, color: resolvedTheme === 'light' ? 'black' : 'white' }}>
+              <Typography variant="body1" sx={{ marginLeft: 1, color: '#c084fc' }}>
                 検索
               </Typography>
             </IconButton>
@@ -106,7 +106,7 @@ const Header: React.FC = () => {
           <Button
             onClick={navigateToYoutubeVideos}
             startIcon={<YouTubeIcon sx={{ color: '#818cf8', fontFamily: 'Volkhov' }} />}
-            sx={{ marginLeft: 1, color: resolvedTheme === 'light' ? 'black' : 'white' }}
+            sx={{ marginLeft: 1, color: '#c084fc' }}
           >
             <Typography variant="body1">
               YouTube
