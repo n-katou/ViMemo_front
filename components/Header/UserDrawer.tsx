@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Drawer from '@mui/material/Drawer';
@@ -25,7 +25,7 @@ import { CustomUser } from '../../types/user';
 import ThemeToggleButton from '../ThemeToggleButton';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface UserDrawerProps {
   drawerOpen: boolean;
@@ -52,6 +52,20 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(drawerOpen);
+
+  useEffect(() => {
+    if (drawerOpen) {
+      setIsVisible(true);
+    }
+  }, [drawerOpen]);
+
+  const handleDrawerClose = () => {
+    setIsVisible(false);
+    setTimeout(() => {
+      toggleDrawer(false)();
+    }, 500); // アニメーションの持続時間と一致させる
+  };
 
   const handleLogoutDialogOpen = () => {
     setLogoutDialogOpen(true);
@@ -72,138 +86,128 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
     }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, x: 50 },
-    visible: { opacity: 1, x: 0 }
-  };
-
   const drawerVariants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: { opacity: 1, scale: 1 }
   };
 
   return (
-    <motion.div
-      initial="hidden"
-      animate={drawerOpen ? 'visible' : 'hidden'}
-      variants={drawerVariants}
-      transition={{ duration: 0.5 }}
-      style={{
-        position: 'fixed',
-        top: 0,
-        right: drawerOpen ? 0 : '-100%',
-        height: '100%',
-        zIndex: 1400,
-        width: isMobile ? '70%' : '400px',
-        marginTop: isMobile ? '50px' : '75px',
-        backgroundColor: theme.palette.background.default,
-        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-        color: 'black'
-      }}
-    >
-      <IconButton
-        edge="start"
-        color="inherit"
-        onClick={toggleDrawer(false)}
-        aria-label="close"
-        sx={{ position: 'absolute', top: 8, left: 8 }}
-      >
-        <CloseIcon />
-      </IconButton>
-      <List sx={{ marginTop: isMobile ? '30px' : '30px' }}>
-        {currentUser ? (
-          <>
-            <motion.div initial="hidden" animate="visible" variants={itemVariants} transition={{ delay: 0.1 }}>
-              <ListItem>
-                <Typography variant="subtitle1" sx={{ ml: 2 }}>
-                  こんにちは、{currentUser.name}さん
-                </Typography>
-              </ListItem>
-            </motion.div>
-            {[
-              { text: 'ホーム', href: '/', icon: <HomeIcon /> },
-              { text: 'マイページ', href: '/mypage/dashboard', icon: <PersonIcon /> },
-              { text: 'いいねした動画', href: '/mypage/favorite_videos', icon: <FavoriteIcon /> },
-              { text: 'いいねしたメモ', href: '/mypage/favorite_notes', icon: <NoteIcon /> },
-              { text: 'MYメモ', href: '/mypage/my_notes', icon: <EditIcon /> },
-            ].map((item, index) => (
-              <motion.div key={item.text} initial="hidden" animate="visible" variants={itemVariants} transition={{ delay: 0.1 * (index + 2) }}>
-                <ListItem
-                  button
-                  onClick={toggleDrawer(false)}
-                  component={Link}
-                  href={item.href}
-                  sx={{ backgroundColor: router.pathname === item.href ? 'rgba(0, 0, 0, 0.1)' : 'inherit' }}
-                >
-                  <ListItemIcon>
-                    {item.icon}
-                  </ListItemIcon>
-                  <Typography>{item.text}</Typography>
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          variants={drawerVariants}
+          transition={{ duration: 0.5 }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            height: '100%',
+            zIndex: 1400,
+            width: isMobile ? '70%' : '400px',
+            marginTop: isMobile ? '50px' : '75px',
+            backgroundColor: theme.palette.background.default,
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+            color: 'black'
+          }}
+        >
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={handleDrawerClose}
+            aria-label="close"
+            sx={{ position: 'absolute', top: 8, left: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <List sx={{ marginTop: isMobile ? '30px' : '30px' }}>
+            {currentUser ? (
+              <>
+                <ListItem>
+                  <Typography variant="subtitle1" sx={{ ml: 2 }}>
+                    こんにちは、{currentUser.name}さん
+                  </Typography>
                 </ListItem>
-              </motion.div>
-            ))}
-            <motion.div initial="hidden" animate="visible" variants={itemVariants} transition={{ delay: 0.7 }}>
-              <ListItem button onClick={handleLogoutDialogOpen}>
-                <ListItemIcon>
-                  <ExitToAppIcon />
-                </ListItemIcon>
-                <Typography>ログアウト</Typography>
-              </ListItem>
-            </motion.div>
-            <motion.div initial="hidden" animate="visible" variants={itemVariants} transition={{ delay: 0.8 }}>
-              <ListItem>
-                <ThemeToggleButton />
-              </ListItem>
-            </motion.div>
-          </>
-        ) : (
-          <>
-            {[
-              { text: 'ホーム', href: '/', icon: <HomeIcon /> },
-              { text: 'ログインページ', href: '/login', icon: <LoginIcon /> },
-            ].map((item, index) => (
-              <motion.div key={item.text} initial="hidden" animate="visible" variants={itemVariants} transition={{ delay: 0.1 * index }}>
-                <ListItem
-                  button
-                  onClick={toggleDrawer(false)}
-                  component={Link}
-                  href={item.href}
-                  sx={{ backgroundColor: router.pathname === item.href ? 'rgba(0, 0, 0, 0.1)' : 'inherit' }}
-                >
+                {[
+                  { text: 'ホーム', href: '/', icon: <HomeIcon /> },
+                  { text: 'マイページ', href: '/mypage/dashboard', icon: <PersonIcon /> },
+                  { text: 'いいねした動画', href: '/mypage/favorite_videos', icon: <FavoriteIcon /> },
+                  { text: 'いいねしたメモ', href: '/mypage/favorite_notes', icon: <NoteIcon /> },
+                  { text: 'MYメモ', href: '/mypage/my_notes', icon: <EditIcon /> },
+                ].map((item) => (
+                  <ListItem
+                    button
+                    key={item.text}
+                    onClick={toggleDrawer(false)}
+                    component={Link}
+                    href={item.href}
+                    sx={{ backgroundColor: router.pathname === item.href ? 'rgba(0, 0, 0, 0.1)' : 'inherit' }}
+                  >
+                    <ListItemIcon>
+                      {item.icon}
+                    </ListItemIcon>
+                    <Typography>{item.text}</Typography>
+                  </ListItem>
+                ))}
+                <ListItem button onClick={handleLogoutDialogOpen}>
                   <ListItemIcon>
-                    {item.icon}
+                    <ExitToAppIcon />
                   </ListItemIcon>
-                  <Typography>{item.text}</Typography>
+                  <Typography>ログアウト</Typography>
                 </ListItem>
-              </motion.div>
-            ))}
-            <motion.div initial="hidden" animate="visible" variants={itemVariants} transition={{ delay: 0.3 }}>
-              <ListItem>
-                <ThemeToggleButton />
-              </ListItem>
-            </motion.div>
-          </>
-        )}
-      </List>
+                <ListItem>
+                  <ThemeToggleButton />
+                </ListItem>
+              </>
+            ) : (
+              <>
+                {[
+                  { text: 'ホーム', href: '/', icon: <HomeIcon /> },
+                  { text: 'ログインページ', href: '/login', icon: <LoginIcon /> },
+                ].map((item) => (
+                  <ListItem
+                    button
+                    key={item.text}
+                    onClick={toggleDrawer(false)}
+                    component={Link}
+                    href={item.href}
+                    sx={{ backgroundColor: router.pathname === item.href ? 'rgba(0, 0, 0, 0.1)' : 'inherit' }}
+                  >
+                    <ListItemIcon>
+                      {item.icon}
+                    </ListItemIcon>
+                    <Typography>{item.text}</Typography>
+                  </ListItem>
+                ))}
+                <ListItem>
+                  <ThemeToggleButton />
+                </ListItem>
+              </>
+            )}
+          </List>
 
-      <Dialog
-        open={logoutDialogOpen}
-        onClose={handleLogoutDialogClose}
-      >
-        <DialogTitle>ログアウト確認</DialogTitle>
-        <DialogContent>
-          <DialogContentText>本当にログアウトしますか？</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleLogoutDialogClose} color="primary">
-            いいえ
-          </Button>
-          <Button onClick={handleLogoutConfirm} color="primary" autoFocus>
-            はい
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </motion.div>
+          <Dialog
+            open={logoutDialogOpen}
+            onClose={handleLogoutDialogClose}
+          >
+            <DialogTitle>ログアウト確認</DialogTitle>
+            <DialogContent>
+              <DialogContentText>本当にログアウトしますか？</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleLogoutDialogClose} color="primary">
+                いいえ
+              </Button>
+              <Button onClick={handleLogoutConfirm} color="primary" autoFocus>
+                はい
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
