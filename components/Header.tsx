@@ -42,8 +42,9 @@ const Header: React.FC = () => {
       console.error('ログアウトに失敗しました:', error);
     }
   };
-  const toggleDrawer = (open: boolean) => () => {
-    setDrawerOpen(open);
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
   };
 
   const toggleSearch = () => {
@@ -118,7 +119,7 @@ const Header: React.FC = () => {
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              onClick={toggleDrawer(true)}
+              onClick={toggleDrawer}
               sx={{ color: '#818cf8' }}
             >
               <AccountCircle />
