@@ -14,6 +14,7 @@ import { logEvent } from 'firebase/analytics';
 import { ThemeProvider } from 'next-themes';
 
 import GradientButton from '../styles/GradientButton';
+import { WavyBackground } from '../components/Root/WavyBackground';
 
 interface AuthenticatedAppProps {
   Component: AppProps['Component'];
@@ -46,18 +47,20 @@ function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppP
 
   if (isProtectedRoute && !currentUser) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Container maxWidth="sm">
-          <Alert severity="warning" variant="filled" sx={{ fontSize: '1.25rem', textAlign: 'center' }}>
-            ログインが必要です
-          </Alert>
-          <Box sx={{ mt: 2 }}>
-            <GradientButton variant="contained" sx={{ fontSize: '1.25rem', textAlign: 'center' }} onClick={() => router.push('/login')}>
-              ログインページへ
-            </GradientButton>
-          </Box>
-        </Container>
-      </Box>
+      <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]} waveOpacity={0.3} style={{ position: 'relative', zIndex: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+          <Container maxWidth="sm">
+            <Alert severity="warning" variant="filled" sx={{ fontSize: '1.25rem', textAlign: 'center' }}>
+              ログインが必要です
+            </Alert>
+            <Box sx={{ mt: 2 }}>
+              <GradientButton variant="contained" sx={{ fontSize: '1.25rem', textAlign: 'center' }} onClick={() => router.push('/login')}>
+                ログインページへ
+              </GradientButton>
+            </Box>
+          </Container>
+        </Box>
+      </WavyBackground>
     );
   }
 
