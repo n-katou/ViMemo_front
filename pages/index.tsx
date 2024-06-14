@@ -74,7 +74,7 @@ const RootPage = () => {
         }}
       >
         <Box
-          className="wave-animation"
+          className="gradient-overlay relative w-full h-auto overflow-hidden"
           sx={{
             width: '100%',
             height: 'auto',
