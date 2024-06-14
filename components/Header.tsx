@@ -30,7 +30,17 @@ const Header: React.FC = () => {
     if (isMessageDisplayed === 'true') {
       setFlashMessage('ロード中です。');
     }
-  }, [setFlashMessage]);
+
+    const handleRouteChange = () => {
+      setDrawerOpen(false); // ページ遷移時にドロワーを閉じる
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [setFlashMessage, router.events]);
 
   const handleLogout = async () => {
     try {
@@ -42,8 +52,9 @@ const Header: React.FC = () => {
       console.error('ログアウトに失敗しました:', error);
     }
   };
-  const toggleDrawer = (open: boolean) => () => {
-    setDrawerOpen(open);
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
   };
 
   const toggleSearch = () => {
@@ -94,7 +105,7 @@ const Header: React.FC = () => {
           <div className="flex items-center">
             <IconButton onClick={toggleSearch} sx={{ color: '#818cf8', fontFamily: 'Volkhov', }}>
               <SearchIcon />
-              <Typography variant="body1" sx={{ marginLeft: 1, color: resolvedTheme === 'light' ? 'black' : 'white' }}>
+              <Typography variant="body1" sx={{ marginLeft: 1, color: '#c084fc' }}>
                 検索
               </Typography>
             </IconButton>
@@ -106,7 +117,7 @@ const Header: React.FC = () => {
           <Button
             onClick={navigateToYoutubeVideos}
             startIcon={<YouTubeIcon sx={{ color: '#818cf8', fontFamily: 'Volkhov' }} />}
-            sx={{ marginLeft: 1, color: resolvedTheme === 'light' ? 'black' : 'white' }}
+            sx={{ marginLeft: 1, color: '#c084fc' }}
           >
             <Typography variant="body1">
               YouTube
@@ -118,7 +129,7 @@ const Header: React.FC = () => {
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              onClick={toggleDrawer(true)}
+              onClick={toggleDrawer}
               sx={{ color: '#818cf8' }}
             >
               <AccountCircle />

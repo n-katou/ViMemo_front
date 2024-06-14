@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Drawer from '@mui/material/Drawer';
@@ -25,10 +25,12 @@ import { CustomUser } from '../../types/user';
 import ThemeToggleButton from '../ThemeToggleButton';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import { motion, AnimatePresence } from 'framer-motion';
+import Backdrop from '@mui/material/Backdrop';
 
 interface UserDrawerProps {
   drawerOpen: boolean;
-  toggleDrawer: (open: boolean) => () => void;
+  toggleDrawer: () => void;
   currentUser: CustomUser | null;
   handleLogout: () => void;
 }
@@ -50,7 +52,12 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // PC用のメディアクエリ
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+
+  const handleDrawerClose = () => {
+    toggleDrawer();
+  };
 
   const handleLogoutDialogOpen = () => {
     setLogoutDialogOpen(true);
@@ -71,174 +78,130 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
     }
   };
 
-  return (
-    <Drawer
-      anchor="right"
-      open={drawerOpen}
-      onClose={toggleDrawer(false)}
-      sx={{
-        '& .MuiDrawer-paper': {
-          width: isMobile ? '70%' : '400px', // 携帯画面では幅を100%にする
-          position: 'fixed',
-          right: 0,
-          height: '100%',
-          zIndex: 1400,
-          marginTop: isMobile ? '50px' : '75px', // 携帯画面ではマージンを0にする
-        },
-      }}
-    >
-      <IconButton
-        edge="start"
-        color="inherit"
-        onClick={toggleDrawer(false)}
-        aria-label="close"
-        sx={{ position: 'absolute', top: 8, left: 8 }}
-      >
-        <CloseIcon />
-      </IconButton>
-      <List sx={{ marginTop: isMobile ? '30px' : '30px' }}>
-        {currentUser ? (
-          <>
-            <ListItem>
-              <Typography variant="subtitle1" sx={{ ml: 2 }}>
-                こんにちは、{currentUser.name}さん
-              </Typography>
-            </ListItem>
-            <ListItem
-              button
-              onClick={toggleDrawer(false)}
-              component={Link}
-              href="/"
-              sx={{
-                backgroundColor: router.pathname === '/' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
-              }}
-            >
-              <ListItemIcon>
-                <HomeIcon />
-              </ListItemIcon>
-              <Typography>ホーム</Typography>
-            </ListItem>
-            <ListItem
-              button
-              onClick={toggleDrawer(false)}
-              component={Link}
-              href="/mypage/dashboard"
-              sx={{
-                backgroundColor: router.pathname === '/mypage/dashboard' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
-              }}
-            >
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <Typography>マイページ</Typography>
-            </ListItem>
-            <ListItem
-              button
-              onClick={toggleDrawer(false)}
-              component={Link}
-              href="/mypage/favorite_videos"
-              sx={{
-                backgroundColor: router.pathname === '/mypage/favorite_videos' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
-              }}
-            >
-              <ListItemIcon>
-                <FavoriteIcon />
-              </ListItemIcon>
-              <Typography>いいねした動画</Typography>
-            </ListItem>
-            <ListItem
-              button
-              onClick={toggleDrawer(false)}
-              component={Link}
-              href="/mypage/favorite_notes"
-              sx={{
-                backgroundColor: router.pathname === '/mypage/favorite_notes' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
-              }}
-            >
-              <ListItemIcon>
-                <NoteIcon />
-              </ListItemIcon>
-              <Typography>いいねしたメモ</Typography>
-            </ListItem>
-            <ListItem
-              button
-              onClick={toggleDrawer(false)}
-              component={Link}
-              href="/mypage/my_notes"
-              sx={{
-                backgroundColor: router.pathname === '/mypage/my_notes' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
-              }}
-            >
-              <ListItemIcon>
-                <EditIcon />
-              </ListItemIcon>
-              <Typography>MYメモ</Typography>
-            </ListItem>
-            <ListItem button onClick={handleLogoutDialogOpen}>
-              <ListItemIcon>
-                <ExitToAppIcon />
-              </ListItemIcon>
-              <Typography>ログアウト</Typography>
-            </ListItem>
-            <ListItem>
-              <ThemeToggleButton />
-            </ListItem>
-          </>
-        ) : (
-          <>
-            <ListItem
-              button
-              onClick={toggleDrawer(false)}
-              component={Link}
-              href="/"
-              sx={{
-                backgroundColor: router.pathname === '/' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
-              }}
-            >
-              <ListItemIcon>
-                <HomeIcon />
-              </ListItemIcon>
-              <Typography>ホーム</Typography>
-            </ListItem>
-            <ListItem
-              button
-              onClick={toggleDrawer(false)}
-              component={Link}
-              href="/login"
-              sx={{
-                backgroundColor: router.pathname === '/login' ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
-              }}
-            >
-              <ListItemIcon>
-                <LoginIcon />
-              </ListItemIcon>
-              <Typography>ログインページ</Typography>
-            </ListItem>
-            <ListItem>
-              <ThemeToggleButton />
-            </ListItem>
-          </>
-        )}
-      </List>
+  const drawerVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1 }
+  };
 
-      <Dialog
-        open={logoutDialogOpen}
-        onClose={handleLogoutDialogClose}
-      >
-        <DialogTitle>ログアウト確認</DialogTitle>
-        <DialogContent>
-          <DialogContentText>本当にログアウトしますか？</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleLogoutDialogClose} color="primary">
-            いいえ
-          </Button>
-          <Button onClick={handleLogoutConfirm} color="primary" autoFocus>
-            はい
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Drawer>
+  return (
+    <>
+      <Backdrop open={drawerOpen} onClick={handleDrawerClose} sx={{ zIndex: 1300 }} />
+      <AnimatePresence>
+        {drawerOpen && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={drawerVariants}
+            transition={{ duration: 0.5 }}
+            className="bg-gradient-rainbow"
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              height: '100%',
+              zIndex: 1400,
+              width: isMobile ? '70%' : isDesktop ? '40%' : '50%',
+              marginTop: isMobile ? '50px' : '75px',
+              color: 'white'
+            }}
+          >
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={handleDrawerClose}
+              aria-label="close"
+              sx={{ position: 'absolute', top: 8, left: 8, color: 'white' }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <List sx={{ marginTop: isMobile ? '30px' : '30px' }}>
+              {currentUser ? (
+                <>
+                  <ListItem>
+                    <Typography variant="subtitle1" sx={{ ml: 2, color: 'white' }}>
+                      こんにちは、{currentUser.name}さん
+                    </Typography>
+                  </ListItem>
+                  {[
+                    { text: 'ホーム', href: '/', icon: <HomeIcon /> },
+                    { text: 'マイページ', href: '/mypage/dashboard', icon: <PersonIcon /> },
+                    { text: 'いいねした動画', href: '/mypage/favorite_videos', icon: <FavoriteIcon /> },
+                    { text: 'いいねしたメモ', href: '/mypage/favorite_notes', icon: <NoteIcon /> },
+                    { text: 'MYメモ', href: '/mypage/my_notes', icon: <EditIcon /> },
+                  ].map((item) => (
+                    <ListItem
+                      button
+                      key={item.text}
+                      onClick={handleDrawerClose}
+                      component={Link}
+                      href={item.href}
+                      sx={{ backgroundColor: router.pathname === item.href ? 'rgba(0, 0, 0, 0.1)' : 'inherit' }}
+                    >
+                      <ListItemIcon sx={{ color: 'white' }}>
+                        {item.icon}
+                      </ListItemIcon>
+                      <Typography sx={{ color: 'white' }}>{item.text}</Typography>
+                    </ListItem>
+                  ))}
+                  <ListItem button onClick={handleLogoutDialogOpen}>
+                    <ListItemIcon sx={{ color: 'white' }}>
+                      <ExitToAppIcon />
+                    </ListItemIcon>
+                    <Typography sx={{ color: 'white' }}>ログアウト</Typography>
+                  </ListItem>
+                  <ListItem>
+                    <ThemeToggleButton />
+                  </ListItem>
+                </>
+              ) : (
+                <>
+                  {[
+                    { text: 'ホーム', href: '/', icon: <HomeIcon /> },
+                    { text: 'ログインページ', href: '/login', icon: <LoginIcon /> },
+                  ].map((item) => (
+                    <ListItem
+                      button
+                      key={item.text}
+                      onClick={handleDrawerClose}
+                      component={Link}
+                      href={item.href}
+                      sx={{ backgroundColor: router.pathname === item.href ? 'rgba(0, 0, 0, 0.1)' : 'inherit' }}
+                    >
+                      <ListItemIcon sx={{ color: 'white' }}>
+                        {item.icon}
+                      </ListItemIcon>
+                      <Typography sx={{ color: 'white' }}>{item.text}</Typography>
+                    </ListItem>
+                  ))}
+                  <ListItem>
+                    <ThemeToggleButton />
+                  </ListItem>
+                </>
+              )}
+            </List>
+
+            <Dialog
+              open={logoutDialogOpen}
+              onClose={handleLogoutDialogClose}
+            >
+              <DialogTitle sx={{ color: 'black' }}>ログアウト確認</DialogTitle>
+              <DialogContent>
+                <DialogContentText sx={{ color: 'black' }}>本当にログアウトしますか？</DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleLogoutDialogClose} color="primary">
+                  いいえ
+                </Button>
+                <Button onClick={handleLogoutConfirm} color="primary" autoFocus>
+                  はい
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
