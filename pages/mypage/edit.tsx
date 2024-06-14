@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { useFlashMessage } from '../../context/FlashMessageContext';
 import { CustomUser } from '../../types/user';
+import { WavyBackground } from '../../components/Root/WavyBackground';
+import { Box, TextField, Button, Typography, Snackbar, Alert } from '@mui/material';
 
 const EditProfile = () => {
   const { currentUser, jwtToken } = useAuth();
@@ -13,6 +15,9 @@ const EditProfile = () => {
   const [avatar, setAvatar] = useState<File | null>(null);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -22,16 +27,35 @@ const EditProfile = () => {
     }
   }, [currentUser]);
 
+  const validateInputs = () => {
+    let valid = true;
+    const errors: string[] = [];
+
+    if (name.trim() === '') {
+      errors.push('名前を入力してください。');
+      valid = false;
+    }
+
+    setValidationErrors(errors);
+    return valid;
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setAvatar(e.target.files[0]);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!validateInputs()) {
+      return;
+    }
 
     if (!user) return;
+
+    setLoading(true);
+    setError('');
 
     const formData = new FormData();
     formData.append('user[name]', name);
@@ -56,49 +80,108 @@ const EditProfile = () => {
     } catch (error) {
       console.error('Error updating profile:', error);
       setFlashMessage('プロフィールの更新中にエラーが発生しました。');
+      if (axios.isAxiosError(error)) {
+        setError('プロフィールの更新に失敗しました。');
+        if (error.response?.data.errors) {
+          setValidationErrors(error.response.data.errors);
+        } else {
+          setError(error.response?.data.error || 'プロフィールの更新に失敗しました。');
+        }
+      } else {
+        setError('プロフィールの更新に失敗しました。');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setError('');
+    setValidationErrors([]);
+  };
+
   return (
-    <div className="container mx-auto p-5">
-      <div className="flex justify-center">
-        <div className="w-full lg:w-2/3 xl:w-1/2 bg-white shadow-md rounded-lg p-8">
-          <h1 className="text-center text-3xl font-bold mb-6 text-gray-800">プロフィール編集</h1>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="form-control">
-              <label className="label text-gray-700">アバター</label>
-              <div className="flex flex-wrap items-center">
-                {user?.avatar_url && (
-                  <img
-                    src={user.avatar_url}
-                    className="rounded-full border border-gray-300"
-                    id="preview"
-                    alt="Avatar"
-                    width="80"
-                    height="80"
-                  />
-                )}
-                <input
-                  type="file"
-                  className="input-file p-2 border border-gray-300 rounded-lg"
-                  accept="image/*"
-                  onChange={handleFileChange}
+    <div style={{ position: 'relative', minHeight: '100vh' }}>
+      <WavyBackground
+        colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]}
+        waveOpacity={0.3}
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+      >
+        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+          <Box className="w-full lg:w-2/3 xl:w-1/2 bg-white shadow-md rounded-lg p-8">
+            <Typography variant="h5" component="h2" style={{ color: 'black', textAlign: 'center', marginBottom: '20px' }}>
+              プロフィール編集
+            </Typography>
+            <form onSubmit={handleSubmit}>
+              <Box display="flex" flexDirection="column" gap="16px">
+                <Box display="flex" flexDirection="column" gap="8px">
+                  <label className="label text-gray-700">アバター</label>
+                  <Box display="flex" alignItems="center" gap="16px">
+                    {user?.avatar_url && (
+                      <img
+                        src={user.avatar_url}
+                        className="rounded-full border border-gray-300"
+                        id="preview"
+                        alt="Avatar"
+                        width="80"
+                        height="80"
+                      />
+                    )}
+                    <input
+                      type="file"
+                      className="input-file p-2 border border-gray-300 rounded-lg"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </Box>
+                </Box>
+                <TextField
+                  label="名前"
+                  variant="outlined"
+                  fullWidth
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  error={!!validationErrors.find(error => error.includes('名前'))}
+                  helperText={validationErrors.find(error => error.includes('名前'))}
                 />
-              </div>
-            </div>
-            <div className="form-control">
-              <label className="label text-gray-700">名前</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="input input-bordered w-full p-2 border border-gray-300 rounded-lg"
-              />
-            </div>
-            <button type="submit" className="btn btn-primary w-full py-2 mt-4 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200">更新</button>
-          </form>
-        </div>
-      </div>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  disabled={loading}
+                  sx={{
+                    background: 'linear-gradient(90deg, #e879f9, #38bdf8, #818cf8, #22eec5, #c084fc)',
+                    backgroundSize: '200% 200%',
+                    animation: 'gradientAnimation 10s ease infinite',
+                    color: 'white',
+                    '&:hover': {
+                      background: 'linear-gradient(90deg, #e879f9, #38bdf8, #818cf8, #22eec5, #c084fc)',
+                    },
+                  }}
+                >
+                  {loading ? '更新中...' : '更新'}
+                </Button>
+              </Box>
+            </form>
+          </Box>
+        </Box>
+        <Snackbar
+          open={!!error || validationErrors.length > 0}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          sx={{ marginTop: '84px', zIndex: 1400 }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+            {error}
+            <ul>
+              {validationErrors.map((err, index) => (
+                <li key={index}>{err}</li>
+              ))}
+            </ul>
+          </Alert>
+        </Snackbar>
+      </WavyBackground>
       <style jsx>{`
         .flex-wrap {
           flex-wrap: wrap;
@@ -111,6 +194,17 @@ const EditProfile = () => {
           .input-file {
             width: 100%;
             margin-top: 0.5rem;
+          }
+        }
+        @keyframes gradientAnimation {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
           }
         }
       `}</style>

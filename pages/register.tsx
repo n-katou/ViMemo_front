@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { TextField, Card, Typography, Snackbar, Alert, Box, CircularProgress } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import GradientButton from '../styles/GradientButton';
-import { WavyBackground } from '../components/Root/WavyBackground'; // WavyBackground コンポーネントのインポート
+import { WavyBackground } from '../components/Root/WavyBackground';
 
 const RegisterPage = () => {
   const router = useRouter();
