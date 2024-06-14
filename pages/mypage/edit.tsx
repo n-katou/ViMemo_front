@@ -115,7 +115,7 @@ const EditProfile = () => {
             <form onSubmit={handleSubmit}>
               <Box display="flex" flexDirection="column" gap="16px">
                 <Box display="flex" flexDirection="column" gap="8px">
-                  <label className="label text-gray-700">アバター</label>
+                  <label className="label text-gray-700" style={{ color: 'black' }}>アバター</label>
                   <Box display="flex" alignItems="center" gap="16px">
                     {user?.avatar_url && (
                       <img
@@ -132,6 +132,7 @@ const EditProfile = () => {
                       className="input-file p-2 border border-gray-300 rounded-lg"
                       accept="image/*"
                       onChange={handleFileChange}
+                      style={{ color: 'black' }}
                     />
                   </Box>
                 </Box>
@@ -143,6 +144,12 @@ const EditProfile = () => {
                   onChange={(e) => setName(e.target.value)}
                   error={!!validationErrors.find(error => error.includes('名前'))}
                   helperText={validationErrors.find(error => error.includes('名前'))}
+                  InputProps={{
+                    style: { color: 'black' },
+                  }}
+                  InputLabelProps={{
+                    style: { color: 'black' }
+                  }}
                 />
                 <Button
                   type="submit"
