@@ -485,3 +485,33 @@ input[type="text"] {
     background-position: 100% 50%;
   }
 }
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.input-file {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .input-file {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
