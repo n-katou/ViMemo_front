@@ -52,6 +52,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // PC用のメディアクエリ
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(drawerOpen);
 
@@ -109,7 +110,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               right: 0,
               height: '100%',
               zIndex: 1400,
-              width: isMobile ? '70%' : '400px',
+              width: isMobile ? '70%' : isDesktop ? '40%' : '50%',
               marginTop: isMobile ? '50px' : '75px',
               backgroundColor: theme.palette.background.default,
               boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
