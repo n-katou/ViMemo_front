@@ -54,19 +54,9 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // PC用のメディアクエリ
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(drawerOpen);
-
-  useEffect(() => {
-    if (drawerOpen) {
-      setIsVisible(true);
-    }
-  }, [drawerOpen]);
 
   const handleDrawerClose = () => {
-    setIsVisible(false);
-    setTimeout(() => {
-      toggleDrawer();
-    }, 500); // アニメーションの持続時間と一致させる
+    toggleDrawer();
   };
 
   const handleLogoutDialogOpen = () => {
@@ -97,13 +87,14 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
     <>
       <Backdrop open={drawerOpen} onClick={handleDrawerClose} sx={{ zIndex: 1300 }} />
       <AnimatePresence>
-        {isVisible && (
+        {drawerOpen && (
           <motion.div
             initial="hidden"
             animate="visible"
             exit="hidden"
             variants={drawerVariants}
             transition={{ duration: 0.5 }}
+            className="bg-gradient-rainbow"
             style={{
               position: 'fixed',
               top: 0,
@@ -112,9 +103,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               zIndex: 1400,
               width: isMobile ? '70%' : isDesktop ? '40%' : '50%',
               marginTop: isMobile ? '50px' : '75px',
-              backgroundColor: theme.palette.background.default,
-              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-              color: 'black'
+              color: 'white'
             }}
           >
             <IconButton
@@ -122,7 +111,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               color="inherit"
               onClick={handleDrawerClose}
               aria-label="close"
-              sx={{ position: 'absolute', top: 8, left: 8 }}
+              sx={{ position: 'absolute', top: 8, left: 8, color: 'white' }}
             >
               <CloseIcon />
             </IconButton>
@@ -130,7 +119,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               {currentUser ? (
                 <>
                   <ListItem>
-                    <Typography variant="subtitle1" sx={{ ml: 2 }}>
+                    <Typography variant="subtitle1" sx={{ ml: 2, color: 'white' }}>
                       こんにちは、{currentUser.name}さん
                     </Typography>
                   </ListItem>
@@ -144,22 +133,22 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
                     <ListItem
                       button
                       key={item.text}
-                      onClick={toggleDrawer}
+                      onClick={handleDrawerClose}
                       component={Link}
                       href={item.href}
                       sx={{ backgroundColor: router.pathname === item.href ? 'rgba(0, 0, 0, 0.1)' : 'inherit' }}
                     >
-                      <ListItemIcon>
+                      <ListItemIcon sx={{ color: 'white' }}>
                         {item.icon}
                       </ListItemIcon>
-                      <Typography>{item.text}</Typography>
+                      <Typography sx={{ color: 'white' }}>{item.text}</Typography>
                     </ListItem>
                   ))}
                   <ListItem button onClick={handleLogoutDialogOpen}>
-                    <ListItemIcon>
+                    <ListItemIcon sx={{ color: 'white' }}>
                       <ExitToAppIcon />
                     </ListItemIcon>
-                    <Typography>ログアウト</Typography>
+                    <Typography sx={{ color: 'white' }}>ログアウト</Typography>
                   </ListItem>
                   <ListItem>
                     <ThemeToggleButton />
@@ -174,15 +163,15 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
                     <ListItem
                       button
                       key={item.text}
-                      onClick={toggleDrawer}
+                      onClick={handleDrawerClose}
                       component={Link}
                       href={item.href}
                       sx={{ backgroundColor: router.pathname === item.href ? 'rgba(0, 0, 0, 0.1)' : 'inherit' }}
                     >
-                      <ListItemIcon>
+                      <ListItemIcon sx={{ color: 'white' }}>
                         {item.icon}
                       </ListItemIcon>
-                      <Typography>{item.text}</Typography>
+                      <Typography sx={{ color: 'white' }}>{item.text}</Typography>
                     </ListItem>
                   ))}
                   <ListItem>
@@ -196,9 +185,9 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               open={logoutDialogOpen}
               onClose={handleLogoutDialogClose}
             >
-              <DialogTitle>ログアウト確認</DialogTitle>
+              <DialogTitle sx={{ color: 'black' }}>ログアウト確認</DialogTitle>
               <DialogContent>
-                <DialogContentText>本当にログアウトしますか？</DialogContentText>
+                <DialogContentText sx={{ color: 'black' }}>本当にログアウトしますか？</DialogContentText>
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleLogoutDialogClose} color="primary">

@@ -14,7 +14,6 @@ import { useFlashMessage } from '../context/FlashMessageContext'; // フラッ�
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import YouTubeIcon from '@mui/icons-material/YouTube';
-import CloseIcon from '@mui/icons-material/Close'; // Closeアイコンのインポート
 
 const Header: React.FC = () => {
   const { currentUser, logout } = useAuth();
@@ -31,7 +30,17 @@ const Header: React.FC = () => {
     if (isMessageDisplayed === 'true') {
       setFlashMessage('ロード中です。');
     }
-  }, [setFlashMessage]);
+
+    const handleRouteChange = () => {
+      setDrawerOpen(false); // ページ遷移時にドロワーを閉じる
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [setFlashMessage, router.events]);
 
   const handleLogout = async () => {
     try {
@@ -123,7 +132,7 @@ const Header: React.FC = () => {
               onClick={toggleDrawer}
               sx={{ color: '#818cf8' }}
             >
-              {drawerOpen ? <CloseIcon /> : <AccountCircle />}
+              <AccountCircle />
             </IconButton>
             <UserDrawer
               drawerOpen={drawerOpen}
