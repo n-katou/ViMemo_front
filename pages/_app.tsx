@@ -8,13 +8,9 @@ import "../styles/globals.css";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { FlashMessageProvider, useFlashMessage } from '../context/FlashMessageContext';
 import { useRouter } from 'next/router';
-import { Alert, Container, Box, Button } from '@mui/material';
 import { analytics } from '../lib/initFirebase';
 import { logEvent } from 'firebase/analytics';
 import { ThemeProvider } from 'next-themes';
-
-import GradientButton from '../styles/GradientButton';
-import { WavyBackground } from '../components/Root/WavyBackground';
 
 interface AuthenticatedAppProps {
   Component: AppProps['Component'];
@@ -36,32 +32,18 @@ function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppP
     if (!loading && !currentUser && isProtectedRoute) {
       setFlashMessage('ログインしてください', 'warning');
       setShowLoginMessage(true);
+      router.push('/login');
     } else {
       setShowLoginMessage(false);
     }
-  }, [currentUser, loading, appRouter.pathname, isProtectedRoute, setFlashMessage]);
+  }, [currentUser, loading, appRouter.pathname, isProtectedRoute, setFlashMessage, router]);
 
   if (loading) {
     return <LoadingSpinner loading={loading} />;
   }
 
   if (isProtectedRoute && !currentUser) {
-    return (
-      <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22ee8f"]} waveOpacity={0.3} style={{ position: 'relative', zIndex: 1 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-          <Container maxWidth="sm">
-            <Alert severity="warning" variant="filled" sx={{ fontSize: '1.25rem', textAlign: 'center' }}>
-              ログインが必要です
-            </Alert>
-            <Box sx={{ mt: 2 }}>
-              <GradientButton variant="contained" sx={{ fontSize: '1.25rem', textAlign: 'center' }} onClick={() => router.push('/login')}>
-                ログインページへ
-              </GradientButton>
-            </Box>
-          </Container>
-        </Box>
-      </WavyBackground>
-    );
+    return null;
   }
 
   return <Component {...pageProps} />;
