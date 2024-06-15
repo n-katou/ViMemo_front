@@ -124,7 +124,8 @@ const YoutubeVideosPage: React.FC = () => {
           onChange={(e) => handleSortChange(e.target.value)}
           className="form-select form-select-lg text-white bg-gray-800 border-gray-600"
         >
-          <option value="created_at_desc">デフォルト（投稿順）</option>
+          <option value="created_at_desc">デフォルト（取得順）</option>
+          <option value="published_at_desc">公開日順</option>
           <option value="likes_desc">いいね数順</option>
           <option value="notes_desc">メモ数順</option>
         </select>
