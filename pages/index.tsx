@@ -61,20 +61,20 @@ const RootPage = () => {
   return (
     <div style={{ position: 'relative', zIndex: 0 }} className={bgClass}>
       <Box sx={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '20px 0' }}>
-        <Box
-          component="span"
+        <Typography
+          variant="h1"
+          gutterBottom
+          className="rainbow-border"
           sx={{
-            display: 'inline-block',
             fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
             margin: 0,
             marginTop: 10,
-            color: isLightTheme ? '#818cf8' : 'white',
-            borderBottom: isLightTheme ? '3px solid #38bdf8' : '3px solid #818cf8',
             paddingBottom: '10px',
+            display: 'inline-block'
           }}
         >
           ViMemo（ビメモ）は、動画視聴中に直感的にメモを追加できるサービスです
-        </Box>
+        </Typography>
       </Box>
       <Box
         display="flex"
