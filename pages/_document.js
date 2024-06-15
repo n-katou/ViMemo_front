@@ -10,7 +10,8 @@ class MyDocument extends Document {
           <meta name="description" content="ViMemoは、動画視聴中に直感的にメモを追加できるサービスです。" />
           <meta property="og:title" content="ViMemo" />
           <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
-          <meta property="og:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
+          {/* <meta property="og:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" /> */}
+          <meta property="og:image" content="/og-image.png" />
           <meta property="og:url" content="https://vi-memo.com" />
           <meta property="og:type" content="website" />
           <meta name="twitter:card" content="summary_large_image" />
