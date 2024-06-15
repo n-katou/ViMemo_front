@@ -102,7 +102,6 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               height: '100%',
               zIndex: 1400,
               width: isMobile ? '70%' : isDesktop ? '40%' : '50%',
-              marginTop: isMobile ? '50px' : '75px',
               color: 'white'
             }}
           >
