@@ -8,7 +8,6 @@ import { WavyBackground } from '../../components/Root/WavyBackground';
 
 const AnimatedBox = styled(Box)(({ loading }: { loading: boolean }) => ({
   display: 'flex',
-  flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
   minHeight: '100vh',
@@ -18,7 +17,7 @@ const AnimatedBox = styled(Box)(({ loading }: { loading: boolean }) => ({
   backgroundSize: '200% 200%',
   animation: loading ? 'none' : 'rainbow 10s ease infinite',
   padding: 3,
-  overflow: 'hidden',  // 全体のエフェクトを見やすくするために追加
+  overflow: 'hidden',
   '@keyframes rainbow': {
     '0%': {
       backgroundPosition: '0% 50%',
@@ -76,45 +75,28 @@ const ReturnPage = () => {
       <Box
         sx={{
           display: 'flex',
-          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
           position: 'relative',
           zIndex: 1,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
           padding: 3,
         }}
       >
-        <AnimatePresence>
-          {loading ? (
-            <motion.div
-              key="loading"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              <CircularProgress size={60} sx={{ mb: 3 }} />
-              <motion.div variants={textVariants}>
-                <Typography variant="h5" component="p" sx={{ fontWeight: 'bold', color: '#ffffff' }}>
-                  ログイン処理中...
-                </Typography>
-              </motion.div>
-            </motion.div>
-          ) : (
-            isAuthenticated && (
+        <Box
+          sx={{
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: 2,
+            padding: 4,
+            textAlign: 'center',
+            boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)',
+          }}
+        >
+          <AnimatePresence>
+            {loading ? (
               <motion.div
-                key="authenticated"
-                variants={successContainerVariants}
+                key="loading"
+                variants={containerVariants}
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
@@ -123,28 +105,49 @@ const ReturnPage = () => {
                   flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  width: '100%',
-                  height: '100%',
                 }}
               >
-                <motion.div
-                  variants={successIconVariants}
-                  style={{
-                    fontSize: '4rem',
-                    color: '#ffffff',
-                  }}
-                >
-                  ✅
-                </motion.div>
-                <motion.div variants={successTextVariants}>
-                  <Typography variant="h5" component="p" sx={{ fontWeight: 'bold', color: '#ffffff', mt: 2 }}>
-                    認証成功！リダイレクト中...
+                <CircularProgress size={60} sx={{ mb: 3 }} />
+                <motion.div variants={textVariants}>
+                  <Typography variant="h5" component="p" sx={{ fontWeight: 'bold', color: '#000' }}>
+                    ログイン処理中...
                   </Typography>
                 </motion.div>
               </motion.div>
-            )
-          )}
-        </AnimatePresence>
+            ) : (
+              isAuthenticated && (
+                <motion.div
+                  key="authenticated"
+                  variants={successContainerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <motion.div
+                    variants={successIconVariants}
+                    style={{
+                      fontSize: '4rem',
+                      color: '#4caf50',
+                    }}
+                  >
+                    ✅
+                  </motion.div>
+                  <motion.div variants={successTextVariants}>
+                    <Typography variant="h5" component="p" sx={{ fontWeight: 'bold', color: '#000', mt: 2 }}>
+                      認証成功！リダイレクト中...
+                    </Typography>
+                  </motion.div>
+                </motion.div>
+              )
+            )}
+          </AnimatePresence>
+        </Box>
       </Box>
     </AnimatedBox>
   );
