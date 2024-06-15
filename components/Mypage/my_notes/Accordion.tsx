@@ -11,7 +11,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme } = useTheme();
 
-  const bgClass = theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black';
+  const bgClass = theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-[#818cf8]';
   const contentBgClass = theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100';
 
   return (

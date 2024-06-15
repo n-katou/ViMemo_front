@@ -106,7 +106,7 @@ const RootPage = () => {
           }}
         >
           <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '100px' }}>
-            <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? 'black' : 'white', boxShadow: 'none' }}>
+            <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? '#818cf8' : 'white', boxShadow: 'none' }}>
               <Typography
                 variant="h1"
                 gutterBottom
@@ -114,26 +114,26 @@ const RootPage = () => {
                 sx={{
                   fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
                   margin: 0,
-                  color: isLightTheme ? 'black' : 'white',
+                  color: isLightTheme ? '#818cf8' : 'white',
                   backgroundClip: 'text',
                   textFillColor: 'transparent'
                 }}
               >
                 ViMemo（ビメモ）は、動画視聴中に直感的にメモを追加できるサービスです
               </Typography>
-              <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? 'black' : 'white' }}>
+              <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? '#818cf8' : 'white' }}>
                 機能説明
               </Typography>
-              <Typography variant="body1" sx={{ marginTop: 2, marginBottom: 5, color: isLightTheme ? 'black' : 'white' }}>
+              <Typography variant="body1" sx={{ marginTop: 2, marginBottom: 5, color: isLightTheme ? '#818cf8' : 'white' }}>
                 下のタブをクリックしたら各機能の詳細を確認できます
               </Typography>
-              <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? 'black' : 'white' }}>
+              <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? '#818cf8' : 'white' }}>
                 <Select
                   value={activeTab}
                   onChange={handleTabChange}
                   fullWidth
                   sx={{
-                    color: isLightTheme ? 'black' : 'white',
+                    color: isLightTheme ? '#818cf8' : 'white',
                     '.MuiOutlinedInput-notchedOutline': {
                       borderColor: 'gray',
                     },
@@ -144,12 +144,12 @@ const RootPage = () => {
                       borderColor: 'gray',
                     },
                     '.MuiSvgIcon-root': {
-                      color: isLightTheme ? 'black' : 'white',
+                      color: isLightTheme ? '#818cf8' : 'white',
                     },
                   }}
                 >
                   {tabs.map((tab) => (
-                    <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
+                    <MenuItem key={tab.value} value={tab.value} sx={{ color: '#818cf8' }}>
                       {tab.title}
                     </MenuItem>
                   ))}
@@ -158,7 +158,7 @@ const RootPage = () => {
                   {activeTabContent}
                 </Box>
               </Box>
-              <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8, color: isLightTheme ? 'black' : 'white' }}>
+              <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8, color: isLightTheme ? '#818cf8' : 'white' }}>
                 <Tabs tabs={tabs} />
               </Box>
               {!currentUser && (

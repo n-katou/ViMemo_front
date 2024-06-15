@@ -63,7 +63,7 @@ export const Tabs = ({
           }}
           className="form-select form-select-lg border border-white-300 rounded-md shadow-sm focus:border-white-500 focus:ring focus:ring-white-200 focus:ring-opacity-50"
           // ボーダーのスタイルを追加
-          style={{ color: isLightTheme ? 'black' : 'white' }} // テーマに応じて文字色を変更
+          style={{ color: isLightTheme ? '#818cf8' : 'white' }} // テーマに応じて文字色を変更
         >
           {tabs.map((tab) => (
             <option key={tab.value} value={tab.value}>

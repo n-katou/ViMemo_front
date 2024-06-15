@@ -5,10 +5,10 @@ const tab = (isLightTheme: boolean) => [
     title: "アカウント管理",
     value: "account_management",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
+      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? '#818cf8' : 'white', textAlign: 'left' }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <div className="note-item mt-4" style={{ width: '100%' }}>
-            <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+            <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
               Googleアカウントを利用すれば、登録不要でログインが可能です
             </p>
             <div className="mt-4">
@@ -28,7 +28,7 @@ const tab = (isLightTheme: boolean) => [
     title: "検索機能",
     value: "search",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
+      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? '#818cf8' : 'white', textAlign: 'left' }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <p style={{
             color: '#22eec5',
@@ -47,7 +47,7 @@ const tab = (isLightTheme: boolean) => [
           </p>
           <div className="note-container" style={{ width: '100%' }}>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 タイトルの部分一致で検索可能です
               </p>
               <img
@@ -58,7 +58,7 @@ const tab = (isLightTheme: boolean) => [
               />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 サジェストから選択で動画詳細に遷移します
               </p>
               <img
@@ -69,7 +69,7 @@ const tab = (isLightTheme: boolean) => [
               />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 虫眼鏡にマウスホバーしたら、最新のメモ3件確認できます
               </p>
               <img
@@ -88,7 +88,7 @@ const tab = (isLightTheme: boolean) => [
     title: "メモ操作",
     value: "memo",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
+      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? '#818cf8' : 'white', textAlign: 'left' }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <p style={{
             color: '#e879f9',
@@ -107,7 +107,7 @@ const tab = (isLightTheme: boolean) => [
           </p>
           <div className="note-container" style={{ width: '100%' }}>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 再生中にメモ追加が可能です
               </p>
               <img
@@ -118,7 +118,7 @@ const tab = (isLightTheme: boolean) => [
               />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 再生中にメモ編集が可能です
               </p>
               <img
@@ -129,7 +129,7 @@ const tab = (isLightTheme: boolean) => [
               />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 メモの移動を、ご自身のメモに限定して可能です（PCのみ）
               </p>
               <img
@@ -155,7 +155,7 @@ const tab = (isLightTheme: boolean) => [
                 非会員でも利用可能な機能です
               </p>
               <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-                <p style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
+                <p style={{ color: isLightTheme ? '#818cf8' : 'white', textAlign: 'left' }}>
                   タイムスタンプクリックで、時間軸が移動します
                 </p>
                 <img
@@ -167,7 +167,7 @@ const tab = (isLightTheme: boolean) => [
               </div>
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 表示しているメモリストでダウンロード可能です
               </p>
               <img
@@ -186,7 +186,7 @@ const tab = (isLightTheme: boolean) => [
     title: "動画取得",
     value: "video_get",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
+      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? '#818cf8' : 'white', textAlign: 'left' }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <p style={{
             color: '#e879f9',
@@ -205,7 +205,7 @@ const tab = (isLightTheme: boolean) => [
           </p>
           <div className="note-container" style={{ width: '100%' }}>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 マイページから1日1回まで取得可能です取得を無制限にされたい方はお問い合わせ下さい
               </p>
               <img
@@ -224,7 +224,7 @@ const tab = (isLightTheme: boolean) => [
     title: "プレイリスト",
     value: "video_playlist",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
+      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? '#818cf8' : 'white', textAlign: 'left' }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <p style={{
             color: '#e879f9',
@@ -243,7 +243,7 @@ const tab = (isLightTheme: boolean) => [
           </p>
           <div className="note-container" style={{ width: '100%' }}>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 いいねした動画でプレイリストを作成しますシャッフル再生も可能です
               </p>
               <img
@@ -254,7 +254,7 @@ const tab = (isLightTheme: boolean) => [
               />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 いいねした動画の並び替えが可能です（PC推奨）
               </p>
               <img
@@ -273,7 +273,7 @@ const tab = (isLightTheme: boolean) => [
     title: "活用方法",
     value: "play",
     content: (
-      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
+      <div className="p-4 text-xl md:text-2xl" style={{ color: isLightTheme ? '#818cf8' : 'white', textAlign: 'left' }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <p style={{
             color: '#e879f9',
@@ -292,7 +292,7 @@ const tab = (isLightTheme: boolean) => [
           </p>
           <div className="note-container" style={{ width: '100%' }}>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 ご自身のメモに限定して、Xへお気に入り場面のシェアが可能です
               </p>
               <img
@@ -303,7 +303,7 @@ const tab = (isLightTheme: boolean) => [
               />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
-              <p style={{ color: isLightTheme ? 'black' : 'white' }}>
+              <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
                 自分で書いたメモを動画ごとに管理できるため、一覧から簡単に整理することができます
               </p>
               <img
