@@ -1,29 +1,46 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import useOAuthCallback from '../../hooks/useOAuthCallback';
-import { Box, Typography, CircularProgress } from '@mui/material';
+import axios from 'axios';
 
-const OAuthCallbackPage = () => {
-  useOAuthCallback();
+interface OAuthCallbackState {
+  loading: boolean;
+  isAuthenticated: boolean;
+}
 
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#f0f0f0', // 背景色を変更
-        padding: 3,
-      }}
-    >
-      <CircularProgress size={60} sx={{ mb: 3 }} />
-      <Typography variant="h5" component="p" sx={{ fontWeight: 'bold' }}>
-        ログイン処理中...
-      </Typography>
-    </Box>
-  );
+const useOAuthCallback = (): OAuthCallbackState => {
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const authenticate = async () => {
+      try {
+        const { code, state } = router.query;
+        if (code && state) {
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/callback`, {
+            code,
+            state,
+          });
+          if (response.data.status === 'success') {
+            setIsAuthenticated(true);
+            setTimeout(() => {
+              router.push(`/mypage/dashboard?flash_message=${encodeURIComponent('ログインに成功しました')}`);
+            }, 1000); // 1秒の遅延を追加してリダイレクト
+          } else {
+            // 認証失敗時の処理
+          }
+        }
+      } catch (error) {
+        console.error('Error during OAuth callback:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    authenticate();
+  }, [router.query]);
+
+  return { loading, isAuthenticated };
 };
 
-export default OAuthCallbackPage;
+export default useOAuthCallback;

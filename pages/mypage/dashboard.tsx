@@ -110,7 +110,7 @@ const Dashboard = () => {
       {flashMessage && (
         <Snackbar
           open={showSnackbar}
-          autoHideDuration={3000}
+          autoHideDuration={4000}
           onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >

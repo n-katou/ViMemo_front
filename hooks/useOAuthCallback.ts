@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
@@ -6,6 +6,8 @@ import axios from 'axios';
 const useOAuthCallback = () => {
   const router = useRouter();
   const { setAuthState } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -24,7 +26,13 @@ const useOAuthCallback = () => {
           const userData = await fetchUserData(token, signal);
           if (!signal.aborted) {
             setAuthState({ currentUser: userData, jwtToken: token });
-            await router.push('/mypage/dashboard'); // ダッシュボードへリダイレクト
+            setLoading(false);
+            setIsAuthenticated(true);
+
+            // エフェクト表示のために少し待機
+            setTimeout(() => {
+              router.push('/mypage/dashboard'); // ダッシュボードへリダイレクト
+            }, 2000); // 2秒待機
           }
         } catch (error) {
           if (!signal.aborted) {
@@ -37,9 +45,11 @@ const useOAuthCallback = () => {
           } else {
             console.log("Fetch user data request was canceled");
           }
+          setLoading(false);
         }
       } else {
         router.push('/login');
+        setLoading(false);
       }
     };
 
@@ -49,6 +59,8 @@ const useOAuthCallback = () => {
       controller.abort();
     };
   }, [router, setAuthState]);
+
+  return { loading, isAuthenticated };
 };
 
 async function fetchUserData(token: string, signal: AbortSignal) {
