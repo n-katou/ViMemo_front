@@ -122,7 +122,13 @@ const NoteItem: React.FC<NoteItemProps> = ({
     <motion.div
       ref={ref}
       className="note-item fixed-card-size border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6"
-      style={{ backgroundColor: isDragging ? dragBgColor : bgColor, opacity: isDragging ? 0.8 : 1 }}
+      style={{
+        backgroundColor: isDragging ? dragBgColor : bgColor,
+        opacity: isDragging ? 0.8 : 1,
+        cursor: isOwner ? 'grab' : 'default', // カーソルを変更
+        boxShadow: isDragging ? '0 4px 12px rgba(0, 0, 0, 0.3)' : 'none', // ドラッグ中の影
+        border: isDragging ? '2px dashed #22eec5' : 'none', // ドラッグ中のボーダー
+      }}
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
