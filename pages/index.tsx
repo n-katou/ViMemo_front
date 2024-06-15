@@ -121,7 +121,12 @@ const RootPage = () => {
               >
                 ViMemo（ビメモ）は、動画視聴中に直感的にメモを追加できるサービスです
               </Typography>
-              <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? 'black' : 'white' }}>機能説明</Typography>
+              <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? 'black' : 'white' }}>
+                機能説明
+              </Typography>
+              <Typography variant="body1" sx={{ marginTop: 2, marginBottom: 5, color: isLightTheme ? 'black' : 'white' }}>
+                下のタブをクリックしたら各機能の詳細を確認できます
+              </Typography>
               <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? 'black' : 'white' }}>
                 <Select
                   value={activeTab}

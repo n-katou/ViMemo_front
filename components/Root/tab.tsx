@@ -9,7 +9,7 @@ const tab = (isLightTheme: boolean) => [
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <div className="note-item mt-4" style={{ width: '100%' }}>
             <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-              ・Googleアカウントを利用すれば、登録不要でログインが可能です。
+              Googleアカウントを利用すれば、登録不要でログインが可能です
             </p>
             <div className="mt-4">
               <img
@@ -46,9 +46,9 @@ const tab = (isLightTheme: boolean) => [
             非会員でも利用可能な機能です
           </p>
           <div className="note-container" style={{ width: '100%' }}>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・タイトルの部分一致で検索可能です。
+                タイトルの部分一致で検索可能です
               </p>
               <img
                 src="https://i.gyazo.com/79f4e2662fa4667c3221350f530fb8a8.gif"
@@ -57,9 +57,9 @@ const tab = (isLightTheme: boolean) => [
                 style={{ display: 'block', margin: 'auto' }}
               />
             </div>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・サジェストから選択で動画詳細に遷移します。
+                サジェストから選択で動画詳細に遷移します
               </p>
               <img
                 src="https://i.gyazo.com/bb98f75c7fa57d3a48af8625a30b52b2.gif"
@@ -68,9 +68,9 @@ const tab = (isLightTheme: boolean) => [
                 style={{ display: 'block', margin: 'auto' }}
               />
             </div>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・虫眼鏡にマウスホバーしたら、最新のメモ3件確認できます。
+                虫眼鏡にマウスホバーしたら、最新のメモ3件確認できます
               </p>
               <img
                 src="https://i.gyazo.com/09a9adb8ea7a2c51e31f83c90e96c42e.gif"
@@ -106,9 +106,9 @@ const tab = (isLightTheme: boolean) => [
             このセクションは会員限定です(一部除く)
           </p>
           <div className="note-container" style={{ width: '100%' }}>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・再生中にメモ追加が可能です。
+                再生中にメモ追加が可能です
               </p>
               <img
                 src="https://i.gyazo.com/7976fa8f168a82669aff26214fe9d70c.gif"
@@ -117,9 +117,9 @@ const tab = (isLightTheme: boolean) => [
                 style={{ display: 'block', margin: 'auto' }}
               />
             </div>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・再生中にメモ編集が可能です。
+                再生中にメモ編集が可能です
               </p>
               <img
                 src="https://i.gyazo.com/a1c63d00c74953b5e27393f7b2611da0.gif"
@@ -128,9 +128,9 @@ const tab = (isLightTheme: boolean) => [
                 style={{ display: 'block', margin: 'auto' }}
               />
             </div>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・メモの移動を、ご自身のメモに限定して可能です。（PCのみ）
+                メモの移動を、ご自身のメモに限定して可能です（PCのみ）
               </p>
               <img
                 src="https://i.gyazo.com/5f2639d40a12aa11b08e69aeb56e353c.gif"
@@ -139,7 +139,7 @@ const tab = (isLightTheme: boolean) => [
                 style={{ display: 'block', margin: 'auto' }}
               />
             </div>
-            <div className="note-item mt-4" style={{ marginBottom: '20px', textAlign: 'center' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', textAlign: 'center', width: '100%' }}>
               <p style={{
                 color: '#22eec5',
                 fontWeight: 'bold',
@@ -154,9 +154,9 @@ const tab = (isLightTheme: boolean) => [
               }}>
                 非会員でも利用可能な機能です
               </p>
-              <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+              <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
                 <p style={{ color: isLightTheme ? 'black' : 'white', textAlign: 'left' }}>
-                  ・タイムスタンプクリックで、時間軸が移動します。
+                  タイムスタンプクリックで、時間軸が移動します
                 </p>
                 <img
                   src="https://i.gyazo.com/9aef836642f1cfa60a35f809c098bffb.gif"
@@ -166,9 +166,9 @@ const tab = (isLightTheme: boolean) => [
                 />
               </div>
             </div>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・表示しているメモリストでダウンロード可能です。
+                表示しているメモリストでダウンロード可能です
               </p>
               <img
                 src="https://i.gyazo.com/a63c81ec8f56498300b95970c5b855a1.gif"
@@ -204,9 +204,9 @@ const tab = (isLightTheme: boolean) => [
             このセクションは会員限定です
           </p>
           <div className="note-container" style={{ width: '100%' }}>
-            <div className="note-item mt-4">
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・マイページから1日1回まで取得可能です。取得を無制限にされたい方はお問い合わせ下さい。
+                マイページから1日1回まで取得可能です取得を無制限にされたい方はお問い合わせ下さい
               </p>
               <img
                 src="https://i.gyazo.com/05ceda3f173adf006c3e34ae2bf92400.gif"
@@ -242,9 +242,9 @@ const tab = (isLightTheme: boolean) => [
             このセクションは会員限定です
           </p>
           <div className="note-container" style={{ width: '100%' }}>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・いいねした動画でプレイリストを作成します。シャッフル再生も可能です。
+                いいねした動画でプレイリストを作成しますシャッフル再生も可能です
               </p>
               <img
                 src="https://i.gyazo.com/52ed84887624b7f6a45a824c888adf3d.gif"
@@ -253,9 +253,9 @@ const tab = (isLightTheme: boolean) => [
                 style={{ display: 'block', margin: 'auto' }}
               />
             </div>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・いいねした動画の並び替えが可能です。（PC推奨）
+                いいねした動画の並び替えが可能です（PC推奨）
               </p>
               <img
                 src="https://i.gyazo.com/8a7a554f6b5874980bd2dfe200abc36d.gif"
@@ -291,9 +291,9 @@ const tab = (isLightTheme: boolean) => [
             このセクションは会員限定です
           </p>
           <div className="note-container" style={{ width: '100%' }}>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・ご自身のメモに限定して、Xへお気に入り場面のシェアが可能です。
+                ご自身のメモに限定して、Xへお気に入り場面のシェアが可能です
               </p>
               <img
                 src="https://i.gyazo.com/985d8401bbc0fe3ed4b24206ff2ed83d.gif"
@@ -302,9 +302,9 @@ const tab = (isLightTheme: boolean) => [
                 style={{ display: 'block', margin: 'auto' }}
               />
             </div>
-            <div className="note-item mt-4" style={{ marginBottom: '20px' }}>
+            <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? 'black' : 'white' }}>
-                ・自分で書いたメモを動画ごとに管理できるため、一覧から簡単に整理することができます。
+                自分で書いたメモを動画ごとに管理できるため、一覧から簡単に整理することができます
               </p>
               <img
                 src="https://i.gyazo.com/946ae5cc9aa7311b6aec0ea25fcb23c0.gif"
