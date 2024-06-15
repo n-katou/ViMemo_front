@@ -110,10 +110,13 @@ const RootPage = () => {
               <Typography
                 variant="h1"
                 gutterBottom
+                className="bg-gradient-rainbow"
                 sx={{
                   fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
                   margin: 0,
-                  color: isLightTheme ? 'black' : 'white'
+                  color: isLightTheme ? 'black' : 'white',
+                  backgroundClip: 'text',
+                  textFillColor: 'transparent'
                 }}
               >
                 ViMemo（ビメモ）は、動画視聴中に直感的にメモを追加できるサービスです
