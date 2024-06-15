@@ -24,7 +24,7 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({ count, page, 
         size="large"
         sx={{
           '& .MuiPaginationItem-root': {
-            color: resolvedTheme === 'light' ? 'black' : 'white',
+            color: resolvedTheme === 'light' ? '#818cf8' : 'white',
           },
           '& .MuiPaginationItem-root.Mui-selected': {
             backgroundColor: resolvedTheme === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)',

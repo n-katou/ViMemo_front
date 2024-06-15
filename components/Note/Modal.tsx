@@ -22,7 +22,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
       onClick={onClose} // 背景をクリックした場合にモーダルを閉じる
     >
       <div
-        className={`relative p-6 rounded-lg shadow-lg w-full max-w-md mx-auto ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}
+        className={`relative p-6 rounded-lg shadow-lg w-full max-w-md mx-auto ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-[#818cf8]'}`}
         onClick={(e) => e.stopPropagation()} // モーダルの内部をクリックしても背景クリックイベントが発動しないようにする
       >
         {children} {/* モーダル内のコンテンツを表示 */}
