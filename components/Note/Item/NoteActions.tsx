@@ -48,7 +48,7 @@ const NoteActions: React.FC<NoteActionsProps> = ({
               href={shareUrl}
               target="_blank"
               className="btn btn-outline btn-primary share-button"
-              style={{ color: 'white' }}
+              style={{ color: 'white', backgroundColor: 'black' }}
             >
               <BsTwitterX />
             </IconButton>
