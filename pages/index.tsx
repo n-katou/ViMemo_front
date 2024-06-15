@@ -10,7 +10,6 @@ import tab from '../components/Root/tab';
 import Image from 'next/image';
 import pinterestBoardPhoto from '../public/pinterest_board_photo.png'; // 画像のパスを指定
 import InfoIcon from '@mui/icons-material/Info';
-import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 
 const RootPage = () => {
   const router = useRouter();
@@ -61,6 +60,22 @@ const RootPage = () => {
 
   return (
     <div style={{ position: 'relative', zIndex: 0 }} className={bgClass}>
+      <Box sx={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '20px 0' }}>
+        <Box
+          component="span"
+          sx={{
+            display: 'inline-block',
+            fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+            margin: 0,
+            marginTop: 10,
+            color: isLightTheme ? '#818cf8' : 'white',
+            borderBottom: isLightTheme ? '3px solid #38bdf8' : '3px solid #818cf8',
+            paddingBottom: '10px',
+          }}
+        >
+          ViMemo（ビメモ）は、動画視聴中に直感的にメモを追加できるサービスです
+        </Box>
+      </Box>
       <Box
         display="flex"
         justifyContent="center"
@@ -70,8 +85,8 @@ const RootPage = () => {
           maxWidth: '800px',
           margin: '0 auto',
           position: 'relative',
-          marginTop: '70px',
-          zIndex: 2,
+          marginTop: '20px',
+          zIndex: 1,
           boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
           borderRadius: '8px',
           overflow: 'hidden',
@@ -109,28 +124,13 @@ const RootPage = () => {
             margin: 0,
           }}
         >
-          <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '100px' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '50px' }}>
             <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? 'black' : 'white', boxShadow: 'none' }}>
-              <Typography
-                variant="h1"
-                gutterBottom
-                className="bg-gradient-rainbow"
-                sx={{
-                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-                  margin: 0,
-                  color: isLightTheme ? 'black' : 'white',
-                  backgroundClip: 'text',
-                  textFillColor: 'transparent'
-                }}
-              >
-                ViMemo（ビメモ）は、動画視聴中に直感的にメモを追加できるサービスです
-              </Typography>
               <Box sx={{
                 backgroundColor: isLightTheme ? '#e3f2fd' : '#c084fc',
                 padding: '15px 25px',
                 borderRadius: '12px',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                marginTop: 4,
                 marginBottom: 4,
                 display: 'flex',
                 alignItems: 'center',
@@ -198,7 +198,6 @@ const RootPage = () => {
                     }}
                   >
                     ログインページへ
-                    <ArrowDropDownCircleIcon sx={{ marginLeft: '10px' }} />
                   </GradientButton>
                 </Box>
               )}
