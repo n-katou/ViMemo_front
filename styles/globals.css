@@ -410,6 +410,32 @@ input[type="text"] {
   -webkit-text-fill-color: transparent;
 }
 
+@keyframes rainbow-border {
+  0% {
+    border-bottom-color: #38bdf8;
+  }
+
+  25% {
+    border-bottom-color: #818cf8;
+  }
+
+  50% {
+    border-bottom-color: #c084fc;
+  }
+
+  75% {
+    border-bottom-color: #e879f9;
+  }
+
+  100% {
+    border-bottom-color: #22eec5;
+  }
+}
+
+.rainbow-border {
+  border-bottom: 3px solid;
+  animation: rainbow-border 4s linear infinite;
+}
 
 .youtube-video-card {
   transition: transform 0.2s ease-in-out;
