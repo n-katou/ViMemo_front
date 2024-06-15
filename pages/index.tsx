@@ -9,6 +9,8 @@ import GradientButton from '../styles/GradientButton';
 import tab from '../components/Root/tab';
 import Image from 'next/image';
 import pinterestBoardPhoto from '../public/pinterest_board_photo.png'; // 画像のパスを指定
+import InfoIcon from '@mui/icons-material/Info';
+import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 
 const RootPage = () => {
   const router = useRouter();
@@ -22,6 +24,8 @@ const RootPage = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'info' | 'success' | 'warning' | 'error'>('info');
   const [mounted, setMounted] = useState(false);
+
+  const bgClass = theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-[#818cf8]';
 
   useEffect(() => {
     setMounted(true);
@@ -56,7 +60,7 @@ const RootPage = () => {
   if (!mounted) return null;
 
   return (
-    <div style={{ position: 'relative', zIndex: 0 }}>
+    <div style={{ position: 'relative', zIndex: 0 }} className={bgClass}>
       <Box
         display="flex"
         justifyContent="center"
@@ -106,7 +110,7 @@ const RootPage = () => {
           }}
         >
           <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '100px' }}>
-            <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? '#818cf8' : 'white', boxShadow: 'none' }}>
+            <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? 'black' : 'white', boxShadow: 'none' }}>
               <Typography
                 variant="h1"
                 gutterBottom
@@ -114,26 +118,41 @@ const RootPage = () => {
                 sx={{
                   fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
                   margin: 0,
-                  color: isLightTheme ? '#818cf8' : 'white',
+                  color: isLightTheme ? 'black' : 'white',
                   backgroundClip: 'text',
                   textFillColor: 'transparent'
                 }}
               >
                 ViMemo（ビメモ）は、動画視聴中に直感的にメモを追加できるサービスです
               </Typography>
-              <Typography variant="h5" sx={{ marginTop: 10, color: isLightTheme ? '#818cf8' : 'white' }}>
-                機能説明
-              </Typography>
-              <Typography variant="body1" sx={{ marginTop: 2, marginBottom: 5, color: isLightTheme ? '#818cf8' : 'white' }}>
-                下のタブをクリックしたら各機能の詳細を確認できます
-              </Typography>
-              <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? '#818cf8' : 'white' }}>
+              <Box sx={{
+                backgroundColor: isLightTheme ? '#e3f2fd' : '#c084fc',
+                padding: '15px 25px',
+                borderRadius: '12px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                marginTop: 4,
+                marginBottom: 4,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px'
+              }}>
+                <InfoIcon sx={{ fontSize: '2rem', color: isLightTheme ? '#38bdf8' : 'white' }} />
+                <Box>
+                  <Typography variant="h5" sx={{ color: isLightTheme ? '#38bdf8' : 'white', fontWeight: 'bold' }}>
+                    機能説明
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: isLightTheme ? '#38bdf8' : 'white' }}>
+                    下のタブをクリックしたら各機能の詳細を確認できます
+                  </Typography>
+                </Box>
+              </Box>
+              <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? 'black' : 'white' }}>
                 <Select
                   value={activeTab}
                   onChange={handleTabChange}
                   fullWidth
                   sx={{
-                    color: isLightTheme ? '#818cf8' : 'white',
+                    color: isLightTheme ? 'black' : 'white',
                     '.MuiOutlinedInput-notchedOutline': {
                       borderColor: 'gray',
                     },
@@ -144,12 +163,12 @@ const RootPage = () => {
                       borderColor: 'gray',
                     },
                     '.MuiSvgIcon-root': {
-                      color: isLightTheme ? '#818cf8' : 'white',
+                      color: isLightTheme ? 'black' : 'white',
                     },
                   }}
                 >
                   {tabs.map((tab) => (
-                    <MenuItem key={tab.value} value={tab.value} sx={{ color: '#818cf8' }}>
+                    <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
                       {tab.title}
                     </MenuItem>
                   ))}
@@ -158,7 +177,7 @@ const RootPage = () => {
                   {activeTabContent}
                 </Box>
               </Box>
-              <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8, color: isLightTheme ? '#818cf8' : 'white' }}>
+              <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8, color: isLightTheme ? 'black' : 'white' }}>
                 <Tabs tabs={tabs} />
               </Box>
               {!currentUser && (
@@ -169,9 +188,17 @@ const RootPage = () => {
                     sx={{
                       marginTop: 4,
                       marginBottom: 4,
+                      backgroundColor: '#38bdf8',
+                      color: 'white',
+                      fontWeight: 'bold',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                      '&:hover': {
+                        backgroundColor: '#1e88e5',
+                      }
                     }}
                   >
                     ログインページへ
+                    <ArrowDropDownCircleIcon sx={{ marginLeft: '10px' }} />
                   </GradientButton>
                 </Box>
               )}
