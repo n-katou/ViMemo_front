@@ -40,6 +40,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const { jwtToken } = useAuth();
   const [liked, setLiked] = useState<boolean>(false);
   const [likeError, setLikeError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const defaultAvatarUrl = process.env.NEXT_PUBLIC_DEFAULT_AVATAR_URL;
   const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl;
   const ref = useRef<HTMLDivElement>(null);
@@ -54,6 +55,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
     if (note.likes) {
       setLiked(note.likes.some((like: Like) => like.user_id === Number(currentUser?.id)));
     }
+    setIsInitialized(true); // 初期化が完了したことを設定
   }, [note, currentUser]);
 
   const handleDelete = () => {
@@ -149,15 +151,17 @@ const NoteItem: React.FC<NoteItemProps> = ({
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <Tooltip title={liked ? "いいねを取り消す" : "いいね"}>
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5, delay: index * 0.2 }}>
-                <IconButton onClick={liked ? () => handleUnlikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError) : () => handleLikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError)}>
-                  <Badge badgeContent={note.likes_count} color="primary">
-                    {liked ? <ThumbUpIcon style={{ color: 'white' }} /> : <ThumbUpOffAltIcon style={{ color: 'white' }} />}
-                  </Badge>
-                </IconButton>
-              </motion.div>
-            </Tooltip>
+            {isInitialized && ( // 初期化が完了した後にのみ表示
+              <Tooltip title={liked ? "いいねを取り消す" : "いいね"}>
+                <motion.div initial={{ scale: 1 }} animate={{ scale: 1 }} transition={{ duration: 0 }}>
+                  <IconButton onClick={liked ? () => handleUnlikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError) : () => handleLikeNote(videoId, note, jwtToken || '', currentUser, setLiked, setLikeError)}>
+                    <Badge badgeContent={note.likes_count} color="primary">
+                      {liked ? <ThumbUpIcon style={{ color: 'white' }} /> : <ThumbUpOffAltIcon style={{ color: 'white' }} />}
+                    </Badge>
+                  </IconButton>
+                </motion.div>
+              </Tooltip>
+            )}
             {!note.is_visible && isOwner && (
               <p className="text-yellow-400 ml-2">非表示中</p>
             )}
