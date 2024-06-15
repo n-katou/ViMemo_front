@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // YouTube動画関連の関数
 // YouTube動画を取得する非同期関数
-export async function fetchYoutubeVideo(id, jwtToken) {
+export async function fetchYoutubeVideo(videoId, jwtToken) {
   const headers = {
     'Accept': 'application/json',
   };
@@ -13,13 +13,13 @@ export async function fetchYoutubeVideo(id, jwtToken) {
   }
 
   // 動画データを取得するためのAPIリクエスト
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}`, {
     headers: headers,
   });
 
   // レスポンスが正常でない場合、エラーメッセージをスロー
   if (!res.ok) {
-    throw new Error(`Error fetching video with ID ${id}`);
+    throw new Error(`Error fetching video with ID ${videoId}`);
   }
 
   // レスポンスデータをJSON形式で返す
@@ -75,7 +75,7 @@ export async function handleUnlike(videoId, likeId, jwtToken) {
 }
 
 // 動画のいいねリストを取得する非同期関数
-export async function fetchVideoLikes(id, jwtToken) {
+export async function fetchVideoLikes(videoId, jwtToken) {
   try {
     const headers = {
       'Accept': 'application/json',
@@ -85,12 +85,12 @@ export async function fetchVideoLikes(id, jwtToken) {
       headers['Authorization'] = `Bearer ${jwtToken}`;
     }
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${id}/likes`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos/${videoId}/likes`, {
       headers: headers,
     });
 
     if (!res.ok) {
-      throw new Error(`Error fetching likes for video with ID ${id}`);
+      throw new Error(`Error fetching likes for video with ID ${videoId}`);
     }
 
     const data = await res.json();
