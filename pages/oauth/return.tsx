@@ -139,7 +139,17 @@ const ReturnPage = () => {
                     ✅
                   </motion.div>
                   <motion.div variants={successTextVariants}>
-                    <Typography variant="h5" component="p" sx={{ fontWeight: 'bold', color: '#000', mt: 2 }}>
+                    <Typography
+                      variant="h5"
+                      component="p"
+                      className="bg-gradient-rainbow"
+                      sx={{
+                        fontWeight: 'bold',
+                        mt: 2,
+                        backgroundClip: 'text',
+                        textFillColor: 'transparent'
+                      }}
+                    >
                       認証成功！リダイレクト中...
                     </Typography>
                   </motion.div>
