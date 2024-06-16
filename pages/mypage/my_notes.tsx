@@ -8,6 +8,7 @@ import { NoteWithVideoTitle } from '../../types/note'; // 必要に応じてイ�
 import PaginationComponent from '../../components/Pagination';
 import Accordion from '../../components/Mypage/my_notes/Accordion'; // 追加
 import { groupNotesByVideoId } from '../../utils/groupNotesByVideoId'; // 追加
+import { useTheme } from 'next-themes'; // テーマフックを使用
 
 const ITEMS_PER_PAGE = 10;
 
@@ -20,6 +21,7 @@ const MyNotesPage: React.FC = () => {
   const [sortOption, setSortOption] = useState<string>('created_at_desc');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState(1);
+  const { theme } = useTheme(); // テーマフックを使用
 
   useEffect(() => {
     if (!currentUser) {
@@ -88,14 +90,14 @@ const MyNotesPage: React.FC = () => {
   const totalPages = Math.ceil(videoIds.length / ITEMS_PER_PAGE);
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-white-900 mb-4">MYメモ一覧</h1>
+    <div className={`container mx-auto py-8 px-4 mt-4 max-w-screen-lg ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
+      <h1 className="text-3xl font-bold mb-4">MYメモ一覧</h1>
       <input
         type="text"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="YouTubeタイトルで検索"
-        className="mb-4 p-2 border rounded-md w-full"
+        className={`mb-4 p-2 border rounded-md w-full ${theme === 'light' ? 'border-gray-400' : 'border-gray-600'}`}
       />
       {paginatedVideoIds.length > 0 ? (
         paginatedVideoIds.map((videoId) => (
@@ -116,7 +118,7 @@ const MyNotesPage: React.FC = () => {
           </Accordion>
         ))
       ) : (
-        <p className="text-lg text-gray-600">メモがありません。</p>
+        <p className={`text-lg ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>メモがありません。</p>
       )}
       <div className="mt-8">
         <PaginationComponent
