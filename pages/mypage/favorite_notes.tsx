@@ -9,6 +9,7 @@ import Box from '@mui/material/Box';
 import Pagination from '../../components/Pagination';
 import NoteCard from '../../components/Mypage/favorite_notes/NoteCard'; // NoteCardコンポーネントをインポート
 import { fetchNoteLikes } from '../../components/Mypage/favorite_notes/favoriteNotesUtils'; // noteUtilsから関数をインポート
+import { useTheme } from 'next-themes'; // useThemeフックをインポート
 
 // likeableがNote型かどうかをチェックするためのタイプガード関数
 const isNote = (likeable: any): likeable is Note => {
@@ -24,6 +25,7 @@ const FavoriteNotesPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1); // 現在のページを管理する状態
   const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションを追加
   const itemsPerPage = 12; // 1ページあたりのアイテム数を設定
+  const { theme } = useTheme(); // テーマフックを使用
 
   // クエリパラメータを更新する関数
   const updateQueryParams = (page: number, sort: string) => {
@@ -101,13 +103,13 @@ const FavoriteNotesPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-white-900">いいねしたメモ一覧</h1>
+    <div className={`container mx-auto py-8 px-4 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
+      <h1 className="text-3xl font-bold">いいねしたメモ一覧</h1>
       <div className="flex justify-end mb-8">
         <select
           value={sortOption}
           onChange={handleSortChange}
-          className="form-select form-select-lg text-white bg-gray-800 border-gray-600 rounded-md"
+          className={`form-select form-select-lg ${theme === 'light' ? 'text-[#818cf8] bg-white border border-gray-400' : 'text-white bg-gray-800 border-gray-600'} rounded-md`}
         >
           <option value="created_at_desc">デフォルト（新しい順）</option>
           <option value="created_at_asc">古い順</option>

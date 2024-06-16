@@ -10,6 +10,7 @@ import VideoCard from '../../components/Mypage/favorite_videos/FavoriteVideoCard
 import { DndProvider, useDrag, useDrop } from 'react-dnd'; // react-dndをインポート
 import update from 'immutability-helper'; // update関数をインポート
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useTheme } from 'next-themes'; // useThemeフックをインポート
 
 const FavoriteVideosPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth(); // 現在のユーザーとJWTトークンを取得
@@ -25,6 +26,7 @@ const FavoriteVideosPage: React.FC = () => {
   });
   const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションの状態を管理
   const [itemsPerPage, setItemsPerPage] = useState<number>(10); // 一ページあたりのアイテム数を管理
+  const { theme } = useTheme(); // テーマフックを使用
 
   // クエリパラメータを更新する関数
   const updateQueryParams = (page: number, sort: string, perPage: number) => {
@@ -119,10 +121,10 @@ const FavoriteVideosPage: React.FC = () => {
 
   return (
     <DndProvider backend={HTML5Backend}> {/* DndProviderでラップ */}
-      <div className="container mx-auto py-8 px-4">
-        <h1 className="text-3xl font-bold text-white-900">いいねしたYoutube一覧</h1>
+      <div className={`container mx-auto py-8 px-4 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
+        <h1 className="text-3xl font-bold">いいねしたYoutube一覧</h1>
         <div className="flex justify-end mb-8">
-          <select value={itemsPerPage} onChange={handleItemsPerPageChange} className="form-select text-white bg-gray-800 border-gray-600 ml-4">
+          <select value={itemsPerPage} onChange={handleItemsPerPageChange} className={`form-select ${theme === 'light' ? 'bg-white border border-gray-400 text-[#818cf8]' : 'bg-gray-800 border-gray-600 text-white'} ml-4`}>
             <option value={10}>10件表示</option>
             <option value={15}>15件表示</option>
             <option value={20}>20件表示</option>

@@ -9,6 +9,7 @@ import Alert from '@mui/material/Alert';
 import PaginationComponent from '../components/Pagination';
 import { fetchYoutubeVideos, handleLikeVideo, handleUnlikeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
 import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
+import { useTheme } from 'next-themes';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -33,6 +34,7 @@ const YoutubeVideosPage: React.FC = () => {
   const [sortOption, setSortOption] = useState<string>('created_at_desc');
   const [flashMessage, setFlashMessage] = useState<string | null>(null);
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
+  const { theme } = useTheme();
 
   const query = router.query.query as string || '';
 
@@ -116,13 +118,13 @@ const YoutubeVideosPage: React.FC = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-white-900">Youtube一覧</h1>
+    <div className={`container mx-auto py-8 px-4 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
+      <h1 className="text-3xl font-bold">Youtube一覧</h1>
       <div className="flex justify-end mb-8">
         <select
           value={sortOption}
           onChange={(e) => handleSortChange(e.target.value)}
-          className="form-select form-select-lg text-white bg-gray-800 border-gray-600"
+          className={`form-select form-select-lg ${theme === 'light' ? 'text-[#818cf8] bg-white border border-gray-600' : 'text-white bg-gray-800'}`}
         >
           <option value="created_at_desc">デフォルト（取得順）</option>
           <option value="published_at_desc">公開日順</option>
