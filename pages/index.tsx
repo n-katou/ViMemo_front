@@ -152,7 +152,8 @@ const RootPage = () => {
                   onChange={handleTabChange}
                   fullWidth
                   sx={{
-                    color: isLightTheme ? 'black' : 'white',
+                    color: 'white',
+                    backgroundColor: isLightTheme ? '#c084fc' : 'inherit',
                     '.MuiOutlinedInput-notchedOutline': {
                       borderColor: 'gray',
                     },
@@ -163,7 +164,7 @@ const RootPage = () => {
                       borderColor: 'gray',
                     },
                     '.MuiSvgIcon-root': {
-                      color: isLightTheme ? 'black' : 'white',
+                      color: 'white',
                     },
                   }}
                 >
