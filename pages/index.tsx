@@ -134,7 +134,9 @@ const RootPage = () => {
                 marginBottom: 4,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px'
+                gap: '10px',
+                maxWidth: '500px', // ここで幅を制限
+                margin: '0 auto', // 中央揃え
               }}>
                 <InfoIcon sx={{ fontSize: '2rem', color: isLightTheme ? '#38bdf8' : 'white' }} />
                 <Box>
