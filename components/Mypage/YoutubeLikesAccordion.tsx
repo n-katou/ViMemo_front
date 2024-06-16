@@ -1,3 +1,4 @@
+// YoutubeLikesAccordion.jsx
 import React from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -28,7 +29,7 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVi
               src={youtubePlaylistUrl}
               frameBorder="0"
               allowFullScreen
-              className="w-full aspect-video"
+              className="w-full aspect-video large-video"
             ></iframe>
           </div>
         ) : (
