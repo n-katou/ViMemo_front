@@ -24,7 +24,7 @@ const RootPage = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState<'info' | 'success' | 'warning' | 'error'>('info');
   const [mounted, setMounted] = useState(false);
 
-  const bgClass = theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-[#818cf8]';
+  const bgClass = theme === 'dark' ? 'bg-black text-white' : 'bg-white text-[#818cf8]';
 
   useEffect(() => {
     setMounted(true);
