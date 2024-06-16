@@ -48,6 +48,7 @@ const YoutubeVideoShowPage: React.FC = () => {
   const router = useRouter();
 
   const { currentUser, jwtToken, loading } = useAuth();
+  const { theme } = useTheme(); // テーマフックを使用
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const playerRef = useRef<any>(null);
 
@@ -98,7 +99,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     : notes;
 
   return (
-    <div className="container mx-auto py-8">
+    <div className={`container mx-auto py-8 mt-2 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
       <Snackbar
         open={isSnackbarOpen}
         autoHideDuration={5000} // 5秒後に自動で閉じる

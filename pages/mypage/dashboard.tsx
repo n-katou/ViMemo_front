@@ -8,7 +8,7 @@ import UserCard from '../../components/Mypage/UserCard';
 import YoutubeLikesAccordion from '../../components/Mypage/YoutubeLikesAccordion';
 import NoteLikesAccordion from '../../components/Mypage/NoteLikesAccordion';
 import SearchForm from '../../components/Mypage/SearchForm';
-import { fetchData, fetchVideosByGenre, debouncedFetchSuggestions, shufflePlaylist } from '../../components/Mypage/dashboard';
+import { fetchData, fetchVideosByGenre, shufflePlaylist } from '../../components/Mypage/dashboard';
 
 const Dashboard = () => {
   // 認証コンテキストから必要な情報を取得
@@ -36,11 +36,6 @@ const Dashboard = () => {
       fetchDataCallback();
     }
   }, [jwtToken, currentUser, fetchDataCallback]);
-
-  // 検索クエリが変更された時にサジェスチョンをフェッチ
-  // useEffect(() => {
-  //   debouncedFetchSuggestions(searchQuery, setSuggestions);
-  // }, [searchQuery]);
 
   // フラッシュメッセージをチェックして表示
   useEffect(() => {
@@ -72,14 +67,12 @@ const Dashboard = () => {
   const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row">
-        <div className="w-full md:w-1/4 mb-8 md:mb-0">
-          {/* ユーザー情報カードを表示 */}
+    <div className="container mx-auto px-4 py-8 mt-4">
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="w-full md:w-1/3 lg:w-1/4 mb-8 md:mb-0">
           <UserCard currentUser={currentUser} isAdmin={isAdmin} />
         </div>
         <div className="w-full md:flex-1 md:pl-8">
-          {/* 検索フォームを表示 */}
           <SearchForm
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -96,17 +89,18 @@ const Dashboard = () => {
               }
             }}
           />
-          {/* YouTube動画のいいねアコーディオンを表示 */}
-          <YoutubeLikesAccordion
-            youtubeVideoLikes={youtubeVideoLikes}
-            youtubePlaylistUrl={youtubePlaylistUrl}
-            shufflePlaylist={() => shufflePlaylist(jwtToken, setYoutubePlaylistUrl)}
-          />
-          {/* ノートのいいねアコーディオンを表示 */}
+        </div>
+      </div>
+      <div className="w-full mt-8">
+        <YoutubeLikesAccordion
+          youtubeVideoLikes={youtubeVideoLikes}
+          youtubePlaylistUrl={youtubePlaylistUrl}
+          shufflePlaylist={() => shufflePlaylist(jwtToken, setYoutubePlaylistUrl)}
+        />
+        <div className="mt-8 space-y-6">
           <NoteLikesAccordion noteLikes={noteLikes} />
         </div>
       </div>
-      {/* フラッシュメッセージがある場合にSnackbarを表示 */}
       {flashMessage && (
         <Snackbar
           open={showSnackbar}

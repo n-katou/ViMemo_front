@@ -12,6 +12,7 @@ import Box from '@mui/material/Box';
 import Link from 'next/link';
 import { Like } from '../../types/like';
 import { Note } from '../../types/note';
+import { useTheme } from 'next-themes'; // useThemeフックをインポート
 
 interface NoteLikesAccordionProps {
   noteLikes: Like[];
@@ -20,13 +21,16 @@ interface NoteLikesAccordionProps {
 const isNote = (likeable: any): likeable is Note => likeable !== undefined && likeable.content !== undefined;
 
 const NoteLikesAccordion: React.FC<NoteLikesAccordionProps> = ({ noteLikes }) => {
+  const { theme } = useTheme(); // テーマフックを使用
   // 最初の6件のnoteLikesを取得
   const limitedNoteLikes = noteLikes.slice(0, 6);
 
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="h6">最新「いいね」したメモ一覧</Typography>
+        <Typography variant="h6" sx={{ color: theme === 'light' ? '#818cf8' : 'inherit' }}>
+          最新「いいね」したメモ一覧
+        </Typography>
       </AccordionSummary>
       <AccordionDetails>
         {limitedNoteLikes.length > 0 ? (
@@ -56,7 +60,9 @@ const NoteLikesAccordion: React.FC<NoteLikesAccordionProps> = ({ noteLikes }) =>
                     {note.youtube_video_id && (
                       <Box textAlign="center" p={2}>
                         <Link href={`/youtube_videos/${note.youtube_video_id}`} passHref legacyBehavior>
-                          <Button variant="contained" className="btn btn-outline btn-darkpink" size="small">この動画を見る</Button>
+                          <Button variant="contained" className="btn btn-outline btn-darkpink" size="small">
+                            この動画を見る
+                          </Button>
                         </Link>
                       </Box>
                     )}
@@ -67,7 +73,9 @@ const NoteLikesAccordion: React.FC<NoteLikesAccordionProps> = ({ noteLikes }) =>
             })}
           </div>
         ) : (
-          <Typography variant="body2" color="textSecondary">いいねしたメモがありません。</Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ color: theme === 'light' ? '#818cf8' : 'inherit' }}>
+            いいねしたメモがありません。
+          </Typography>
         )}
       </AccordionDetails>
     </Accordion>
