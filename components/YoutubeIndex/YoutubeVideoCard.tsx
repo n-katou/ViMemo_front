@@ -10,8 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
-import { formatDuration, videoTimestampToSeconds, playFromTimestamp } from '../YoutubeShow/youtubeShowUtils';
+import { formatDuration } from '../YoutubeShow/youtubeShowUtils';
 import RelatedNotesList from './RelatedNotesList'; // RelatedNotesListコンポーネントのインポート
 
 // YoutubeVideoCardコンポーネントのプロパティ型を定義
