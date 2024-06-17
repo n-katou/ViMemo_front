@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import NoteIcon from '@mui/icons-material/Note';
 import Popover from '@mui/material/Popover';
-import { formatDuration, videoTimestampToSeconds, playFromTimestamp } from '../../YoutubeShow/youtubeShowUtils'; // 動画の再生時間をフォーマットする関数をインポート
+import { formatDuration } from '../../YoutubeShow/youtubeShowUtils'; // 動画の再生時間をフォーマットする関数をインポート
 import RelatedNotesList from '../../YoutubeIndex/RelatedNotesList'; // RelatedNotesListコンポーネントをインポート
 
 // VideoCardコンポーネントのプロパティ型を定義
@@ -30,14 +30,6 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({ video, currentUser, handl
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [noteAnchorEl, setNoteAnchorEl] = useState<HTMLElement | null>(null); // NoteのPopover用
   const playerRef = useRef<HTMLIFrameElement | null>(null); // Playerの参照を管理
-
-  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleNotePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
     setNoteAnchorEl(event.currentTarget);
