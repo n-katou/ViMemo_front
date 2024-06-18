@@ -103,9 +103,20 @@ const Header: React.FC = () => {
           </span>
           <div style={{ flexGrow: 1 }} />
           <div className="flex items-center">
-            <IconButton onClick={toggleSearch} sx={{ color: '#818cf8', fontFamily: 'Volkhov', }}>
+            <IconButton
+              onClick={toggleSearch}
+              sx={{
+                color: '#818cf8',
+                fontFamily: 'Volkhov',
+                '&:hover': {
+                  color: '#818cf8',
+                  transform: 'scale(1.1)',
+                  transition: 'transform 0.3s ease',
+                }
+              }}
+            >
               <SearchIcon />
-              <Typography variant="body1" sx={{ marginLeft: 1, color: '#c084fc', '&:hover': { color: '#818cf8' } }}>
+              <Typography variant="body1" sx={{ marginLeft: 0.5, color: '#c084fc', '&:hover': { color: '#818cf8' } }}>
                 検索
               </Typography>
             </IconButton>
@@ -113,10 +124,18 @@ const Header: React.FC = () => {
           </div>
           <Button
             onClick={navigateToYoutubeVideos}
-            startIcon={<YouTubeIcon sx={{ color: '#818cf8', fontFamily: 'Volkhov', '&:hover': { color: '#c084fc', transform: 'scale(1.1)', transition: 'all 0.3s ease' } }} />}
-            sx={{ marginLeft: 1, color: '#c084fc', '&:hover': { color: '#818cf8' } }}
+            startIcon={<YouTubeIcon className="youtube-icon" />}
+            sx={{
+              color: '#818cf8',
+              fontFamily: 'Volkhov',
+              '&:hover': {
+                color: '#818cf8',
+                transform: 'scale(1.1)',
+                transition: 'transform 0.3s ease',
+              }
+            }}
           >
-            <Typography variant="body1">
+            <Typography variant="body1" sx={{ marginLeft: 0.5, color: '#c084fc', '&:hover': { color: '#818cf8' } }}>
               YouTube
             </Typography>
           </Button>
@@ -127,7 +146,14 @@ const Header: React.FC = () => {
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={toggleDrawer}
-              sx={{ color: '#818cf8', '&:hover': { color: '#c084fc', transform: 'scale(1.1)', transition: 'all 0.3s ease' } }}
+              sx={{
+                color: '#818cf8',
+                '&:hover': {
+                  color: '#c084fc',
+                  transform: 'scale(1.1)',
+                  transition: 'transform 0.3s ease',
+                }
+              }}
             >
               <AccountCircle />
             </IconButton>
