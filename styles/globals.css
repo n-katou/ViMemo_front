@@ -408,6 +408,15 @@ input[type="text"] {
   animation: rainbow 10s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  /* スムーズな色の変化 */
+}
+
+.bg-gradient-rainbow-header:hover {
+  transform: scale(1.1);
+  /* ホバー時に拡大 */
+  opacity: 0.8;
+  /* ホバー時にフェード */
 }
 
 @keyframes rainbow-border {

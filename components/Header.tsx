@@ -9,8 +9,8 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import SearchDialog from './Header/SearchDialog';
 import UserDrawer from './Header/UserDrawer';
-import FlashMessage from '../components/FlashMessage'; // フラッシュメッセージコンポーネントのインポート
-import { useFlashMessage } from '../context/FlashMessageContext'; // フラッシュメッセージコンテキストのインポート
+import FlashMessage from '../components/FlashMessage';
+import { useFlashMessage } from '../context/FlashMessageContext';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import YouTubeIcon from '@mui/icons-material/YouTube';
@@ -18,8 +18,8 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 const Header: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
-  const { setFlashMessage } = useFlashMessage(); // フラッシュメッセージの使用
-  const { theme, resolvedTheme } = useTheme(); // テーマを取得
+  const { setFlashMessage } = useFlashMessage();
+  const { theme, resolvedTheme } = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -32,7 +32,7 @@ const Header: React.FC = () => {
     }
 
     const handleRouteChange = () => {
-      setDrawerOpen(false); // ページ遷移時にドロワーを閉じる
+      setDrawerOpen(false);
     };
 
     router.events.on('routeChangeStart', handleRouteChange);
@@ -45,7 +45,7 @@ const Header: React.FC = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      setDrawerOpen(false); // ドロワーを閉じる
+      setDrawerOpen(false);
       localStorage.setItem('isMessageDisplayed', 'false');
       router.push('/login?flash_message=ログアウトしました');
     } catch (error) {
@@ -95,31 +95,47 @@ const Header: React.FC = () => {
                   xs: '1.5rem',
                   sm: '3.0rem',
                   md: '3.5rem',
-                }
+                },
               }}
             >
               ViMemo
             </Typography>
           </span>
-          <div style={{ flexGrow: 1 }} /> {/* ダミーのスペースを追加 */}
+          <div style={{ flexGrow: 1 }} />
           <div className="flex items-center">
-            <IconButton onClick={toggleSearch} sx={{ color: '#818cf8', fontFamily: 'Volkhov', }}>
+            <IconButton
+              onClick={toggleSearch}
+              sx={{
+                color: '#818cf8',
+                fontFamily: 'Volkhov',
+                '&:hover': {
+                  color: '#818cf8',
+                  transform: 'scale(1.1)',
+                  transition: 'transform 0.3s ease',
+                }
+              }}
+            >
               <SearchIcon />
-              <Typography variant="body1" sx={{ marginLeft: 1, color: '#c084fc' }}>
+              <Typography variant="body1" sx={{ marginLeft: 0.5, color: '#c084fc', '&:hover': { color: '#818cf8' } }}>
                 検索
               </Typography>
             </IconButton>
-            <SearchDialog
-              searchOpen={searchOpen}
-              toggleSearch={toggleSearch}
-            />
+            <SearchDialog searchOpen={searchOpen} toggleSearch={toggleSearch} />
           </div>
           <Button
             onClick={navigateToYoutubeVideos}
-            startIcon={<YouTubeIcon sx={{ color: '#818cf8', fontFamily: 'Volkhov' }} />}
-            sx={{ marginLeft: 1, color: '#c084fc' }}
+            startIcon={<YouTubeIcon className="youtube-icon" />}
+            sx={{
+              color: '#818cf8',
+              fontFamily: 'Volkhov',
+              '&:hover': {
+                color: '#818cf8',
+                transform: 'scale(1.1)',
+                transition: 'transform 0.3s ease',
+              }
+            }}
           >
-            <Typography variant="body1">
+            <Typography variant="body1" sx={{ marginLeft: 0.5, color: '#c084fc', '&:hover': { color: '#818cf8' } }}>
               YouTube
             </Typography>
           </Button>
@@ -130,21 +146,23 @@ const Header: React.FC = () => {
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={toggleDrawer}
-              sx={{ color: '#818cf8' }}
+              sx={{
+                color: '#818cf8',
+                '&:hover': {
+                  color: '#c084fc',
+                  transform: 'scale(1.1)',
+                  transition: 'transform 0.3s ease',
+                }
+              }}
             >
               <AccountCircle />
             </IconButton>
-            <UserDrawer
-              drawerOpen={drawerOpen}
-              toggleDrawer={toggleDrawer}
-              currentUser={currentUser}
-              handleLogout={handleLogout}
-            />
+            <UserDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} currentUser={currentUser} handleLogout={handleLogout} />
           </div>
         </Toolbar>
       </AppBar>
-      <Toolbar /> {/* この行はコンテンツの上にスペースを作ります */}
-      <FlashMessage /> {/* フラッシュメッセージコンポーネントを追加 */}
+      <Toolbar />
+      <FlashMessage />
     </>
   );
 };
