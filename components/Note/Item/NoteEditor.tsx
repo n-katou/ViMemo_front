@@ -54,11 +54,11 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
             <input
               type="number"
               value={newMinutes || ''}
-              onChange={(e) => setNewMinutes(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)))}
+              onChange={(e) => setNewMinutes(Math.max(0, Math.min(300, parseInt(e.target.value) || 0)))}
               min="0"
-              max="59"
+              max="300"
               placeholder="00"
-              className={`input input-bordered text-center w-12 ${isDarkMode ? 'bg-gray-800 text-white border border-white placeholder-gray-400' : 'bg-white text-black border border-gray-300 placeholder-black'}`}
+              className={`input input-bordered text-center w-16 ${isDarkMode ? 'bg-gray-800 text-white border border-white placeholder-gray-400' : 'bg-white text-black border border-gray-300 placeholder-black'}`}
             />
             <span>分</span>
             <input
