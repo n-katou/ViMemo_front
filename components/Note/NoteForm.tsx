@@ -70,11 +70,11 @@ export const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
           <input
             type="number"
             value={timestampMinutes} // タイムスタンプの分
-            onChange={(e) => setTimestampMinutes(Math.max(0, Math.min(59, parseInt(e.target.value) || 0)).toString())} // タイムスタンプの分が変更されたときに状態を更新
+            onChange={(e) => setTimestampMinutes(Math.max(0, Math.min(300, parseInt(e.target.value) || 0)).toString())} // タイムスタンプの分が変更されたときに状態を更新
             min="0"
-            max="59"
+            max="300"
             placeholder="00"
-            className={`input input-bordered text-center w-12 ${isDarkMode ? 'bg-gray-700 text-white' : 'text-black'}`}
+            className={`input input-bordered text-center w-16 ${isDarkMode ? 'bg-gray-700 text-white' : 'text-black'}`}
           />
           <span className={isDarkMode ? 'text-white' : ''}>分</span>
           <input
