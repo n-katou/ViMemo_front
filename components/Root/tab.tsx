@@ -13,7 +13,7 @@ const tab = (isLightTheme: boolean) => [
             </p>
             <div className="mt-4">
               <img
-                src="https://i.gyazo.com/b9226792089d148f0b1dcc659786d536.gif"
+                src="https://i.gyazo.com/9f8777682f57eba9472e308144c0ccc2.gif"
                 width="100%"
                 alt="ログイン方法の説明"
                 style={{ display: 'block', margin: 'auto' }}
