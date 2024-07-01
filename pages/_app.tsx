@@ -93,13 +93,8 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
         <link rel="canonical" href="https://vi-memo.com" />
-        <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="ViMemo" />
-        <meta name="theme-color" content="#000" />
-        <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
+        <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <FlashMessageProvider>
         <AuthProvider>
