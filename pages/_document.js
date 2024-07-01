@@ -22,7 +22,6 @@ class MyDocument extends Document {
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
           <meta name="apple-mobile-web-app-title" content="ViMemo" />
           <meta name="theme-color" content="#000000" />
-          <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
         </Head>
         <body>
           <Main />
