@@ -32,7 +32,7 @@ const NoteActions: React.FC<NoteActionsProps> = ({
   const youtubeId = note.youtube_video?.youtube_id;
 
   // 共有メッセージを作成
-  const shareMessage = `【シェア】\n\n🔖タイムスタンプ: ${padZero(newMinutes)}:${padZero(newSeconds)}\n📝メモ: ${note.content}\n📺YouTube: https://www.youtube.com/watch?v=${youtubeId}&t=${videoTimestampToSeconds(note.video_timestamp)}s\n\nViMemoでシェアしよう✍️`;
+  const shareMessage = `【シェア】\n\n🔖タイムスタンプ: ${padZero(newMinutes)}:${padZero(newSeconds)}\n📝メモ: ${note.content}\n📺YouTube: https://www.youtube.com/watch?v=${youtubeId}&t=${videoTimestampToSeconds(note.video_timestamp)}s\n\n#ViMemo でシェアしよう✍️`;
 
   // Twitterの共有URLを作成
   const shareUrl = youtubeId ? `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(shareMessage)}` : '';
