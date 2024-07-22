@@ -37,7 +37,6 @@ const MyNotesPage: React.FC = () => {
             Authorization: `Bearer ${jwtToken}`,
           },
         });
-
         if (res.data.notes) {
           setNotes(res.data.notes);
         } else {
