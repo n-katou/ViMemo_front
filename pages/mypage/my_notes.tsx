@@ -31,7 +31,7 @@ const MyNotesPage: React.FC = () => {
 
     const fetchNotes = async (sort: string) => {
       try {
-        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/notes_with_videos?sort=${sort}`;
+        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/my_notes?sort=${sort}`;
         const res = await axios.get(userNotesUrl, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
