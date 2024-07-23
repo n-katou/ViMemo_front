@@ -1,7 +1,5 @@
-// src/hooks/mypage/favorite_notes/useFavoriteNotes.ts
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
 import { fetchNoteLikes } from '../../../components/Mypage/favorite_notes/favoriteNotesUtils';
 import { Like } from '../../../types/like';
 import { Note } from '../../../types/note';

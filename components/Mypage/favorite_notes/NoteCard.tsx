@@ -1,23 +1,22 @@
 import React from 'react';
-import { Typography, Avatar, Button, Box, Tooltip, IconButton, Badge } from '@mui/material';
+import { Card, CardContent, Typography, Avatar, Button, Box, Tooltip, IconButton, Badge } from '@mui/material';
 import { ThumbUp, ThumbUpOffAlt } from '@mui/icons-material';
 import Link from 'next/link';
 import { Note } from '../../../types/note';
 import useNoteLike from '../../../hooks/mypage/favorite_notes/useNoteLike';
-import { NoteCardContainer, NoteCardContent, NoteCardActions } from '../../../styles/mypage/favorite_notes/NoteCardStyles';
 
 interface NoteCardProps {
   note: Note;
-  jwtToken?: string;
+  jwtToken?: string; // オプションに変更
   currentUser: any;
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({ note, jwtToken, currentUser }) => {
-  const { liked, likesCount, handleLike } = useNoteLike(note.youtube_video_id, note.id, jwtToken);
+  const { liked, likeError, likesCount, handleLike } = useNoteLike({ note, jwtToken });
 
   return (
-    <NoteCardContainer>
-      <NoteCardContent>
+    <Card className="note-card" sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <CardContent className="note-card-content" sx={{ flexGrow: 1, overflowY: 'auto' }}>
         {note.user && (
           <div className="flex items-center mb-2">
             {note.user.avatar_url && (
@@ -34,8 +33,8 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, jwtToken, currentUser }) => {
             {note.content}
           </Typography>
         </Box>
-      </NoteCardContent>
-      <NoteCardActions>
+      </CardContent>
+      <Box className="note-card-actions" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderTop: '1px solid #e0e0e0' }}>
         <Tooltip title={liked ? "いいねを取り消す" : "いいね"}>
           <IconButton onClick={handleLike}>
             <Badge badgeContent={likesCount} color="primary">
@@ -50,8 +49,8 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, jwtToken, currentUser }) => {
             </Button>
           </Link>
         )}
-      </NoteCardActions>
-    </NoteCardContainer>
+      </Box>
+    </Card>
   );
 };
 

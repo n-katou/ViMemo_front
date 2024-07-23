@@ -1,38 +1,44 @@
 import { useState, useEffect } from 'react';
 import { handleNoteLike, handleNoteUnlike, fetchCurrentUserLike } from '../../../src/api';
+import { Note } from '../../../types/note';
 
-const useNoteLike = (youtubeVideoId: number, noteId: number, jwtToken?: string) => {
+interface UseNoteLikeProps {
+  note: Note;
+  jwtToken?: string;
+}
+
+const useNoteLike = ({ note, jwtToken }: UseNoteLikeProps) => {
   const [liked, setLiked] = useState(false);
   const [likeError, setLikeError] = useState<string | null>(null);
   const [likeId, setLikeId] = useState<number | null>(null);
-  const [likesCount, setLikesCount] = useState(0);
+  const [likesCount, setLikesCount] = useState(note.likes_count);
+
+  const fetchLikeStatus = async () => {
+    if (jwtToken) {
+      try {
+        const fetchedLikeId = await fetchCurrentUserLike(note.youtube_video_id, note.id, jwtToken);
+        if (fetchedLikeId) {
+          setLiked(true);
+          setLikeId(fetchedLikeId);
+        } else {
+          setLiked(false);
+          setLikeId(null);
+        }
+      } catch (error) {
+        console.error('Failed to fetch current user like status:', error);
+      }
+    }
+  };
 
   useEffect(() => {
-    const fetchLikeStatus = async () => {
-      if (jwtToken) {
-        try {
-          const fetchedLikeId = await fetchCurrentUserLike(youtubeVideoId, noteId, jwtToken);
-          if (fetchedLikeId) {
-            setLiked(true);
-            setLikeId(fetchedLikeId);
-          } else {
-            setLiked(false);
-            setLikeId(null);
-          }
-        } catch (error) {
-          console.error('Failed to fetch current user like status:', error);
-        }
-      }
-    };
-
     fetchLikeStatus();
-  }, [youtubeVideoId, noteId, jwtToken]);
+  }, [note.youtube_video_id, note.id, jwtToken]);
 
   const handleLike = async () => {
     if (!jwtToken) return;
 
     if (liked && likeId !== null) {
-      const result = await handleNoteUnlike(youtubeVideoId, noteId, likeId, jwtToken);
+      const result = await handleNoteUnlike(note.youtube_video_id, note.id, likeId, jwtToken);
       if (result.success) {
         setLiked(false);
         setLikeId(null);
@@ -42,7 +48,7 @@ const useNoteLike = (youtubeVideoId: number, noteId: number, jwtToken?: string) 
         setLikeError(result.error);
       }
     } else {
-      const result = await handleNoteLike(youtubeVideoId, noteId, jwtToken);
+      const result = await handleNoteLike(note.youtube_video_id, note.id, jwtToken);
       if (result.success) {
         setLiked(true);
         setLikeId(result.like_id);
@@ -52,9 +58,15 @@ const useNoteLike = (youtubeVideoId: number, noteId: number, jwtToken?: string) 
         setLikeError(result.error);
       }
     }
+    await fetchLikeStatus();
   };
 
-  return { liked, likesCount, handleLike, likeError };
+  return {
+    liked,
+    likeError,
+    likesCount,
+    handleLike
+  };
 };
 
 export default useNoteLike;
