@@ -48,7 +48,14 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
   };
 
   return (
-    <div ref={dragDropRef} className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group" style={{ opacity: isDragging ? 0.5 : 1 }}>
+    <div
+      ref={dragDropRef}
+      className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group"
+      style={{
+        opacity: isDragging ? 0.5 : 1,
+        backgroundColor: isDragging ? '#22eec5' : 'white', // ドラッグ中の背景色を変更
+      }}
+    >
       <div className="drag-handle cursor-move bg-gradient-rainbow p-2 flex items-center justify-center">
         <p className="text-white text-sm">ドラッグして順番を変更</p>
       </div>
