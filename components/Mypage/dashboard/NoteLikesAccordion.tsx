@@ -10,8 +10,8 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Link from 'next/link';
-import { Like } from '../../types/like';
-import { Note } from '../../types/note';
+import { Like } from '../../../types/like';
+import { Note } from '../../../types/note';
 import { useTheme } from 'next-themes'; // useThemeフックをインポート
 
 interface NoteLikesAccordionProps {

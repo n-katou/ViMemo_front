@@ -7,7 +7,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
-import { Like } from '../../types/like';
+import { Like } from '../../../types/like';
 import { useTheme } from 'next-themes';
 
 interface YoutubeLikesAccordionProps {
@@ -31,7 +31,6 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVi
           <div className="mb-4 video-wrapper">
             <iframe
               src={youtubePlaylistUrl}
-              frameBorder="0"
               allowFullScreen
               className="w-full aspect-video large-video"
             ></iframe>
