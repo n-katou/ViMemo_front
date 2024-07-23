@@ -34,7 +34,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
   const router = useRouter();
   const playerRef = useRef<HTMLIFrameElement | null>(null);
 
-  const { dragDropRef, isDragging } = useDragDropVideoCard(index, moveVideo);
+  const { dragDropRef, isDragging, isOver } = useDragDropVideoCard(index, moveVideo);
   const { anchorEl, open, handlePopoverOpen, handlePopoverClose } = useNotePopover();
 
   const relatedNotes = notes.filter(note => note.youtube_video_id === video.id);
@@ -53,7 +53,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
       className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group"
       style={{
         opacity: isDragging ? 0.5 : 1,
-        backgroundColor: isDragging ? '#22eec5' : 'white',
+        backgroundColor: isDragging ? '#22eec5' : isOver ? '#38bdf8' : 'white',
         transition: 'background-color 0.2s, transform 0.2s',
         transform: isDragging ? 'scale(1.02)' : 'scale(1)',
         zIndex: isDragging ? 1000 : 'auto',
