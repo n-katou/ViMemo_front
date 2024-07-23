@@ -4,11 +4,11 @@ import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import UserCard from '../../components/Mypage/UserCard';
-import YoutubeLikesAccordion from '../../components/Mypage/YoutubeLikesAccordion';
-import NoteLikesAccordion from '../../components/Mypage/NoteLikesAccordion';
-import SearchForm from '../../components/Mypage/SearchForm';
-import { fetchData, fetchVideosByGenre, shufflePlaylist } from '../../components/Mypage/dashboard';
+import UserCard from '../../components/Mypage/dashboard/UserCard';
+import YoutubeLikesAccordion from '../../components/Mypage/dashboard/YoutubeLikesAccordion';
+// import NoteLikesAccordion from '../../components/Mypage/dashboard/NoteLikesAccordion';
+import SearchForm from '../../components/Mypage/dashboard/SearchForm';
+import { fetchData, fetchVideosByGenre, shufflePlaylist } from '../../components/Mypage/dashboard/dashboard';
 
 const Dashboard = () => {
   // 認証コンテキストから必要な情報を取得
