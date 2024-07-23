@@ -12,11 +12,15 @@ const CustomSpinner: React.FC<CustomSpinnerProps> = ({ size = 300, bgColor = 'rg
     height: size,
   };
 
+  const textStyle = {
+    color: '#fff',
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: bgColor, zIndex: 50 }}>
       <div className="text-center">
         <div className={styles.spinner} style={spinnerStyle}></div>
-        <p className="mt-4 text-white text-lg font-semibold">Loading...</p>
+        <p className="mt-4 text-lg font-semibold" style={textStyle}>シャッフル中...</p>
       </div>
     </div>
   );
