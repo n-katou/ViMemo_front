@@ -1,97 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { useAuth } from '../../context/AuthContext';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import { Like } from '../../types/like';
-import { Note } from '../../types/note';
+import React from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import { useTheme } from 'next-themes';
+import { useFavoriteNotes } from '../../hooks/mypage/favorite_notes/useFavoriteNotes';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import Pagination from '../../components/Pagination';
-import NoteCard from '../../components/Mypage/favorite_notes/NoteCard'; // NoteCardコンポーネントをインポート
-import { fetchNoteLikes } from '../../components/Mypage/favorite_notes/favoriteNotesUtils'; // noteUtilsから関数をインポート
-import { useTheme } from 'next-themes'; // useThemeフックをインポート
-
-// likeableがNote型かどうかをチェックするためのタイプガード関数
-const isNote = (likeable: any): likeable is Note => {
-  return (likeable as Note).content !== undefined;
-};
+import NoteCard from '../../components/Mypage/favorite_notes/NoteCard';
+import { useAuth } from '../../context/AuthContext';
 
 const FavoriteNotesPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth(); // 認証コンテキストから現在のユーザーとJWTトークンを取得
-  const router = useRouter();
-  const [noteLikes, setNoteLikes] = useState<Like[]>([]); // ノートのいいねリストを管理する状態
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState<number>(1); // 現在のページを管理する状態
-  const [sortOption, setSortOption] = useState<string>('created_at_desc'); // ソートオプションを追加
-  const itemsPerPage = 12; // 1ページあたりのアイテム数を設定
+  const {
+    noteLikes,
+    loading,
+    error,
+    currentPage,
+    sortOption,
+    itemsPerPage,
+    sortNotes,
+    handlePageChange,
+    handleSortChange,
+    isNote,
+  } = useFavoriteNotes({ currentUser, jwtToken });
+
   const { theme } = useTheme(); // テーマフックを使用
-
-  // クエリパラメータを更新する関数
-  const updateQueryParams = (page: number, sort: string) => {
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, page, sort },
-    }, undefined, { shallow: true });
-  };
-
-  // コンポーネントがマウントされたときにノートのいいねを取得するための副作用
-  useEffect(() => {
-    if (!currentUser || !jwtToken) {
-      setLoading(false); // ローディング状態を終了
-      return;
-    }
-
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        await fetchNoteLikes(jwtToken, setNoteLikes, setError, setLoading);
-        console.log("Note likes fetched successfully");
-      } catch (err) {
-        console.error("Error fetching note likes:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [currentUser, jwtToken]);
-
-  useEffect(() => {
-    const page = parseInt(router.query.page as string, 10) || 1;
-    const sort = router.query.sort as string || 'created_at_desc';
-
-    setCurrentPage(page);
-    setSortOption(sort);
-  }, [router.query.page, router.query.sort]);
-
-  // ノートのリストをソートする関数
-  const sortNotes = (notes: Like[]) => {
-    switch (sortOption) {
-      case 'created_at_asc':
-        return notes.slice().sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-      case 'most_liked':
-        return notes.slice().sort((a, b) => b.likeable.likes_count - a.likeable.likes_count);
-      default:
-        return notes.slice().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-    }
-  };
-
-  // ページネーションのためのアイテムのスライス
-  const startIndex = (currentPage - 1) * itemsPerPage; // 開始インデックスを計算
-  const endIndex = startIndex + itemsPerPage; // 終了インデックスを計算
-  const currentItems = sortNotes(noteLikes).slice(startIndex, endIndex); // 現在のページに表示するアイテムをスライス
-
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setCurrentPage(value);
-    updateQueryParams(value, sortOption);
-  };
-
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSortOption = e.target.value;
-    setSortOption(newSortOption);
-    updateQueryParams(1, newSortOption);
-  };
 
   if (loading) {
     console.log("Loading state: ", loading);
@@ -101,6 +33,10 @@ const FavoriteNotesPage: React.FC = () => {
     console.error("Error state: ", error);
     return <p>{error}</p>;
   }
+
+  const startIndex = (currentPage - 1) * itemsPerPage; // 開始インデックスを計算
+  const endIndex = startIndex + itemsPerPage; // 終了インデックスを計算
+  const currentItems = sortNotes(noteLikes).slice(startIndex, endIndex); // 現在のページに表示するアイテムをスライス
 
   return (
     <div className={`container mx-auto py-8 px-4 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
