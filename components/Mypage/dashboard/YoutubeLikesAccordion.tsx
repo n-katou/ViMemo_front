@@ -61,7 +61,7 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVi
           >
             {isShuffling ? 'シャッフル中...' : 'プレイリストをシャッフル'}
           </Button>
-          {isShuffling && <CustomSpinner size={150} bgColor="rgba(255, 255, 255, 0.5)" />}
+          {isShuffling && <CustomSpinner size={150} bgColor="rgba(0, 0, 0, 0.7)" />}
         </Box>
       )}
     </Accordion>
