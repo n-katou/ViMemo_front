@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { YoutubeVideo } from '../../../types/youtubeVideo';
 import { Note } from '../../../types/note';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -53,7 +53,10 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
       className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group"
       style={{
         opacity: isDragging ? 0.5 : 1,
-        backgroundColor: isDragging ? '#22eec5' : 'white', // ドラッグ中の背景色を変更
+        backgroundColor: isDragging ? '#22eec5' : 'white',
+        transition: 'background-color 0.2s, transform 0.2s',
+        transform: isDragging ? 'scale(1.02)' : 'scale(1)',
+        zIndex: isDragging ? 1000 : 'auto',
       }}
     >
       <div className="drag-handle cursor-move bg-gradient-rainbow p-2 flex items-center justify-center">

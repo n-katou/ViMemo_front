@@ -1,7 +1,10 @@
 import { useDrag, useDrop } from 'react-dnd';
+import { useRef } from 'react';
 
 const useDragDropVideoCard = (index: number, moveVideo: (dragIndex: number, hoverIndex: number) => void) => {
-  const [{ isDragging }, dragRef] = useDrag({
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  const [{ isDragging }, drag] = useDrag({
     type: 'VIDEO_CARD',
     item: { index },
     collect: (monitor) => ({
@@ -9,35 +12,51 @@ const useDragDropVideoCard = (index: number, moveVideo: (dragIndex: number, hove
     }),
   });
 
-  const [, dropRef] = useDrop({
+  const [, drop] = useDrop({
     accept: 'VIDEO_CARD',
     hover: (draggedItem: { index: number }, monitor) => {
-      if (!draggedItem || draggedItem.index === index) {
+      if (!ref.current) {
         return;
       }
-      const hoverBoundingRect = monitor.getClientOffset();
-      const hoverMiddleY = (hoverBoundingRect!.y - hoverBoundingRect!.y) / 2;
+      const dragIndex = draggedItem.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       const clientOffset = monitor.getClientOffset();
-      const hoverClientY = clientOffset!.y - hoverBoundingRect!.y;
+      const hoverClientY = clientOffset!.y - hoverBoundingRect.top;
 
-      if (draggedItem.index < index && hoverClientY < hoverMiddleY) {
-        return;
-      }
-      if (draggedItem.index > index && hoverClientY > hoverMiddleY) {
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
         return;
       }
 
-      moveVideo(draggedItem.index, index);
-      draggedItem.index = index;
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+
+      moveVideo(dragIndex, hoverIndex);
+      draggedItem.index = hoverIndex;
+    },
+    drop: (draggedItem: { index: number }) => {
+      const dragIndex = draggedItem.index;
+      const hoverIndex = index;
+
+      if (dragIndex !== hoverIndex) {
+        moveVideo(dragIndex, hoverIndex);
+      }
     },
   });
 
-  const dragDropRef = (node: HTMLDivElement | null) => {
-    dragRef(node);
-    dropRef(node);
-  };
+  drag(drop(ref));
 
-  return { dragDropRef, isDragging };
+  return {
+    dragDropRef: ref,
+    isDragging,
+  };
 };
 
 export default useDragDropVideoCard;
