@@ -62,7 +62,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
       <div className="drag-handle cursor-move bg-gradient-rainbow p-2 flex items-center justify-center">
         <p className="text-white text-sm">ドラッグして順番を変更</p>
       </div>
-      <VideoContainer>
+      <VideoContainer className="hidden md:block">
         <iframe
           src={`https://www.youtube.com/embed/${video.youtube_id}`}
           allowFullScreen
@@ -80,26 +80,28 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
             {video.title}
           </h2>
         </div>
-        <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-        <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-        <div className="flex items-center">
-          <FavoriteIcon className="text-red-500 mr-1" />
-          <p className="text-gray-600">{video.likes_count}</p>
+        <div className="hidden md:block">
+          <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+          <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
+          <div className="flex items-center">
+            <FavoriteIcon className="text-red-500 mr-1" />
+            <p className="text-gray-600">{video.likes_count}</p>
+          </div>
+          <div className="flex items-center" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
+            <NoteIcon className="text-blue-500 mr-1" />
+            <p className="text-gray-600 flex items-center">
+              {video.notes_count} <SearchIcon className="ml-1" />
+            </p>
+          </div>
+          <VideoPopover
+            open={open}
+            anchorEl={anchorEl}
+            handlePopoverClose={handlePopoverClose}
+            relatedNotes={relatedNotes}
+            playerRef={playerRef}
+          />
         </div>
-        <div className="flex items-center" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
-          <NoteIcon className="text-blue-500 mr-1" />
-          <p className="text-gray-600 flex items-center">
-            {video.notes_count} <SearchIcon className="ml-1" />
-          </p>
-        </div>
-        <VideoPopover
-          open={open}
-          anchorEl={anchorEl}
-          handlePopoverClose={handlePopoverClose}
-          relatedNotes={relatedNotes}
-          playerRef={playerRef}
-        />
-        <LikeButtonContainer>
+        <LikeButtonContainer className="hidden md:block">
           <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
         </LikeButtonContainer>
       </CardContentBox>
