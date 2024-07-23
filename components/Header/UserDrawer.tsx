@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -35,18 +34,7 @@ interface UserDrawerProps {
   handleLogout: () => void;
 }
 
-const clearCacheAndCookies = () => {
-  if (window.caches) {
-    caches.keys().then((names) => {
-      for (let name of names) caches.delete(name);
-    });
-  }
-  document.cookie.split(";").forEach(function (c) {
-    document.cookie = c
-      .replace(/^ +/, "")
-      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-  });
-};
+
 
 const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, currentUser, handleLogout }) => {
   const router = useRouter();
@@ -69,7 +57,6 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
 
   const handleLogoutConfirm = async () => {
     handleLogoutDialogClose();
-    clearCacheAndCookies();
     try {
       await handleLogout();
       router.push('/login');
@@ -130,7 +117,6 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
                     { text: 'MYメモ', href: '/mypage/my_notes', icon: <EditIcon /> },
                   ].map((item) => (
                     <ListItem
-                      button
                       key={item.text}
                       onClick={handleDrawerClose}
                       component={Link}
@@ -160,7 +146,6 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
                     { text: 'ログインページ', href: '/login', icon: <LoginIcon /> },
                   ].map((item) => (
                     <ListItem
-                      button
                       key={item.text}
                       onClick={handleDrawerClose}
                       component={Link}
