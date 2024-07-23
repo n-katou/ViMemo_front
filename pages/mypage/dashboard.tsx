@@ -97,9 +97,9 @@ const Dashboard = () => {
           youtubePlaylistUrl={youtubePlaylistUrl}
           shufflePlaylist={() => shufflePlaylist(jwtToken, setYoutubePlaylistUrl)}
         />
-        <div className="mt-8 space-y-6">
+        {/* <div className="mt-8 space-y-6">
           <NoteLikesAccordion noteLikes={noteLikes} />
-        </div>
+        </div> */}
       </div>
       {flashMessage && (
         <Snackbar
