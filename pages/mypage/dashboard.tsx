@@ -1,69 +1,37 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/router';
+import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import UserCard from '../../components/Mypage/UserCard';
-import YoutubeLikesAccordion from '../../components/Mypage/YoutubeLikesAccordion';
-import NoteLikesAccordion from '../../components/Mypage/NoteLikesAccordion';
-import SearchForm from '../../components/Mypage/SearchForm';
-import { fetchData, fetchVideosByGenre, shufflePlaylist } from '../../components/Mypage/dashboard';
+import UserCard from '../../components/Mypage/dashboard/UserCard';
+import YoutubeLikesAccordion from '../../components/Mypage/dashboard/YoutubeLikesAccordion';
+// import NoteLikesAccordion from '../../components/Mypage/dashboard/NoteLikesAccordion';
+import SearchForm from '../../components/Mypage/dashboard/SearchForm';
+import { useDashboardData } from '../../hooks/mypage/dashboard/useDashboardData';
 
 const Dashboard = () => {
-  // 認証コンテキストから必要な情報を取得
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
-  const router = useRouter();
+  const {
+    youtubeVideoLikes,
+    youtubePlaylistUrl,
+    searchQuery,
+    setSearchQuery,
+    suggestions,
+    flashMessage,
+    showSnackbar,
+    handleSearch,
+    handleCloseSnackbar,
+    shufflePlaylist,
+  } = useDashboardData({ jwtToken, currentUser, setAuthState });
 
-  // コンポーネントの状態を管理するためのuseStateフックを使用
-  const [youtubeVideoLikes, setYoutubeVideoLikes] = useState([]);
-  const [noteLikes, setNoteLikes] = useState([]);
-  const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
-  const [youtubeVideos, setYoutubeVideos] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [flashMessage, setFlashMessageState] = useState('');
-  const [showSnackbar, setShowSnackbar] = useState(false);
-
-  // データをフェッチするコールバック関数を定義
-  const fetchDataCallback = useCallback(() => {
-    fetchData(jwtToken, currentUser, setAuthState, setYoutubeVideoLikes, setNoteLikes, setYoutubePlaylistUrl, setFlashMessageState, setShowSnackbar, router);
-  }, [jwtToken, currentUser, setAuthState, router]);
-
-  // コンポーネントがマウントされた時とjwtTokenまたはcurrentUserが変更された時にデータをフェッチ
-  useEffect(() => {
-    if (jwtToken && currentUser) {
-      fetchDataCallback();
-    }
-  }, [jwtToken, currentUser, fetchDataCallback]);
-
-  // フラッシュメッセージをチェックして表示
-  useEffect(() => {
-    const flashMessage = localStorage.getItem('flashMessage');
-    if (flashMessage) {
-      setFlashMessageState(flashMessage);
-      setShowSnackbar(true);
-      localStorage.removeItem('flashMessage');
-    }
-  }, []);
-
-  // Snackbarを閉じるハンドラー関数
-  const handleCloseSnackbar = () => {
-    setShowSnackbar(false);
-    setFlashMessageState('');
-  };
-
-  // ローディング中の場合にスピナーを表示
   if (loading) {
     return <LoadingSpinner loading={loading} />;
   }
 
-  // ユーザーがログインしていない場合にログインを促すメッセージを表示
   if (!currentUser) {
     return <div className="flex justify-center items-center h-screen"><p className="text-xl">ログインして下さい。</p></div>;
   }
 
-  // 管理者ユーザーかどうかを判定
   const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
   return (
@@ -77,17 +45,7 @@ const Dashboard = () => {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             suggestions={suggestions}
-            handleSearch={async (e) => {
-              e.preventDefault();
-              console.log('Searching for genre:', searchQuery);
-              try {
-                await fetchVideosByGenre(searchQuery, jwtToken, setYoutubeVideos, setFlashMessageState, setShowSnackbar, router);
-              } catch (error) {
-                console.error('Error fetching videos:', error);
-                setFlashMessageState('ビデオを取得できませんでした。');
-                setShowSnackbar(true);
-              }
-            }}
+            handleSearch={handleSearch}
           />
         </div>
       </div>
@@ -95,7 +53,7 @@ const Dashboard = () => {
         <YoutubeLikesAccordion
           youtubeVideoLikes={youtubeVideoLikes}
           youtubePlaylistUrl={youtubePlaylistUrl}
-          shufflePlaylist={() => shufflePlaylist(jwtToken, setYoutubePlaylistUrl)}
+          shufflePlaylist={shufflePlaylist}
         />
         {/* <div className="mt-8 space-y-6">
           <NoteLikesAccordion noteLikes={noteLikes} />

@@ -1,72 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import NoteCard from '../../components/Mypage/my_notes/NoteCard';
-import { NoteWithVideoTitle } from '../../types/note'; // 必要に応じてインポートパスを調整
+import { NoteWithVideoTitle } from '../../types/note';
 import PaginationComponent from '../../components/Pagination';
-import Accordion from '../../components/Mypage/my_notes/Accordion'; // 追加
-import { groupNotesByVideoId } from '../../utils/groupNotesByVideoId'; // 追加
-import { useTheme } from 'next-themes'; // テーマフックを使用
+import Accordion from '../../components/Mypage/my_notes/Accordion';
+import { groupNotesByVideoId } from '../../utils/groupNotesByVideoId';
+import { useTheme } from 'next-themes';
+import useFetchNotes from '../../hooks/mypage/my_notes/useFetchNotes';
+import useHandleDeleteNote from '../../hooks/mypage/my_notes/useHandleDeleteNote';
 
 const ITEMS_PER_PAGE = 10;
 
 const MyNotesPage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth();
+  const { theme } = useTheme();
+  const { notes, loading, error, setNotes } = useFetchNotes({ jwtToken, currentUser });
+  const handleDeleteNote = useHandleDeleteNote(jwtToken, setNotes);
+
   const router = useRouter();
-  const [notes, setNotes] = useState<NoteWithVideoTitle[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [sortOption, setSortOption] = useState<string>('created_at_desc');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState(1);
-  const { theme } = useTheme(); // テーマフックを使用
-
-  useEffect(() => {
-    if (!currentUser) {
-      setLoading(false);
-      return;
-    }
-
-    const fetchNotes = async (sort: string) => {
-      try {
-        const userNotesUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/my_notes?sort=${sort}`;
-        const res = await axios.get(userNotesUrl, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
-        if (res.data.notes) {
-          setNotes(res.data.notes);
-        } else {
-          setError('メモの取得に失敗しました。');
-        }
-      } catch (err) {
-        setError('メモの取得に失敗しました。');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const querySort = router.query.sort as string || 'created_at_desc';
-    setSortOption(querySort);
-    fetchNotes(querySort);
-  }, [currentUser, jwtToken, router.query.sort]);
-
-  const handleDeleteNote = async (noteId: number) => {
-    try {
-      const deleteUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notes/${noteId}`;
-      await axios.delete(deleteUrl, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-      setNotes((prevNotes) => prevNotes.filter((note) => note.id !== noteId));
-    } catch (err) {
-      console.error('Error deleting note:', err);
-    }
-  };
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage);
@@ -109,8 +64,9 @@ const MyNotesPage: React.FC = () => {
                   content={note.content}
                   videoTimestamp={note.video_timestamp}
                   youtubeVideoId={note.youtube_video_id}
+                  noteId={note.id}
                   createdAt={note.created_at}
-                  onDelete={() => handleDeleteNote(note.id)}
+                  onDelete={() => handleDeleteNote(note.youtube_video_id, note.id)}
                 />
               ))}
             </div>
