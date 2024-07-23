@@ -4,17 +4,13 @@ import { YoutubeVideo } from '../../../types/youtubeVideo';
 import { Note } from '../../../types/note';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import SearchIcon from '@mui/icons-material/Search';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import NoteIcon from '@mui/icons-material/Note';
-import Popover from '@mui/material/Popover';
-import { formatDuration } from '../../YoutubeShow/youtubeShowUtils';
-import RelatedNotesList from '../../YoutubeIndex/RelatedNotesList';
 import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';
 import useNotePopover from '../../../hooks/mypage/favorite_videos/useNotePopover';
 import { VideoContainer, CardContentBox, LikeButtonContainer } from '../../../styles/mypage/favorite_videos/FavoriteVideoCardStyles';
+import LikeButton from './LikeButton';
 import VideoPopover from './VideoPopover';
+import { formatDuration } from '../../YoutubeShow/youtubeShowUtils';
 
 interface VideoCardProps {
   video: YoutubeVideo;
@@ -51,47 +47,6 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
     }
   };
 
-  const renderPopover = () => (
-    <Popover
-      id="mouse-over-popover"
-      sx={{
-        pointerEvents: 'none',
-        '.MuiPopover-paper': {
-          width: '600px',
-          marginTop: '10px',
-          padding: '20px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        },
-      }}
-      open={open}
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'center',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'center',
-      }}
-      onClose={handlePopoverClose}
-      disableRestoreFocus
-    >
-      <RelatedNotesList notes={relatedNotes.slice(0, 3)} playerRef={playerRef} />
-    </Popover>
-  );
-
-  const renderLikeButton = () => (
-    <Tooltip title={video.liked ? "いいね解除" : "いいね"}>
-      <div className="flex items-center cursor-pointer" onClick={handleLikeClick}>
-        <IconButton color={video.liked ? "secondary" : "primary"} className="like-button">
-          {video.liked ? <FavoriteIcon style={{ color: 'red' }} /> : <FavoriteBorderIcon />}
-        </IconButton>
-        <span style={{ color: 'black' }}>{video.liked ? "いいね解除" : "いいねする"}</span>
-      </div>
-    </Tooltip>
-  );
-
   return (
     <div ref={dragDropRef} className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group" style={{ opacity: isDragging ? 0.5 : 1 }}>
       <div className="drag-handle cursor-move bg-gradient-rainbow p-2 flex items-center justify-center">
@@ -127,9 +82,15 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
             {video.notes_count} <SearchIcon className="ml-1" />
           </p>
         </div>
-        {renderPopover()}
+        <VideoPopover
+          open={open}
+          anchorEl={anchorEl}
+          handlePopoverClose={handlePopoverClose}
+          relatedNotes={relatedNotes}
+          playerRef={playerRef}
+        />
         <LikeButtonContainer>
-          {renderLikeButton()}
+          <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
         </LikeButtonContainer>
       </CardContentBox>
     </div>
