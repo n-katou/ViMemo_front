@@ -38,6 +38,8 @@ const YoutubeVideoShowPage: React.FC = () => {
   } = useYoutubeVideoShowPage();
 
   const { theme } = useTheme();
+  const snackbarStyles = useSnackbarStyles();
+  const alertStyles = useAlertStyles();
 
   if (loading || dataLoading) {
     return <LoadingSpinner loading={loading || dataLoading} />;
@@ -50,9 +52,9 @@ const YoutubeVideoShowPage: React.FC = () => {
         autoHideDuration={5000}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        sx={useSnackbarStyles()}
+        sx={snackbarStyles}
       >
-        <Alert onClose={handleSnackbarClose} severity="info" sx={useAlertStyles()}>
+        <Alert onClose={handleSnackbarClose} severity="info" sx={alertStyles}>
           動画を再生してからメモを作成、編集してください。
         </Alert>
       </Snackbar>
