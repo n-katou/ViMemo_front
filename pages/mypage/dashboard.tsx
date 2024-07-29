@@ -5,7 +5,6 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import UserCard from '../../components/Mypage/dashboard/UserCard';
 import YoutubeLikesAccordion from '../../components/Mypage/dashboard/YoutubeLikesAccordion';
-// import NoteLikesAccordion from '../../components/Mypage/dashboard/NoteLikesAccordion';
 import SearchForm from '../../components/Mypage/dashboard/SearchForm';
 import { useDashboardData } from '../../hooks/mypage/dashboard/useDashboardData';
 
@@ -25,7 +24,7 @@ const Dashboard = () => {
   } = useDashboardData({ jwtToken, currentUser, setAuthState });
 
   if (loading) {
-    return <LoadingSpinner loading={loading} />;
+    return <LoadingSpinner loading={loading} />
   }
 
   if (!currentUser) {
@@ -55,9 +54,6 @@ const Dashboard = () => {
           youtubePlaylistUrl={youtubePlaylistUrl}
           shufflePlaylist={shufflePlaylist}
         />
-        {/* <div className="mt-8 space-y-6">
-          <NoteLikesAccordion noteLikes={noteLikes} />
-        </div> */}
       </div>
       {flashMessage && (
         <Snackbar
