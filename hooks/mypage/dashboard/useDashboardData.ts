@@ -19,7 +19,7 @@ interface UseDashboardDataReturn {
   suggestions: any[];
   flashMessage: string;
   showSnackbar: boolean;
-  handleSearch: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleSearch: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   handleCloseSnackbar: () => void;
   shufflePlaylist: () => void;
 }
