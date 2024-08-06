@@ -53,7 +53,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
       className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group"
       style={{
         opacity: isDragging ? 0.5 : 1,
-        backgroundColor: isDragging ? '#22eec5' : isOver ? '#38bdf8' : 'white',
+        backgroundColor: isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white',
         transition: 'background-color 0.2s, transform 0.2s',
         transform: isDragging ? 'scale(1.02)' : 'scale(1)',
         zIndex: isDragging ? 1000 : 'auto',
