@@ -80,7 +80,13 @@ const YoutubeVideoShowPage: React.FC = () => {
               >
                 {isNoteFormVisible ? <><CloseIcon className="mr-2" />投稿フォームを閉じる</> : <><AddIcon className="mr-2" />投稿フォームを開く</>}
               </button>
-              {isNoteFormVisible && <NoteForm addNote={(content, minutes, seconds, isVisible) => addNote(content, minutes, seconds, isVisible, jwtToken, video, setNotes)} player={playerRef.current} />}
+              {isNoteFormVisible && (
+                <NoteForm
+                  addNote={(content, minutes, seconds, isVisible) => addNote(content, minutes, seconds, isVisible, jwtToken, video, setNotes)}
+                  player={playerRef.current}
+                  onCancel={() => setIsNoteFormVisible(false)} // キャンセル時に投稿フォームを閉じる
+                />
+              )}
             </div>
           )}
           {currentUser && (
