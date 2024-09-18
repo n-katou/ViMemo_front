@@ -129,7 +129,7 @@ export const debouncedFetchSuggestions = debounce(async (query, setSuggestions) 
   }
 }, 1000);
 
-export const shufflePlaylist = async (jwtToken, setYoutubePlaylistUrl) => {
+export const shufflePlaylist = async (jwtToken, setYoutubePlaylistUrl, setYoutubeVideoLikes) => {
   try {
     // APIエンドポイントにGETリクエストを送信してシャッフルプレイリストを生成
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/generate_shuffle_playlist`, {
@@ -140,8 +140,10 @@ export const shufflePlaylist = async (jwtToken, setYoutubePlaylistUrl) => {
 
     if (response.status === 200) {
       // レスポンスデータからシャッフルされたプレイリストURLを取得
-      const { shuffled_youtube_playlist_url } = response.data;
+      const { shuffled_youtube_playlist_url, youtube_videos } = response.data;
+
       setYoutubePlaylistUrl(shuffled_youtube_playlist_url); // プレイリストURLを設定
+      setYoutubeVideoLikes(youtube_videos); // シャッフルされた動画リストを設定
     }
   } catch (error) {
     console.error('Error generating shuffled playlist:', error); // エラーハンドリング

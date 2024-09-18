@@ -39,6 +39,16 @@ export const useDashboardData = ({
   const [flashMessage, setFlashMessageState] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
 
+  // データ取得のための関数
+  const fetchDashboardData = async () => {
+    await fetchData(jwtToken, currentUser, setYoutubeVideoLikes, setYoutubePlaylistUrl, setSuggestions, setAuthState);
+  };
+
+  // プレイリストをシャッフルする関数
+  const handleShufflePlaylist = async () => {
+    await shufflePlaylist(jwtToken, setYoutubePlaylistUrl, setYoutubeVideoLikes); // プレイリストと動画リストを更新
+  };
+
   const fetchDataCallback = useCallback(() => {
     fetchData(
       jwtToken,
@@ -104,6 +114,7 @@ export const useDashboardData = ({
     showSnackbar,
     handleSearch,
     handleCloseSnackbar,
-    shufflePlaylist: () => shufflePlaylist(jwtToken, setYoutubePlaylistUrl),
+    // shufflePlaylist: () => shufflePlaylist(jwtToken, setYoutubePlaylistUrl),
+    shufflePlaylist: handleShufflePlaylist,
   };
 };

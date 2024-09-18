@@ -54,7 +54,7 @@ const Dashboard = () => {
           <YoutubeLikesAccordion
             youtubeVideoLikes={youtubeVideoLikes}
             youtubePlaylistUrl={youtubePlaylistUrl} // youtubePlaylistUrlを左側のAccordionに表示
-            shufflePlaylist={shufflePlaylist}
+            shufflePlaylist={shufflePlaylist} // シャッフル後に右側も更新するように修正
           />
         </div>
 
@@ -63,18 +63,15 @@ const Dashboard = () => {
           <h2 className="text-lg font-semibold mb-4">プレイリストの動画タイトル</h2>
           {Array.isArray(youtubeVideoLikes) && youtubeVideoLikes.length > 0 ? (
             <ul>
-              {youtubeVideoLikes.map((like, index) => {
-                // バックエンドから直接受け取ったlikeオブジェクトからタイトルを取得
-                return (
-                  <li key={index} className="mb-2">
-                    {like.title ? (
-                      <span>{index + 1}. {like.title}</span>
-                    ) : (
-                      <span>不明な動画 (ID: {like.likeable_id})</span>
-                    )}
-                  </li>
-                );
-              })}
+              {youtubeVideoLikes.map((like, index) => (
+                <li key={index} className="mb-2">
+                  {like.title ? (
+                    <span>{index + 1}. {like.title}</span>
+                  ) : (
+                    <span>不明な動画 (ID: {like.likeable_id})</span>
+                  )}
+                </li>
+              ))}
             </ul>
           ) : (
             <p>プレイリストがありません。</p>
