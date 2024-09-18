@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { useDrop, useDrag } from 'react-dnd';
+import React from 'react';
+import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';  // 修正したフックを使います
 
 // 動画のLike型を定義
 interface Like {
@@ -14,53 +14,45 @@ interface PlaylistItemProps {
   moveItem: (fromIndex: number, toIndex: number) => void;
 }
 
-const ItemType = 'PLAYLIST_ITEM';
-
 const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) => {
-  const ref = useRef<HTMLLIElement>(null);
+  // `useDragDropVideoCard` フックを使用してドラッグ&ドロップの機能を持たせる
+  const { dragDropRef, isDragging, isOver } = useDragDropVideoCard(index, moveItem);
 
-  const [{ isDragging }, dragRef] = useDrag({
-    type: ItemType,
-    item: { index },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-
-  const [, dropRef] = useDrop({
-    accept: ItemType,
-    hover: (draggedItem: { index: number }) => {
-      if (draggedItem.index !== index) {
-        moveItem(draggedItem.index, index);
-        draggedItem.index = index;
-      }
-    },
-  });
-
-  dragRef(dropRef(ref));
-
+  // ドラッグ中の色とスタイルを制御
+  const backgroundColor = isDragging ? 'blue' : isOver ? 'lightgreen' : 'white';
   const opacity = isDragging ? 0.5 : 1;
 
   return (
-    <li ref={ref} className="mb-2" style={{ opacity }}>
+    <div
+      ref={dragDropRef}  // `div` 要素に変更
+      className="mb-2"
+      style={{
+        opacity,
+        backgroundColor,
+        padding: '8px',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        color: 'black'
+      }}
+    >
       {like.title ? (
         <span>{index + 1}. {like.title}</span>
       ) : (
         <span>不明な動画 (ID: {like.likeable_id})</span>
       )}
-    </li>
+    </div>
   );
 };
 
 // 並び替え可能なプレイリスト
 interface SortablePlaylistProps {
   youtubeVideoLikes: Like[];
-  moveItem: (fromIndex: number, toIndex: number) => void; // 移動のための関数
+  moveItem: (fromIndex: number, toIndex: number) => void;
 }
 
 const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, moveItem }) => {
   return (
-    <ul>
+    <div>
       {youtubeVideoLikes.map((like, index) => (
         <PlaylistItem
           key={like.likeable_id}
@@ -69,7 +61,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
           moveItem={moveItem}
         />
       ))}
-    </ul>
+    </div>
   );
 };
 

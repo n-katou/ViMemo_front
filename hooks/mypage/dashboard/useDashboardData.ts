@@ -40,19 +40,34 @@ export const useDashboardData = ({
   const [flashMessage, setFlashMessageState] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
 
-  const fetchDataCallback = useCallback(() => {
-    fetchData(
-      jwtToken,
-      currentUser,
-      setAuthState,
-      setYoutubeVideoLikes,
-      setNoteLikes,
-      setYoutubePlaylistUrl,
-      setFlashMessageState,
-      setShowSnackbar,
-      router
-    );
-  }, [jwtToken, currentUser, setAuthState, router]);
+  const fetchDataCallback = useCallback(async () => {
+    try {
+      await fetchData(
+        jwtToken,
+        currentUser,
+        setAuthState,
+        setYoutubeVideoLikes,
+        setNoteLikes,
+        setYoutubePlaylistUrl,
+        setFlashMessageState,
+        setShowSnackbar,
+        router
+      );
+    } catch (error) {
+      setFlashMessageState('データの取得に失敗しました。');
+      setShowSnackbar(true);
+    }
+  }, [
+    jwtToken,
+    currentUser,
+    setAuthState,
+    setYoutubeVideoLikes,
+    setNoteLikes,
+    setYoutubePlaylistUrl,
+    setFlashMessageState,
+    setShowSnackbar,
+    router
+  ]);
 
   useEffect(() => {
     if (jwtToken && currentUser) {

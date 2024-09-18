@@ -1,66 +1,80 @@
 import axios from 'axios';
 import debounce from 'lodash/debounce';
 
-export const fetchData = async (jwtToken, currentUser, setAuthState, setYoutubeVideoLikes, setNoteLikes, setYoutubePlaylistUrl, setFlashMessageState, setShowSnackbar, router) => {
-  // トークンがない場合はエラーを表示して終了
+export const fetchData = async (
+  jwtToken, currentUser, setAuthState, setYoutubeVideoLikes,
+  setNoteLikes, setYoutubePlaylistUrl, setFlashMessageState,
+  setShowSnackbar, router
+) => {
+  // JWTトークンがない場合エラーメッセージを表示
   if (!jwtToken) {
     console.error('Token is undefined');
     return;
   }
 
   try {
-    // APIエンドポイントにGETリクエストを送信してユーザーのマイページデータを取得
+    // APIからデータを取得
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mypage`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
     });
 
-    // レスポンスデータから必要な情報を取得
+    // レスポンスから必要なデータを解凍
     const { youtube_video_likes, note_likes, youtube_playlist_url, avatar_url, role, email, name } = response.data;
-    setYoutubeVideoLikes(youtube_video_likes); // YouTube動画のいいね情報を設定
-    setNoteLikes(note_likes); // ノートのいいね情報を設定
-    setYoutubePlaylistUrl(youtube_playlist_url); // YouTubeプレイリストURLを設定
 
-    // 現在のユーザー情報が存在する場合
+    // sort_orderが有効な動画のみを含むようにフィルタリングし、順序をソート
+    const sortedVideoLikes = youtube_video_likes
+      .filter(video => video.sort_order !== null && video.sort_order !== undefined)  // sort_orderが無効な場合を除外
+      .sort((a, b) => a.sort_order - b.sort_order);  // sort_orderでソート
+
+    // ソートされた動画リストを設定
+    setYoutubeVideoLikes(sortedVideoLikes);
+
+    // ノートのいいね情報を設定
+    setNoteLikes(note_likes);
+
+    // プレイリストURLを設定
+    setYoutubePlaylistUrl(youtube_playlist_url);
+
+    // currentUserが存在する場合にユーザー情報を更新
     if (currentUser) {
-      // ユーザー情報を更新
-      const updatedUser = {
-        ...currentUser,
-        avatar_url,
-        role,
-        email,
-        name,
-      };
-
-      // ユーザー情報に変更がある場合、認証状態を更新しローカルストレージに保存
+      const updatedUser = { ...currentUser, avatar_url, role, email, name };
       if (
         currentUser.avatar_url !== avatar_url ||
         currentUser.role !== role ||
         currentUser.email !== email ||
         currentUser.name !== name
       ) {
-        setAuthState({
-          currentUser: updatedUser,
-          jwtToken,
-        });
+        // 認証状態を更新し、ローカルストレージに保存
+        setAuthState({ currentUser: updatedUser, jwtToken });
         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
       }
     }
 
-    // URLクエリからフラッシュメッセージを取得し表示する
+    // URLクエリにフラッシュメッセージが含まれている場合
     const flashMessageFromQuery = router.query.flashMessage;
     if (flashMessageFromQuery) {
-      setFlashMessageState(flashMessageFromQuery); // フラッシュメッセージの状態を設定
-      setShowSnackbar(true); // Snackbarを表示
-      const { flashMessage, ...rest } = router.query; // フラッシュメッセージをURLクエリから削除
-      router.replace({
-        pathname: router.pathname,
-        query: rest,
-      }, undefined, { shallow: true });
+      setFlashMessageState(flashMessageFromQuery);
+      setShowSnackbar(true);
+
+      // フラッシュメッセージを消去してURLをクリーンにする
+      const { flashMessage, ...rest } = router.query;
+      router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true });
     }
   } catch (error) {
-    console.error('Error fetching mypage data:', error); // エラーハンドリング
+    // エラーハンドリング
+    if (error.response) {
+      // APIからのエラーレスポンスがある場合、そのデータを表示
+      console.error('Error response data:', error.response.data);
+      console.error('Error status:', error.response.status);
+    } else {
+      // ネットワークエラーやその他のエラーの場合
+      console.error('Error message:', error.message);
+    }
+    // エラーメッセージをユーザーに通知
+    setFlashMessageState('データの取得に失敗しました。');
+    setShowSnackbar(true);
   }
 };
 
@@ -151,15 +165,14 @@ export const shufflePlaylist = async (jwtToken, setYoutubePlaylistUrl, setYoutub
 };
 
 // プレイリストの順序をバックエンドに送信する関数
-// プレイリストの順序をバックエンドに送信する関数
-export const updatePlaylistOrder = async (jwtToken, updatedOrder) => {
-  try {
-    // 送信データの確認
-    console.log("Sending order data to API:", updatedOrder);
+export const updatePlaylistOrder = async (jwtToken, videos) => {
+  const videoIds = videos.map(video => video.id);  // video_ids を生成
+  console.log('Sending video IDs:', videoIds);  // 送信データをログに出力
 
+  try {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/update_playlist_order`,
-      { order: updatedOrder },
+      { video_ids: videoIds },  // video_ids を送信
       {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
@@ -167,15 +180,8 @@ export const updatePlaylistOrder = async (jwtToken, updatedOrder) => {
         },
       }
     );
-
-    if (response.status !== 200) {
-      console.error('Failed to update playlist order. Status:', response.status);
-      return null;
-    }
-
-    return response.data;
+    console.log('Playlist order updated successfully:', response.data);
   } catch (error) {
     console.error('Error updating playlist order:', error.message);
-    return null;
   }
 };

@@ -49,16 +49,18 @@ const Dashboard = () => {
     const [movedItem] = updatedItems.splice(fromIndex, 1);
     updatedItems.splice(toIndex, 0, movedItem);
 
-    // 順序を更新して保存する
     setYoutubeVideoLikes(updatedItems);
 
-    // バックエンドに新しい順序を送信
     const updatedOrder = updatedItems.map((item, index) => ({
-      id: item.id || item.likeable_id,  // `id` または `likeable_id` が正しいか確認
+      id: item.id || item.likeable_id,  // video.id または likeable_id を確認
       order: index + 1
     }));
 
-    console.log("Updated order to send:", updatedOrder);  // 送信するデータを確認するためのログ
+    console.log("Updated order to send:", updatedOrder);  // 送信するデータを確認
+
+    const videoIds = updatedOrder.map(item => item.id);
+    console.log('Sending video IDs:', videoIds);  // サーバーに送信するIDを確認
+
     await updatePlaylistOrder(jwtToken, updatedOrder);
   };
 
