@@ -24,7 +24,7 @@ const Dashboard = () => {
   } = useDashboardData({ jwtToken, currentUser, setAuthState });
 
   if (loading) {
-    return <LoadingSpinner loading={loading} />
+    return <LoadingSpinner loading={loading} />;
   }
 
   if (!currentUser) {
@@ -48,12 +48,38 @@ const Dashboard = () => {
           />
         </div>
       </div>
-      <div className="w-full mt-8">
-        <YoutubeLikesAccordion
-          youtubeVideoLikes={youtubeVideoLikes}
-          youtubePlaylistUrl={youtubePlaylistUrl}
-          shufflePlaylist={shufflePlaylist}
-        />
+      <div className="w-full mt-8 flex">
+        {/* 左側: YoutubeLikesAccordion */}
+        <div className="w-2/3 pr-4">
+          <YoutubeLikesAccordion
+            youtubeVideoLikes={youtubeVideoLikes}
+            youtubePlaylistUrl={youtubePlaylistUrl} // youtubePlaylistUrlを左側のAccordionに表示
+            shufflePlaylist={shufflePlaylist}
+          />
+        </div>
+
+        {/* 右側: プレイリストタイトル表示エリア */}
+        <div className="w-1/3 pl-4">
+          <h2 className="text-lg font-semibold mb-4">プレイリストの動画タイトル</h2>
+          {Array.isArray(youtubeVideoLikes) && youtubeVideoLikes.length > 0 ? (
+            <ul>
+              {youtubeVideoLikes.map((like, index) => {
+                // バックエンドから直接受け取ったlikeオブジェクトからタイトルを取得
+                return (
+                  <li key={index} className="mb-2">
+                    {like.title ? (
+                      <span>{index + 1}. {like.title}</span>
+                    ) : (
+                      <span>不明な動画 (ID: {like.likeable_id})</span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p>プレイリストがありません。</p>
+          )}
+        </div>
       </div>
       {flashMessage && (
         <Snackbar
