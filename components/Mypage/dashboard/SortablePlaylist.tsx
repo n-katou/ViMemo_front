@@ -55,26 +55,13 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
 // 並び替え可能なプレイリスト
 interface SortablePlaylistProps {
   youtubeVideoLikes: Like[];
+  moveItem: (fromIndex: number, toIndex: number) => void; // 移動のための関数
 }
 
-const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes }) => {
-  const [items, setItems] = useState<Like[]>(youtubeVideoLikes);
-
-  // youtubeVideoLikesが変更されたときにリストを更新
-  useEffect(() => {
-    setItems(youtubeVideoLikes);
-  }, [youtubeVideoLikes]);
-
-  const moveItem = useCallback((fromIndex: number, toIndex: number) => {
-    const updatedItems = [...items];
-    const [movedItem] = updatedItems.splice(fromIndex, 1);
-    updatedItems.splice(toIndex, 0, movedItem);
-    setItems(updatedItems);
-  }, [items]);
-
+const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, moveItem }) => {
   return (
     <ul>
-      {items.map((like, index) => (
+      {youtubeVideoLikes.map((like, index) => (
         <PlaylistItem
           key={like.likeable_id}
           like={like}

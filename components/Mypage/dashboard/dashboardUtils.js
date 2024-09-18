@@ -149,3 +149,33 @@ export const shufflePlaylist = async (jwtToken, setYoutubePlaylistUrl, setYoutub
     console.error('Error generating shuffled playlist:', error); // エラーハンドリング
   }
 };
+
+// プレイリストの順序をバックエンドに送信する関数
+// プレイリストの順序をバックエンドに送信する関数
+export const updatePlaylistOrder = async (jwtToken, updatedOrder) => {
+  try {
+    // 送信データの確認
+    console.log("Sending order data to API:", updatedOrder);
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/update_playlist_order`,
+      { order: updatedOrder },
+      {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status !== 200) {
+      console.error('Failed to update playlist order. Status:', response.status);
+      return null;
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Error updating playlist order:', error.message);
+    return null;
+  }
+};

@@ -11,6 +11,7 @@ interface UseDashboardDataParams {
 
 interface UseDashboardDataReturn {
   youtubeVideoLikes: any[];
+  setYoutubeVideoLikes: (likes: any[]) => void;
   noteLikes: any[];
   youtubePlaylistUrl: string;
   youtubeVideos: any[];
@@ -39,16 +40,6 @@ export const useDashboardData = ({
   const [flashMessage, setFlashMessageState] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
 
-  // データ取得のための関数
-  const fetchDashboardData = async () => {
-    await fetchData(jwtToken, currentUser, setYoutubeVideoLikes, setYoutubePlaylistUrl, setSuggestions, setAuthState);
-  };
-
-  // プレイリストをシャッフルする関数
-  const handleShufflePlaylist = async () => {
-    await shufflePlaylist(jwtToken, setYoutubePlaylistUrl, setYoutubeVideoLikes); // プレイリストと動画リストを更新
-  };
-
   const fetchDataCallback = useCallback(() => {
     fetchData(
       jwtToken,
@@ -69,32 +60,10 @@ export const useDashboardData = ({
     }
   }, [jwtToken, currentUser, fetchDataCallback]);
 
-  useEffect(() => {
-    const flashMessage = localStorage.getItem('flashMessage');
-    if (flashMessage) {
-      setFlashMessageState(flashMessage);
-      setShowSnackbar(true);
-      localStorage.removeItem('flashMessage');
-    }
-  }, []);
-
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Searching for genre:', searchQuery);
-    try {
-      await fetchVideosByGenre(
-        searchQuery,
-        jwtToken,
-        setYoutubeVideos,
-        setFlashMessageState,
-        setShowSnackbar,
-        router
-      );
-    } catch (error) {
-      console.error('Error fetching videos:', error);
-      setFlashMessageState('ビデオを取得できませんでした。');
-      setShowSnackbar(true);
-    }
+    await fetchVideosByGenre(searchQuery, jwtToken, setYoutubeVideos, setFlashMessageState, setShowSnackbar, router);
   };
 
   const handleCloseSnackbar = () => {
@@ -104,6 +73,7 @@ export const useDashboardData = ({
 
   return {
     youtubeVideoLikes,
+    setYoutubeVideoLikes,
     noteLikes,
     youtubePlaylistUrl,
     youtubeVideos,
@@ -114,7 +84,6 @@ export const useDashboardData = ({
     showSnackbar,
     handleSearch,
     handleCloseSnackbar,
-    // shufflePlaylist: () => shufflePlaylist(jwtToken, setYoutubePlaylistUrl),
-    shufflePlaylist: handleShufflePlaylist,
+    shufflePlaylist: () => shufflePlaylist(jwtToken, setYoutubePlaylistUrl, setYoutubeVideoLikes),
   };
 };

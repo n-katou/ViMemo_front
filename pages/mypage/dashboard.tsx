@@ -10,11 +10,13 @@ import { useDashboardData } from '../../hooks/mypage/dashboard/useDashboardData'
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import SortablePlaylist from '../../components/Mypage/dashboard/SortablePlaylist';
+import { updatePlaylistOrder } from '../../components/Mypage/dashboard/dashboardUtils';
 
 const Dashboard = () => {
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
   const {
     youtubeVideoLikes,
+    setYoutubeVideoLikes,
     youtubePlaylistUrl,
     searchQuery,
     setSearchQuery,
@@ -36,6 +38,30 @@ const Dashboard = () => {
 
   const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
+  // youtubeVideoLikes を sort_order に基づいてソート
+  const sortedVideoLikes = youtubeVideoLikes
+    ? [...youtubeVideoLikes].sort((a, b) => a.sort_order - b.sort_order)
+    : [];
+
+  // プレイリストの順序を変更し、バックエンドに保存
+  const handleMoveItem = async (fromIndex: number, toIndex: number) => {
+    const updatedItems = [...youtubeVideoLikes];
+    const [movedItem] = updatedItems.splice(fromIndex, 1);
+    updatedItems.splice(toIndex, 0, movedItem);
+
+    // 順序を更新して保存する
+    setYoutubeVideoLikes(updatedItems);
+
+    // バックエンドに新しい順序を送信
+    const updatedOrder = updatedItems.map((item, index) => ({
+      id: item.id || item.likeable_id,  // `id` または `likeable_id` が正しいか確認
+      order: index + 1
+    }));
+
+    console.log("Updated order to send:", updatedOrder);  // 送信するデータを確認するためのログ
+    await updatePlaylistOrder(jwtToken, updatedOrder);
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="container mx-auto px-4 py-8 mt-4">
@@ -56,16 +82,16 @@ const Dashboard = () => {
           {/* 左側: YoutubeLikesAccordion */}
           <div className="w-2/3 pr-4">
             <YoutubeLikesAccordion
-              youtubeVideoLikes={youtubeVideoLikes}
-              youtubePlaylistUrl={youtubePlaylistUrl} // youtubePlaylistUrlを左側のAccordionに表示
-              shufflePlaylist={shufflePlaylist} // シャッフル後に右側も更新するように修正
+              youtubeVideoLikes={sortedVideoLikes}  // ソートされたリストを渡す
+              youtubePlaylistUrl={youtubePlaylistUrl}
+              shufflePlaylist={shufflePlaylist}
             />
           </div>
 
           {/* 右側: プレイリストタイトル表示エリア */}
           <div className="w-1/3 pl-4">
             <h2 className="text-lg font-semibold mb-4">プレイリストの動画タイトル</h2>
-            <SortablePlaylist youtubeVideoLikes={youtubeVideoLikes} />
+            <SortablePlaylist youtubeVideoLikes={sortedVideoLikes} moveItem={handleMoveItem} /> {/* ドラッグ時に順序を更新 */}
           </div>
         </div>
         {flashMessage && (
