@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
-import { CustomUser } from '../../types/user';
+import { CustomUser } from '../../../types/user';
 
 interface UserCardProps {
   currentUser: CustomUser;

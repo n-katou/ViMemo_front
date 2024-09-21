@@ -3,20 +3,19 @@ import Link from 'next/link';
 import { FaTrashAlt } from 'react-icons/fa';
 
 interface NoteCardProps {
-  videoTitle: string; // 動画のタイトル
-  content: string; // メモの内容
-  videoTimestamp: string; // メモのタイムスタンプ
-  youtubeVideoId: number; // YouTube動画のID
-  createdAt: string; // メモの作成日時
-  onDelete: () => void; // メモを削除するための関数
+  videoTitle: string;
+  content: string;
+  videoTimestamp: string;
+  youtubeVideoId: number;
+  noteId: number;
+  createdAt: string;
+  onDelete: (youtubeVideoId: number, noteId: number) => void;
 }
 
-const NoteCard: React.FC<NoteCardProps> = ({ videoTitle, content, videoTimestamp, youtubeVideoId, createdAt, onDelete }) => {
-  // 削除ボタンがクリックされたときの処理
+const NoteCard: React.FC<NoteCardProps> = ({ videoTitle, content, videoTimestamp, youtubeVideoId, noteId, createdAt, onDelete }) => {
   const handleDelete = () => {
-    // 確認ダイアログを表示し、ユーザーが削除を確認した場合にonDelete関数を呼び出す
     if (window.confirm('本当に削除しますか？')) {
-      onDelete();
+      onDelete(youtubeVideoId, noteId);
     }
   };
 

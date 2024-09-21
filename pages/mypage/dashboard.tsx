@@ -1,119 +1,121 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/router';
+import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import UserCard from '../../components/Mypage/UserCard';
-import YoutubeLikesAccordion from '../../components/Mypage/YoutubeLikesAccordion';
-import NoteLikesAccordion from '../../components/Mypage/NoteLikesAccordion';
-import SearchForm from '../../components/Mypage/SearchForm';
-import { fetchData, fetchVideosByGenre, shufflePlaylist } from '../../components/Mypage/dashboard';
+import UserCard from '../../components/Mypage/dashboard/UserCard';
+import YoutubeLikesAccordion from '../../components/Mypage/dashboard/YoutubeLikesAccordion';
+import SearchForm from '../../components/Mypage/dashboard/SearchForm';
+import { useDashboardData } from '../../hooks/mypage/dashboard/useDashboardData';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import SortablePlaylist from '../../components/Mypage/dashboard/SortablePlaylist';
+import { updatePlaylistOrder } from '../../components/Mypage/dashboard/dashboardUtils';
 
 const Dashboard = () => {
-  // 認証コンテキストから必要な情報を取得
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
-  const router = useRouter();
+  const {
+    youtubeVideoLikes,
+    setYoutubeVideoLikes,
+    youtubePlaylistUrl,
+    searchQuery,
+    setSearchQuery,
+    suggestions,
+    flashMessage,
+    showSnackbar,
+    handleSearch,
+    handleCloseSnackbar,
+    shufflePlaylist,
+  } = useDashboardData({ jwtToken, currentUser, setAuthState });
 
-  // コンポーネントの状態を管理するためのuseStateフックを使用
-  const [youtubeVideoLikes, setYoutubeVideoLikes] = useState([]);
-  const [noteLikes, setNoteLikes] = useState([]);
-  const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
-  const [youtubeVideos, setYoutubeVideos] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [flashMessage, setFlashMessageState] = useState('');
-  const [showSnackbar, setShowSnackbar] = useState(false);
-
-  // データをフェッチするコールバック関数を定義
-  const fetchDataCallback = useCallback(() => {
-    fetchData(jwtToken, currentUser, setAuthState, setYoutubeVideoLikes, setNoteLikes, setYoutubePlaylistUrl, setFlashMessageState, setShowSnackbar, router);
-  }, [jwtToken, currentUser, setAuthState, router]);
-
-  // コンポーネントがマウントされた時とjwtTokenまたはcurrentUserが変更された時にデータをフェッチ
-  useEffect(() => {
-    if (jwtToken && currentUser) {
-      fetchDataCallback();
-    }
-  }, [jwtToken, currentUser, fetchDataCallback]);
-
-  // フラッシュメッセージをチェックして表示
-  useEffect(() => {
-    const flashMessage = localStorage.getItem('flashMessage');
-    if (flashMessage) {
-      setFlashMessageState(flashMessage);
-      setShowSnackbar(true);
-      localStorage.removeItem('flashMessage');
-    }
-  }, []);
-
-  // Snackbarを閉じるハンドラー関数
-  const handleCloseSnackbar = () => {
-    setShowSnackbar(false);
-    setFlashMessageState('');
-  };
-
-  // ローディング中の場合にスピナーを表示
   if (loading) {
     return <LoadingSpinner loading={loading} />;
   }
 
-  // ユーザーがログインしていない場合にログインを促すメッセージを表示
   if (!currentUser) {
     return <div className="flex justify-center items-center h-screen"><p className="text-xl">ログインして下さい。</p></div>;
   }
 
-  // 管理者ユーザーかどうかを判定
   const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
+  // youtubeVideoLikes を sort_order に基づいてソート
+  const sortedVideoLikes = youtubeVideoLikes
+    ? [...youtubeVideoLikes].sort((a, b) => a.sort_order - b.sort_order)
+    : [];
+
+  // プレイリストの順序を変更し、バックエンドに保存
+  const handleMoveItem = async (fromIndex: number, toIndex: number) => {
+    const updatedItems = [...youtubeVideoLikes];
+    const [movedItem] = updatedItems.splice(fromIndex, 1);
+    updatedItems.splice(toIndex, 0, movedItem);
+
+    setYoutubeVideoLikes(updatedItems);  // まずクライアント側で並び替えを即座に反映
+
+    const updatedOrder = updatedItems.map((item, index) => ({
+      id: item.id || item.likeable_id,  // video.id または likeable_id を確認
+      order: index + 1
+    }));
+
+    console.log("Updated order to send:", updatedOrder);  // 送信するデータを確認
+
+    const videoIds = updatedOrder.map(item => item.id);
+    console.log('Sending video IDs:', videoIds);  // サーバーに送信するIDを確認
+
+    // プレイリスト順序をバックエンドに保存し、クライアント側の状態も更新
+    await updatePlaylistOrder(jwtToken, updatedItems, setYoutubeVideoLikes);
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8 mt-4">
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="w-full md:w-1/3 lg:w-1/4 mb-8 md:mb-0">
-          <UserCard currentUser={currentUser} isAdmin={isAdmin} />
+    <DndProvider backend={HTML5Backend}>
+      <div className="container mx-auto px-4 py-8 mt-4">
+        {/* ユーザーカードエリア */}
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="w-full md:w-1/3 lg:w-1/4 mb-8 md:mb-0">
+            <UserCard currentUser={currentUser} isAdmin={isAdmin} />
+          </div>
+          <div className="w-full md:flex-1 md:pl-8">
+            <SearchForm
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              suggestions={suggestions}
+              handleSearch={handleSearch}
+            />
+          </div>
         </div>
-        <div className="w-full md:flex-1 md:pl-8">
-          <SearchForm
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            suggestions={suggestions}
-            handleSearch={async (e) => {
-              e.preventDefault();
-              console.log('Searching for genre:', searchQuery);
-              try {
-                await fetchVideosByGenre(searchQuery, jwtToken, setYoutubeVideos, setFlashMessageState, setShowSnackbar, router);
-              } catch (error) {
-                console.error('Error fetching videos:', error);
-                setFlashMessageState('ビデオを取得できませんでした。');
-                setShowSnackbar(true);
-              }
-            }}
-          />
+
+        {/* プレイリストと動画タイトルを上下に配置 */}
+        <div className="flex flex-col w-full mt-8 gap-8">
+          {/* プレイリスト表示エリア */}
+          <div className="w-full">
+            <YoutubeLikesAccordion
+              youtubeVideoLikes={sortedVideoLikes}  // ソートされたリストを渡す
+              youtubePlaylistUrl={youtubePlaylistUrl}
+              shufflePlaylist={shufflePlaylist}
+            />
+          </div>
+
+          {/* 動画タイトル表示エリア */}
+          <div className="bg-white shadow-md rounded-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4">プレイリストの動画タイトル</h2>
+            <SortablePlaylist youtubeVideoLikes={sortedVideoLikes} moveItem={handleMoveItem} /> {/* ドラッグ時に順序を更新 */}
+          </div>
         </div>
+
+        {/* スナックバーによるメッセージ表示 */}
+        {flashMessage && (
+          <Snackbar
+            open={showSnackbar}
+            autoHideDuration={4000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+              {flashMessage}
+            </Alert>
+          </Snackbar>
+        )}
       </div>
-      <div className="w-full mt-8">
-        <YoutubeLikesAccordion
-          youtubeVideoLikes={youtubeVideoLikes}
-          youtubePlaylistUrl={youtubePlaylistUrl}
-          shufflePlaylist={() => shufflePlaylist(jwtToken, setYoutubePlaylistUrl)}
-        />
-        {/* <div className="mt-8 space-y-6">
-          <NoteLikesAccordion noteLikes={noteLikes} />
-        </div> */}
-      </div>
-      {flashMessage && (
-        <Snackbar
-          open={showSnackbar}
-          autoHideDuration={4000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-            {flashMessage}
-          </Alert>
-        </Snackbar>
-      )}
-    </div>
+    </DndProvider>
   );
 };
 

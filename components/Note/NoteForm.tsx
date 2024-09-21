@@ -8,9 +8,10 @@ import { useTimestamp } from './noteformFunctions'; // タイムスタンプフ�
 type NoteFormProps = {
   addNote: (content: string, minutes: number, seconds: number, isVisible: boolean) => Promise<void>; // メモを追加する関数の型
   player: any; // YouTubeプレーヤーのインスタンス
+  onCancel: () => void; // キャンセルボタンが押されたときの関数
 };
 
-export const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
+export const NoteForm: React.FC<NoteFormProps> = ({ addNote, player, onCancel }) => {
   // コンポーネントの状態を定義
   const [noteContent, setNoteContent] = useState(''); // メモの内容
   const [isVisible, setIsVisible] = useState(true); // メモの表示/非表示
@@ -48,7 +49,8 @@ export const NoteForm: React.FC<NoteFormProps> = ({ addNote, player }) => {
     setTimestampMinutes('');
     setTimestampSeconds('');
     setIsVisible(true);
-    setIsModalOpen(false);
+    setIsModalOpen(false); // モーダルを閉じる
+    onCancel(); // 親コンポーネントから渡されたキャンセル処理を呼び出す
   };
 
   // フォームの内容を定義
