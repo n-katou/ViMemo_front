@@ -81,9 +81,11 @@ const Dashboard = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col md:flex-row w-full mt-8">
-          {/* 左側: YoutubeLikesAccordion */}
-          <div className="w-full md:w-2/3 pr-0 md:pr-4">
+
+        {/* プレイリストと動画タイトルを上下に配置 */}
+        <div className="flex flex-col w-full mt-8 gap-8">
+          {/* プレイリスト表示エリア */}
+          <div className="w-full">
             <YoutubeLikesAccordion
               youtubeVideoLikes={sortedVideoLikes}  // ソートされたリストを渡す
               youtubePlaylistUrl={youtubePlaylistUrl}
@@ -91,12 +93,13 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* 右側: プレイリストタイトル表示エリア */}
-          <div className="w-full md:w-1/3 pl-0 md:pl-4 mt-8 md:mt-0">
+          {/* 動画タイトル表示エリア */}
+          <div className="w-full">
             <h2 className="text-lg font-semibold mb-4">プレイリストの動画タイトル</h2>
             <SortablePlaylist youtubeVideoLikes={sortedVideoLikes} moveItem={handleMoveItem} /> {/* ドラッグ時に順序を更新 */}
           </div>
         </div>
+
         {flashMessage && (
           <Snackbar
             open={showSnackbar}
