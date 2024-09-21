@@ -36,7 +36,17 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
       }}
     >
       {like.title ? (
-        <span>{index + 1}. {like.title}</span>
+        <span
+          style={{
+            display: 'inline-block',
+            maxWidth: '100%',   // 必要に応じて調整
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',  // 省略を適用
+          }}
+        >
+          {index + 1}. {like.title}
+        </span>
       ) : (
         <span>不明な動画 (ID: {like.likeable_id})</span>
       )}
