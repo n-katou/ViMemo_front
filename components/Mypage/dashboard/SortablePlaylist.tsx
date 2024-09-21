@@ -61,6 +61,11 @@ interface SortablePlaylistProps {
 }
 
 const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, moveItem }) => {
+  // 画面リロード関数
+  const handleReload = () => {
+    window.location.reload();  // ページをリロード
+  };
+
   return (
     <div>
       {youtubeVideoLikes.map((like, index) => (
@@ -71,6 +76,22 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
           moveItem={moveItem}
         />
       ))}
+
+      <div style={{ marginTop: '16px', textAlign: 'center' }}>
+        <button
+          onClick={handleReload}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#38bdf8',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+        >
+          並び替え確定
+        </button>
+      </div>
     </div>
   );
 };
