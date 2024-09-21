@@ -1,5 +1,10 @@
 import React from 'react';
-import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';  // 修正したフックを使います
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';
 
 // 動画のLike型を定義
 interface Like {
@@ -68,15 +73,28 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
 
   return (
     <div>
-      {youtubeVideoLikes.map((like, index) => (
-        <PlaylistItem
-          key={like.likeable_id}
-          like={like}
-          index={index}
-          moveItem={moveItem}
-        />
-      ))}
+      {/* アコーディオン形式でプレイリストを折りたたみ可能にする */}
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography>再生中のプレイリスト（並び替え可能）</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {youtubeVideoLikes.map((like, index) => (
+            <PlaylistItem
+              key={like.likeable_id}
+              like={like}
+              index={index}
+              moveItem={moveItem}
+            />
+          ))}
+        </AccordionDetails>
+      </Accordion>
 
+      {/* リロードボタン */}
       <div style={{ marginTop: '16px', textAlign: 'center' }}>
         <button
           onClick={handleReload}
