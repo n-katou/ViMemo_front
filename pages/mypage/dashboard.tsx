@@ -96,7 +96,6 @@ const Dashboard = () => {
 
           {/* 動画タイトル表示エリア */}
           <div className="bg-white shadow-md rounded-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4">プレイリストの動画タイトル</h2>
             <SortablePlaylist youtubeVideoLikes={sortedVideoLikes} moveItem={handleMoveItem} /> {/* ドラッグ時に順序を更新 */}
           </div>
         </div>

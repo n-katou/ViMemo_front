@@ -5,6 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';
+import { useTheme } from 'next-themes';
 
 // 動画のLike型を定義
 interface Like {
@@ -30,14 +31,23 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
   return (
     <div
       ref={dragDropRef}
-      className="mb-2"
+      className="mb-4"
       style={{
         opacity,
         backgroundColor,
-        padding: '8px',
+        padding: '12px',
         border: '1px solid #ccc',
-        borderRadius: '4px',
-        color: 'black'
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        transition: 'background-color 0.3s ease',
+        color: 'black',
+        cursor: 'pointer',
+        flexBasis: 'calc(50% - 16px)', // 各アイテムを一律に設定 (2列に分ける)
+        minHeight: '60px',  // 高さを統一
+        maxWidth: '100%',
+        display: 'flex',
+        alignItems: 'center',  // 垂直方向に中央揃え
+        justifyContent: 'center',  // 水平方向に中央揃え
       }}
     >
       {like.title ? (
@@ -71,6 +81,8 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
     window.location.reload();  // ページをリロード
   };
 
+  const { theme } = useTheme();
+
   return (
     <div>
       {/* アコーディオン形式でプレイリストを折りたたみ可能にする */}
@@ -80,7 +92,9 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography>再生中のプレイリスト（並び替え可能）</Typography>
+          <Typography variant="h6" sx={{ color: theme === 'light' ? '#818cf8' : 'inherit' }}>
+            再生中のプレイリスト（並び替え可能）
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           {youtubeVideoLikes.map((like, index) => (
@@ -95,17 +109,22 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
       </Accordion>
 
       {/* リロードボタン */}
-      <div style={{ marginTop: '16px', textAlign: 'center' }}>
+      <div style={{ marginTop: '32px', textAlign: 'center' }}>
         <button
           onClick={handleReload}
           style={{
-            padding: '8px 16px',
+            padding: '12px 24px',
             backgroundColor: '#38bdf8',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: '8px',
             cursor: 'pointer',
+            fontWeight: 'bold',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            transition: 'background-color 0.3s ease',
           }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#3182ce'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#38bdf8'}
         >
           並び替え確定
         </button>
