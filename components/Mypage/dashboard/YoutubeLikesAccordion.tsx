@@ -12,7 +12,7 @@ import { useTheme } from 'next-themes';
 import CustomSpinner from './CustomSpinner'; // カスタムスピナーコンポーネントをインポート
 
 interface YoutubeLikesAccordionProps {
-  youtubeVideoLikes: Like[];
+  youtubeVideoLikes: Like[] | undefined; // undefined を許容
   youtubePlaylistUrl: string;
   shufflePlaylist: () => void;
 }
@@ -36,7 +36,8 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVi
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        {youtubeVideoLikes.length > 0 ? (
+        {/* youtubeVideoLikes が undefined でないことを確認 */}
+        {Array.isArray(youtubeVideoLikes) && youtubeVideoLikes.length > 0 ? (
           <div className="mb-4 video-wrapper">
             <iframe
               src={youtubePlaylistUrl}
@@ -50,7 +51,7 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVi
           </Typography>
         )}
       </AccordionDetails>
-      {youtubeVideoLikes.length > 0 && (
+      {Array.isArray(youtubeVideoLikes) && youtubeVideoLikes.length > 0 && (
         <Box textAlign="center" mt={2} mb={4}>
           <Button
             variant="contained"

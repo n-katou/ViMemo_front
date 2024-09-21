@@ -11,6 +11,7 @@ interface UseDashboardDataParams {
 
 interface UseDashboardDataReturn {
   youtubeVideoLikes: any[];
+  setYoutubeVideoLikes: (likes: any[]) => void;
   noteLikes: any[];
   youtubePlaylistUrl: string;
   youtubeVideos: any[];
@@ -39,19 +40,34 @@ export const useDashboardData = ({
   const [flashMessage, setFlashMessageState] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
 
-  const fetchDataCallback = useCallback(() => {
-    fetchData(
-      jwtToken,
-      currentUser,
-      setAuthState,
-      setYoutubeVideoLikes,
-      setNoteLikes,
-      setYoutubePlaylistUrl,
-      setFlashMessageState,
-      setShowSnackbar,
-      router
-    );
-  }, [jwtToken, currentUser, setAuthState, router]);
+  const fetchDataCallback = useCallback(async () => {
+    try {
+      await fetchData(
+        jwtToken,
+        currentUser,
+        setAuthState,
+        setYoutubeVideoLikes,
+        setNoteLikes,
+        setYoutubePlaylistUrl,
+        setFlashMessageState,
+        setShowSnackbar,
+        router
+      );
+    } catch (error) {
+      setFlashMessageState('データの取得に失敗しました。');
+      setShowSnackbar(true);
+    }
+  }, [
+    jwtToken,
+    currentUser,
+    setAuthState,
+    setYoutubeVideoLikes,
+    setNoteLikes,
+    setYoutubePlaylistUrl,
+    setFlashMessageState,
+    setShowSnackbar,
+    router
+  ]);
 
   useEffect(() => {
     if (jwtToken && currentUser) {
@@ -59,32 +75,10 @@ export const useDashboardData = ({
     }
   }, [jwtToken, currentUser, fetchDataCallback]);
 
-  useEffect(() => {
-    const flashMessage = localStorage.getItem('flashMessage');
-    if (flashMessage) {
-      setFlashMessageState(flashMessage);
-      setShowSnackbar(true);
-      localStorage.removeItem('flashMessage');
-    }
-  }, []);
-
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Searching for genre:', searchQuery);
-    try {
-      await fetchVideosByGenre(
-        searchQuery,
-        jwtToken,
-        setYoutubeVideos,
-        setFlashMessageState,
-        setShowSnackbar,
-        router
-      );
-    } catch (error) {
-      console.error('Error fetching videos:', error);
-      setFlashMessageState('ビデオを取得できませんでした。');
-      setShowSnackbar(true);
-    }
+    await fetchVideosByGenre(searchQuery, jwtToken, setYoutubeVideos, setFlashMessageState, setShowSnackbar, router);
   };
 
   const handleCloseSnackbar = () => {
@@ -94,6 +88,7 @@ export const useDashboardData = ({
 
   return {
     youtubeVideoLikes,
+    setYoutubeVideoLikes,
     noteLikes,
     youtubePlaylistUrl,
     youtubeVideos,
@@ -104,6 +99,6 @@ export const useDashboardData = ({
     showSnackbar,
     handleSearch,
     handleCloseSnackbar,
-    shufflePlaylist: () => shufflePlaylist(jwtToken, setYoutubePlaylistUrl),
+    shufflePlaylist: () => shufflePlaylist(jwtToken, setYoutubePlaylistUrl, setYoutubeVideoLikes),
   };
 };
