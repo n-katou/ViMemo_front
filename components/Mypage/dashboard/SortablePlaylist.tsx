@@ -5,6 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';
+import { useTheme } from 'next-themes';
 
 // 動画のLike型を定義
 interface Like {
@@ -70,6 +71,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
   const handleReload = () => {
     window.location.reload();  // ページをリロード
   };
+  const { theme } = useTheme();
 
   return (
     <div>
@@ -80,7 +82,9 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography>再生中のプレイリスト（並び替え可能）</Typography>
+          <Typography variant="h6" sx={{ color: theme === 'light' ? '#818cf8' : 'inherit' }}>
+            再生中のプレイリスト（並び替え可能）
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           {youtubeVideoLikes.map((like, index) => (
