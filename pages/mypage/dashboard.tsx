@@ -81,9 +81,9 @@ const Dashboard = () => {
             />
           </div>
         </div>
-        <div className="w-full mt-8 flex">
+        <div className="flex flex-col md:flex-row w-full mt-8">
           {/* 左側: YoutubeLikesAccordion */}
-          <div className="w-2/3 pr-4">
+          <div className="w-full md:w-2/3 pr-0 md:pr-4">
             <YoutubeLikesAccordion
               youtubeVideoLikes={sortedVideoLikes}  // ソートされたリストを渡す
               youtubePlaylistUrl={youtubePlaylistUrl}
@@ -92,7 +92,7 @@ const Dashboard = () => {
           </div>
 
           {/* 右側: プレイリストタイトル表示エリア */}
-          <div className="w-1/3 pl-4">
+          <div className="w-full md:w-1/3 pl-0 md:pl-4 mt-8 md:mt-0">
             <h2 className="text-lg font-semibold mb-4">プレイリストの動画タイトル</h2>
             <SortablePlaylist youtubeVideoLikes={sortedVideoLikes} moveItem={handleMoveItem} /> {/* ドラッグ時に順序を更新 */}
           </div>

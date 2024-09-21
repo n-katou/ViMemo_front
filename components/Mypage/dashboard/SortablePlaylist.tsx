@@ -19,12 +19,12 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
   const { dragDropRef, isDragging, isOver } = useDragDropVideoCard(index, moveItem);
 
   // ドラッグ中の色とスタイルを制御
-  const backgroundColor = isDragging ? 'blue' : isOver ? 'lightgreen' : 'white';
+  const backgroundColor = isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white';
   const opacity = isDragging ? 0.5 : 1;
 
   return (
     <div
-      ref={dragDropRef}  // `div` 要素に変更
+      ref={dragDropRef}
       className="mb-2"
       style={{
         opacity,
@@ -39,10 +39,10 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
         <span
           style={{
             display: 'inline-block',
-            maxWidth: '100%',   // 必要に応じて調整
+            maxWidth: '100%',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
-            textOverflow: 'ellipsis',  // 省略を適用
+            textOverflow: 'ellipsis',
           }}
         >
           {index + 1}. {like.title}
