@@ -49,7 +49,7 @@ const Dashboard = () => {
     const [movedItem] = updatedItems.splice(fromIndex, 1);
     updatedItems.splice(toIndex, 0, movedItem);
 
-    setYoutubeVideoLikes(updatedItems);
+    setYoutubeVideoLikes(updatedItems);  // まずクライアント側で並び替えを即座に反映
 
     const updatedOrder = updatedItems.map((item, index) => ({
       id: item.id || item.likeable_id,  // video.id または likeable_id を確認
@@ -61,7 +61,8 @@ const Dashboard = () => {
     const videoIds = updatedOrder.map(item => item.id);
     console.log('Sending video IDs:', videoIds);  // サーバーに送信するIDを確認
 
-    await updatePlaylistOrder(jwtToken, updatedOrder);
+    // プレイリスト順序をバックエンドに保存し、クライアント側の状態も更新
+    await updatePlaylistOrder(jwtToken, updatedItems, setYoutubeVideoLikes);
   };
 
   return (

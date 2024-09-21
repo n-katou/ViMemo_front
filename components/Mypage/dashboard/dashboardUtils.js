@@ -165,14 +165,14 @@ export const shufflePlaylist = async (jwtToken, setYoutubePlaylistUrl, setYoutub
 };
 
 // プレイリストの順序をバックエンドに送信する関数
-export const updatePlaylistOrder = async (jwtToken, videos) => {
-  const videoIds = videos.map(video => video.id);  // video_ids を生成
-  console.log('Sending video IDs:', videoIds);  // 送信データをログに出力
+export const updatePlaylistOrder = async (jwtToken, videos, setYoutubeVideoLikes) => {
+  const videoIds = videos.map(video => video.id);
+  console.log('Sending video IDs:', videoIds);
 
   try {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v1/update_playlist_order`,
-      { video_ids: videoIds },  // video_ids を送信
+      { video_ids: videoIds },
       {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
@@ -180,7 +180,19 @@ export const updatePlaylistOrder = async (jwtToken, videos) => {
         },
       }
     );
-    console.log('Playlist order updated successfully:', response.data);
+
+    if (response.status === 200) {
+      console.log('Playlist order updated successfully:', response.data);
+
+      // ここで再度プレイリストをバックエンドから取得し、セットする
+      const latestResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mypage`, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+      const { youtube_video_likes } = latestResponse.data;
+      setYoutubeVideoLikes(youtube_video_likes);  // バックエンドから取得した最新のデータをセット
+    }
   } catch (error) {
     console.error('Error updating playlist order:', error.message);
   }
