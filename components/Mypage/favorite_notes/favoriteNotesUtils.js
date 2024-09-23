@@ -12,7 +12,7 @@ export const fetchNoteLikes = async (
 
   try {
     // APIリクエストを実行
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mypage`, {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/like_note`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
