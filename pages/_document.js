@@ -11,11 +11,11 @@ class MyDocument extends Document {
           <meta property="og:title" content="ViMemo" />
           <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
           <meta property="og:image" content="/og-image.png" />
-          <meta property="og:url" content="https://vi-memo.com" />
+          <meta property="og:url" content="https://vimemo.vercel.app" />
           <meta property="og:type" content="website" />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
-          <link rel="canonical" href="https://vi-memo.com" />
+          <link rel="canonical" href="https://vimemo.vercel.app" />
           <link rel="manifest" href="/site.webmanifest" />
           <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
           <meta name="apple-mobile-web-app-capable" content="yes" />

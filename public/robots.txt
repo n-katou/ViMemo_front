@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://vi-memo.com
+Host: https://vimemo.vercel.app
 
 # Sitemaps
-Sitemap: https://vi-memo.com/sitemap.xml
+Sitemap: https://vimemo.vercel.app/sitemap.xml
