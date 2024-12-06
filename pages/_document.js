@@ -14,7 +14,7 @@ class MyDocument extends Document {
           <meta property="og:url" content="https://vimemo.vercel.app" />
           <meta property="og:type" content="website" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:image" content="https://vimemo.s3.ap-northeast-1.amazonaws.com/uploads/pinterest_board_photo.png" />
+          <meta name="twitter:image" content="https://vimemo.vercel.app/pinterest_board_photo.png" />
           <link rel="canonical" href="https://vimemo.vercel.app" />
           <link rel="manifest" href="/site.webmanifest" />
           <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

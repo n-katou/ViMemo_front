@@ -31,6 +31,12 @@ export const metadata: Metadata = {
   appleWebApp: {
     title: "ViMemo",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "ViMemo",
+    description: "動画視聴中、直感的にメモを追加できるサービス",
+    images: ["/pinterest_board_photo.png"],
+  },
 };
 
 function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppProps) {
@@ -87,11 +93,11 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
         <meta name="description" content="ViMemoは、動画視聴中に直感的にメモを追加できるサービスです。" />
         <meta property="og:title" content="ViMemo" />
         <meta property="og:description" content="動画視聴中、直感的にメモを追加できるサービス" />
-        <meta property="og:image" content="https://vimemo.vercel.app/images/pinterest_board_photo.png" />
+        <meta property="og:image" content="https://vimemo.vercel.app/pinterest_board_photo.png" />
         <meta property="og:url" content="https://vimemo.vercel.app" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://vimemo.vercel.app/images/pinterest_board_photo.png" />
+        <meta name="twitter:image" content="https://vimemo.vercel.app/pinterest_board_photo.png" />
         <link rel="canonical" href="https://vimemo.vercel.app" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-web.png" />
         <link rel="manifest" href="/site.webmanifest" />
