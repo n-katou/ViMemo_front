@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
@@ -19,10 +19,11 @@ const Header: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
   const { setFlashMessage } = useFlashMessage();
-  const { theme, resolvedTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const drawerTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -53,8 +54,19 @@ const Header: React.FC = () => {
     }
   };
 
-  const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
+  // ホバーで `UserDrawer` を開く処理
+  const handleMouseEnter = () => {
+    if (drawerTimeout.current) {
+      clearTimeout(drawerTimeout.current);
+    }
+    setDrawerOpen(true);
+  };
+
+  // ホバーが外れた時に少し遅らせて閉じる処理
+  const handleMouseLeave = () => {
+    drawerTimeout.current = setTimeout(() => {
+      setDrawerOpen(false);
+    }, 300);
   };
 
   const toggleSearch = () => {
@@ -73,15 +85,18 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <AppBar position="fixed" sx={{ backgroundColor: resolvedTheme === 'light' ? 'white' : 'black', zIndex: 1300 }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          backgroundColor: resolvedTheme === 'light' ? 'white' : 'black',
+          zIndex: 1300,
+        }}
+      >
         <Toolbar>
           <span
             className="bg-gradient-rainbow-header"
             onClick={navigateToHome}
-            style={{
-              cursor: 'pointer',
-              display: 'inline-block',
-            }}
+            style={{ cursor: 'pointer', display: 'inline-block' }}
           >
             <Typography
               variant="h6"
@@ -91,73 +106,57 @@ const Header: React.FC = () => {
                 flexGrow: 1,
                 fontFamily: 'Volkhov',
                 fontWeight: 600,
-                fontSize: {
-                  xs: '1.5rem',
-                  sm: '3.0rem',
-                  md: '3.5rem',
-                },
+                fontSize: { xs: '1.5rem', sm: '3.0rem', md: '3.5rem' },
               }}
             >
               ViMemo
             </Typography>
           </span>
           <div style={{ flexGrow: 1 }} />
-          <div className="flex items-center">
-            <IconButton
-              onClick={toggleSearch}
-              sx={{
-                color: '#818cf8',
-                fontFamily: 'Volkhov',
-                '&:hover': {
-                  color: '#818cf8',
-                  transform: 'scale(1.1)',
-                  transition: 'transform 0.3s ease',
-                }
-              }}
-            >
-              <SearchIcon />
-              <Typography variant="body1" sx={{ marginLeft: 0.5, color: '#c084fc', '&:hover': { color: '#818cf8' } }}>
-                検索
-              </Typography>
-            </IconButton>
-            <SearchDialog searchOpen={searchOpen} toggleSearch={toggleSearch} />
-          </div>
+
+          <IconButton onClick={toggleSearch} sx={{ color: '#818cf8' }}>
+            <SearchIcon />
+            <Typography variant="body1" sx={{ marginLeft: 0.5, color: '#c084fc' }}>
+              検索
+            </Typography>
+          </IconButton>
+          <SearchDialog searchOpen={searchOpen} toggleSearch={toggleSearch} />
+
           <Button
             onClick={navigateToYoutubeVideos}
             startIcon={<YouTubeIcon className="youtube-icon" />}
-            sx={{
-              color: '#818cf8',
-              fontFamily: 'Volkhov',
-              '&:hover': {
-                color: '#818cf8',
-                transform: 'scale(1.1)',
-                transition: 'transform 0.3s ease',
-              }
-            }}
+            sx={{ color: '#818cf8', fontWeight: 'bold' }}
           >
-            <Typography variant="body1" sx={{ marginLeft: 0.5, color: '#c084fc', '&:hover': { color: '#818cf8' } }}>
-              YouTube
-            </Typography>
+            YouTube
           </Button>
-          <div>
+
+          {/* アカウントアイコン（ホバーで開く） */}
+          <div
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            style={{ display: 'inline-block', position: 'relative' }}
+          >
             <IconButton
               size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={toggleDrawer}
               sx={{
                 color: '#818cf8',
                 '&:hover': {
                   color: '#c084fc',
                   transform: 'scale(1.1)',
                   transition: 'transform 0.3s ease',
-                }
+                },
               }}
             >
               <AccountCircle />
             </IconButton>
-            <UserDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} currentUser={currentUser} handleLogout={handleLogout} />
+            <UserDrawer
+              drawerOpen={drawerOpen}
+              toggleDrawer={() => setDrawerOpen(!drawerOpen)}
+              currentUser={currentUser}
+              handleLogout={handleLogout}
+              onMouseEnter={handleMouseEnter} // `UserDrawer` 内にマウスがある間は閉じない
+              onMouseLeave={handleMouseLeave} // `UserDrawer` 外にマウスが出たら閉じる
+            />
           </div>
         </Toolbar>
       </AppBar>
