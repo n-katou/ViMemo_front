@@ -56,6 +56,7 @@ const tab = (isLightTheme: boolean) => [
                 alt="全件検索"
                 style={{ display: 'block', margin: 'auto' }}
               />
+              <hr style={{ marginTop: '40px', borderColor: isLightTheme ? '#ccc' : '#f0f8ff', borderWidth: '1px' }} />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
@@ -67,6 +68,7 @@ const tab = (isLightTheme: boolean) => [
                 alt="サジェスト"
                 style={{ display: 'block', margin: 'auto' }}
               />
+              <hr style={{ marginTop: '40px', borderColor: isLightTheme ? '#ccc' : '#f0f8ff', borderWidth: '1px' }} />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
@@ -116,6 +118,7 @@ const tab = (isLightTheme: boolean) => [
                 alt="メモ作成"
                 style={{ display: 'block', margin: 'auto' }}
               />
+              <hr style={{ marginTop: '40px', borderColor: isLightTheme ? '#ccc' : '#f0f8ff', borderWidth: '1px' }} />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
@@ -127,6 +130,7 @@ const tab = (isLightTheme: boolean) => [
                 alt="メモ編集"
                 style={{ display: 'block', margin: 'auto' }}
               />
+              <hr style={{ marginTop: '40px', borderColor: isLightTheme ? '#ccc' : '#f0f8ff', borderWidth: '1px' }} />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
@@ -138,6 +142,7 @@ const tab = (isLightTheme: boolean) => [
                 alt="メモ移動"
                 style={{ display: 'block', margin: 'auto' }}
               />
+              <hr style={{ marginTop: '40px', borderColor: isLightTheme ? '#ccc' : '#f0f8ff', borderWidth: '1px' }} />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', textAlign: 'center', width: '100%' }}>
               <p style={{
@@ -164,6 +169,7 @@ const tab = (isLightTheme: boolean) => [
                   alt="タイムスタンプ"
                   style={{ display: 'block', margin: 'auto' }}
                 />
+                <hr style={{ marginTop: '40px', borderColor: isLightTheme ? '#ccc' : '#f0f8ff', borderWidth: '1px' }} />
               </div>
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
@@ -252,6 +258,7 @@ const tab = (isLightTheme: boolean) => [
                 alt="プレイリスト"
                 style={{ display: 'block', margin: 'auto' }}
               />
+              <hr style={{ marginTop: '40px', borderColor: isLightTheme ? '#ccc' : '#f0f8ff', borderWidth: '1px' }} />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
@@ -301,6 +308,7 @@ const tab = (isLightTheme: boolean) => [
                 alt="シェア"
                 style={{ display: 'block', margin: 'auto' }}
               />
+              <hr style={{ marginTop: '40px', borderColor: isLightTheme ? '#ccc' : '#f0f8ff', borderWidth: '1px' }} />
             </div>
             <div className="note-item mt-4" style={{ marginBottom: '20px', width: '100%' }}>
               <p style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
