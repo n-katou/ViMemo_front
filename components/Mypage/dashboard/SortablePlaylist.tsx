@@ -81,7 +81,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
   return (
     <div>
       <h2 style={{ color: theme === 'light' ? '#818cf8' : '#000', marginBottom: '12px' }}>
-        再生中のプレイリスト（並び替え可能）
+        再生中のプレイリスト（ドラッグ&ドロップで並び替え可能）
       </h2>
 
       <div>

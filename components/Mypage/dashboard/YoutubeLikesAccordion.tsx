@@ -86,9 +86,18 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({
             startIcon={<ShuffleIcon />}
             onClick={handleShuffleClick}
             disabled={isShuffling || isReloading}
+            sx={{
+              backgroundColor: isShuffling || isReloading ? '#ccc' : '#22eec5',
+              color: isShuffling || isReloading ? 'gray' : 'white',
+              cursor: isShuffling || isReloading ? 'not-allowed' : 'pointer',
+              '&:hover': {
+                backgroundColor: isShuffling || isReloading ? '#ccc' : '#1bb89a', // ホバー時の色
+              },
+            }}
           >
             {isShuffling ? 'シャッフル中...' : 'プレイリストをシャッフル'}
           </Button>
+
           {isShuffling && <CustomSpinner size={150} bgColor="rgba(0, 0, 0, 0.7)" />}
 
           <Button
@@ -100,6 +109,9 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({
               backgroundColor: isConfirming || isReloading ? '#ccc' : '#38bdf8',
               color: isConfirming || isReloading ? 'gray' : 'white',
               cursor: isConfirming || isReloading ? 'not-allowed' : 'pointer',
+              '&:hover': {
+                backgroundColor: isConfirming || isReloading ? '#ccc' : '#1e90ff', // ホバー時の色
+              },
             }}
           >
             {isReloading ? '並び替え...（保存中）' : isConfirming ? '保存中...' : '並び替え確定'}
