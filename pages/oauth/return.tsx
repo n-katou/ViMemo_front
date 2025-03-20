@@ -139,19 +139,27 @@ const ReturnPage = () => {
                     ✅
                   </motion.div>
                   <motion.div variants={successTextVariants}>
-                    <Typography
-                      variant="h5"
-                      component="p"
-                      className="bg-gradient-rainbow"
-                      sx={{
-                        fontWeight: 'bold',
-                        mt: 2,
-                        backgroundClip: 'text',
-                        textFillColor: 'transparent'
+                    <div
+                      style={{
+                        padding: '10px 20px', // 余白を追加
+                        borderRadius: '10px', // 角を丸くする
+                        display: 'inline-block', // テキストのサイズに合わせる
                       }}
                     >
-                      認証成功！リダイレクト中...
-                    </Typography>
+                      <Typography
+                        variant="h5"
+                        component="p"
+                        className="bg-gradient-rainbow"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: 'white', // テキストカラーを白に
+                          textAlign: 'center', // 中央配置
+                        }}
+                      >
+                        認証成功！リダイレクト中...
+                      </Typography>
+                    </div>
+
                   </motion.div>
                 </motion.div>
               )

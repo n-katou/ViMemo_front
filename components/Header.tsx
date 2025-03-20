@@ -43,26 +43,31 @@ const Header: React.FC = () => {
     };
   }, [setFlashMessage, router.events]);
 
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const handleLogout = async () => {
     try {
-      await logout();
-      setDrawerOpen(false);
+      setIsLoggingOut(true);  // ログアウトボタン押下時にフラグをON
+      setDrawerOpen(false);   // ドロワーを閉じる
       localStorage.setItem('isMessageDisplayed', 'false');
+
+      await logout();
+
       router.push('/login?flash_message=ログアウトしました');
     } catch (error) {
       console.error('ログアウトに失敗しました:', error);
+    } finally {
+      setTimeout(() => setIsLoggingOut(false), 3000); // 1秒後にフラグをOFF
     }
   };
 
-  // ホバーで `UserDrawer` を開く処理
+  // ホバー時に開く（ログアウト状態でも開く）
   const handleMouseEnter = () => {
-    if (drawerTimeout.current) {
-      clearTimeout(drawerTimeout.current);
-    }
+    if (drawerTimeout.current) clearTimeout(drawerTimeout.current);
     setDrawerOpen(true);
   };
 
-  // ホバーが外れた時に少し遅らせて閉じる処理
+  // ホバーが外れたら閉じる
   const handleMouseLeave = () => {
     drawerTimeout.current = setTimeout(() => {
       setDrawerOpen(false);
