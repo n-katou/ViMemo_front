@@ -88,9 +88,12 @@ const Dashboard = () => {
           {/* プレイリスト表示エリア */}
           <div className="w-full">
             <YoutubeLikesAccordion
-              youtubeVideoLikes={sortedVideoLikes}  // ソートされたリストを渡す
+              youtubeVideoLikes={sortedVideoLikes}
               youtubePlaylistUrl={youtubePlaylistUrl}
               shufflePlaylist={shufflePlaylist}
+              setYoutubeVideoLikes={setYoutubeVideoLikes}
+              updatePlaylistOrder={updatePlaylistOrder}
+              jwtToken={jwtToken ?? ''}
             />
           </div>
 

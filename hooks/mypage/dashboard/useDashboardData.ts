@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { fetchData, fetchVideosByGenre, shufflePlaylist } from '../../../components/Mypage/dashboard/dashboardUtils';
 import { CustomUser } from '../../../types/user';
+import { Like } from '../../../types/like';
 
 interface UseDashboardDataParams {
   jwtToken: string | null;
@@ -10,8 +11,8 @@ interface UseDashboardDataParams {
 }
 
 interface UseDashboardDataReturn {
-  youtubeVideoLikes: any[];
-  setYoutubeVideoLikes: (likes: any[]) => void;
+  youtubeVideoLikes: Like[];
+  setYoutubeVideoLikes: (likes: Like[]) => void;
   noteLikes: any[];
   youtubePlaylistUrl: string;
   youtubeVideos: any[];
@@ -22,7 +23,7 @@ interface UseDashboardDataReturn {
   showSnackbar: boolean;
   handleSearch: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   handleCloseSnackbar: () => void;
-  shufflePlaylist: () => void;
+  shufflePlaylist: () => Promise<Like[]>; // 修正: `Promise<Like[]>` を返す
 }
 
 export const useDashboardData = ({
@@ -31,7 +32,7 @@ export const useDashboardData = ({
   setAuthState,
 }: UseDashboardDataParams): UseDashboardDataReturn => {
   const router = useRouter();
-  const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<any[]>([]);
+  const [youtubeVideoLikes, setYoutubeVideoLikes] = useState<Like[]>([]);
   const [noteLikes, setNoteLikes] = useState<any[]>([]);
   const [youtubePlaylistUrl, setYoutubePlaylistUrl] = useState('');
   const [youtubeVideos, setYoutubeVideos] = useState<any[]>([]);
@@ -86,6 +87,12 @@ export const useDashboardData = ({
     setFlashMessageState('');
   };
 
+  // 修正: `shufflePlaylist` の戻り値を `Promise<Like[]>` に変更
+  const handleShufflePlaylist = async (): Promise<Like[]> => {
+    const shuffledVideos = await shufflePlaylist(jwtToken, setYoutubePlaylistUrl, setYoutubeVideoLikes);
+    return shuffledVideos;
+  };
+
   return {
     youtubeVideoLikes,
     setYoutubeVideoLikes,
@@ -99,6 +106,6 @@ export const useDashboardData = ({
     showSnackbar,
     handleSearch,
     handleCloseSnackbar,
-    shufflePlaylist: () => shufflePlaylist(jwtToken, setYoutubePlaylistUrl, setYoutubeVideoLikes),
+    shufflePlaylist: handleShufflePlaylist, // 修正: `Promise<Like[]>` を返す関数を設定
   };
 };

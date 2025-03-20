@@ -145,7 +145,6 @@ export const debouncedFetchSuggestions = debounce(async (query, setSuggestions) 
 
 export const shufflePlaylist = async (jwtToken, setYoutubePlaylistUrl, setYoutubeVideoLikes) => {
   try {
-    // APIエンドポイントにGETリクエストを送信してシャッフルプレイリストを生成
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/generate_shuffle_playlist`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -153,21 +152,23 @@ export const shufflePlaylist = async (jwtToken, setYoutubePlaylistUrl, setYoutub
     });
 
     if (response.status === 200) {
-      // レスポンスデータからシャッフルされたプレイリストURLを取得
       const { shuffled_youtube_playlist_url, youtube_videos } = response.data;
 
-      setYoutubePlaylistUrl(shuffled_youtube_playlist_url); // プレイリストURLを設定
-      setYoutubeVideoLikes(youtube_videos); // シャッフルされた動画リストを設定
+      setYoutubePlaylistUrl(shuffled_youtube_playlist_url);
+      setYoutubeVideoLikes(youtube_videos);
+
+      return youtube_videos; // 修正: シャッフル後の動画リストを返す
     }
   } catch (error) {
-    console.error('Error generating shuffled playlist:', error); // エラーハンドリング
+    console.error('Error generating shuffled playlist:', error);
+    return [];
   }
 };
+
 
 // プレイリストの順序をバックエンドに送信する関数
 export const updatePlaylistOrder = async (jwtToken, videos, setYoutubeVideoLikes) => {
   const videoIds = videos.map(video => video.id);
-  console.log('Sending video IDs:', videoIds);
 
   try {
     const response = await axios.post(
@@ -184,14 +185,15 @@ export const updatePlaylistOrder = async (jwtToken, videos, setYoutubeVideoLikes
     if (response.status === 200) {
       console.log('Playlist order updated successfully:', response.data);
 
-      // ここで再度プレイリストをバックエンドから取得し、セットする
+      // 最新のプレイリストを取得
       const latestResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mypage`, {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
         },
       });
+
       const { youtube_video_likes } = latestResponse.data;
-      setYoutubeVideoLikes(youtube_video_likes);  // バックエンドから取得した最新のデータをセット
+      setYoutubeVideoLikes(youtube_video_likes);
     }
   } catch (error) {
     console.error('Error updating playlist order:', error.message);
