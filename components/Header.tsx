@@ -14,6 +14,8 @@ import { useFlashMessage } from '../context/FlashMessageContext';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import YouTubeIcon from '@mui/icons-material/YouTube';
+import { useMediaQuery } from '@mui/material';
+
 
 const Header: React.FC = () => {
   const { currentUser, logout } = useAuth();
@@ -24,6 +26,9 @@ const Header: React.FC = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const drawerTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // スマホ判定
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
     setMounted(true);
@@ -72,6 +77,10 @@ const Header: React.FC = () => {
     drawerTimeout.current = setTimeout(() => {
       setDrawerOpen(false);
     }, 300);
+  };
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
   };
 
   const toggleSearch = () => {
@@ -161,7 +170,7 @@ const Header: React.FC = () => {
           </Button>
 
 
-          {/* アカウントアイコン（ホバーで開く） */}
+          {/* アカウントアイコン（PCはホバーで開く、スマホはクリック） */}
           <div
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -169,24 +178,20 @@ const Header: React.FC = () => {
           >
             <IconButton
               size="large"
+              onClick={isMobile ? toggleDrawer : undefined}
               sx={{
                 color: '#818cf8',
-                '&:hover': {
-                  color: '#c084fc',
-                  transform: 'scale(1.1)',
-                  transition: 'transform 0.3s ease',
-                },
+                '&:hover': { color: '#c084fc', transform: 'scale(1.1)', transition: 'transform 0.3s ease' },
               }}
             >
               <AccountCircle />
             </IconButton>
             <UserDrawer
               drawerOpen={drawerOpen}
-              toggleDrawer={() => setDrawerOpen(!drawerOpen)}
+              toggleDrawer={toggleDrawer}
               currentUser={currentUser}
               handleLogout={handleLogout}
-              onMouseEnter={handleMouseEnter} // `UserDrawer` 内にマウスがある間は閉じない
-              onMouseLeave={handleMouseLeave} // `UserDrawer` 外にマウスが出たら閉じる
+              isMobile={isMobile} // スマホ用レイアウトにする
             />
           </div>
         </Toolbar>

@@ -23,6 +23,7 @@ interface UserDrawerProps {
   handleLogout: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  isMobile: boolean;
 }
 
 const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, currentUser, handleLogout, onMouseEnter, onMouseLeave }) => {
@@ -33,7 +34,10 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   const handleDrawerClose = () => {
-    toggleDrawer();
+    if (!isMobile) {
+      // スマホではバツボタンでのみ閉じるため、Backdropクリックでは閉じない
+      toggleDrawer();
+    }
   };
 
   const handleLogoutDialogOpen = () => {
@@ -55,15 +59,18 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
   };
 
   const drawerVariants = {
-    hidden: { x: "100%", opacity: 0 },
-    visible: { x: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
+    hidden: { x: "100%", opacity: 0, transition: { duration: 0.5, ease: "easeInOut" } },
+    visible: { x: 0, opacity: 1, transition: { duration: 0.3, ease: "easeOut" } },
   };
-
 
   return (
     <>
       {/* 背景を暗くし、ぼかしを適用 */}
-      <Backdrop open={drawerOpen} onClick={handleDrawerClose} sx={{ zIndex: 1300, background: "rgba(0, 0, 0, 0.7)", backdropFilter: "blur(10px)" }} />
+      <Backdrop
+        open={drawerOpen}
+        onClick={isMobile ? undefined : handleDrawerClose} // スマホではBackdropクリックでは閉じない
+        sx={{ zIndex: 1300, background: "rgba(0, 0, 0, 0.7)", backdropFilter: "blur(10px)" }}
+      />
 
       <AnimatePresence>
         {drawerOpen && (
@@ -79,7 +86,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               right: 0,
               height: "100%",
               zIndex: 1400,
-              width: isMobile ? "75%" : isDesktop ? "40%" : "50%",
+              width: isMobile ? "100vw" : isDesktop ? "40%" : "50%", // **スマホでは全画面表示**
               background: "rgba(255, 255, 255, 0.1)",
               backdropFilter: "blur(20px)",
               borderLeft: "1px solid rgba(255, 255, 255, 0.2)",
@@ -87,13 +94,13 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
               color: "white",
               padding: "20px",
             }}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
+            onMouseEnter={isMobile ? undefined : onMouseEnter} // **スマホでは無効化**
+            onMouseLeave={() => !isMobile && toggleDrawer()}
           >
             {/* 閉じるボタン */}
             <IconButton
               edge="start"
-              onClick={handleDrawerClose}
+              onClick={toggleDrawer} // スマホではこれで閉じる
               aria-label="close"
               sx={{
                 position: "absolute",
