@@ -31,12 +31,13 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({
   const { theme } = useTheme();
   const [isShuffling, setIsShuffling] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [isReloading, setIsReloading] = useState(false);
 
   const handleShuffleClick = async () => {
     setIsShuffling(true);
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    const shuffledVideos = await shufflePlaylist(); // `shufflePlaylist()` の返り値を受け取る
+    const shuffledVideos = await shufflePlaylist();
     setYoutubeVideoLikes(shuffledVideos);
 
     setIsShuffling(false);
@@ -47,7 +48,12 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({
 
     setIsConfirming(true);
     await updatePlaylistOrder(jwtToken, youtubeVideoLikes, setYoutubeVideoLikes);
-    setIsConfirming(false);
+
+    // 画面をリロード
+    setIsReloading(true);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000); // 2秒待ってリロード
   };
 
   return (
@@ -79,7 +85,7 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({
             className="btn btn-outline btn-lightperple"
             startIcon={<ShuffleIcon />}
             onClick={handleShuffleClick}
-            disabled={isShuffling}
+            disabled={isShuffling || isReloading}
           >
             {isShuffling ? 'シャッフル中...' : 'プレイリストをシャッフル'}
           </Button>
@@ -87,12 +93,16 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({
 
           <Button
             variant="contained"
-            color="primary"
             onClick={handleConfirmOrder}
-            disabled={isConfirming}
-            sx={{ marginLeft: '16px' }}
+            disabled={isConfirming || isReloading}
+            sx={{
+              marginLeft: '16px',
+              backgroundColor: isConfirming || isReloading ? '#ccc' : '#38bdf8',
+              color: isConfirming || isReloading ? 'gray' : 'white',
+              cursor: isConfirming || isReloading ? 'not-allowed' : 'pointer',
+            }}
           >
-            {isConfirming ? '保存中...' : '並び替え確定'}
+            {isReloading ? '並び替え...（保存中）' : isConfirming ? '保存中...' : '並び替え確定'}
           </Button>
         </Box>
       )}
