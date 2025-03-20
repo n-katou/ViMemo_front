@@ -114,12 +114,26 @@ const Header: React.FC = () => {
           </span>
           <div style={{ flexGrow: 1 }} />
 
-          <IconButton onClick={toggleSearch} sx={{ color: '#818cf8' }}>
+          <IconButton
+            onClick={toggleSearch}
+            sx={{
+              color: '#818cf8',
+              transition: 'color 0.3s ease, transform 0.3s ease',
+              '&:hover': {
+                color: '#FFD700', // ホバー時にゴールド系カラーに変更
+                transform: 'scale(1.1) translateY(-2px)', // 拡大＆浮かせる
+              },
+              '&:active': {
+                transform: 'scale(0.95)', // クリック時に押し込む
+              },
+            }}
+          >
             <SearchIcon />
             <Typography variant="body1" sx={{ marginLeft: 0.5, color: '#c084fc' }}>
               検索
             </Typography>
           </IconButton>
+
           <SearchDialog searchOpen={searchOpen} toggleSearch={toggleSearch} />
 
           <Button
