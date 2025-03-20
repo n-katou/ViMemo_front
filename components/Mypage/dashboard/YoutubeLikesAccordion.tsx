@@ -9,23 +9,51 @@ import Button from '@mui/material/Button';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
 import { Like } from '../../../types/like';
 import { useTheme } from 'next-themes';
-import CustomSpinner from './CustomSpinner'; // カスタムスピナーコンポーネントをインポート
+import CustomSpinner from './CustomSpinner';
 
 interface YoutubeLikesAccordionProps {
-  youtubeVideoLikes: Like[] | undefined; // undefined を許容
+  youtubeVideoLikes: Like[] | undefined;
   youtubePlaylistUrl: string;
-  shufflePlaylist: () => void;
+  shufflePlaylist: () => Promise<Like[]>; // 修正: 戻り値を Promise<Like[]> に変更
+  setYoutubeVideoLikes: (likes: Like[]) => void;
+  updatePlaylistOrder: (token: string, likes: Like[], setLikes: (likes: Like[]) => void) => Promise<void>;
+  jwtToken: string;
 }
 
-const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVideoLikes, youtubePlaylistUrl, shufflePlaylist }) => {
+const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({
+  youtubeVideoLikes,
+  youtubePlaylistUrl,
+  shufflePlaylist,
+  setYoutubeVideoLikes,
+  updatePlaylistOrder,
+  jwtToken
+}) => {
   const { theme } = useTheme();
-  const [isShuffling, setIsShuffling] = useState(false); // シャッフル中の状態を管理
+  const [isShuffling, setIsShuffling] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [isReloading, setIsReloading] = useState(false);
 
   const handleShuffleClick = async () => {
-    setIsShuffling(true); // シャッフル中の状態を開始
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // 2秒間の遅延を追加
-    await shufflePlaylist(); // シャッフル関数を呼び出し
-    setIsShuffling(false); // シャッフル中の状態を終了
+    setIsShuffling(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    const shuffledVideos = await shufflePlaylist();
+    setYoutubeVideoLikes(shuffledVideos);
+
+    setIsShuffling(false);
+  };
+
+  const handleConfirmOrder = async () => {
+    if (!youtubeVideoLikes) return;
+
+    setIsConfirming(true);
+    await updatePlaylistOrder(jwtToken, youtubeVideoLikes, setYoutubeVideoLikes);
+
+    // 画面をリロード
+    setIsReloading(true);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000); // 2秒待ってリロード
   };
 
   return (
@@ -36,7 +64,6 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVi
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        {/* youtubeVideoLikes が undefined でないことを確認 */}
         {Array.isArray(youtubeVideoLikes) && youtubeVideoLikes.length > 0 ? (
           <div className="mb-4 video-wrapper">
             <iframe
@@ -58,11 +85,37 @@ const YoutubeLikesAccordion: React.FC<YoutubeLikesAccordionProps> = ({ youtubeVi
             className="btn btn-outline btn-lightperple"
             startIcon={<ShuffleIcon />}
             onClick={handleShuffleClick}
-            disabled={isShuffling} // シャッフル中はボタンを無効化
+            disabled={isShuffling || isReloading}
+            sx={{
+              backgroundColor: isShuffling || isReloading ? '#ccc' : '#22eec5',
+              color: isShuffling || isReloading ? 'gray' : 'white',
+              cursor: isShuffling || isReloading ? 'not-allowed' : 'pointer',
+              '&:hover': {
+                backgroundColor: isShuffling || isReloading ? '#ccc' : '#1bb89a', // ホバー時の色
+              },
+            }}
           >
             {isShuffling ? 'シャッフル中...' : 'プレイリストをシャッフル'}
           </Button>
+
           {isShuffling && <CustomSpinner size={150} bgColor="rgba(0, 0, 0, 0.7)" />}
+
+          <Button
+            variant="contained"
+            onClick={handleConfirmOrder}
+            disabled={isConfirming || isReloading}
+            sx={{
+              marginLeft: '16px',
+              backgroundColor: isConfirming || isReloading ? '#ccc' : '#38bdf8',
+              color: isConfirming || isReloading ? 'gray' : 'white',
+              cursor: isConfirming || isReloading ? 'not-allowed' : 'pointer',
+              '&:hover': {
+                backgroundColor: isConfirming || isReloading ? '#ccc' : '#1e90ff', // ホバー時の色
+              },
+            }}
+          >
+            {isReloading ? '並び替え...（保存中）' : isConfirming ? '保存中...' : '並び替え確定'}
+          </Button>
         </Box>
       )}
     </Accordion>
