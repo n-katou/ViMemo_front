@@ -21,9 +21,11 @@ interface UserDrawerProps {
   toggleDrawer: () => void;
   currentUser: CustomUser | null;
   handleLogout: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
-const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, currentUser, handleLogout }) => {
+const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, currentUser, handleLogout, onMouseEnter, onMouseLeave }) => {
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -53,13 +55,16 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
   };
 
   const drawerVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1 }
+    hidden: { x: "100%", opacity: 0 },
+    visible: { x: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
   };
+
 
   return (
     <>
-      <Backdrop open={drawerOpen} onClick={handleDrawerClose} sx={{ zIndex: 1300 }} />
+      {/* 背景を暗くし、ぼかしを適用 */}
+      <Backdrop open={drawerOpen} onClick={handleDrawerClose} sx={{ zIndex: 1300, background: "rgba(0, 0, 0, 0.7)", backdropFilter: "blur(10px)" }} />
+
       <AnimatePresence>
         {drawerOpen && (
           <motion.div
@@ -67,39 +72,49 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
             animate="visible"
             exit="hidden"
             variants={drawerVariants}
-            transition={{ duration: 0.5 }}
-            className="bg-gradient-rainbow"
+            className="drawer-container"
             style={{
-              position: 'fixed',
+              position: "fixed",
               top: 0,
               right: 0,
-              height: '100%',
+              height: "100%",
               zIndex: 1400,
-              width: isMobile ? '70%' : isDesktop ? '40%' : '50%',
-              color: 'white'
+              width: isMobile ? "75%" : isDesktop ? "40%" : "50%",
+              background: "rgba(255, 255, 255, 0.1)",
+              backdropFilter: "blur(20px)",
+              borderLeft: "1px solid rgba(255, 255, 255, 0.2)",
+              boxShadow: "-4px 0 10px rgba(0, 0, 0, 0.3)",
+              color: "white",
+              padding: "20px",
             }}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
           >
+            {/* 閉じるボタン */}
             <IconButton
               edge="start"
-              color="inherit"
               onClick={handleDrawerClose}
               aria-label="close"
-              sx={{ position: 'absolute', top: 8, left: 8, color: 'white' }}
+              sx={{
+                position: "absolute",
+                top: 10,
+                left: 10,
+                color: "white",
+              }}
             >
               <CloseIcon />
             </IconButton>
-            <List sx={{ marginTop: isMobile ? '30px' : '30px' }}>
-              <UserDrawerListItems
-                currentUser={currentUser}
-                handleDrawerClose={handleDrawerClose}
-                handleLogoutDialogOpen={handleLogoutDialogOpen}
-              />
+
+            {/* メニューリスト */}
+            <List sx={{ marginTop: "40px" }}>
+              <UserDrawerListItems currentUser={currentUser} handleDrawerClose={handleDrawerClose} handleLogoutDialogOpen={handleLogoutDialogOpen} />
             </List>
 
+            {/* ログアウト確認ダイアログ */}
             <Dialog open={logoutDialogOpen} onClose={handleLogoutDialogClose}>
-              <DialogTitle sx={{ color: 'black' }}>ログアウト確認</DialogTitle>
+              <DialogTitle sx={{ color: "black" }}>ログアウト確認</DialogTitle>
               <DialogContent>
-                <DialogContentText sx={{ color: 'black' }}>本当にログアウトしますか？</DialogContentText>
+                <DialogContentText sx={{ color: "black" }}>本当にログアウトしますか？</DialogContentText>
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleLogoutDialogClose} color="primary">いいえ</Button>
