@@ -49,7 +49,7 @@ const YoutubeVideoShowPage: React.FC = () => {
     <div className={`container mx-auto py-8 mt-2 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
       <Snackbar
         open={isSnackbarOpen}
-        autoHideDuration={5000}
+        autoHideDuration={3000}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         sx={snackbarStyles}
