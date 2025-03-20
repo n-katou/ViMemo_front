@@ -125,10 +125,22 @@ const Header: React.FC = () => {
           <Button
             onClick={navigateToYoutubeVideos}
             startIcon={<YouTubeIcon className="youtube-icon" />}
-            sx={{ color: '#818cf8', fontWeight: 'bold' }}
+            sx={{
+              color: '#818cf8',
+              fontWeight: 'bold',
+              transition: 'color 0.3s ease, transform 0.3s ease',
+              '&:hover': {
+                color: '#FF0000', // ホバー時にYouTubeカラーに変更
+                transform: 'scale(1.1) translateY(-2px)', // 拡大＆浮かせる
+              },
+              '&:active': {
+                transform: 'scale(0.95)', // クリック時に押し込む
+              },
+            }}
           >
             YouTube
           </Button>
+
 
           {/* アカウントアイコン（ホバーで開く） */}
           <div
