@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LoadingSpinner from '../components/LoadingSpinner';
+import ScrollButtons from '../components/ScrollButtons';
 import "../styles/globals.css";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { FlashMessageProvider, useFlashMessage } from '../context/FlashMessageContext';
@@ -85,6 +86,10 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
     };
   }, [nextRouter.events]);
 
+  // ログインページなど特定のページではボタンを非表示にする（オプション）
+  const hideScrollButtonsOnPages = ['/login', '/signup']; // ここに非表示にしたいページを追加
+  const shouldShowScrollButtons = !hideScrollButtonsOnPages.includes(nextRouter.pathname);
+
   return (
     <>
       <Head>
@@ -111,6 +116,8 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
                 <AuthenticatedApp Component={Component} pageProps={pageProps} appRouter={router} />
               </main>
               <Footer />
+              {/* すべてのページに適用（ログイン・サインアップページでは非表示） */}
+              {shouldShowScrollButtons && <ScrollButtons />}
             </div>
           </ThemeProvider>
         </AuthProvider>
