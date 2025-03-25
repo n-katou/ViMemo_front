@@ -4,11 +4,10 @@ import { useTheme } from 'next-themes';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import PaginationComponent from '../components/Pagination';
-import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 import useYoutubeVideosPage from '../hooks/youtube_videos/useYoutubeVideosPage';
-
+import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 import ReactPlayer from 'react-player';
+import { useRouter } from 'next/router';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -31,59 +30,81 @@ const YoutubeVideosPage: React.FC = () => {
   } = useYoutubeVideosPage();
 
   const { theme } = useTheme();
-
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const router = useRouter();
 
-  // ランダムに10秒ごとに切り替え
+  const handleWatchNow = () => {
+    const currentVideo = youtubeVideos[currentVideoIndex];
+    router.push(`/youtube_videos/${currentVideo.id}`);
+  };
+
+  // ヒーロー動画を定期的に変更
   useEffect(() => {
     if (youtubeVideos.length === 0) return;
 
     const interval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * youtubeVideos.length);
       setCurrentVideoIndex(randomIndex);
-    }, 20000); // 20秒
+    }, 7000); // 20秒ごと
 
     return () => clearInterval(interval);
   }, [youtubeVideos]);
 
-  if (loading) {
-    return <LoadingSpinner loading={loading} />;
-  }
-
+  if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className={`container mx-auto py-8 px-4 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
-      <h1 className="text-3xl font-bold">Youtube一覧</h1>
-      <div className="flex justify-end mb-8">
-        <select
-          value={sortOption}
-          onChange={(e) => handleSortChange(e.target.value)}
-          className={`form-select form-select-lg ${theme === 'light' ? 'text-[#818cf8] bg-white border border-gray-600' : 'text-white bg-gray-800'}`}
-        >
-          <option value="created_at_desc">デフォルト（取得順）</option>
-          <option value="published_at_desc">公開日順</option>
-          <option value="likes_desc">いいね数順</option>
-          <option value="notes_desc">メモ数順</option>
-        </select>
-      </div>
-      {youtubeVideos.length > 0 ? (
-        <>
-          <div className="mb-8">
-            <ReactPlayer
-              url={`https://www.youtube.com/watch?v=${youtubeVideos[currentVideoIndex].youtube_id}`}
-              playing
-              muted
-              controls
-              width="100%"
-              height="480px"
-              style={{ borderRadius: '12px', overflow: 'hidden' }}
-            />
+    <div className={`w-full min-h-screen ${theme === 'light' ? 'bg-white text-gray-800' : 'bg-black text-white'}`}>
+      {/* Heroセクション */}
+      {youtubeVideos.length > 0 && (
+        <div className="relative w-full h-[60vh] mb-12">
+          <ReactPlayer
+            url={`https://www.youtube.com/watch?v=${youtubeVideos[currentVideoIndex].youtube_id}`}
+            playing
+            muted
+            controls={false}
+            width="100%"
+            height="100%"
+            style={{ position: 'absolute', top: 0, left: 0 }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div className="absolute bottom-10 left-10 text-white">
+            <h2 className="text-4xl font-bold mb-4 max-w-2xl">
+              {youtubeVideos[currentVideoIndex].title}
+            </h2>
+            <button
+              onClick={handleWatchNow}
+              className="bg-white text-black font-semibold px-6 py-2 rounded hover:bg-gray-300 transition"
+            >
+              今すぐ見る
+            </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {youtubeVideos.map((video: YoutubeVideo) => (
+        </div>
+      )}
+
+      {/* ソートオプション */}
+      <div className="container mx-auto px-4 mb-6">
+        <div className="flex justify-end">
+          <select
+            value={sortOption}
+            onChange={(e) => handleSortChange(e.target.value)}
+            className={`p-2 rounded border ${theme === 'light' ? 'bg-white border-gray-600 text-gray-800' : 'bg-gray-800 border-gray-600 text-white'}`}
+          >
+            <option value="created_at_desc">デフォルト（取得順）</option>
+            <option value="published_at_desc">公開日順</option>
+            <option value="likes_desc">いいね数順</option>
+            <option value="notes_desc">メモ数順</option>
+          </select>
+        </div>
+      </div>
+
+      {/* 横スクロールセクション */}
+      <div className="container mx-auto px-4">
+        <h3 className="text-2xl font-bold mb-4">おすすめ動画</h3>
+        <div className="flex overflow-x-auto space-x-4 pb-4">
+          {youtubeVideos.map((video: YoutubeVideo) => (
+            <div key={video.id} className="flex-shrink-0 w-80">
               <YoutubeVideoCard
-                key={video.id}
                 video={video}
                 handleTitleClick={handleTitleClick}
                 handleLikeVideo={handleLikeVideoWrapper}
@@ -92,32 +113,25 @@ const YoutubeVideosPage: React.FC = () => {
                 jwtToken={jwtToken}
                 setNotes={setNotes}
               />
-            ))}
-          </div>
-          <PaginationComponent
-            count={pagination.total_pages}
-            page={pagination.current_page}
-            onChange={handlePageChange}
-          />
-        </>
-      ) : (
-        <p>動画がありません。</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* スナックバー */}
+      {flashMessage && (
+        <Snackbar
+          open={showSnackbar}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+            {flashMessage}
+          </Alert>
+        </Snackbar>
       )}
-      {
-        flashMessage && (
-          <Snackbar
-            open={showSnackbar}
-            autoHideDuration={3000}
-            onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          >
-            <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-              {flashMessage}
-            </Alert>
-          </Snackbar>
-        )
-      }
-    </div >
+    </div>
   );
 };
 
