@@ -142,25 +142,33 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
               padding: 0,
               marginTop: 10,
               borderRadius: 8,
-              overflow: 'hidden',
-              background: 'rgba(0, 0, 0, 0.5)', // より視認性を高める
+              overflowY: 'auto',
+              maxHeight: 200,
+              background: 'rgba(0, 0, 0, 0.5)',
               backdropFilter: 'blur(10px)',
+              color: 'white',
+              position: 'relative',
             }}
           >
-            {suggestions.slice(0, maxSuggestions).map((suggestion) => (
-              <StyledMenuItem
-                key={suggestion.id}
-                onClick={() => handleSuggestionClick(suggestion.id)}
-                sx={{
-                  color: 'white',
-                  transition: '0.3s',
-                  '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.4)' }, // ホバー時の視認性向上
-                }}
-              >
-                {suggestion.title}
-              </StyledMenuItem>
-            ))}
+            {suggestions.length > 0 ? (
+              suggestions.slice(0, maxSuggestions).map((suggestion) => (
+                <StyledMenuItem
+                  key={suggestion.id}
+                  onClick={() => handleSuggestionClick(suggestion.id)}
+                  sx={{
+                    color: 'white',
+                    transition: '0.3s',
+                    '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.4)' },
+                  }}
+                >
+                  {suggestion.title}
+                </StyledMenuItem>
+              ))
+            ) : (
+              <li style={{ padding: '12px 16px', color: '#ccc' }}>該当する動画はありません。</li>
+            )}
           </motion.ul>
+
 
           {/* 検索ボタン */}
           <GradientButton
