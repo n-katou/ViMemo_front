@@ -197,7 +197,7 @@ const Header: React.FC = () => {
                       background: 'transparent',
                       padding: '8px',
                       fontSize: '0.9rem',
-                      width: '180px',
+                      width: '300px',
                     }}
                   />
                 </div>
@@ -243,7 +243,7 @@ const Header: React.FC = () => {
                     <li
                       style={{
                         padding: '10px',
-                        textAlign: 'center',
+                        textAlign: 'left',
                         color: '#888',
                         pointerEvents: 'none',
                       }}

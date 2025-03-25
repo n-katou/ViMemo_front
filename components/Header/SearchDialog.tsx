@@ -151,7 +151,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
             }}
           >
             {suggestions.length > 0 ? (
-              suggestions.slice(0, maxSuggestions).map((suggestion) => (
+              suggestions.map((suggestion) => (
                 <StyledMenuItem
                   key={suggestion.id}
                   onClick={() => handleSuggestionClick(suggestion.id)}
