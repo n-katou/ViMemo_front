@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useTheme } from 'next-themes';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -7,6 +7,8 @@ import Alert from '@mui/material/Alert';
 import PaginationComponent from '../components/Pagination';
 import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 import useYoutubeVideosPage from '../hooks/youtube_videos/useYoutubeVideosPage';
+
+import ReactPlayer from 'react-player';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -29,6 +31,20 @@ const YoutubeVideosPage: React.FC = () => {
   } = useYoutubeVideosPage();
 
   const { theme } = useTheme();
+
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+
+  // ランダムに10秒ごとに切り替え
+  useEffect(() => {
+    if (youtubeVideos.length === 0) return;
+
+    const interval = setInterval(() => {
+      const randomIndex = Math.floor(Math.random() * youtubeVideos.length);
+      setCurrentVideoIndex(randomIndex);
+    }, 5000); // 5秒
+
+    return () => clearInterval(interval);
+  }, [youtubeVideos]);
 
   if (loading) {
     return <LoadingSpinner loading={loading} />;
@@ -53,6 +69,17 @@ const YoutubeVideosPage: React.FC = () => {
       </div>
       {youtubeVideos.length > 0 ? (
         <>
+          <div className="mb-8">
+            <ReactPlayer
+              url={`https://www.youtube.com/watch?v=${youtubeVideos[currentVideoIndex].youtube_id}`}
+              playing
+              muted
+              controls
+              width="100%"
+              height="480px"
+              style={{ borderRadius: '12px', overflow: 'hidden' }}
+            />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {youtubeVideos.map((video: YoutubeVideo) => (
               <YoutubeVideoCard
@@ -61,7 +88,7 @@ const YoutubeVideosPage: React.FC = () => {
                 handleTitleClick={handleTitleClick}
                 handleLikeVideo={handleLikeVideoWrapper}
                 handleUnlikeVideo={handleUnlikeVideoWrapper}
-                notes={notes.filter(note => note.youtube_video_id === video.id)} // 動画に関連するメモを渡す
+                notes={notes.filter(note => note.youtube_video_id === video.id)}
                 jwtToken={jwtToken}
                 setNotes={setNotes}
               />
@@ -73,20 +100,24 @@ const YoutubeVideosPage: React.FC = () => {
             onChange={handlePageChange}
           />
         </>
-      ) : <p>動画がありません。</p>}
-      {flashMessage && (
-        <Snackbar
-          open={showSnackbar}
-          autoHideDuration={3000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-            {flashMessage}
-          </Alert>
-        </Snackbar>
+      ) : (
+        <p>動画がありません。</p>
       )}
-    </div>
+      {
+        flashMessage && (
+          <Snackbar
+            open={showSnackbar}
+            autoHideDuration={3000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+              {flashMessage}
+            </Alert>
+          </Snackbar>
+        )
+      }
+    </div >
   );
 };
 
