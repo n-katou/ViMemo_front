@@ -13,6 +13,7 @@ import { analytics } from '../lib/initFirebase';
 import { logEvent } from 'firebase/analytics';
 import { ThemeProvider } from 'next-themes';
 import type { Metadata } from "next";
+import Script from 'next/script';
 
 interface AuthenticatedAppProps {
   Component: AppProps['Component'];
@@ -115,6 +116,12 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
               <main className="flex-grow">
                 <AuthenticatedApp Component={Component} pageProps={pageProps} appRouter={router} />
               </main>
+              <Script
+                async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8463657129176689"
+                strategy="afterInteractive"
+                crossOrigin="anonymous"
+              />
               <Footer />
               {/* すべてのページに適用（ログイン・サインアップページでは非表示） */}
               {shouldShowScrollButtons && <ScrollButtons />}
