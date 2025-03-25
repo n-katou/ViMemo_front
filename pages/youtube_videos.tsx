@@ -10,6 +10,7 @@ import ReactPlayer from 'react-player';
 import { useRouter } from 'next/router';
 import GradientButton from '../styles/GradientButton';
 import { motion, AnimatePresence } from 'framer-motion';
+import PaginationComponent from '../components/Pagination';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -55,10 +56,13 @@ const YoutubeVideosPage: React.FC = () => {
   useEffect(() => {
     if (youtubeVideos.length === 0) return;
 
+    const safeIndex = Math.floor(Math.random() * youtubeVideos.length);
+    setCurrentVideoIndex(safeIndex);
+
     const interval = setInterval(() => {
-      const randomIndex = Math.floor(Math.random() * youtubeVideos.length);
-      setCurrentVideoIndex(randomIndex);
-    }, 7000); // 7秒ごと
+      const newIndex = Math.floor(Math.random() * youtubeVideos.length);
+      setCurrentVideoIndex(newIndex);
+    }, 7000);
 
     return () => clearInterval(interval);
   }, [youtubeVideos]);
@@ -69,7 +73,7 @@ const YoutubeVideosPage: React.FC = () => {
   return (
     <div className={`w-full min-h-screen ${theme === 'light' ? 'bg-white text-gray-800' : 'bg-black text-white'}`}>
       {/* Heroセクション */}
-      {youtubeVideos.length > 0 && (
+      {youtubeVideos.length > 0 && youtubeVideos[currentVideoIndex] && (
         <div className="relative w-full h-[60vh] mb-12 overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
@@ -188,6 +192,13 @@ const YoutubeVideosPage: React.FC = () => {
               >
                 ▶
               </button>
+            </div>
+            <div className="mt-6 mb-3 flex justify-center">
+              <PaginationComponent
+                count={pagination.total_pages}
+                page={pagination.current_page}
+                onChange={handlePageChange}
+              />
             </div>
           </div>
         </>
