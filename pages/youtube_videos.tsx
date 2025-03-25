@@ -38,14 +38,35 @@ const YoutubeVideosPage: React.FC = () => {
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const scrollLeft = () => {
-    scrollContainerRef.current?.scrollBy({ left: -300, behavior: 'smooth' });
+  const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startAutoScroll = (direction: 'left' | 'right', speed = 150) => {
+    if (scrollIntervalRef.current) return;
+
+    scrollIntervalRef.current = setInterval(() => {
+      scrollContainerRef.current?.scrollBy({
+        left: direction === 'left' ? -speed : speed,
+        behavior: 'smooth',
+      });
+    }, 16); // 約60fps
   };
 
-  const scrollRight = () => {
-    scrollContainerRef.current?.scrollBy({ left: 300, behavior: 'smooth' });
+  const stopAutoScroll = () => {
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+      scrollIntervalRef.current = null;
+    }
   };
 
+  const scrollFastOnce = (direction: 'left' | 'right') => {
+    stopAutoScroll();
+
+    const distance = direction === 'left' ? -300 : 300;
+    scrollContainerRef.current?.scrollBy({
+      left: distance,
+      behavior: 'auto',
+    });
+  };
 
   const handleWatchNow = () => {
     const currentVideo = youtubeVideos[currentVideoIndex];
@@ -157,8 +178,10 @@ const YoutubeVideosPage: React.FC = () => {
             <div className="relative">
               {/* 左ボタン */}
               <button
-                onClick={scrollLeft}
-                className="absolute left-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20"
+                onMouseEnter={() => startAutoScroll('left', 80)}  // ゆっくりホバー
+                onMouseLeave={stopAutoScroll}
+                onClick={() => scrollFastOnce('left')}
+                className="absolute left-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
                 style={{ transform: 'translateY(-50%)' }}
               >
                 ◀
@@ -186,8 +209,10 @@ const YoutubeVideosPage: React.FC = () => {
 
               {/* 右ボタン */}
               <button
-                onClick={scrollRight}
-                className="absolute right-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20"
+                onMouseEnter={() => startAutoScroll('right', 80)} // ゆっくりホバー
+                onMouseLeave={stopAutoScroll}
+                onClick={() => scrollFastOnce('right')}
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
                 style={{ transform: 'translateY(-50%)' }}
               >
                 ▶
