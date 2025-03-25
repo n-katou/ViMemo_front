@@ -15,6 +15,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import { useMediaQuery } from '@mui/material';
+import useSuggestions from '../hooks/header/useSuggestions';
 
 
 const Header: React.FC = () => {
@@ -27,10 +28,16 @@ const Header: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const drawerTimeout = useRef<NodeJS.Timeout | null>(null);
 
+  const [query, setQuery] = useState('');
+  const suggestions = useSuggestions(query);
+  const handleSuggestionClick = (id: number) => {
+    router.push(`/youtube_videos/${id}`);
+    setQuery('');
+  };
+
+
   // スマホ判定
   const isMobile = useMediaQuery('(max-width: 768px)');
-
-  const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -164,36 +171,89 @@ const Header: React.FC = () => {
               <SearchDialog searchOpen={searchOpen} toggleSearch={toggleSearch} />
             </>
           ) : (
-            <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', marginRight: '1rem' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  background: '#f5f5f5',
-                  borderRadius: '8px',
-                  padding: '2px 10px',
-                  border: '1px solid rgba(0,0,0,0.2)',
-                  transition: 'all 0.3s ease-in-out',
-                }}
-              >
-                <SearchIcon sx={{ color: 'rgba(0,0,0,0.6)' }} />
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="動画検索"
+            <div style={{ position: 'relative' }}>
+              <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', marginRight: '1rem' }}>
+                <div
                   style={{
-                    border: 'none',
-                    outline: 'none',
-                    background: 'transparent',
-                    padding: '8px',
-                    fontSize: '0.9rem',
-                    width: '180px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    background: '#f5f5f5',
+                    borderRadius: '8px',
+                    padding: '2px 10px',
+                    border: '1px solid rgba(0,0,0,0.2)',
+                    transition: 'all 0.3s ease-in-out',
                   }}
-                />
-              </div>
-            </form>
+                >
+                  <SearchIcon sx={{ color: 'rgba(0,0,0,0.6)' }} />
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="動画検索"
+                    style={{
+                      border: 'none',
+                      outline: 'none',
+                      background: 'transparent',
+                      padding: '8px',
+                      fontSize: '0.9rem',
+                      width: '180px',
+                    }}
+                  />
+                </div>
+              </form>
+
+              {/* ▼ サジェストリスト表示 */}
+              {query.length > 0 && (
+                <ul
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    background: 'white',
+                    border: '1px solid #ddd',
+                    borderRadius: '8px',
+                    marginTop: '4px',
+                    width: '100%',
+                    zIndex: 1000,
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
+                    maxHeight: '200px',
+                    overflowY: 'auto',
+                    color: 'black',
+                    padding: '0.5rem 0',
+                  }}
+                >
+                  {suggestions.length > 0 ? (
+                    suggestions.slice(0, 5).map((suggestion) => (
+                      <li
+                        key={suggestion.id}
+                        onClick={() => handleSuggestionClick(suggestion.id)}
+                        style={{
+                          padding: '10px',
+                          cursor: 'pointer',
+                          transition: 'background 0.2s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#f0f0f0')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
+                      >
+                        {suggestion.title}
+                      </li>
+                    ))
+                  ) : (
+                    <li
+                      style={{
+                        padding: '10px',
+                        textAlign: 'center',
+                        color: '#888',
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      該当する動画はありません
+                    </li>
+                  )}
+                </ul>
+              )}
+            </div>
           )}
 
 

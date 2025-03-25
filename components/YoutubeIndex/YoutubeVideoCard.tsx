@@ -53,7 +53,10 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   );
 
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card">
+    <div
+      className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card"
+      style={{ height: '400px' }} // 高さを一定にする
+    >
       <div className="video-container relative"> {/* 動画のアスペクト比を維持するためのラッパー */}
         <iframe
           className="video absolute top-0 left-0 w-full h-full" // フレームを絶対配置
@@ -66,7 +69,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
       <div className="p-4">
         <h2
           onClick={() => handleTitleClick(video.id)}
-          className="text-xl font-bold text-blue-600 cursor-pointer hover:underline"
+          className="text-xl font-bold text-blue-600 cursor-pointer hover:underline whitespace-nowrap overflow-hidden text-ellipsis"
         >
           {video.title}
         </h2>
