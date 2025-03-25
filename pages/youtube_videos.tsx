@@ -123,67 +123,75 @@ const YoutubeVideosPage: React.FC = () => {
         </div>
       )}
 
-
-      {/* ソートオプション */}
-      <div className="container mx-auto px-4 mb-6">
-        <div className="flex justify-end">
-          <select
-            value={sortOption}
-            onChange={(e) => handleSortChange(e.target.value)}
-            className={`p-2 rounded border ${theme === 'light' ? 'bg-white border-gray-600 text-gray-800' : 'bg-gray-800 border-gray-600 text-white'}`}
-          >
-            <option value="created_at_desc">デフォルト（取得順）</option>
-            <option value="published_at_desc">公開日順</option>
-            <option value="likes_desc">いいね数順</option>
-            <option value="notes_desc">メモ数順</option>
-          </select>
+      {/* 検索結果が0件の場合の表示 */}
+      {youtubeVideos.length === 0 ? (
+        <div className="text-center py-20 text-lg text-gray-500">
+          該当する動画はありません。
         </div>
-      </div>
-
-      {/* 横スクロールセクション */}
-      <div className="container mx-auto px-4">
-        <h3 className="text-2xl font-bold mb-4">おすすめ動画</h3>
-
-        <div className="relative">
-          {/* 左ボタン */}
-          <button
-            onClick={scrollLeft}
-            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20"
-            style={{ transform: 'translateY(-50%)' }}
-          >
-            ◀
-          </button>
-
-          {/* 横スクロール動画一覧 */}
-          <div
-            ref={scrollContainerRef}
-            className="flex overflow-x-auto space-x-4 pb-4 px-10 scroll-smooth scrollbar-hide"
-          >
-            {youtubeVideos.map((video: YoutubeVideo) => (
-              <div key={video.id} className="flex-shrink-0 w-80">
-                <YoutubeVideoCard
-                  video={video}
-                  handleTitleClick={handleTitleClick}
-                  handleLikeVideo={handleLikeVideoWrapper}
-                  handleUnlikeVideo={handleUnlikeVideoWrapper}
-                  notes={notes.filter(note => note.youtube_video_id === video.id)}
-                  jwtToken={jwtToken}
-                  setNotes={setNotes}
-                />
-              </div>
-            ))}
+      ) : (
+        <>
+          {/* ソートオプション */}
+          <div className="container mx-auto px-4 mb-6">
+            <div className="flex justify-end">
+              <select
+                value={sortOption}
+                onChange={(e) => handleSortChange(e.target.value)}
+                className={`p-2 rounded border ${theme === 'light' ? 'bg-white border-gray-600 text-gray-800' : 'bg-gray-800 border-gray-600 text-white'}`}
+              >
+                <option value="created_at_desc">デフォルト（取得順）</option>
+                <option value="published_at_desc">公開日順</option>
+                <option value="likes_desc">いいね数順</option>
+                <option value="notes_desc">メモ数順</option>
+              </select>
+            </div>
           </div>
 
-          {/* 右ボタン */}
-          <button
-            onClick={scrollRight}
-            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20"
-            style={{ transform: 'translateY(-50%)' }}
-          >
-            ▶
-          </button>
-        </div>
-      </div>
+          {/* 横スクロールセクション */}
+          <div className="container mx-auto px-4">
+            <h3 className="text-2xl font-bold mb-4">おすすめ動画</h3>
+
+            <div className="relative">
+              {/* 左ボタン */}
+              <button
+                onClick={scrollLeft}
+                className="absolute left-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20"
+                style={{ transform: 'translateY(-50%)' }}
+              >
+                ◀
+              </button>
+
+              {/* 横スクロール動画一覧 */}
+              <div
+                ref={scrollContainerRef}
+                className="flex overflow-x-auto space-x-4 pb-4 px-10 scroll-smooth scrollbar-hide"
+              >
+                {youtubeVideos.map((video: YoutubeVideo) => (
+                  <div key={video.id} className="flex-shrink-0 w-80">
+                    <YoutubeVideoCard
+                      video={video}
+                      handleTitleClick={handleTitleClick}
+                      handleLikeVideo={handleLikeVideoWrapper}
+                      handleUnlikeVideo={handleUnlikeVideoWrapper}
+                      notes={notes.filter(note => note.youtube_video_id === video.id)}
+                      jwtToken={jwtToken}
+                      setNotes={setNotes}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* 右ボタン */}
+              <button
+                onClick={scrollRight}
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20"
+                style={{ transform: 'translateY(-50%)' }}
+              >
+                ▶
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* スナックバー */}
       {flashMessage && (
