@@ -287,8 +287,7 @@ const Header: React.FC = () => {
               size="large"
               onClick={isMobile ? toggleDrawer : undefined}
               sx={{
-                color: '#818cf8',
-                '&:hover': { color: '#c084fc', transform: 'scale(1.1)', transition: 'transform 0.3s ease' },
+                color: '#818cf8'
               }}
             >
               <AccountCircle />
