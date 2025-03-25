@@ -54,7 +54,7 @@ const FavoriteVideosPage: React.FC = () => {
             <option value={10}>10件表示</option>
             <option value={15}>15件表示</option>
             <option value={20}>20件表示</option>
-            <option value={-1}>全件表示</option>
+            <option value={10000000}>全件表示</option>
           </select>
         </div>
 
