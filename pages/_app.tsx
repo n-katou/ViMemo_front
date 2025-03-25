@@ -107,12 +107,6 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
         <link rel="canonical" href="https://vimemo.vercel.app" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-web.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-          strategy="afterInteractive"
-          data-ad-client="ca-pub-8463657129176689"
-        />
       </Head>
       <FlashMessageProvider>
         <AuthProvider>
@@ -122,6 +116,12 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
               <main className="flex-grow">
                 <AuthenticatedApp Component={Component} pageProps={pageProps} appRouter={router} />
               </main>
+              <Script
+                async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+                strategy="afterInteractive"
+                data-ad-client="ca-pub-8463657129176689"
+              />
               <Footer />
               {/* すべてのページに適用（ログイン・サインアップページでは非表示） */}
               {shouldShowScrollButtons && <ScrollButtons />}
