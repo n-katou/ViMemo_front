@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useTheme } from 'next-themes';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -32,6 +32,17 @@ const YoutubeVideosPage: React.FC = () => {
   const { theme } = useTheme();
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const router = useRouter();
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    scrollContainerRef.current?.scrollBy({ left: -300, behavior: 'smooth' });
+  };
+
+  const scrollRight = () => {
+    scrollContainerRef.current?.scrollBy({ left: 300, behavior: 'smooth' });
+  };
+
 
   const handleWatchNow = () => {
     const currentVideo = youtubeVideos[currentVideoIndex];
@@ -101,20 +112,45 @@ const YoutubeVideosPage: React.FC = () => {
       {/* 横スクロールセクション */}
       <div className="container mx-auto px-4">
         <h3 className="text-2xl font-bold mb-4">おすすめ動画</h3>
-        <div className="flex overflow-x-auto space-x-4 pb-4">
-          {youtubeVideos.map((video: YoutubeVideo) => (
-            <div key={video.id} className="flex-shrink-0 w-80">
-              <YoutubeVideoCard
-                video={video}
-                handleTitleClick={handleTitleClick}
-                handleLikeVideo={handleLikeVideoWrapper}
-                handleUnlikeVideo={handleUnlikeVideoWrapper}
-                notes={notes.filter(note => note.youtube_video_id === video.id)}
-                jwtToken={jwtToken}
-                setNotes={setNotes}
-              />
-            </div>
-          ))}
+
+        <div className="relative">
+          {/* 左ボタン */}
+          <button
+            onClick={scrollLeft}
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20"
+            style={{ transform: 'translateY(-50%)' }}
+          >
+            ◀
+          </button>
+
+          {/* 横スクロール動画一覧 */}
+          <div
+            ref={scrollContainerRef}
+            className="flex overflow-x-auto space-x-4 pb-4 px-10 scroll-smooth scrollbar-hide"
+          >
+            {youtubeVideos.map((video: YoutubeVideo) => (
+              <div key={video.id} className="flex-shrink-0 w-80">
+                <YoutubeVideoCard
+                  video={video}
+                  handleTitleClick={handleTitleClick}
+                  handleLikeVideo={handleLikeVideoWrapper}
+                  handleUnlikeVideo={handleUnlikeVideoWrapper}
+                  notes={notes.filter(note => note.youtube_video_id === video.id)}
+                  jwtToken={jwtToken}
+                  setNotes={setNotes}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* 右ボタン */}
+          <button
+            onClick={scrollRight}
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20"
+            style={{ transform: 'translateY(-50%)' }}
+          >
+            ▶
+          </button>
         </div>
       </div>
 
