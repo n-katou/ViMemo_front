@@ -8,6 +8,8 @@ import useYoutubeVideosPage from '../hooks/youtube_videos/useYoutubeVideosPage';
 import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 import ReactPlayer from 'react-player';
 import { useRouter } from 'next/router';
+import GradientButton from '../styles/GradientButton';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -56,7 +58,7 @@ const YoutubeVideosPage: React.FC = () => {
     const interval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * youtubeVideos.length);
       setCurrentVideoIndex(randomIndex);
-    }, 7000); // 20秒ごと
+    }, 7000); // 7秒ごと
 
     return () => clearInterval(interval);
   }, [youtubeVideos]);
@@ -68,30 +70,59 @@ const YoutubeVideosPage: React.FC = () => {
     <div className={`w-full min-h-screen ${theme === 'light' ? 'bg-white text-gray-800' : 'bg-black text-white'}`}>
       {/* Heroセクション */}
       {youtubeVideos.length > 0 && (
-        <div className="relative w-full h-[60vh] mb-12">
-          <ReactPlayer
-            url={`https://www.youtube.com/watch?v=${youtubeVideos[currentVideoIndex].youtube_id}`}
-            playing
-            muted
-            controls={false}
-            width="100%"
-            height="100%"
-            style={{ position: 'absolute', top: 0, left: 0 }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-          <div className="absolute bottom-10 left-10 text-white">
-            <h2 className="text-4xl font-bold mb-4 max-w-2xl">
-              {youtubeVideos[currentVideoIndex].title}
-            </h2>
-            <button
-              onClick={handleWatchNow}
-              className="bg-white text-black font-semibold px-6 py-2 rounded hover:bg-gray-300 transition"
+        <div className="relative w-full h-[60vh] mb-12 overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={youtubeVideos[currentVideoIndex].id}
+              initial={{ opacity: 0, scale: 1.05, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              transition={{ duration: 1.2, ease: 'easeInOut' }}
+              className="absolute inset-0"
             >
-              今すぐ見る
-            </button>
-          </div>
+              {/* 動画 */}
+              <ReactPlayer
+                url={`https://www.youtube.com/watch?v=${youtubeVideos[currentVideoIndex].youtube_id}`}
+                playing
+                muted
+                controls={false}
+                width="100%"
+                height="100%"
+                style={{ position: 'absolute', top: 0, left: 0 }}
+              />
+
+              {/* グラデーションオーバーレイ */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-10" />
+
+              {/* タイトルとボタン */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="absolute bottom-10 left-10 z-20 text-white"
+              >
+                <h2 className="text-4xl font-bold mb-4 max-w-2xl drop-shadow-xl">
+                  {youtubeVideos[currentVideoIndex].title}
+                </h2>
+                <GradientButton
+                  onClick={handleWatchNow}
+                  variant="contained"
+                  sx={{
+                    textTransform: 'uppercase',
+                    fontWeight: 'bold',
+                    px: 4,
+                    py: 1.5,
+                    '&:hover': { transform: 'scale(1.05)' },
+                  }}
+                >
+                  今すぐ見る
+                </GradientButton>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       )}
+
 
       {/* ソートオプション */}
       <div className="container mx-auto px-4 mb-6">
