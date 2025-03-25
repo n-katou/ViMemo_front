@@ -30,6 +30,18 @@ const Header: React.FC = () => {
   // スマホ判定
   const isMobile = useMediaQuery('(max-width: 768px)');
 
+  const [query, setQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (query) {
+      router.push(`/youtube_videos?query=${encodeURIComponent(query)}`);
+      setQuery('');
+      if (isMobile) toggleSearch();
+    }
+  };
+
   useEffect(() => {
     setMounted(true);
     const isMessageDisplayed = localStorage.getItem('isMessageDisplayed');
@@ -128,27 +140,62 @@ const Header: React.FC = () => {
           </span>
           <div style={{ flexGrow: 1 }} />
 
-          <IconButton
-            onClick={toggleSearch}
-            sx={{
-              color: '#818cf8',
-              transition: 'color 0.3s ease, transform 0.3s ease',
-              '&:hover': {
-                color: '#FFD700', // ホバー時にゴールド系カラーに変更
-                transform: 'scale(1.1) translateY(-2px)', // 拡大＆浮かせる
-              },
-              '&:active': {
-                transform: 'scale(0.95)', // クリック時に押し込む
-              },
-            }}
-          >
-            <SearchIcon />
-            <Typography variant="body1" sx={{ marginLeft: 0.5, color: '#c084fc' }}>
-              検索
-            </Typography>
-          </IconButton>
+          {isMobile ? (
+            <>
+              <IconButton
+                onClick={toggleSearch}
+                sx={{
+                  color: '#818cf8',
+                  transition: 'color 0.3s ease, transform 0.3s ease',
+                  '&:hover': {
+                    color: '#FFD700',
+                    transform: 'scale(1.1) translateY(-2px)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.95)',
+                  },
+                }}
+              >
+                <SearchIcon />
+                <Typography variant="body1" sx={{ marginLeft: 0.5, color: '#c084fc' }}>
+                  検索
+                </Typography>
+              </IconButton>
+              <SearchDialog searchOpen={searchOpen} toggleSearch={toggleSearch} />
+            </>
+          ) : (
+            <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', marginRight: '1rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  background: '#f5f5f5',
+                  borderRadius: '8px',
+                  padding: '2px 10px',
+                  border: '1px solid rgba(0,0,0,0.2)',
+                  transition: 'all 0.3s ease-in-out',
+                }}
+              >
+                <SearchIcon sx={{ color: 'rgba(0,0,0,0.6)' }} />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="動画検索"
+                  style={{
+                    border: 'none',
+                    outline: 'none',
+                    background: 'transparent',
+                    padding: '8px',
+                    fontSize: '0.9rem',
+                    width: '180px',
+                  }}
+                />
+              </div>
+            </form>
+          )}
 
-          <SearchDialog searchOpen={searchOpen} toggleSearch={toggleSearch} />
 
           <Button
             onClick={navigateToYoutubeVideos}
