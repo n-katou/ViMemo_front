@@ -41,7 +41,7 @@ const YoutubeVideosPage: React.FC = () => {
     const interval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * youtubeVideos.length);
       setCurrentVideoIndex(randomIndex);
-    }, 5000); // 5秒
+    }, 20000); // 20秒
 
     return () => clearInterval(interval);
   }, [youtubeVideos]);
