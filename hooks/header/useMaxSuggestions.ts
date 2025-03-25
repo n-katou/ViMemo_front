@@ -5,7 +5,7 @@ const useMaxSuggestions = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setMaxSuggestions(window.innerWidth <= 600 ? 3 : 10);
+      setMaxSuggestions(window.innerWidth <= 600 ? 20 : 20);
     };
 
     window.addEventListener('resize', handleResize);
