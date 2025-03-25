@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useTheme } from 'next-themes';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import PaginationComponent from '../components/Pagination';
-import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 import useYoutubeVideosPage from '../hooks/youtube_videos/useYoutubeVideosPage';
-
+import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 import ReactPlayer from 'react-player';
+import { useRouter } from 'next/router';
+import GradientButton from '../styles/GradientButton';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -31,93 +32,173 @@ const YoutubeVideosPage: React.FC = () => {
   } = useYoutubeVideosPage();
 
   const { theme } = useTheme();
-
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const router = useRouter();
 
-  // ランダムに10秒ごとに切り替え
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    scrollContainerRef.current?.scrollBy({ left: -300, behavior: 'smooth' });
+  };
+
+  const scrollRight = () => {
+    scrollContainerRef.current?.scrollBy({ left: 300, behavior: 'smooth' });
+  };
+
+
+  const handleWatchNow = () => {
+    const currentVideo = youtubeVideos[currentVideoIndex];
+    router.push(`/youtube_videos/${currentVideo.id}`);
+  };
+
+  // ヒーロー動画を定期的に変更
   useEffect(() => {
     if (youtubeVideos.length === 0) return;
 
     const interval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * youtubeVideos.length);
       setCurrentVideoIndex(randomIndex);
-    }, 20000); // 20秒
+    }, 7000); // 7秒ごと
 
     return () => clearInterval(interval);
   }, [youtubeVideos]);
 
-  if (loading) {
-    return <LoadingSpinner loading={loading} />;
-  }
-
+  if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className={`container mx-auto py-8 px-4 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
-      <h1 className="text-3xl font-bold">Youtube一覧</h1>
-      <div className="flex justify-end mb-8">
-        <select
-          value={sortOption}
-          onChange={(e) => handleSortChange(e.target.value)}
-          className={`form-select form-select-lg ${theme === 'light' ? 'text-[#818cf8] bg-white border border-gray-600' : 'text-white bg-gray-800'}`}
-        >
-          <option value="created_at_desc">デフォルト（取得順）</option>
-          <option value="published_at_desc">公開日順</option>
-          <option value="likes_desc">いいね数順</option>
-          <option value="notes_desc">メモ数順</option>
-        </select>
-      </div>
-      {youtubeVideos.length > 0 ? (
-        <>
-          <div className="mb-8">
-            <ReactPlayer
-              url={`https://www.youtube.com/watch?v=${youtubeVideos[currentVideoIndex].youtube_id}`}
-              playing
-              muted
-              controls
-              width="100%"
-              height="480px"
-              style={{ borderRadius: '12px', overflow: 'hidden' }}
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {youtubeVideos.map((video: YoutubeVideo) => (
-              <YoutubeVideoCard
-                key={video.id}
-                video={video}
-                handleTitleClick={handleTitleClick}
-                handleLikeVideo={handleLikeVideoWrapper}
-                handleUnlikeVideo={handleUnlikeVideoWrapper}
-                notes={notes.filter(note => note.youtube_video_id === video.id)}
-                jwtToken={jwtToken}
-                setNotes={setNotes}
+    <div className={`w-full min-h-screen ${theme === 'light' ? 'bg-white text-gray-800' : 'bg-black text-white'}`}>
+      {/* Heroセクション */}
+      {youtubeVideos.length > 0 && (
+        <div className="relative w-full h-[60vh] mb-12 overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={youtubeVideos[currentVideoIndex].id}
+              initial={{ opacity: 0, scale: 1.05, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              transition={{ duration: 1.2, ease: 'easeInOut' }}
+              className="absolute inset-0"
+            >
+              {/* 動画 */}
+              <ReactPlayer
+                url={`https://www.youtube.com/watch?v=${youtubeVideos[currentVideoIndex].youtube_id}`}
+                playing
+                muted
+                controls={false}
+                width="100%"
+                height="100%"
+                style={{ position: 'absolute', top: 0, left: 0 }}
               />
+
+              {/* グラデーションオーバーレイ */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-10" />
+
+              {/* タイトルとボタン */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="absolute bottom-10 left-10 z-20 text-white"
+              >
+                <h2 className="text-4xl font-bold mb-4 max-w-2xl drop-shadow-xl">
+                  {youtubeVideos[currentVideoIndex].title}
+                </h2>
+                <GradientButton
+                  onClick={handleWatchNow}
+                  variant="contained"
+                  sx={{
+                    textTransform: 'uppercase',
+                    fontWeight: 'bold',
+                    px: 4,
+                    py: 1.5,
+                    '&:hover': { transform: 'scale(1.05)' },
+                  }}
+                >
+                  今すぐ見る
+                </GradientButton>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
+
+
+      {/* ソートオプション */}
+      <div className="container mx-auto px-4 mb-6">
+        <div className="flex justify-end">
+          <select
+            value={sortOption}
+            onChange={(e) => handleSortChange(e.target.value)}
+            className={`p-2 rounded border ${theme === 'light' ? 'bg-white border-gray-600 text-gray-800' : 'bg-gray-800 border-gray-600 text-white'}`}
+          >
+            <option value="created_at_desc">デフォルト（取得順）</option>
+            <option value="published_at_desc">公開日順</option>
+            <option value="likes_desc">いいね数順</option>
+            <option value="notes_desc">メモ数順</option>
+          </select>
+        </div>
+      </div>
+
+      {/* 横スクロールセクション */}
+      <div className="container mx-auto px-4">
+        <h3 className="text-2xl font-bold mb-4">おすすめ動画</h3>
+
+        <div className="relative">
+          {/* 左ボタン */}
+          <button
+            onClick={scrollLeft}
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20"
+            style={{ transform: 'translateY(-50%)' }}
+          >
+            ◀
+          </button>
+
+          {/* 横スクロール動画一覧 */}
+          <div
+            ref={scrollContainerRef}
+            className="flex overflow-x-auto space-x-4 pb-4 px-10 scroll-smooth scrollbar-hide"
+          >
+            {youtubeVideos.map((video: YoutubeVideo) => (
+              <div key={video.id} className="flex-shrink-0 w-80">
+                <YoutubeVideoCard
+                  video={video}
+                  handleTitleClick={handleTitleClick}
+                  handleLikeVideo={handleLikeVideoWrapper}
+                  handleUnlikeVideo={handleUnlikeVideoWrapper}
+                  notes={notes.filter(note => note.youtube_video_id === video.id)}
+                  jwtToken={jwtToken}
+                  setNotes={setNotes}
+                />
+              </div>
             ))}
           </div>
-          <PaginationComponent
-            count={pagination.total_pages}
-            page={pagination.current_page}
-            onChange={handlePageChange}
-          />
-        </>
-      ) : (
-        <p>動画がありません。</p>
-      )}
-      {
-        flashMessage && (
-          <Snackbar
-            open={showSnackbar}
-            autoHideDuration={3000}
-            onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+
+          {/* 右ボタン */}
+          <button
+            onClick={scrollRight}
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20"
+            style={{ transform: 'translateY(-50%)' }}
           >
-            <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-              {flashMessage}
-            </Alert>
-          </Snackbar>
-        )
-      }
-    </div >
+            ▶
+          </button>
+        </div>
+      </div>
+
+      {/* スナックバー */}
+      {flashMessage && (
+        <Snackbar
+          open={showSnackbar}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+            {flashMessage}
+          </Alert>
+        </Snackbar>
+      )}
+    </div>
   );
 };
 
