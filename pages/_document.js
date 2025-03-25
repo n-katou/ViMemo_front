@@ -22,6 +22,7 @@ class MyDocument extends Document {
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
           <meta name="apple-mobile-web-app-title" content="ViMemo" />
           <meta name="theme-color" content="#000000" />
+          <meta name="google-adsense-account" content="ca-pub-8463657129176689"></meta>
         </Head>
         <body>
           <Main />
