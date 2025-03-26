@@ -85,10 +85,12 @@ const Header: React.FC = () => {
     }
   };
 
-  // ホバー時に開く（ログアウト状態でも開く）
+  // ホバー時に開く（遅延付き）
   const handleMouseEnter = () => {
     if (drawerTimeout.current) clearTimeout(drawerTimeout.current);
-    setDrawerOpen(true);
+    drawerTimeout.current = setTimeout(() => {
+      setDrawerOpen(true);
+    }, 400); // ← ここで遅延時間を設定
   };
 
   // ホバーが外れたら閉じる
@@ -273,7 +275,7 @@ const Header: React.FC = () => {
               },
             }}
           >
-            YouTube
+            一覧
           </Button>
 
 
