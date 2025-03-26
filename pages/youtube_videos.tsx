@@ -61,12 +61,23 @@ const YoutubeVideosPage: React.FC = () => {
   const scrollFastOnce = (direction: 'left' | 'right') => {
     stopAutoScroll();
 
-    const distance = direction === 'left' ? -300 : 300;
-    scrollContainerRef.current?.scrollBy({
-      left: distance,
-      behavior: 'auto',
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const scrollAmount = 300;
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+    const currentScroll = container.scrollLeft;
+
+    let targetScroll = direction === 'left'
+      ? Math.max(0, currentScroll - scrollAmount)
+      : Math.min(maxScrollLeft, currentScroll + scrollAmount);
+
+    container.scrollTo({
+      left: targetScroll,
+      behavior: 'smooth',
     });
   };
+
 
   const handleWatchNow = () => {
     const currentVideo = youtubeVideos[currentVideoIndex];
