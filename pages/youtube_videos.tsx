@@ -14,6 +14,7 @@ import PaginationComponent from '../components/Pagination';
 import IconButton from '@mui/material/IconButton';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import { useMediaQuery } from '@mui/material';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -102,10 +103,17 @@ const YoutubeVideosPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [youtubeVideos]);
 
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [isMuted, setIsMuted] = useState(true); // デフォルトで音量OFF
 
+  useEffect(() => {
+    if (isMobile) {
+      setIsMuted(true); // モバイルのみ自動ミュート
+    }
+  }, [currentVideoIndex, isMobile]);
+
   const toggleMute = () => {
-    setIsMuted((prev) => !prev);
+    setIsMuted(prev => !prev);
   };
 
   if (loading) return <LoadingSpinner loading={loading} />;
