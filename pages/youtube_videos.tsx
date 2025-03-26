@@ -11,6 +11,9 @@ import { useRouter } from 'next/router';
 import GradientButton from '../styles/GradientButton';
 import { motion, AnimatePresence } from 'framer-motion';
 import PaginationComponent from '../components/Pagination';
+import IconButton from '@mui/material/IconButton';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -94,10 +97,16 @@ const YoutubeVideosPage: React.FC = () => {
     const interval = setInterval(() => {
       const newIndex = Math.floor(Math.random() * youtubeVideos.length);
       setCurrentVideoIndex(newIndex);
-    }, 7000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [youtubeVideos]);
+
+  const [isMuted, setIsMuted] = useState(true); // デフォルトで音量OFF
+
+  const toggleMute = () => {
+    setIsMuted((prev) => !prev);
+  };
 
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
@@ -120,7 +129,7 @@ const YoutubeVideosPage: React.FC = () => {
               <ReactPlayer
                 url={`https://www.youtube.com/watch?v=${youtubeVideos[currentVideoIndex].youtube_id}`}
                 playing
-                muted
+                muted={isMuted}
                 controls={false}
                 width="100%"
                 height="100%"
@@ -153,6 +162,28 @@ const YoutubeVideosPage: React.FC = () => {
                 >
                   今すぐ見る
                 </GradientButton>
+                <IconButton
+                  onClick={toggleMute}
+                  sx={{
+                    position: 'absolute',
+                    bottom: 20,
+                    right: 20,
+                    width: 48,
+                    height: 48,
+                    border: '2px solid white',
+                    borderRadius: '50%',
+                    backgroundColor: 'rgba(0,0,0,0.4)',
+                    color: 'white',
+                    zIndex: 30,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      transform: 'scale(1.1)',
+                    },
+                  }}
+                >
+                  {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+                </IconButton>
               </motion.div>
             </motion.div>
           </AnimatePresence>
