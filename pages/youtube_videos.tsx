@@ -39,16 +39,6 @@ const YoutubeVideosPage: React.FC = () => {
 
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const startAutoScroll = (direction: 'left' | 'right', speed = 150) => {
-    if (scrollIntervalRef.current) return;
-
-    scrollIntervalRef.current = setInterval(() => {
-      scrollContainerRef.current?.scrollBy({
-        left: direction === 'left' ? -speed : speed,
-        behavior: 'smooth',
-      });
-    }, 16); // 約60fps
-  };
 
   const stopAutoScroll = () => {
     if (scrollIntervalRef.current) {
@@ -156,7 +146,6 @@ const YoutubeVideosPage: React.FC = () => {
             <div className="relative">
               {/* 左ボタン */}
               <button
-                onMouseEnter={() => startAutoScroll('left', 80)}
                 onMouseLeave={stopAutoScroll}
                 onClick={() => scrollFastOnce('left')}
                 className="absolute -left-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
@@ -186,7 +175,6 @@ const YoutubeVideosPage: React.FC = () => {
 
               {/* 右ボタン */}
               <button
-                onMouseEnter={() => startAutoScroll('right', 80)}
                 onMouseLeave={stopAutoScroll}
                 onClick={() => scrollFastOnce('right')}
                 className="absolute -right-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"

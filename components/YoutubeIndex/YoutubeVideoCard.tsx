@@ -102,6 +102,17 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
       }}
       onClick={() => isMobile && setIsActive(true)}
     >
+      {isMobile && isActive && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // ← これで親のonClickが発火しない！
+            handleCardClose();
+          }}
+          className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-50 pointer-events-auto"
+        >
+          ×
+        </button>
+      )}
       {/* Wrapper 全体を motion.div にして高さ調整 */}
       <motion.div
         initial={{ height: 180 }}
