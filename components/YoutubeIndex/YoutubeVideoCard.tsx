@@ -116,7 +116,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
       {/* Wrapper 全体を motion.div にして高さ調整 */}
       <motion.div
         initial={{ height: 180 }}
-        animate={{ height: isVisible ? 400 : 180 }}
+        animate={{ height: isVisible ? 380 : 180 }}
         transition={{ duration: 0.4 }}
         className="relative bg-white rounded-lg shadow-lg overflow-hidden"
       >

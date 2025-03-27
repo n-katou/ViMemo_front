@@ -37,8 +37,6 @@ const YoutubeVideosPage: React.FC = () => {
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-
-
   const handleWatchNow = () => {
     const currentVideo = youtubeVideos[currentVideoIndex];
     router.push(`/youtube_videos/${currentVideo.id}`);
@@ -98,7 +96,6 @@ const YoutubeVideosPage: React.FC = () => {
       behavior: 'smooth',
     });
   };
-
 
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
