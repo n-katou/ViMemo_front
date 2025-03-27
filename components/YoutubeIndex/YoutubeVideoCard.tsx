@@ -68,19 +68,20 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   const isMobile = useMediaQuery('(max-width: 768px)');
 
 
-  const handleCardOpen = () => {
-    if (isMobile) {
-      setIsActive(true);
-    }
-  };
-
   const handleCardClose = () => {
     if (isMobile) {
       setIsActive(false);
+      setIsHovered(false);
     }
   };
 
   const isVisible = isMobile ? isActive : isHovered;
+
+  React.useEffect(() => {
+    if (!isActive) {
+      setIsHovered(false);
+    }
+  }, [isActive]);
 
   return (
     <div
@@ -90,35 +91,41 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
       onMouseLeave={() => !isMobile && setIsHovered(false)}
       onClick={() => isMobile && setIsActive(true)}
     >
-      {/* 映像部分だけ固定 */}
+      {isMobile && isActive && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // ← これで親のonClickが発火しない！
+            handleCardClose();
+          }}
+          className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-50 pointer-events-auto"
+        >
+          ×
+        </button>
+      )}
       <div className="relative w-full h-[180px] shadow-md rounded-t-lg overflow-hidden">
         {isVisible ? (
-          <ReactPlayer
-            url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
-            playing
-            muted={isMuted}
-            controls={false}
-            width="100%"
-            height="100%"
-            style={{
-              position: 'absolute', top: 0, left: 0,
-              pointerEvents: 'none'
-            }}
-          />
+          <div className="absolute top-0 left-0 w-full h-full">
+            <ReactPlayer
+              url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
+              playing
+              muted={isMuted}
+              controls={false}
+              width="100%"
+              height="100%"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                pointerEvents: 'none', // ← これをReactPlayerに直接当てる
+              }}
+            />
+          </div>
         ) : (
           <img
             src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
             alt={video.title}
             className="absolute top-0 left-0 w-full h-full object-cover"
           />
-        )}
-        {isMobile && isActive && (
-          <button
-            onClick={handleCardClose}
-            className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-50"
-          >
-            ×
-          </button>
         )}
         <IconButton
           onClick={toggleMute}
