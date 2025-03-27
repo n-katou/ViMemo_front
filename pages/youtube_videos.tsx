@@ -6,14 +6,9 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import useYoutubeVideosPage from '../hooks/youtube_videos/useYoutubeVideosPage';
 import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
-import ReactPlayer from 'react-player';
+import YoutubeHeroSection from '../components/YoutubeIndex/YoutubeHeroSection';
 import { useRouter } from 'next/router';
-import GradientButton from '../styles/GradientButton';
-import { motion, AnimatePresence } from 'framer-motion';
 import PaginationComponent from '../components/Pagination';
-import IconButton from '@mui/material/IconButton';
-import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { useMediaQuery } from '@mui/material';
 
 const YoutubeVideosPage: React.FC = () => {
@@ -123,80 +118,12 @@ const YoutubeVideosPage: React.FC = () => {
     <div className={`w-full min-h-screen ${theme === 'light' ? 'bg-white text-gray-800' : 'bg-black text-white'}`}>
       {/* Heroセクション */}
       {youtubeVideos.length > 0 && youtubeVideos[currentVideoIndex] && (
-        <div className="relative w-full h-[60vh] mb-12 overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={youtubeVideos[currentVideoIndex].id}
-              initial={{ opacity: 0, scale: 1.05, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              transition={{ duration: 1.2, ease: 'easeInOut' }}
-              className="absolute inset-0"
-            >
-              {/* 動画 */}
-              <ReactPlayer
-                url={`https://www.youtube.com/watch?v=${youtubeVideos[currentVideoIndex].youtube_id}`}
-                playing
-                muted={isMuted}
-                controls={false}
-                volume={isMuted ? 0 : 1}
-                width="100%"
-                height="100%"
-                style={{ position: 'absolute', top: 0, left: 0 }}
-              />
-
-              {/* グラデーションオーバーレイ */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-10" />
-
-              {/* タイトルとボタン */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.8 }}
-                className="absolute bottom-10 left-10 z-20 text-white"
-              >
-                <h2 className="text-4xl font-bold mb-4 max-w-2xl drop-shadow-xl">
-                  {youtubeVideos[currentVideoIndex].title}
-                </h2>
-                <GradientButton
-                  onClick={handleWatchNow}
-                  variant="contained"
-                  sx={{
-                    textTransform: 'uppercase',
-                    fontWeight: 'bold',
-                    px: 4,
-                    py: 1.5,
-                    '&:hover': { transform: 'scale(1.05)' },
-                  }}
-                >
-                  今すぐ見る
-                </GradientButton>
-                <IconButton
-                  onClick={toggleMute}
-                  sx={{
-                    position: 'absolute',
-                    bottom: 20,
-                    right: 20,
-                    width: 48,
-                    height: 48,
-                    border: '2px solid white',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(0,0,0,0.4)',
-                    color: 'white',
-                    zIndex: 30,
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255,255,255,0.1)',
-                      transform: 'scale(1.1)',
-                    },
-                  }}
-                >
-                  {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
-                </IconButton>
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+        <YoutubeHeroSection
+          video={youtubeVideos[currentVideoIndex]}
+          isMuted={isMuted}
+          toggleMute={toggleMute}
+          onClickWatch={handleWatchNow}
+        />
       )}
 
       {/* 検索結果が0件の場合の表示 */}
