@@ -37,6 +37,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   const playerRef = useRef<HTMLIFrameElement | null>(null); // Playerの参照を管理
   const [isHovered, setIsHovered] = useState(false); // PC用
   const [isActive, setIsActive] = useState(false);   // モバイル用
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -88,11 +89,21 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
     <div
       className={`rounded-lg overflow-visible youtube-video-card transform transition-all duration-300 ${isVisible ? 'scale-105 z-20' : 'scale-100'
         }`}
-      onMouseEnter={() => !isMobile && setIsHovered(true)}
+      onMouseEnter={() => {
+        if (!isMobile) {
+          hoverTimeoutRef.current = setTimeout(() => {
+            setIsHovered(true);
+          }, 300);
+        }
+      }}
+
       onMouseLeave={() => {
         if (!isMobile) {
+          if (hoverTimeoutRef.current) {
+            clearTimeout(hoverTimeoutRef.current);
+            hoverTimeoutRef.current = null;
+          }
           setIsHovered(false);
-          setIsMuted(true); // ★ここが追加された行
         }
       }}
       onClick={() => isMobile && setIsActive(true)}
