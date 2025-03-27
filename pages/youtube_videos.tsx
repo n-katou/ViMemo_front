@@ -56,21 +56,18 @@ const YoutubeVideosPage: React.FC = () => {
     setIsMuted(prev => !prev);
   };
 
-  const scrollByBlock = (direction: 'left' | 'right') => {
-    const container = scrollContainerRef.current;
+  const scrollByBlock = (direction: 'left' | 'right', ref: React.RefObject<HTMLDivElement>) => {
+    const container = ref.current;
     if (!container) return;
 
-    const cardWidth = 320; // カード幅（`w-80` = 20rem = 320px）
-    const gap = 16;         // tailwindの `space-x-4` = 1rem = 16px
+    const cardWidth = 320;
+    const gap = 16;
     const itemTotalWidth = cardWidth + gap;
 
     const currentScroll = container.scrollLeft;
-    const maxScrollLeft = container.scrollWidth - container.clientWidth;
 
-    // 何枚目が左端にあるか（小数あり）
     const currentIndex = Math.round(currentScroll / itemTotalWidth);
 
-    // 進める or 戻る
     const nextIndex = direction === 'left'
       ? Math.max(0, currentIndex - 3)
       : Math.min(Math.ceil(container.scrollWidth / itemTotalWidth), currentIndex + 3);
@@ -110,6 +107,12 @@ const YoutubeVideosPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [youtubeVideos, isMobile]);
 
+  const likedScrollRef = useRef<HTMLDivElement>(null);
+  const likedVideos = [...youtubeVideos]
+    .sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0))
+    .slice(0, 10);
+
+
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
 
@@ -124,6 +127,46 @@ const YoutubeVideosPage: React.FC = () => {
           onClickWatch={handleWatchNow}
         />
       )}
+      {/* いいね順おすすめ動画セクション */}
+      <div className="container mx-auto px-4 mb-12">
+        <h3 className="text-2xl font-bold mb-4">おすすめ動画</h3>
+
+        <div className="relative">
+          <button
+            onClick={() => scrollByBlock('left', likedScrollRef)}
+            className="absolute -left-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
+          >
+            ◀
+          </button>
+
+          <div
+            ref={likedScrollRef}
+            className="flex overflow-x-auto space-x-4 pb-4 px-10 scroll-smooth scrollbar-hide snap-x snap-mandatory"
+          >
+            {likedVideos.map((video: YoutubeVideo) => (
+              <div key={video.id} className="flex-shrink-0 w-80 snap-start">
+                <YoutubeVideoCard
+                  video={video}
+                  handleTitleClick={handleTitleClick}
+                  handleLikeVideo={handleLikeVideoWrapper}
+                  handleUnlikeVideo={handleUnlikeVideoWrapper}
+                  notes={notes.filter(note => note.youtube_video_id === video.id)}
+                  jwtToken={jwtToken}
+                  setNotes={setNotes}
+                />
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={() => scrollByBlock('right', likedScrollRef)}
+            className="absolute -right-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
+          >
+            ▶
+          </button>
+        </div>
+      </div>
+
 
       {/* 検索結果が0件の場合の表示 */}
       {youtubeVideos.length === 0 ? (
@@ -132,30 +175,28 @@ const YoutubeVideosPage: React.FC = () => {
         </div>
       ) : (
         <>
-          {/* ソートオプション */}
-          <div className="container mx-auto px-4 mb-6">
-            <div className="flex justify-end">
-              <select
-                value={sortOption}
-                onChange={(e) => handleSortChange(e.target.value)}
-                className={`p-2 rounded border ${theme === 'light' ? 'bg-white border-gray-600 text-gray-800' : 'bg-gray-800 border-gray-600 text-white'}`}
-              >
-                <option value="created_at_desc">デフォルト（取得順）</option>
-                <option value="published_at_desc">公開日順</option>
-                <option value="likes_desc">いいね数順</option>
-                <option value="notes_desc">メモ数順</option>
-              </select>
-            </div>
-          </div>
 
           {/* 横スクロールセクション */}
           <div className="container mx-auto px-4">
-            <h3 className="text-2xl font-bold mb-4">おすすめ動画</h3>
-
+            <h3 className="text-2xl font-bold mb-4">動画</h3>
+            <div className="container mx-auto px-4 mb-6">
+              {/* ソートオプション */}
+              <div className="flex justify-end">
+                <select
+                  value={sortOption}
+                  onChange={(e) => handleSortChange(e.target.value)}
+                  className={`p-2 rounded border ${theme === 'light' ? 'bg-white border-gray-600 text-gray-800' : 'bg-gray-800 border-gray-600 text-white'}`}
+                >
+                  <option value="created_at_desc">取得順</option>
+                  <option value="published_at_desc">公開日順</option>
+                  <option value="notes_desc">メモ数順</option>
+                </select>
+              </div>
+            </div>
             <div className="relative">
               {/* 左ボタン */}
               <button
-                onClick={() => scrollByBlock('left')}
+                onClick={() => scrollByBlock('left', scrollContainerRef)}
                 className="absolute -left-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
               >
                 ◀
@@ -183,7 +224,7 @@ const YoutubeVideosPage: React.FC = () => {
 
               {/* 右ボタン */}
               <button
-                onClick={() => scrollByBlock('right')}
+                onClick={() => scrollByBlock('right', scrollContainerRef)}
                 className="absolute -right-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
               >
                 ▶
@@ -199,21 +240,22 @@ const YoutubeVideosPage: React.FC = () => {
           </div>
         </>
       )}
-
       {/* スナックバー */}
-      {flashMessage && (
-        <Snackbar
-          open={showSnackbar}
-          autoHideDuration={3000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-            {flashMessage}
-          </Alert>
-        </Snackbar>
-      )}
-    </div>
+      {
+        flashMessage && (
+          <Snackbar
+            open={showSnackbar}
+            autoHideDuration={3000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+              {flashMessage}
+            </Alert>
+          </Snackbar>
+        )
+      }
+    </div >
   );
 };
 
