@@ -12,6 +12,10 @@ import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
 import { formatDuration } from '../YoutubeShow/youtubeShowUtils';
 import RelatedNotesList from './RelatedNotesList'; // RelatedNotesListコンポーネントのインポート
+import ReactPlayer from 'react-player';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+
 
 // YoutubeVideoCardコンポーネントのプロパティ型を定義
 interface YoutubeVideoCardProps {
@@ -28,6 +32,8 @@ interface YoutubeVideoCardProps {
 const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleClick, handleLikeVideo, handleUnlikeVideo, notes, setNotes, jwtToken }) => {
   const { currentUser } = useAuth(); // 認証コンテキストから現在のユーザー情報を取得
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const playerRef = useRef<HTMLIFrameElement | null>(null); // Playerの参照を管理
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -52,109 +58,140 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
     <RelatedNotesList notes={relatedNotes.slice(0, 3)} playerRef={playerRef} />
   );
 
+  const toggleMute = () => {
+    setIsMuted(prev => !prev);
+  };
+
+
   return (
     <div
-      className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card"
-      style={{ height: '400px' }} // 高さを一定にする
+      className={`rounded-lg overflow-visible youtube-video-card transform transition-all duration-300 ${isHovered ? 'scale-105 z-20' : 'scale-100'
+        }`}
+      style={{ width: '320px' }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="video-container relative"> {/* 動画のアスペクト比を維持するためのラッパー */}
-        <iframe
-          className="video absolute top-0 left-0 w-full h-full" // フレームを絶対配置
-          src={`https://www.youtube.com/embed/${video.youtube_id}`} // YouTube動画のURLを設定
-          frameBorder="0"
-          allowFullScreen
-          ref={playerRef}
-        />
-      </div>
-      <div className="p-4">
-        <h2
-          onClick={() => handleTitleClick(video.id)}
-          className="text-xl font-bold text-blue-600 cursor-pointer hover:underline whitespace-nowrap overflow-hidden text-ellipsis"
-        >
-          {video.title}
-        </h2>
-        <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-        <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-        <div className="flex items-center">
-          <FavoriteIcon className="text-red-500 mr-1" />
-          <p className="text-gray-600">{video.likes_count}</p>
-        </div>
-        <div
-          className="flex items-center"
-          onMouseEnter={handlePopoverOpen}
-          onMouseLeave={handlePopoverClose}
-        >
-          <NoteIcon className="text-blue-500 mr-1" />
-          <p className="text-gray-600 flex items-center">
-            {video.notes_count} <SearchIcon className="ml-1" />
-          </p>
-        </div>
-        <Popover
-          id="mouse-over-popover"
+      {/* 映像部分だけ固定 */}
+      <div className="relative w-full h-[180px] shadow-md rounded-t-lg overflow-hidden">
+        {isHovered ? (
+          <ReactPlayer
+            url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
+            playing
+            muted={isMuted}
+            controls={false}
+            width="100%"
+            height="100%"
+            style={{ position: 'absolute', top: 0, left: 0 }}
+          />
+        ) : (
+          <img
+            src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
+            alt={video.title}
+            className="absolute top-0 left-0 w-full h-full object-cover"
+          />
+        )}
+
+        {/* 音量ボタン（映像の上） */}
+        <IconButton
+          onClick={toggleMute}
           sx={{
-            pointerEvents: 'none',
-            '.MuiPopover-paper': {
-              width: '600px', // ポップオーバーの幅を600pxに設定
-              marginTop: '10px', // タイトルの下に表示するためにマージンを追加
-              padding: '20px', // 内部の余白を追加
-              borderRadius: '8px', // 角を丸くする
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // シャドウを追加
-            }
+            position: 'absolute',
+            top: 10,
+            right: 10,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            color: 'white',
+            zIndex: 30,
+            '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' },
           }}
-          open={open}
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: 'bottom', // ポップオーバーをターゲットの下に表示
-            horizontal: 'center', // 水平方向の位置を中央に設定
-          }}
-          transformOrigin={{
-            vertical: 'top', // ポップオーバーの基点を上に設定
-            horizontal: 'center', // 水平方向の基点を中央に設定
-          }}
-          onClose={handlePopoverClose}
-          disableRestoreFocus
         >
-          {renderNoteList()}
-        </Popover>
-        {currentUser && ( // ユーザーがログインしている場合にのみいいね機能を表示
-          <div className="flex items-center mt-2">
-            {video.liked ? ( // 動画がいいねされている場合
-              <Tooltip title="いいね解除">
-                <div className="flex items-center cursor-pointer" onClick={async () => {
-                  if (currentUser) { // ログインしている場合
-                    const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
-                    if (like) {
-                      await handleUnlikeVideo(video.id, like.id); // いいね解除の処理
-                    }
-                  }
-                }}>
-                  <IconButton
-                    color="secondary"
-                    className="like-button"
-                  >
-                    <FavoriteIcon style={{ color: 'red' }} /> {/* いいね済みアイコンを表示 */}
-                  </IconButton>
-                  <span style={{ color: 'black' }}>いいね解除</span> {/* いいね解除のラベル */}
-                </div>
-              </Tooltip>
-            ) : ( // 動画がいいねされていない場合
-              <Tooltip title="いいね">
-                <div className="flex items-center cursor-pointer" onClick={async () => {
-                  await handleLikeVideo(video.id); // いいねの処理
-                }}>
-                  <IconButton
-                    color="primary"
-                    className="like-button"
-                  >
-                    <FavoriteBorderIcon /> {/* いいねアイコンを表示 */}
-                  </IconButton>
-                  <span style={{ color: 'black' }}>いいねする</span> {/* いいねのラベル */}
-                </div>
-              </Tooltip>
+          {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+        </IconButton>
+      </div>
+
+      {isHovered && (
+        <>
+          <div className="bg-white p-4 rounded-b-lg shadow-lg -mt-2 z-30 relative">
+            <h2
+              onClick={() => handleTitleClick(video.id)}
+              className="text-xl font-bold text-blue-600 cursor-pointer hover:underline whitespace-nowrap overflow-hidden text-ellipsis"
+            >
+              {video.title}
+            </h2>
+            <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+            <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
+            <div className="flex items-center">
+              <FavoriteIcon className="text-red-500 mr-1" />
+              <p className="text-gray-600">{video.likes_count}</p>
+            </div>
+            <div
+              className="flex items-center"
+              onMouseEnter={handlePopoverOpen}
+              onMouseLeave={handlePopoverClose}
+            >
+              <NoteIcon className="text-blue-500 mr-1" />
+              <p className="text-gray-600 flex items-center">
+                {video.notes_count} <SearchIcon className="ml-1" />
+              </p>
+            </div>
+            <Popover
+              id="mouse-over-popover"
+              sx={{
+                pointerEvents: 'none',
+                '.MuiPopover-paper': {
+                  width: '600px',
+                  marginTop: '10px',
+                  padding: '20px',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                },
+              }}
+              open={open}
+              anchorEl={anchorEl}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+              onClose={handlePopoverClose}
+              disableRestoreFocus
+            >
+              {renderNoteList()}
+            </Popover>
+
+            {currentUser && (
+              <div className="flex items-center mt-2">
+                {video.liked ? (
+                  <Tooltip title="いいね解除">
+                    <div
+                      className="flex items-center cursor-pointer"
+                      onClick={async () => {
+                        const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
+                        if (like) await handleUnlikeVideo(video.id, like.id);
+                      }}
+                    >
+                      <IconButton color="secondary" className="like-button">
+                        <FavoriteIcon style={{ color: 'red' }} />
+                      </IconButton>
+                      <span style={{ color: 'black' }}>いいね解除</span>
+                    </div>
+                  </Tooltip>
+                ) : (
+                  <Tooltip title="いいね">
+                    <div
+                      className="flex items-center cursor-pointer"
+                      onClick={async () => {
+                        await handleLikeVideo(video.id);
+                      }}
+                    >
+                      <IconButton color="primary" className="like-button">
+                        <FavoriteBorderIcon />
+                      </IconButton>
+                      <span style={{ color: 'black' }}>いいねする</span>
+                    </div>
+                  </Tooltip>
+                )}
+              </div>
             )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };
