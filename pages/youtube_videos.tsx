@@ -12,6 +12,7 @@ import PaginationComponent from '../components/Pagination';
 import { useMediaQuery } from '@mui/material';
 import { fetchRandomYoutubeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
 import HorizontalVideoShelf from '../components/YoutubeIndex/HorizontalVideoShelf';
+import useYoutubeVideoRankings from '../components/YoutubeIndex/useYoutubeVideoRankings';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -113,6 +114,8 @@ const YoutubeVideosPage: React.FC = () => {
     .sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0))
     .slice(0, 10);
 
+  const { topLikedVideos, topNotedVideos, topRecentVideos, loading: rankingLoading } = useYoutubeVideoRankings();
+
 
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
@@ -131,7 +134,7 @@ const YoutubeVideosPage: React.FC = () => {
       {/* いいね順おすすめ動画セクション */}
       <HorizontalVideoShelf
         title="おすすめ動画"
-        videos={[...youtubeVideos].sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0)).slice(0, 10)}
+        videos={topLikedVideos}
         notes={notes}
         jwtToken={jwtToken}
         setNotes={setNotes}
@@ -142,7 +145,7 @@ const YoutubeVideosPage: React.FC = () => {
 
       <HorizontalVideoShelf
         title="注目動画"
-        videos={[...youtubeVideos].sort((a, b) => (b.notes?.length ?? 0) - (a.notes?.length ?? 0)).slice(0, 10)}
+        videos={topNotedVideos}
         notes={notes}
         jwtToken={jwtToken}
         setNotes={setNotes}
@@ -153,7 +156,7 @@ const YoutubeVideosPage: React.FC = () => {
 
       <HorizontalVideoShelf
         title="新着動画"
-        videos={[...youtubeVideos].sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()).slice(0, 10)}
+        videos={topRecentVideos}
         notes={notes}
         jwtToken={jwtToken}
         setNotes={setNotes}
