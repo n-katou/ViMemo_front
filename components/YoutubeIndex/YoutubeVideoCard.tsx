@@ -72,6 +72,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
     if (isMobile) {
       setIsActive(false);
       setIsHovered(false);
+      setIsMuted(true);
     }
   };
 
@@ -88,7 +89,12 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
       className={`rounded-lg overflow-visible youtube-video-card transform transition-all duration-300 ${isVisible ? 'scale-105 z-20' : 'scale-100'
         }`}
       onMouseEnter={() => !isMobile && setIsHovered(true)}
-      onMouseLeave={() => !isMobile && setIsHovered(false)}
+      onMouseLeave={() => {
+        if (!isMobile) {
+          setIsHovered(false);
+          setIsMuted(true); // ★ここが追加された行
+        }
+      }}
       onClick={() => isMobile && setIsActive(true)}
     >
       {isMobile && isActive && (
@@ -127,20 +133,22 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
             className="absolute top-0 left-0 w-full h-full object-cover"
           />
         )}
-        <IconButton
-          onClick={toggleMute}
-          sx={{
-            position: 'absolute',
-            top: 10,
-            right: 10,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            color: 'white',
-            zIndex: 30,
-            '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' },
-          }}
-        >
-          {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
-        </IconButton>
+        {isVisible && (
+          <IconButton
+            onClick={toggleMute}
+            sx={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              color: 'white',
+              zIndex: 30,
+              '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' },
+            }}
+          >
+            {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+          </IconButton>
+        )}
       </div>
       {isVisible && (
         <>
