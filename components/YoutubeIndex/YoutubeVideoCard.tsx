@@ -16,6 +16,7 @@ import ReactPlayer from 'react-player';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { useMediaQuery } from '@mui/material';
+import { motion, AnimatePresence } from 'framer-motion';
 
 
 // YoutubeVideoCardコンポーネントのプロパティ型を定義
@@ -87,41 +88,30 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
 
   return (
     <div
-      className={`rounded-lg overflow-visible youtube-video-card transform transition-all duration-300 ${isVisible ? 'scale-105 z-20' : 'scale-100'
-        }`}
+      className="relative rounded-lg overflow-hidden transition-all duration-300"
       onMouseEnter={() => {
         if (!isMobile) {
-          hoverTimeoutRef.current = setTimeout(() => {
-            setIsHovered(true);
-          }, 300);
+          hoverTimeoutRef.current = setTimeout(() => setIsHovered(true), 300);
         }
       }}
-
       onMouseLeave={() => {
         if (!isMobile) {
-          if (hoverTimeoutRef.current) {
-            clearTimeout(hoverTimeoutRef.current);
-            hoverTimeoutRef.current = null;
-          }
+          if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
           setIsHovered(false);
         }
       }}
       onClick={() => isMobile && setIsActive(true)}
     >
-      {isMobile && isActive && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation(); // ← これで親のonClickが発火しない！
-            handleCardClose();
-          }}
-          className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-50 pointer-events-auto"
-        >
-          ×
-        </button>
-      )}
-      <div className="relative w-full h-[180px] shadow-md rounded-t-lg overflow-hidden">
-        {isVisible ? (
-          <div className="absolute top-0 left-0 w-full h-full">
+      {/* Wrapper 全体を motion.div にして高さ調整 */}
+      <motion.div
+        initial={{ height: 180 }}
+        animate={{ height: isVisible ? 400 : 180 }}
+        transition={{ duration: 0.4 }}
+        className="relative bg-white rounded-lg shadow-lg overflow-hidden"
+      >
+        {/* 動画部分 */}
+        <div className="relative w-full h-[180px]">
+          {isVisible ? (
             <ReactPlayer
               url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
               playing
@@ -133,119 +123,131 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                pointerEvents: 'none', // ← これをReactPlayerに直接当てる
+                pointerEvents: 'none',
               }}
             />
-          </div>
-        ) : (
-          <img
-            src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
-            alt={video.title}
-            className="absolute top-0 left-0 w-full h-full object-cover"
-          />
-        )}
-        {isVisible && (
-          <IconButton
-            onClick={toggleMute}
-            sx={{
-              position: 'absolute',
-              top: 10,
-              right: 10,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              color: 'white',
-              zIndex: 30,
-              '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' },
-            }}
-          >
-            {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
-          </IconButton>
-        )}
-      </div>
-      {isVisible && (
-        <>
-          <div className="bg-white p-4 rounded-b-lg shadow-lg -mt-2 z-30 relative">
-            <h2
-              onClick={() => handleTitleClick(video.id)}
-              className="text-xl font-bold text-blue-600 cursor-pointer hover:underline whitespace-nowrap overflow-hidden text-ellipsis"
-            >
-              {video.title}
-            </h2>
-            <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-            <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-            <div className="flex items-center">
-              <FavoriteIcon className="text-red-500 mr-1" />
-              <p className="text-gray-600">{video.likes_count}</p>
-            </div>
-            <div
-              className="flex items-center"
-              onMouseEnter={handlePopoverOpen}
-              onMouseLeave={handlePopoverClose}
-            >
-              <NoteIcon className="text-blue-500 mr-1" />
-              <p className="text-gray-600 flex items-center">
-                {video.notes_count} <SearchIcon className="ml-1" />
-              </p>
-            </div>
-            <Popover
-              id="mouse-over-popover"
+          ) : (
+            <img
+              src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
+              alt={video.title}
+              className="absolute top-0 left-0 w-full h-full object-cover"
+            />
+          )}
+          {isVisible && (
+            <IconButton
+              onClick={toggleMute}
               sx={{
-                pointerEvents: 'none',
-                '.MuiPopover-paper': {
-                  width: '600px',
-                  marginTop: '10px',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                },
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                color: 'white',
+                zIndex: 30,
+                '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' },
               }}
-              open={open}
-              anchorEl={anchorEl}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-              onClose={handlePopoverClose}
-              disableRestoreFocus
             >
-              {renderNoteList()}
-            </Popover>
+              {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+            </IconButton>
+          )}
+        </div>
 
-            {currentUser && (
-              <div className="flex items-center mt-2">
-                {video.liked ? (
-                  <Tooltip title="いいね解除">
-                    <div
-                      className="flex items-center cursor-pointer"
-                      onClick={async () => {
-                        const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
-                        if (like) await handleUnlikeVideo(video.id, like.id);
-                      }}
-                    >
-                      <IconButton color="secondary" className="like-button">
-                        <FavoriteIcon style={{ color: 'red' }} />
-                      </IconButton>
-                      <span style={{ color: 'black' }}>いいね解除</span>
-                    </div>
-                  </Tooltip>
-                ) : (
-                  <Tooltip title="いいね">
-                    <div
-                      className="flex items-center cursor-pointer"
-                      onClick={async () => {
-                        await handleLikeVideo(video.id);
-                      }}
-                    >
-                      <IconButton color="primary" className="like-button">
-                        <FavoriteBorderIcon />
-                      </IconButton>
-                      <span style={{ color: 'black' }}>いいねする</span>
-                    </div>
-                  </Tooltip>
-                )}
+        {/* 情報部分（motion.divでふわっと出す） */}
+        <AnimatePresence>
+          {isVisible && (
+            <motion.div
+              key="info"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="p-4"
+            >
+              <h2
+                onClick={() => handleTitleClick(video.id)}
+                className="text-xl font-bold text-blue-600 cursor-pointer hover:underline whitespace-nowrap overflow-hidden text-ellipsis"
+              >
+                {video.title}
+              </h2>
+              <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+              <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
+              <div className="flex items-center">
+                <FavoriteIcon className="text-red-500 mr-1" />
+                <p className="text-gray-600">{video.likes_count}</p>
               </div>
-            )}
-          </div>
-        </>
-      )}
+              <div
+                className="flex items-center"
+                onMouseEnter={handlePopoverOpen}
+                onMouseLeave={handlePopoverClose}
+              >
+                <NoteIcon className="text-blue-500 mr-1" />
+                <p className="text-gray-600 flex items-center">
+                  {video.notes_count} <SearchIcon className="ml-1" />
+                </p>
+              </div>
+
+              {/* ポップオーバーやいいね部分もそのままここに置いてOK */}
+              <Popover
+                id="mouse-over-popover"
+                sx={{
+                  pointerEvents: 'none',
+                  '.MuiPopover-paper': {
+                    width: '600px',
+                    marginTop: '10px',
+                    padding: '20px',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                  },
+                }}
+                open={open}
+                anchorEl={anchorEl}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+                onClose={handlePopoverClose}
+                disableRestoreFocus
+              >
+                {renderNoteList()}
+              </Popover>
+
+              {currentUser && (
+                <div className="flex items-center mt-2">
+                  {video.liked ? (
+                    <Tooltip title="いいね解除">
+                      <div
+                        className="flex items-center cursor-pointer"
+                        onClick={async () => {
+                          const like = video.likes.find((like: Like) => like.user_id === Number(currentUser.id));
+                          if (like) await handleUnlikeVideo(video.id, like.id);
+                        }}
+                      >
+                        <IconButton color="secondary">
+                          <FavoriteIcon style={{ color: 'red' }} />
+                        </IconButton>
+                        <span className="text-black">いいね解除</span>
+                      </div>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title="いいね">
+                      <div
+                        className="flex items-center cursor-pointer"
+                        onClick={async () => {
+                          await handleLikeVideo(video.id);
+                        }}
+                      >
+                        <IconButton color="primary">
+                          <FavoriteBorderIcon />
+                        </IconButton>
+                        <span className="text-black">いいねする</span>
+                      </div>
+                    </Tooltip>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
+
   );
 };
 
