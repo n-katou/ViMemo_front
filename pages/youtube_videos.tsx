@@ -156,11 +156,10 @@ const YoutubeVideosPage: React.FC = () => {
             <div className="relative">
               {/* 左ボタン */}
               <button
-                onMouseEnter={() => startAutoScroll('left', 80)}  // ゆっくりホバー
+                onMouseEnter={() => startAutoScroll('left', 80)}
                 onMouseLeave={stopAutoScroll}
                 onClick={() => scrollFastOnce('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
-                style={{ transform: 'translateY(-50%)' }}
+                className="absolute -left-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
               >
                 ◀
               </button>
@@ -187,11 +186,10 @@ const YoutubeVideosPage: React.FC = () => {
 
               {/* 右ボタン */}
               <button
-                onMouseEnter={() => startAutoScroll('right', 80)} // ゆっくりホバー
+                onMouseEnter={() => startAutoScroll('right', 80)}
                 onMouseLeave={stopAutoScroll}
                 onClick={() => scrollFastOnce('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
-                style={{ transform: 'translateY(-50%)' }}
+                className="absolute -right-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
               >
                 ▶
               </button>
