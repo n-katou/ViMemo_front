@@ -41,7 +41,7 @@ const YoutubeVideosPage: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const handleWatchNow = () => {
-    const currentVideo = youtubeVideos[currentVideoIndex];
+    if (!currentVideo) return;
     router.push(`/youtube_videos/${currentVideo.id}`);
   };
 
@@ -108,11 +108,6 @@ const YoutubeVideosPage: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [youtubeVideos, isMobile]);
-
-  const likedScrollRef = useRef<HTMLDivElement>(null);
-  const likedVideos = [...youtubeVideos]
-    .sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0))
-    .slice(0, 10);
 
   const { topLikedVideos, topNotedVideos, topRecentVideos, loading: rankingLoading } = useYoutubeVideoRankings();
 
