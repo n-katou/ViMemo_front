@@ -10,6 +10,7 @@ import YoutubeHeroSection from '../components/YoutubeIndex/YoutubeHeroSection';
 import { useRouter } from 'next/router';
 import PaginationComponent from '../components/Pagination';
 import { useMediaQuery } from '@mui/material';
+import { fetchRandomYoutubeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -37,66 +38,10 @@ const YoutubeVideosPage: React.FC = () => {
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const startAutoScroll = (direction: 'left' | 'right', speed = 150) => {
-    if (scrollIntervalRef.current) return;
-
-    scrollIntervalRef.current = setInterval(() => {
-      scrollContainerRef.current?.scrollBy({
-        left: direction === 'left' ? -speed : speed,
-        behavior: 'smooth',
-      });
-    }, 16); // 約60fps
-  };
-
-  const stopAutoScroll = () => {
-    if (scrollIntervalRef.current) {
-      clearInterval(scrollIntervalRef.current);
-      scrollIntervalRef.current = null;
-    }
-  };
-
-  const scrollFastOnce = (direction: 'left' | 'right') => {
-    stopAutoScroll();
-
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const scrollAmount = 300;
-    const maxScrollLeft = container.scrollWidth - container.clientWidth;
-    const currentScroll = container.scrollLeft;
-
-    let targetScroll = direction === 'left'
-      ? Math.max(0, currentScroll - scrollAmount)
-      : Math.min(maxScrollLeft, currentScroll + scrollAmount);
-
-    container.scrollTo({
-      left: targetScroll,
-      behavior: 'smooth',
-    });
-  };
-
-
   const handleWatchNow = () => {
     const currentVideo = youtubeVideos[currentVideoIndex];
     router.push(`/youtube_videos/${currentVideo.id}`);
   };
-
-  // ヒーロー動画を定期的に変更
-  useEffect(() => {
-    if (youtubeVideos.length === 0) return;
-
-    const safeIndex = Math.floor(Math.random() * youtubeVideos.length);
-    setCurrentVideoIndex(safeIndex);
-
-    const interval = setInterval(() => {
-      const newIndex = Math.floor(Math.random() * youtubeVideos.length);
-      setCurrentVideoIndex(newIndex);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [youtubeVideos]);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [isMuted, setIsMuted] = useState(true); // デフォルトで音量OFF
@@ -111,15 +56,69 @@ const YoutubeVideosPage: React.FC = () => {
     setIsMuted(prev => !prev);
   };
 
+  const scrollByBlock = (direction: 'left' | 'right') => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const cardWidth = 320; // カード幅（`w-80` = 20rem = 320px）
+    const gap = 16;         // tailwindの `space-x-4` = 1rem = 16px
+    const itemTotalWidth = cardWidth + gap;
+
+    const currentScroll = container.scrollLeft;
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+
+    // 何枚目が左端にあるか（小数あり）
+    const currentIndex = Math.round(currentScroll / itemTotalWidth);
+
+    // 進める or 戻る
+    const nextIndex = direction === 'left'
+      ? Math.max(0, currentIndex - 3)
+      : Math.min(Math.ceil(container.scrollWidth / itemTotalWidth), currentIndex + 3);
+
+    const targetScroll = nextIndex * itemTotalWidth;
+
+    container.scrollTo({
+      left: targetScroll,
+      behavior: 'smooth',
+    });
+  };
+
+  const [currentVideo, setCurrentVideo] = useState<YoutubeVideo | null>(null);
+
+  // ヒーロー動画のランダム表示（10秒ごとに変更）
+  useEffect(() => {
+    if (!youtubeVideos || youtubeVideos.length === 0) return;
+
+    const getRandomVideo = async () => {
+      const randomVideo = await fetchRandomYoutubeVideo();
+      if (randomVideo) {
+        setCurrentVideo(randomVideo);
+
+        // モバイル時はミュートを強制ON
+        if (isMobile) {
+          setIsMuted(true);
+        }
+      }
+    };
+
+    getRandomVideo();
+
+    const interval = setInterval(() => {
+      getRandomVideo();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [youtubeVideos, isMobile]);
+
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div className={`w-full min-h-screen ${theme === 'light' ? 'bg-white text-gray-800' : 'bg-black text-white'}`}>
       {/* Heroセクション */}
-      {youtubeVideos.length > 0 && youtubeVideos[currentVideoIndex] && (
+      {currentVideo && (
         <YoutubeHeroSection
-          video={youtubeVideos[currentVideoIndex]}
+          video={currentVideo}
           isMuted={isMuted}
           toggleMute={toggleMute}
           onClickWatch={handleWatchNow}
@@ -156,11 +155,8 @@ const YoutubeVideosPage: React.FC = () => {
             <div className="relative">
               {/* 左ボタン */}
               <button
-                onMouseEnter={() => startAutoScroll('left', 80)}  // ゆっくりホバー
-                onMouseLeave={stopAutoScroll}
-                onClick={() => scrollFastOnce('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
-                style={{ transform: 'translateY(-50%)' }}
+                onClick={() => scrollByBlock('left')}
+                className="absolute -left-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
               >
                 ◀
               </button>
@@ -168,10 +164,10 @@ const YoutubeVideosPage: React.FC = () => {
               {/* 横スクロール動画一覧 */}
               <div
                 ref={scrollContainerRef}
-                className="flex overflow-x-auto space-x-4 pb-4 px-10 scroll-smooth scrollbar-hide"
+                className="flex overflow-x-auto space-x-4 pb-4 px-10 scroll-smooth scrollbar-hide snap-x snap-mandatory"
               >
                 {youtubeVideos.map((video: YoutubeVideo) => (
-                  <div key={video.id} className="flex-shrink-0 w-80">
+                  <div key={video.id} className="flex-shrink-0 w-80 snap-start">
                     <YoutubeVideoCard
                       video={video}
                       handleTitleClick={handleTitleClick}
@@ -187,11 +183,8 @@ const YoutubeVideosPage: React.FC = () => {
 
               {/* 右ボタン */}
               <button
-                onMouseEnter={() => startAutoScroll('right', 80)} // ゆっくりホバー
-                onMouseLeave={stopAutoScroll}
-                onClick={() => scrollFastOnce('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
-                style={{ transform: 'translateY(-50%)' }}
+                onClick={() => scrollByBlock('right')}
+                className="absolute -right-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
               >
                 ▶
               </button>

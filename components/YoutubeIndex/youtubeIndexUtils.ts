@@ -105,3 +105,28 @@ export const handleUnlikeVideo = async (youtubeVideoId: number, likeId: number, 
     console.error('Unlike exception:', error);
   }
 };
+
+export const fetchRandomYoutubeVideo = async (): Promise<YoutubeVideo | null> => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos?page=1&per_page=1000`, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('authToken') || ''}`,
+      },
+      credentials: 'include',
+    });
+
+    if (!res.ok) throw new Error('Failed to fetch');
+
+    const data = await res.json();
+    const videos = data.videos as YoutubeVideo[];
+
+    if (videos.length === 0) return null;
+
+    const randomIndex = Math.floor(Math.random() * videos.length);
+    return videos[randomIndex];
+  } catch (error) {
+    console.error('fetchRandomYoutubeVideo error:', error);
+    return null;
+  }
+};
