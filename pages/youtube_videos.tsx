@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import PaginationComponent from '../components/Pagination';
 import { useMediaQuery } from '@mui/material';
 import { fetchRandomYoutubeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
+import HorizontalVideoShelf from '../components/YoutubeIndex/HorizontalVideoShelf';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -128,44 +129,38 @@ const YoutubeVideosPage: React.FC = () => {
         />
       )}
       {/* いいね順おすすめ動画セクション */}
-      <div className="container mx-auto px-4 mb-12">
-        <h3 className="text-2xl font-bold mb-4">おすすめ動画</h3>
+      <HorizontalVideoShelf
+        title="おすすめ動画"
+        videos={[...youtubeVideos].sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0)).slice(0, 10)}
+        notes={notes}
+        jwtToken={jwtToken}
+        setNotes={setNotes}
+        onClickTitle={handleTitleClick}
+        onLike={handleLikeVideoWrapper}
+        onUnlike={handleUnlikeVideoWrapper}
+      />
 
-        <div className="relative">
-          <button
-            onClick={() => scrollByBlock('left', likedScrollRef)}
-            className="absolute -left-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
-          >
-            ◀
-          </button>
+      <HorizontalVideoShelf
+        title="注目動画"
+        videos={[...youtubeVideos].sort((a, b) => (b.notes?.length ?? 0) - (a.notes?.length ?? 0)).slice(0, 10)}
+        notes={notes}
+        jwtToken={jwtToken}
+        setNotes={setNotes}
+        onClickTitle={handleTitleClick}
+        onLike={handleLikeVideoWrapper}
+        onUnlike={handleUnlikeVideoWrapper}
+      />
 
-          <div
-            ref={likedScrollRef}
-            className="flex overflow-x-auto space-x-4 pb-4 px-10 scroll-smooth scrollbar-hide snap-x snap-mandatory"
-          >
-            {likedVideos.map((video: YoutubeVideo) => (
-              <div key={video.id} className="flex-shrink-0 w-80 snap-start">
-                <YoutubeVideoCard
-                  video={video}
-                  handleTitleClick={handleTitleClick}
-                  handleLikeVideo={handleLikeVideoWrapper}
-                  handleUnlikeVideo={handleUnlikeVideoWrapper}
-                  notes={notes.filter(note => note.youtube_video_id === video.id)}
-                  jwtToken={jwtToken}
-                  setNotes={setNotes}
-                />
-              </div>
-            ))}
-          </div>
-
-          <button
-            onClick={() => scrollByBlock('right', likedScrollRef)}
-            className="absolute -right-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
-          >
-            ▶
-          </button>
-        </div>
-      </div>
+      <HorizontalVideoShelf
+        title="新着動画"
+        videos={[...youtubeVideos].sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()).slice(0, 10)}
+        notes={notes}
+        jwtToken={jwtToken}
+        setNotes={setNotes}
+        onClickTitle={handleTitleClick}
+        onLike={handleLikeVideoWrapper}
+        onUnlike={handleUnlikeVideoWrapper}
+      />
 
 
       {/* 検索結果が0件の場合の表示 */}
@@ -175,10 +170,9 @@ const YoutubeVideosPage: React.FC = () => {
         </div>
       ) : (
         <>
-
           {/* 横スクロールセクション */}
           <div className="container mx-auto px-4">
-            <h3 className="text-2xl font-bold mb-4">動画</h3>
+            <h3 className="text-2xl font-bold mb-4">動画の絞り込み</h3>
             <div className="container mx-auto px-4 mb-6">
               {/* ソートオプション */}
               <div className="flex justify-end">
@@ -189,6 +183,7 @@ const YoutubeVideosPage: React.FC = () => {
                 >
                   <option value="created_at_desc">取得順</option>
                   <option value="published_at_desc">公開日順</option>
+                  <option value="likes_desc">いいね数順</option>
                   <option value="notes_desc">メモ数順</option>
                 </select>
               </div>
