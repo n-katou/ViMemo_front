@@ -10,6 +10,7 @@ import YoutubeHeroSection from '../components/YoutubeIndex/YoutubeHeroSection';
 import { useRouter } from 'next/router';
 import PaginationComponent from '../components/Pagination';
 import { useMediaQuery } from '@mui/material';
+import { fetchRandomYoutubeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
 
 const YoutubeVideosPage: React.FC = () => {
   const {
@@ -41,21 +42,6 @@ const YoutubeVideosPage: React.FC = () => {
     const currentVideo = youtubeVideos[currentVideoIndex];
     router.push(`/youtube_videos/${currentVideo.id}`);
   };
-
-  // ヒーロー動画を定期的に変更
-  useEffect(() => {
-    if (youtubeVideos.length === 0) return;
-
-    const safeIndex = Math.floor(Math.random() * youtubeVideos.length);
-    setCurrentVideoIndex(safeIndex);
-
-    const interval = setInterval(() => {
-      const newIndex = Math.floor(Math.random() * youtubeVideos.length);
-      setCurrentVideoIndex(newIndex);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [youtubeVideos]);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [isMuted, setIsMuted] = useState(true); // デフォルトで音量OFF
@@ -97,15 +83,37 @@ const YoutubeVideosPage: React.FC = () => {
     });
   };
 
+  const [currentVideo, setCurrentVideo] = useState<YoutubeVideo | null>(null);
+
+  // ヒーロー動画を定期的にランダムに変更
+  useEffect(() => {
+    if (!youtubeVideos || youtubeVideos.length === 0) return;
+
+    const getRandomVideo = async () => {
+      const randomVideo = await fetchRandomYoutubeVideo();
+      if (randomVideo) setCurrentVideo(randomVideo);
+    };
+
+    // 初回取得
+    getRandomVideo();
+
+    // 10秒ごとにランダム取得
+    const interval = setInterval(() => {
+      getRandomVideo();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [youtubeVideos]);
+
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div className={`w-full min-h-screen ${theme === 'light' ? 'bg-white text-gray-800' : 'bg-black text-white'}`}>
       {/* Heroセクション */}
-      {youtubeVideos.length > 0 && youtubeVideos[currentVideoIndex] && (
+      {currentVideo && (
         <YoutubeHeroSection
-          video={youtubeVideos[currentVideoIndex]}
+          video={currentVideo}
           isMuted={isMuted}
           toggleMute={toggleMute}
           onClickWatch={handleWatchNow}
