@@ -100,7 +100,10 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
             controls={false}
             width="100%"
             height="100%"
-            style={{ position: 'absolute', top: 0, left: 0 }}
+            style={{
+              position: 'absolute', top: 0, left: 0,
+              pointerEvents: 'none'
+            }}
           />
         ) : (
           <img
