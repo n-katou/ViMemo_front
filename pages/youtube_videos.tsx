@@ -85,25 +85,30 @@ const YoutubeVideosPage: React.FC = () => {
 
   const [currentVideo, setCurrentVideo] = useState<YoutubeVideo | null>(null);
 
-  // ヒーロー動画を定期的にランダムに変更
+  // ヒーロー動画のランダム表示（10秒ごとに変更）
   useEffect(() => {
     if (!youtubeVideos || youtubeVideos.length === 0) return;
 
     const getRandomVideo = async () => {
       const randomVideo = await fetchRandomYoutubeVideo();
-      if (randomVideo) setCurrentVideo(randomVideo);
+      if (randomVideo) {
+        setCurrentVideo(randomVideo);
+
+        // モバイル時はミュートを強制ON
+        if (isMobile) {
+          setIsMuted(true);
+        }
+      }
     };
 
-    // 初回取得
     getRandomVideo();
 
-    // 10秒ごとにランダム取得
     const interval = setInterval(() => {
       getRandomVideo();
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [youtubeVideos]);
+  }, [youtubeVideos, isMobile]);
 
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
