@@ -15,6 +15,7 @@ import RelatedNotesList from './RelatedNotesList'; // RelatedNotesListコンポ�
 import ReactPlayer from 'react-player';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import { useMediaQuery } from '@mui/material';
 
 
 // YoutubeVideoCardコンポーネントのプロパティ型を定義
@@ -32,9 +33,11 @@ interface YoutubeVideoCardProps {
 const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleClick, handleLikeVideo, handleUnlikeVideo, notes, setNotes, jwtToken }) => {
   const { currentUser } = useAuth(); // 認証コンテキストから現在のユーザー情報を取得
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [isHovered, setIsHovered] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const playerRef = useRef<HTMLIFrameElement | null>(null); // Playerの参照を管理
+  const [isHovered, setIsHovered] = useState(false); // PC用
+  const [isActive, setIsActive] = useState(false);   // モバイル用
+
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -62,18 +65,34 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
     setIsMuted(prev => !prev);
   };
 
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+
+  const handleCardOpen = () => {
+    if (isMobile) {
+      setIsActive(true);
+    }
+  };
+
+  const handleCardClose = () => {
+    if (isMobile) {
+      setIsActive(false);
+    }
+  };
+
+  const isVisible = isMobile ? isActive : isHovered;
 
   return (
     <div
-      className={`rounded-lg overflow-visible youtube-video-card transform transition-all duration-300 ${isHovered ? 'scale-105 z-20' : 'scale-100'
+      className={`rounded-lg overflow-visible youtube-video-card transform transition-all duration-300 ${isVisible ? 'scale-105 z-20' : 'scale-100'
         }`}
-      style={{ width: '320px' }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => !isMobile && setIsHovered(true)}
+      onMouseLeave={() => !isMobile && setIsHovered(false)}
+      onClick={() => isMobile && setIsActive(true)}
     >
       {/* 映像部分だけ固定 */}
       <div className="relative w-full h-[180px] shadow-md rounded-t-lg overflow-hidden">
-        {isHovered ? (
+        {isVisible ? (
           <ReactPlayer
             url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
             playing
@@ -90,8 +109,14 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
             className="absolute top-0 left-0 w-full h-full object-cover"
           />
         )}
-
-        {/* 音量ボタン（映像の上） */}
+        {isMobile && isActive && (
+          <button
+            onClick={handleCardClose}
+            className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-50"
+          >
+            ×
+          </button>
+        )}
         <IconButton
           onClick={toggleMute}
           sx={{
@@ -107,8 +132,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
           {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
         </IconButton>
       </div>
-
-      {isHovered && (
+      {isVisible && (
         <>
           <div className="bg-white p-4 rounded-b-lg shadow-lg -mt-2 z-30 relative">
             <h2
