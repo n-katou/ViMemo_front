@@ -68,43 +68,64 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   const isMobile = useMediaQuery('(max-width: 768px)');
 
 
-  const handleCardOpen = () => {
-    if (isMobile) {
-      setIsActive(true);
-    }
-  };
-
   const handleCardClose = () => {
     if (isMobile) {
       setIsActive(false);
+      setIsHovered(false);
+      setIsMuted(true);
     }
   };
 
   const isVisible = isMobile ? isActive : isHovered;
+
+  React.useEffect(() => {
+    if (!isActive) {
+      setIsHovered(false);
+    }
+  }, [isActive]);
 
   return (
     <div
       className={`rounded-lg overflow-visible youtube-video-card transform transition-all duration-300 ${isVisible ? 'scale-105 z-20' : 'scale-100'
         }`}
       onMouseEnter={() => !isMobile && setIsHovered(true)}
-      onMouseLeave={() => !isMobile && setIsHovered(false)}
+      onMouseLeave={() => {
+        if (!isMobile) {
+          setIsHovered(false);
+          setIsMuted(true); // ★ここが追加された行
+        }
+      }}
       onClick={() => isMobile && setIsActive(true)}
     >
-      {/* 映像部分だけ固定 */}
+      {isMobile && isActive && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // ← これで親のonClickが発火しない！
+            handleCardClose();
+          }}
+          className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-50 pointer-events-auto"
+        >
+          ×
+        </button>
+      )}
       <div className="relative w-full h-[180px] shadow-md rounded-t-lg overflow-hidden">
         {isVisible ? (
-          <ReactPlayer
-            url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
-            playing
-            muted={isMuted}
-            controls={false}
-            width="100%"
-            height="100%"
-            style={{
-              position: 'absolute', top: 0, left: 0,
-              pointerEvents: 'none'
-            }}
-          />
+          <div className="absolute top-0 left-0 w-full h-full">
+            <ReactPlayer
+              url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
+              playing
+              muted={isMuted}
+              controls={false}
+              width="100%"
+              height="100%"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                pointerEvents: 'none', // ← これをReactPlayerに直接当てる
+              }}
+            />
+          </div>
         ) : (
           <img
             src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
@@ -112,28 +133,22 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
             className="absolute top-0 left-0 w-full h-full object-cover"
           />
         )}
-        {isMobile && isActive && (
-          <button
-            onClick={handleCardClose}
-            className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-50"
+        {isVisible && (
+          <IconButton
+            onClick={toggleMute}
+            sx={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              color: 'white',
+              zIndex: 30,
+              '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' },
+            }}
           >
-            ×
-          </button>
+            {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+          </IconButton>
         )}
-        <IconButton
-          onClick={toggleMute}
-          sx={{
-            position: 'absolute',
-            top: 10,
-            right: 10,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            color: 'white',
-            zIndex: 30,
-            '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' },
-          }}
-        >
-          {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
-        </IconButton>
       </div>
       {isVisible && (
         <>
