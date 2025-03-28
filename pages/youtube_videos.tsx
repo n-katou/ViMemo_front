@@ -173,10 +173,9 @@ const YoutubeVideosPage: React.FC = () => {
           該当する動画はありません。
         </div>
       ) : (
-        <div className="container mx-auto px-4">
+        <div className="w-full px-4 mb-12">
           <h3 className="text-2xl font-bold mb-4">動画の絞り込み</h3>
-
-          <div className="flex justify-end mb-6">
+          <div className="flex justify-end mb-4">
             <select
               value={sortOption}
               onChange={(e) => handleSortChange(e.target.value)}
@@ -188,48 +187,50 @@ const YoutubeVideosPage: React.FC = () => {
               <option value="notes_desc">メモ数順</option>
             </select>
           </div>
-
-          <div className="relative">
+          <div className="relative w-full pb-4">
             <button
               onClick={() => scrollByBlock('left', scrollContainerRef)}
-              className="absolute -left-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
+              className="absolute -left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
             >
               ◀
             </button>
-
-            <div
-              ref={scrollContainerRef}
-              className="flex overflow-x-auto space-x-4 pb-4 px-10 scroll-smooth scrollbar-hide snap-x snap-mandatory"
-            >
-              {youtubeVideos.map((video: YoutubeVideo) => (
-                <div key={video.id} className="flex-shrink-0 w-80 snap-start">
-                  <YoutubeVideoCard
-                    video={video}
-                    handleTitleClick={handleTitleClick}
-                    handleLikeVideo={handleLikeVideoWrapper}
-                    handleUnlikeVideo={handleUnlikeVideoWrapper}
-                    notes={notes.filter(note => note.youtube_video_id === video.id)}
-                    jwtToken={jwtToken}
-                    setNotes={setNotes}
-                  />
-                </div>
-              ))}
+            <div className="mx-8">
+              <div
+                ref={scrollContainerRef}
+                className="flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide snap-x snap-mandatory"
+              >
+                {youtubeVideos.map((video: YoutubeVideo) => (
+                  <div key={video.id} className="flex-shrink-0 w-80 snap-start">
+                    <YoutubeVideoCard
+                      video={video}
+                      handleTitleClick={handleTitleClick}
+                      handleLikeVideo={handleLikeVideoWrapper}
+                      handleUnlikeVideo={handleUnlikeVideoWrapper}
+                      notes={notes.filter(note => note.youtube_video_id === video.id)}
+                      jwtToken={jwtToken}
+                      setNotes={setNotes}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
+
 
             <button
               onClick={() => scrollByBlock('right', scrollContainerRef)}
-              className="absolute -right-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
+              className="absolute -right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
             >
               ▶
             </button>
-          </div>
 
-          <div className="mt-6 mb-3 flex justify-center">
-            <PaginationComponent
-              count={pagination.total_pages}
-              page={pagination.current_page}
-              onChange={handlePageChange}
-            />
+
+            <div className="mt-6 mb-3 flex justify-center">
+              <PaginationComponent
+                count={pagination.total_pages}
+                page={pagination.current_page}
+                onChange={handlePageChange}
+              />
+            </div>
           </div>
         </div>
       )}
