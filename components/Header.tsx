@@ -265,13 +265,14 @@ const Header: React.FC = () => {
             sx={{
               color: '#818cf8',
               fontWeight: 'bold',
+              mr: 2, // ← ここを追加！（または数値調整）
               transition: 'color 0.3s ease, transform 0.3s ease',
               '&:hover': {
-                color: '#FF0000', // ホバー時にYouTubeカラーに変更
-                transform: 'scale(1.1) translateY(-2px)', // 拡大＆浮かせる
+                color: '#FF0000',
+                transform: 'scale(1.1) translateY(-2px)',
               },
               '&:active': {
-                transform: 'scale(0.95)', // クリック時に押し込む
+                transform: 'scale(0.95)',
               },
             }}
           >
