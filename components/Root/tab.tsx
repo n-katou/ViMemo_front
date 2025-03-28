@@ -230,7 +230,7 @@ const tab = (isLightTheme: boolean) => [
         </div>
 
         <div className="note-container mt-6">
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <p className="text-center font-medium" style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
               ご自身のメモを使ってX (旧Twitter) にお気に入り場面をシェアできます
             </p>
@@ -239,7 +239,7 @@ const tab = (isLightTheme: boolean) => [
               alt="Xへのシェア"
               className="rounded-lg shadow-lg w-full md:w-3/4 mx-auto"
             />
-          </div>
+          </div> */}
           <div className="mb-6">
             <p className="text-center font-medium" style={{ color: isLightTheme ? '#818cf8' : 'white' }}>
               自分で書いたメモを動画ごとに管理し、一覧から簡単に整理できます
