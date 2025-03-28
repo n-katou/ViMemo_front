@@ -93,7 +93,7 @@ const YoutubeVideosPage: React.FC = () => {
     };
 
     getRandomVideo();
-    const interval = setInterval(getRandomVideo, 10000);
+    const interval = setInterval(getRandomVideo, 12000);
     return () => clearInterval(interval);
   }, [youtubeVideos, isMobile]);
 

@@ -5,7 +5,7 @@ import { Note } from '../../types/note';
 import { useAuth } from '../../context/AuthContext';
 import { fetchYoutubeVideos, handleLikeVideo, handleUnlikeVideo } from '../../components/YoutubeIndex/youtubeIndexUtils';
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 20;
 
 const useYoutubeVideosPage = () => {
   const { currentUser, jwtToken } = useAuth();
