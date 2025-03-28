@@ -101,7 +101,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
             playerRef={playerRef}
           />
         </div>
-        <LikeButtonContainer className="hidden md:block">
+        <LikeButtonContainer className="block md:block mt-2">
           <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
         </LikeButtonContainer>
       </CardContentBox>
