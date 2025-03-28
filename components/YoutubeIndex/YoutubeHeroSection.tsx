@@ -69,32 +69,33 @@ const YoutubeHeroSection: React.FC<YoutubeHeroSectionProps> = ({
             >
               今すぐ見る
             </GradientButton>
-
-            <IconButton
-              onClick={toggleMute}
-              sx={{
-                position: 'absolute',
-                bottom: 20,
-                right: 20,
-                width: 48,
-                height: 48,
-                border: '2px solid white',
-                borderRadius: '50%',
-                backgroundColor: 'rgba(0,0,0,0.4)',
-                color: 'white',
-                zIndex: 30,
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  transform: 'scale(1.1)',
-                },
-              }}
-            >
-              {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
-            </IconButton>
           </motion.div>
         </motion.div>
       </AnimatePresence>
+
+      {/* ミュートボタン（右下固定） */}
+      <IconButton
+        onClick={toggleMute}
+        sx={{
+          position: 'absolute',
+          top: 60, // ← 以前は 20
+          right: 40, // ← 以前は 20
+          width: 48,
+          height: 48,
+          border: '2px solid white',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(0,0,0,0.4)',
+          color: 'white',
+          zIndex: 30,
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            transform: 'scale(1.1)',
+          },
+        }}
+      >
+        {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+      </IconButton>
     </div>
   );
 };
