@@ -120,7 +120,7 @@ const YoutubeVideosPage: React.FC = () => {
           該当する動画はありません。
         </div>
       ) : (
-        <div className="w-full px-4 mb-12 bg-[#111827]">
+        <div className="w-full px-4 mb-12">
           <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r bg-clip-text flex items-center gap-2">絞り込み・検索結果</h3>
           <div className="flex justify-end mb-4">
             <select
