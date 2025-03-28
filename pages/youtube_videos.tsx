@@ -110,63 +110,6 @@ const YoutubeVideosPage: React.FC = () => {
           onClickWatch={() => router.push(`/youtube_videos/${currentVideo.id}`)}
         />
       )}
-
-      {/* 各ランキングセクション */}
-      <HorizontalVideoShelf
-        title="おすすめ動画"
-        videos={topLikedVideos}
-        setVideos={setTopLikedVideos}
-        notes={notes}
-        jwtToken={jwtToken}
-        setNotes={setNotes}
-        onClickTitle={handleTitleClick}
-        onLike={async (id) => {
-          if (!jwtToken || !currentUser) return;
-          // まず該当ランキングにだけ更新
-          await handleLikeVideo(id, jwtToken, currentUser, setTopLikedVideos);
-        }}
-        onUnlike={async (id, likeId) => {
-          if (!jwtToken || !currentUser) return;
-          await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopLikedVideos);
-        }}
-      />
-
-      <HorizontalVideoShelf
-        title="注目動画"
-        videos={topNotedVideos}
-        setVideos={setTopNotedVideos}
-        notes={notes}
-        jwtToken={jwtToken}
-        setNotes={setNotes}
-        onClickTitle={handleTitleClick}
-        onLike={async (id) => {
-          if (!jwtToken || !currentUser) return;
-          await handleLikeVideo(id, jwtToken, currentUser, setTopNotedVideos);
-        }}
-        onUnlike={async (id, likeId) => {
-          if (!jwtToken || !currentUser) return;
-          await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopNotedVideos);
-        }}
-      />
-
-      <HorizontalVideoShelf
-        title="新着動画"
-        videos={topRecentVideos}
-        setVideos={setTopRecentVideos}
-        notes={notes}
-        jwtToken={jwtToken}
-        setNotes={setNotes}
-        onClickTitle={handleTitleClick}
-        onLike={async (id) => {
-          if (!jwtToken || !currentUser) return;
-          await handleLikeVideo(id, jwtToken, currentUser, setTopRecentVideos);
-        }}
-        onUnlike={async (id, likeId) => {
-          if (!jwtToken || !currentUser) return;
-          await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopRecentVideos);
-        }}
-      />
-
       {/* 通常の横スクロール動画一覧 */}
       {youtubeVideos.length === 0 ? (
         <div className="text-center py-20 text-lg text-gray-500">
@@ -234,6 +177,64 @@ const YoutubeVideosPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* 各ランキングセクション */}
+      <HorizontalVideoShelf
+        title="おすすめ動画"
+        videos={topLikedVideos}
+        setVideos={setTopLikedVideos}
+        notes={notes}
+        jwtToken={jwtToken}
+        setNotes={setNotes}
+        onClickTitle={handleTitleClick}
+        onLike={async (id) => {
+          if (!jwtToken || !currentUser) return;
+          // まず該当ランキングにだけ更新
+          await handleLikeVideo(id, jwtToken, currentUser, setTopLikedVideos);
+        }}
+        onUnlike={async (id, likeId) => {
+          if (!jwtToken || !currentUser) return;
+          await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopLikedVideos);
+        }}
+      />
+
+      <HorizontalVideoShelf
+        title="注目動画"
+        videos={topNotedVideos}
+        setVideos={setTopNotedVideos}
+        notes={notes}
+        jwtToken={jwtToken}
+        setNotes={setNotes}
+        onClickTitle={handleTitleClick}
+        onLike={async (id) => {
+          if (!jwtToken || !currentUser) return;
+          await handleLikeVideo(id, jwtToken, currentUser, setTopNotedVideos);
+        }}
+        onUnlike={async (id, likeId) => {
+          if (!jwtToken || !currentUser) return;
+          await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopNotedVideos);
+        }}
+      />
+
+      <HorizontalVideoShelf
+        title="新着動画"
+        videos={topRecentVideos}
+        setVideos={setTopRecentVideos}
+        notes={notes}
+        jwtToken={jwtToken}
+        setNotes={setNotes}
+        onClickTitle={handleTitleClick}
+        onLike={async (id) => {
+          if (!jwtToken || !currentUser) return;
+          await handleLikeVideo(id, jwtToken, currentUser, setTopRecentVideos);
+        }}
+        onUnlike={async (id, likeId) => {
+          if (!jwtToken || !currentUser) return;
+          await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopRecentVideos);
+        }}
+      />
+
+
 
       {/* スナックバー */}
       {flashMessage && (
