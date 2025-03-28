@@ -91,7 +91,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
       className="relative rounded-lg overflow-hidden transition-all duration-300"
       onMouseEnter={() => {
         if (!isMobile) {
-          hoverTimeoutRef.current = setTimeout(() => setIsHovered(true), 300);
+          hoverTimeoutRef.current = setTimeout(() => setIsHovered(true), 400);
         }
       }}
       onMouseLeave={() => {
