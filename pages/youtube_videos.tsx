@@ -69,17 +69,21 @@ const YoutubeVideosPage: React.FC = () => {
     const cardWidth = 320;
     const gap = 16;
     const itemTotalWidth = cardWidth + gap;
+
+    const scrollStep = isMobile ? 1 : 3; // ← ここで切り替え
+
     const currentScroll = container.scrollLeft;
     const currentIndex = Math.round(currentScroll / itemTotalWidth);
     const nextIndex = direction === 'left'
-      ? Math.max(0, currentIndex - 3)
-      : Math.min(Math.ceil(container.scrollWidth / itemTotalWidth), currentIndex + 3);
+      ? Math.max(0, currentIndex - scrollStep)
+      : Math.min(Math.ceil(container.scrollWidth / itemTotalWidth), currentIndex + scrollStep);
 
     container.scrollTo({
       left: nextIndex * itemTotalWidth,
       behavior: 'smooth',
     });
   };
+
 
   useEffect(() => {
     if (!youtubeVideos || youtubeVideos.length === 0) return;
