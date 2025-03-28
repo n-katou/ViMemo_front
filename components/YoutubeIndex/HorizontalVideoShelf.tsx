@@ -12,6 +12,7 @@ export type HorizontalVideoShelfProps = {
   onClickTitle: (id: number) => void;
   onLike: (id: number) => Promise<void>;
   onUnlike: (id: number, likeId: number) => Promise<void>;
+  setVideos: React.Dispatch<React.SetStateAction<YoutubeVideo[]>>;
 };
 
 const HorizontalVideoShelf: React.FC<HorizontalVideoShelfProps> = ({
@@ -68,8 +69,8 @@ const HorizontalVideoShelf: React.FC<HorizontalVideoShelfProps> = ({
                   video={video}
                   handleTitleClick={() => onClickTitle(video.id)}
                   handleLikeVideo={() => onLike(video.id)}
-                  handleUnlikeVideo={(likeId) => onUnlike(video.id, likeId)}
-                  notes={notes.filter(note => note.youtube_video_id === video.id)}
+                  handleUnlikeVideo={(id, likeId) => onUnlike(id, likeId)}
+                  notes={video.notes}
                   jwtToken={jwtToken}
                   setNotes={setNotes}
                 />
