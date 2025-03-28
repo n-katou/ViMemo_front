@@ -9,7 +9,7 @@ const useYoutubeVideoRankings = () => {
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth();
 
-  const fetchRanking = async (sort: string, limit = 10): Promise<YoutubeVideo[] | null> => {
+  const fetchRanking = async (sort: string, limit = 20): Promise<YoutubeVideo[] | null> => {
     try {
       const authToken = localStorage.getItem('authToken');
 
