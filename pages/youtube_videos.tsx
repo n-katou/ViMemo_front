@@ -117,7 +117,7 @@ const YoutubeVideosPage: React.FC = () => {
         </div>
       ) : (
         <div className="w-full px-4 mb-12">
-          <h3 className="text-2xl font-bold mb-4">動画の絞り込み</h3>
+          <h3 className="text-2xl font-bold mb-4">絞り込み・検索結果</h3>
           <div className="flex justify-end mb-4">
             <select
               value={sortOption}
