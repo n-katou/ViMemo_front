@@ -48,7 +48,7 @@ const HorizontalVideoShelf: React.FC<HorizontalVideoShelfProps> = ({
   };
 
   return (
-    <div className="w-full px-4 mb-12">
+    <div className="w-full px-4 mb-20">
       <h3 className="text-2xl font-bold mb-4">{title}</h3>
       <div className="relative w-full">
         <button

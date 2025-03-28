@@ -69,17 +69,21 @@ const YoutubeVideosPage: React.FC = () => {
     const cardWidth = 320;
     const gap = 16;
     const itemTotalWidth = cardWidth + gap;
+
+    const scrollStep = isMobile ? 1 : 3; // ← ここで切り替え
+
     const currentScroll = container.scrollLeft;
     const currentIndex = Math.round(currentScroll / itemTotalWidth);
     const nextIndex = direction === 'left'
-      ? Math.max(0, currentIndex - 3)
-      : Math.min(Math.ceil(container.scrollWidth / itemTotalWidth), currentIndex + 3);
+      ? Math.max(0, currentIndex - scrollStep)
+      : Math.min(Math.ceil(container.scrollWidth / itemTotalWidth), currentIndex + scrollStep);
 
     container.scrollTo({
       left: nextIndex * itemTotalWidth,
       behavior: 'smooth',
     });
   };
+
 
   useEffect(() => {
     if (!youtubeVideos || youtubeVideos.length === 0) return;
@@ -93,7 +97,7 @@ const YoutubeVideosPage: React.FC = () => {
     };
 
     getRandomVideo();
-    const interval = setInterval(getRandomVideo, 10000);
+    const interval = setInterval(getRandomVideo, 12000);
     return () => clearInterval(interval);
   }, [youtubeVideos, isMobile]);
 
@@ -109,6 +113,73 @@ const YoutubeVideosPage: React.FC = () => {
           toggleMute={toggleMute}
           onClickWatch={() => router.push(`/youtube_videos/${currentVideo.id}`)}
         />
+      )}
+      {/* 通常の横スクロール動画一覧 */}
+      {youtubeVideos.length === 0 ? (
+        <div className="text-center py-20 text-lg text-gray-500">
+          該当する動画はありません。
+        </div>
+      ) : (
+        <div className="w-full px-4 mb-12 bg-[#111827]">
+          <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r bg-clip-text flex items-center gap-2">絞り込み・検索結果</h3>
+          <div className="flex justify-end mb-4">
+            <select
+              value={sortOption}
+              onChange={(e) => handleSortChange(e.target.value)}
+              className={`p-2 rounded border ${theme === 'light' ? 'bg-white border-gray-600 text-gray-800' : 'bg-gray-800 border-gray-600 text-white'}`}
+            >
+              <option value="created_at_desc">取得順</option>
+              <option value="published_at_desc">公開日順</option>
+              <option value="likes_desc">いいね数順</option>
+              <option value="notes_desc">メモ数順</option>
+            </select>
+          </div>
+          <div className="relative w-full pb-4">
+            <button
+              onClick={() => scrollByBlock('left', scrollContainerRef)}
+              className="absolute -left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
+            >
+              ◀
+            </button>
+            <div className="mx-8">
+              <div
+                ref={scrollContainerRef}
+                className="flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide snap-x snap-mandatory"
+              >
+                {youtubeVideos.map((video: YoutubeVideo) => (
+                  <div key={video.id} className="flex-shrink-0 w-80 snap-start">
+                    <YoutubeVideoCard
+                      video={video}
+                      handleTitleClick={handleTitleClick}
+                      handleLikeVideo={handleLikeVideoWrapper}
+                      handleUnlikeVideo={handleUnlikeVideoWrapper}
+                      notes={notes.filter(note => note.youtube_video_id === video.id)}
+                      jwtToken={jwtToken}
+                      setNotes={setNotes}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+
+            <button
+              onClick={() => scrollByBlock('right', scrollContainerRef)}
+              className="absolute -right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
+            >
+              ▶
+            </button>
+
+
+            <div className="mt-6 mb-3 flex justify-center">
+              <PaginationComponent
+                count={pagination.total_pages}
+                page={pagination.current_page}
+                onChange={handlePageChange}
+              />
+            </div>
+          </div>
+        </div>
       )}
 
       {/* 各ランキングセクション */}
@@ -167,72 +238,7 @@ const YoutubeVideosPage: React.FC = () => {
         }}
       />
 
-      {/* 通常の横スクロール動画一覧 */}
-      {youtubeVideos.length === 0 ? (
-        <div className="text-center py-20 text-lg text-gray-500">
-          該当する動画はありません。
-        </div>
-      ) : (
-        <div className="container mx-auto px-4">
-          <h3 className="text-2xl font-bold mb-4">動画の絞り込み</h3>
 
-          <div className="flex justify-end mb-6">
-            <select
-              value={sortOption}
-              onChange={(e) => handleSortChange(e.target.value)}
-              className={`p-2 rounded border ${theme === 'light' ? 'bg-white border-gray-600 text-gray-800' : 'bg-gray-800 border-gray-600 text-white'}`}
-            >
-              <option value="created_at_desc">取得順</option>
-              <option value="published_at_desc">公開日順</option>
-              <option value="likes_desc">いいね数順</option>
-              <option value="notes_desc">メモ数順</option>
-            </select>
-          </div>
-
-          <div className="relative">
-            <button
-              onClick={() => scrollByBlock('left', scrollContainerRef)}
-              className="absolute -left-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
-            >
-              ◀
-            </button>
-
-            <div
-              ref={scrollContainerRef}
-              className="flex overflow-x-auto space-x-4 pb-4 px-10 scroll-smooth scrollbar-hide snap-x snap-mandatory"
-            >
-              {youtubeVideos.map((video: YoutubeVideo) => (
-                <div key={video.id} className="flex-shrink-0 w-80 snap-start">
-                  <YoutubeVideoCard
-                    video={video}
-                    handleTitleClick={handleTitleClick}
-                    handleLikeVideo={handleLikeVideoWrapper}
-                    handleUnlikeVideo={handleUnlikeVideoWrapper}
-                    notes={notes.filter(note => note.youtube_video_id === video.id)}
-                    jwtToken={jwtToken}
-                    setNotes={setNotes}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={() => scrollByBlock('right', scrollContainerRef)}
-              className="absolute -right-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
-            >
-              ▶
-            </button>
-          </div>
-
-          <div className="mt-6 mb-3 flex justify-center">
-            <PaginationComponent
-              count={pagination.total_pages}
-              page={pagination.current_page}
-              onChange={handlePageChange}
-            />
-          </div>
-        </div>
-      )}
 
       {/* スナックバー */}
       {flashMessage && (
