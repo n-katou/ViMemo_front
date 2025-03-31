@@ -7,11 +7,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import NoteIcon from '@mui/icons-material/Note';
 import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';
 import useNotePopover from '../../../hooks/mypage/favorite_videos/useNotePopover';
-import { VideoContainer, CardContentBox, LikeButtonContainer } from '../../../styles/mypage/favorite_videos/FavoriteVideoCardStyles';
-import LikeButton from './LikeButton';
-import VideoPopover from './VideoPopover';
 import { formatDuration } from '../../YoutubeShow/youtubeShowUtils';
 import { MdDragIndicator } from 'react-icons/md';
+import LikeButton from './LikeButton';
+import VideoPopover from './VideoPopover';
 
 interface VideoCardProps {
   video: YoutubeVideo;
@@ -34,11 +33,11 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
 }) => {
   const router = useRouter();
   const playerRef = useRef<HTMLIFrameElement | null>(null);
-
   const { dragDropRef, isDragging, isOver } = useDragDropVideoCard(index, moveVideo);
   const { anchorEl, open, handlePopoverOpen, handlePopoverClose } = useNotePopover();
 
   const relatedNotes = notes.filter(note => note.youtube_video_id === video.id);
+  const thumbnailUrl = `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
 
   const handleLikeClick = async () => {
     if (video.liked && currentUser && video.likeId) {
@@ -48,74 +47,69 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
     }
   };
 
-  const thumbnailUrl = `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
-
   return (
     <div
       ref={dragDropRef}
-      className="mb-3"
+      className="mb-3 p-4 border border-gray-200 rounded-md shadow-sm flex items-start gap-4 bg-white transition-all"
       style={{
         opacity: isDragging ? 0.5 : 1,
         backgroundColor: isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white',
-        padding: '10px 14px',
-        border: '1px solid #ddd',
-        borderRadius: '8px',
-        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        cursor: 'pointer',
-        transition: 'background-color 0.3s ease',
       }}
     >
-      <div className="drag-handle cursor-move bg-gradient-rainbow p-2 flex items-center justify-center">
-        <MdDragIndicator className="text-white-400" size={20} />
+      {/* ドラッグハンドル */}
+      <div className="flex items-center justify-center w-8 h-full bg-gradient-rainbow rounded-md">
+        <MdDragIndicator className="text-white cursor-move" size={20} />
       </div>
-      <span style={{ width: '20px', textAlign: 'right', fontWeight: 'bold' }}>{index + 1}.</span>
+      {/* サムネイル */}
       <img
         src={thumbnailUrl}
         alt={`thumbnail-${video.id}`}
-        style={{
-          width: '64px',
-          height: '36px',
-          borderRadius: '4px',
-          objectFit: 'cover',
-          flexShrink: 0,
-        }}
+        className="w-24 h-14 rounded-md object-cover flex-shrink-0"
       />
-      <div style={{ flex: 1, minWidth: 0 }}>
+
+      {/* メイン情報 */}
+      <div className="flex-1 min-w-0">
+        {/* タイトル */}
         <h2
-          className="text-xl font-bold text-blue-600 cursor-pointer hover:underline group-hover:text-blue-700 truncate"
+          className="text-blue-600 font-semibold text-sm cursor-pointer hover:underline truncate flex items-center gap-1"
           onClick={() => router.push(`/youtube_videos/${video.id}`)}
-          style={{ maxWidth: '70%' }}
           title={video.title}
         >
+          <span className="text-gray-500">{index + 1}.</span>
           {video.title}
         </h2>
-        <div className="flex items-center text-xs text-gray-600 gap-4 mt-1">
-          <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
-          <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
+
+        {/* メタ情報 */}
+        <div className="text-xs text-gray-600 mt-1 flex flex-wrap gap-x-4 gap-y-1">
+          <span>公開日: {new Date(video.published_at).toLocaleDateString()}</span>
+          <span>動画時間: {formatDuration(video.duration)}</span>
           <span className="flex items-center">
-            <FavoriteIcon className="text-red-500 mr-1" />
-            <p className="text-gray-600">{video.likes_count}</p>
+            <FavoriteIcon className="text-red-500 mr-1" fontSize="small" />
+            {video.likes_count}
           </span>
-          <div className="flex items-center" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
-            <NoteIcon className="text-blue-500 mr-1" />
-            <p className="text-gray-600 flex items-center">
-              {video.notes_count} <SearchIcon className="ml-1" />
-            </p>
-          </div>
-          <VideoPopover
-            open={open}
-            anchorEl={anchorEl}
-            handlePopoverClose={handlePopoverClose}
-            relatedNotes={relatedNotes}
-            playerRef={playerRef}
-          />
-          <LikeButtonContainer className="block md:block mt-2">
-            <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
-          </LikeButtonContainer>
+          <span
+            className="flex items-center"
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+          >
+            <NoteIcon className="text-blue-500 mr-1" fontSize="small" />
+            {video.notes_count}
+            <SearchIcon className="ml-1" fontSize="small" />
+          </span>
         </div>
+
+        <VideoPopover
+          open={open}
+          anchorEl={anchorEl}
+          handlePopoverClose={handlePopoverClose}
+          relatedNotes={relatedNotes}
+          playerRef={playerRef}
+        />
+      </div>
+
+      {/* Likeボタン */}
+      <div className="pl-2 pt-1">
+        <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
       </div>
     </div>
   );

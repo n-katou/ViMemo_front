@@ -72,7 +72,7 @@ const FavoriteVideosPage: React.FC = () => {
                 style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '2rem' }}
               />
             )}
-            <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {videos.map((video, index) => (
                 <VideoCard
                   key={video.id}
