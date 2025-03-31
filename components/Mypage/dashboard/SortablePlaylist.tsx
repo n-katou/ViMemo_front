@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
 
 // 動画のLike型を定義
 interface Like {
+  id: number;
   likeable_id: number;
   youtube_id?: string;
   title: string | null;
@@ -23,7 +25,15 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
   const backgroundColor = isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white';
   const opacity = isDragging ? 0.5 : 1;
 
-  const thumbnailUrl = `https://img.youtube.com/vi/${like.youtube_id}/hqdefault.jpg`;
+  const thumbnailUrl = like.youtube_id
+    ? `https://img.youtube.com/vi/${like.youtube_id}/hqdefault.jpg`
+    : '/default-thumbnail.jpg';
+
+  const router = useRouter();
+  const handleClick = () => {
+    router.push(`/youtube_videos/${like.id}`);
+  };
+
 
   return (
     <div
@@ -60,17 +70,27 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
         }}
       />
       {like.title ? (
-        <span
+        console.log('like:', like),
+        <button
+          onClick={handleClick}
           style={{
             display: 'inline-block',
             maxWidth: '100%',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
+            background: 'none',
+            border: 'none',
+            textAlign: 'left',
+            padding: 0,
+            margin: 0,
+            color: '#2563eb', // 青系
+            fontWeight: 'bold',
+            cursor: 'pointer',
           }}
         >
           {like.title}
-        </span>
+        </button>
       ) : (
         <span>不明な動画 (ID: {like.likeable_id})</span>
       )}
