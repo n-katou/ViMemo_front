@@ -2,12 +2,8 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';
 import { useTheme } from 'next-themes';
-
-// 動画のLike型を定義
-interface Like {
-  likeable_id: number;
-  title: string | null;
-}
+import { useRouter } from 'next/router';
+import { Like } from '../../../types/like';
 
 // プレイリストの1つのアイテムコンポーネント
 interface PlaylistItemProps {
@@ -21,6 +17,16 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
 
   const backgroundColor = isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white';
   const opacity = isDragging ? 0.5 : 1;
+
+  const thumbnailUrl = like.youtube_id
+    ? `https://img.youtube.com/vi/${like.youtube_id}/hqdefault.jpg`
+    : '/default-thumbnail.jpg';
+
+  const router = useRouter();
+  const handleClick = () => {
+    router.push(`/youtube_videos/${like.id}`);
+  };
+
 
   return (
     <div
@@ -41,21 +47,29 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
         maxWidth: '100%',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        gap: '12px',
       }}
     >
+      <span style={{ fontWeight: 'bold' }}>{index + 1}.</span>
+      <img
+        src={thumbnailUrl}
+        alt={`thumbnail-${like.likeable_id}`}
+        style={{
+          width: '64px',
+          height: '36px',
+          borderRadius: '4px',
+          objectFit: 'cover',
+          flexShrink: 0,
+        }}
+      />
       {like.title ? (
-        <span
-          style={{
-            display: 'inline-block',
-            maxWidth: '100%',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
+        console.log('like:', like),
+        <button
+          onClick={handleClick}
+          className="text-blue-600 font-bold hover:underline hover:text-blue-800 transition duration-200 ease-in-out max-w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
         >
-          {index + 1}. {like.title}
-        </span>
+          {like.title}
+        </button>
       ) : (
         <span>不明な動画 (ID: {like.likeable_id})</span>
       )}
@@ -72,7 +86,7 @@ interface SortablePlaylistProps {
 const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, moveItem }) => {
   const { theme } = useTheme();
   const [isExpanded, setIsExpanded] = useState(false); // 展開状態管理
-  const maxVisibleItems = 3; // 最初に表示するアイテム数
+  const maxVisibleItems = 5; // 最初に表示するアイテム数
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -84,7 +98,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
         再生中のプレイリスト（ドラッグ&ドロップで並び替え可能）
       </h2>
 
-      <div>
+      <div style={{ position: 'relative', maxHeight: '390px', overflowY: 'scroll' }}>
         {youtubeVideoLikes
           .slice(0, isExpanded ? youtubeVideoLikes.length : maxVisibleItems)
           .map((like, index) => (
@@ -96,7 +110,11 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
             />
           ))}
       </div>
-
+      {isExpanded && (
+        <p style={{ fontSize: '12px', textAlign: 'center', color: '#888', marginTop: '4px' }}>
+          下にスクロールできます
+        </p>
+      )}
       {youtubeVideoLikes.length > maxVisibleItems && (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
           <Button
@@ -105,7 +123,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
             sx={{
               backgroundColor: '#22eec5',
               color: 'white',
-              width: '30%',
+              width: '35%',
               '&:hover': {
                 backgroundColor: '#1bb89a', // ホバー時の色を少し濃くする
               },
