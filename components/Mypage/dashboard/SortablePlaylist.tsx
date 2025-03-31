@@ -86,7 +86,7 @@ interface SortablePlaylistProps {
 const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, moveItem }) => {
   const { theme } = useTheme();
   const [isExpanded, setIsExpanded] = useState(false); // 展開状態管理
-  const maxVisibleItems = 3; // 最初に表示するアイテム数
+  const maxVisibleItems = 5; // 最初に表示するアイテム数
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -98,7 +98,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
         再生中のプレイリスト（ドラッグ&ドロップで並び替え可能）
       </h2>
 
-      <div>
+      <div style={{ position: 'relative', maxHeight: '390px', overflowY: 'scroll' }}>
         {youtubeVideoLikes
           .slice(0, isExpanded ? youtubeVideoLikes.length : maxVisibleItems)
           .map((like, index) => (
@@ -110,7 +110,11 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
             />
           ))}
       </div>
-
+      {isExpanded && (
+        <p style={{ fontSize: '12px', textAlign: 'center', color: '#888', marginTop: '4px' }}>
+          下にスクロールできます
+        </p>
+      )}
       {youtubeVideoLikes.length > maxVisibleItems && (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
           <Button
