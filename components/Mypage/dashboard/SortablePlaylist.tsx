@@ -119,7 +119,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
             sx={{
               backgroundColor: '#22eec5',
               color: 'white',
-              width: '30%',
+              width: '35%',
               '&:hover': {
                 backgroundColor: '#1bb89a', // ホバー時の色を少し濃くする
               },

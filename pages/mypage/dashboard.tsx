@@ -67,7 +67,7 @@ const Dashboard = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="container mx-auto px-4 py-8 mt-4">
+      <div className="w-full px-6 py-8 mt-4">
         {/* ユーザーカードエリア */}
         <div className="flex flex-col md:flex-row gap-8">
           <div className="w-full md:w-1/3 lg:w-1/4 mb-8 md:mb-0">
@@ -83,10 +83,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* プレイリストと動画タイトルを上下に配置 */}
-        <div className="flex flex-col w-full mt-8 gap-8">
-          {/* プレイリスト表示エリア */}
-          <div className="w-full">
+        <div className="flex flex-col md:flex-row w-full mt-8 gap-8">
+          {/* プレイヤーエリア */}
+          <div className="w-full md:w-2/3">
             <YoutubeLikesAccordion
               youtubeVideoLikes={sortedVideoLikes}
               youtubePlaylistUrl={youtubePlaylistUrl}
@@ -97,9 +96,9 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* 動画タイトル表示エリア */}
-          <div className="bg-white shadow-md rounded-lg p-6">
-            <SortablePlaylist youtubeVideoLikes={sortedVideoLikes} moveItem={handleMoveItem} /> {/* ドラッグ時に順序を更新 */}
+          {/* プレイリストエリア */}
+          <div className="w-full md:w-1/3 bg-white shadow-md rounded-lg p-6">
+            <SortablePlaylist youtubeVideoLikes={sortedVideoLikes} moveItem={handleMoveItem} />
           </div>
         </div>
 
