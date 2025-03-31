@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes';
 // 動画のLike型を定義
 interface Like {
   likeable_id: number;
+  youtube_id?: string;
   title: string | null;
 }
 
@@ -21,6 +22,8 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
 
   const backgroundColor = isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white';
   const opacity = isDragging ? 0.5 : 1;
+
+  const thumbnailUrl = `https://img.youtube.com/vi/${like.youtube_id}/hqdefault.jpg`;
 
   return (
     <div
@@ -41,9 +44,21 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
         maxWidth: '100%',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        gap: '12px',
       }}
     >
+      <span style={{ fontWeight: 'bold' }}>{index + 1}.</span>
+      <img
+        src={thumbnailUrl}
+        alt={`thumbnail-${like.likeable_id}`}
+        style={{
+          width: '64px',
+          height: '36px',
+          borderRadius: '4px',
+          objectFit: 'cover',
+          flexShrink: 0,
+        }}
+      />
       {like.title ? (
         <span
           style={{
@@ -54,7 +69,7 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
             textOverflow: 'ellipsis',
           }}
         >
-          {index + 1}. {like.title}
+          {like.title}
         </span>
       ) : (
         <span>不明な動画 (ID: {like.likeable_id})</span>
