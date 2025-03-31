@@ -50,66 +50,68 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
   return (
     <div
       ref={dragDropRef}
-      className="relative mb-1 p-2 pl-6 border border-gray-200 rounded-md shadow-sm flex items-center gap-4 bg-white transition-all"
+      className="relative mb-1 p-2 border border-gray-200 rounded-md shadow-sm bg-white transition-all"
       style={{
         opacity: isDragging ? 0.5 : 1,
         backgroundColor: isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white',
       }}
     >
       {/* ドラッグハンドル */}
-      <div className="absolute left-0 top-0 bottom-0 w-5 bg-gradient-rainbow rounded-l-md flex items-center justify-center">
-        <MdDragIndicator className="text-white cursor-move" size={14} />
+      <div className="w-full h-5 bg-gradient-rainbow rounded-t-md flex items-center justify-center mb-2 cursor-move">
+        <MdDragIndicator className="text-white" size={14} />
       </div>
-      {/* サムネイル */}
-      <img
-        src={thumbnailUrl}
-        alt={`thumbnail-${video.id}`}
-        className="w-24 h-14 rounded-md object-cover flex-shrink-0"
-      />
+      {/* タイトル（上部に移動） */}
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-gray-500 text-sm font-medium">{index + 1}.</span>
+        <h2
+          className="text-blue-600 font-semibold text-sm cursor-pointer hover:underline truncate"
+          onClick={() => router.push(`/youtube_videos/${video.id}`)}
+          title={video.title}
+        >
+          {video.title}
+        </h2>
+      </div>
 
-      {/* メイン情報 */}
-      <div className="flex-1 min-w-0">
-        {/* タイトル */}
-        <div className="flex justify-between items-center w-full">
-          <h2
-            className="text-blue-600 font-semibold text-sm cursor-pointer hover:underline flex items-center gap-1 overflow-hidden min-w-0"
-            onClick={() => router.push(`/youtube_videos/${video.id}`)}
-            title={video.title}
-          >
-            <span className="text-gray-500 flex-shrink-0">{index + 1}.</span>
-            <span className="truncate">{video.title}</span>
-          </h2>
-        </div>
+      {/* メインコンテンツ横並び */}
+      <div className="flex flex-col items-start gap-2">
+        {/* サムネイル */}
+        <img
+          src={thumbnailUrl}
+          alt={`thumbnail-${video.id}`}
+          className="w-40 h-24 rounded-md object-cover mx-auto"
+        />
         {/* メタ情報 */}
-        <div className="mt-2 text-xs text-gray-600 space-y-1 hidden md:block">
+        <div className="w-full text-xs text-gray-600 space-y-1 hidden md:block">
           <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
           <p>動画時間: {formatDuration(video.duration)}</p>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <FavoriteIcon className="text-red-500 mr-1" fontSize="small" /> {video.likes_count}
             <span
-              className="flex items-center"
+              className="flex items-center flex-shrink-0 overflow-hidden"
               onMouseEnter={handlePopoverOpen}
               onMouseLeave={handlePopoverClose}
             >
               <NoteIcon className="text-blue-500 mr-1" fontSize="small" />
-              {video.notes_count}
+              <span className="truncate max-w-[24px]">{video.notes_count}</span>
               <SearchIcon className="ml-1" fontSize="small" />
             </span>
           </div>
-        </div>
-        <div className="mt-3">
-          <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
-        </div>
 
-        <VideoPopover
-          open={open}
-          anchorEl={anchorEl}
-          handlePopoverClose={handlePopoverClose}
-          relatedNotes={relatedNotes}
-          playerRef={playerRef}
-        />
+          <div className="mt-1 text-[10px]">
+            <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
+          </div>
+        </div>
       </div>
+
+      <VideoPopover
+        open={open}
+        anchorEl={anchorEl}
+        handlePopoverClose={handlePopoverClose}
+        relatedNotes={relatedNotes}
+        playerRef={playerRef}
+      />
     </div >
+
   );
 };
 
