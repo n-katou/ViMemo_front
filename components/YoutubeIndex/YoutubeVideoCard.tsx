@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Like } from '../../types/like';
 import { Note } from '../../types/note'; // Note型のインポート
@@ -17,6 +17,7 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { useMediaQuery } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 
 
 // YoutubeVideoCardコンポーネントのプロパティ型を定義
@@ -39,6 +40,8 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   const [isHovered, setIsHovered] = useState(false); // PC用
   const [isActive, setIsActive] = useState(false);   // モバイル用
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [cardRect, setCardRect] = useState<{ top: number; left: number } | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -80,48 +83,39 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
 
   const isVisible = isMobile ? isActive : isHovered;
 
-  React.useEffect(() => {
-    if (!isActive) {
-      setIsHovered(false);
+  useEffect(() => {
+    if (isHovered && cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      setCardRect({ top: rect.top + window.scrollY, left: rect.left });
     }
-  }, [isActive]);
+  }, [isHovered]);
 
-  return (
-    <div
-      className="relative rounded-lg overflow-hidden transition-all duration-300"
-      onMouseEnter={() => {
-        if (!isMobile) {
-          hoverTimeoutRef.current = setTimeout(() => setIsHovered(true), 400);
-        }
+  const CardContent = (
+    <motion.div
+      initial={{ scale: 1, opacity: 0 }}
+      animate={{ scale: 1.3, opacity: 1 }}
+      exit={{ scale: 1, opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="absolute bg-white rounded-xl shadow-xl overflow-hidden w-[320px] z-[9999]"
+      style={{
+        top: cardRect?.top, left: cardRect?.left, position: 'absolute', transform: 'translateX(-10%)',
+        transformOrigin: 'center'
       }}
-      onMouseLeave={() => {
-        if (!isMobile) {
-          if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-          setIsHovered(false);
-        }
-      }}
-      onClick={() => isMobile && setIsActive(true)}
     >
-      {isMobile && isActive && (
+      {isMobile && (
         <button
           onClick={(e) => {
-            e.stopPropagation(); // ← これで親のonClickが発火しない！
+            e.stopPropagation();
             handleCardClose();
           }}
-          className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-50 pointer-events-auto"
+          className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-[10000] pointer-events-auto"
         >
           ×
         </button>
       )}
-      {/* Wrapper 全体を motion.div にして高さ調整 */}
-      <motion.div
-        initial={{ height: 180 }}
-        animate={{ height: isVisible ? 390 : 180 }}
-        transition={{ duration: 0.4 }}
-        className="relative bg-white rounded-lg shadow-lg overflow-hidden"
-      >
+      <div className="w-full bg-white rounded-xl shadow-xl overflow-hidden">
         {/* 動画部分 */}
-        <div className="relative w-full h-[180px]">
+        <div className="relative h-[180px] w-[320px]">
           {isVisible ? (
             <ReactPlayer
               url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
@@ -135,6 +129,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
                 top: 0,
                 left: 0,
                 pointerEvents: 'none',
+                zIndex: 20,
               }}
             />
           ) : (
@@ -171,7 +166,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="p-4 bg-white rounded-b-lg shadow-lg border border-gray-200"
+              className="p-4 bg-white rounded-b-lg shadow-lg border border-gray-200 max-h-[300px] overflow-y-auto"
             >
               <h2
                 onClick={() => handleTitleClick(video.id)}
@@ -200,6 +195,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
               <Popover
                 id="mouse-over-popover"
                 sx={{
+                  zIndex: 10000,
                   pointerEvents: 'none',
                   '.MuiPopover-paper': {
                     width: '600px',
@@ -256,7 +252,45 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+
+      </div>
+    </motion.div>
+  );
+
+  return (
+    <div
+      ref={cardRef}
+      className="relative w-80 h-[180px] cursor-pointer"
+      onMouseEnter={() => {
+        if (!isMobile) {
+          hoverTimeoutRef.current = setTimeout(() => {
+            setIsHovered(true);
+            setIsActive(true);
+          }, 400);
+        }
+      }}
+      onMouseLeave={() => {
+        if (!isMobile) {
+          if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+          setIsHovered(false);
+          setIsActive(false);
+        }
+      }}
+      onClick={() => {
+        if (isMobile) {
+          setIsActive(true);
+          setIsHovered(true);
+        }
+      }}
+    >
+      <div className="relative h-[180px] w-80 overflow-visible">
+        <img
+          src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
+          alt={video.title}
+          className="w-full h-full object-cover rounded-lg"
+        />
+        {isVisible && cardRect && createPortal(CardContent, document.body)}
+      </div>
     </div>
 
   );
