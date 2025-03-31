@@ -42,22 +42,8 @@ const FavoriteVideosPage: React.FC = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className={`container mx-auto py-8 px-4 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
-        <h1 className="text-3xl font-bold">いいねしたYoutube一覧</h1>
-
-        <div className="flex justify-end mb-8">
-          <select
-            value={itemsPerPage}
-            onChange={handleItemsPerPageChange}
-            className={`form-select ${theme === 'light' ? 'bg-white border border-gray-400 text-[#818cf8]' : 'bg-gray-800 border-gray-600 text-white'} ml-4`}
-          >
-            <option value={10}>10件表示</option>
-            <option value={15}>15件表示</option>
-            <option value={20}>20件表示</option>
-            <option value={10000000}>全件表示</option>
-          </select>
-        </div>
-
+      <div className={`w-full px-6 md:px-12 py-8 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
+        <h1 className="text-3xl font-bold mb-6">いいねしたYoutube一覧</h1>
         {videos && videos.length > 0 ? (
           <>
             {videos.length > 0 && videos[currentVideoIndex] && (
@@ -72,7 +58,19 @@ const FavoriteVideosPage: React.FC = () => {
                 style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '2rem' }}
               />
             )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+            <div className="flex justify-end mb-12">
+              <select
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                className={`form-select ${theme === 'light' ? 'bg-white border border-gray-400 text-[#818cf8]' : 'bg-gray-800 border-gray-600 text-white'} ml-4`}
+              >
+                <option value={10}>10件表示</option>
+                <option value={15}>15件表示</option>
+                <option value={20}>20件表示</option>
+                <option value={10000000}>全件表示</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {videos.map((video, index) => (
                 <VideoCard
                   key={video.id}
