@@ -99,6 +99,17 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
       className="absolute bg-white rounded-xl shadow-xl overflow-hidden w-[320px] z-[9999]"
       style={{ top: cardRect?.top, left: cardRect?.left, position: 'absolute' }}
     >
+      {isMobile && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCardClose();
+          }}
+          className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-[10000] pointer-events-auto"
+        >
+          ×
+        </button>
+      )}
       <div className="w-full bg-white rounded-xl shadow-xl overflow-hidden">
         {/* 動画部分 */}
         <div className="relative h-[180px] w-96">
@@ -267,17 +278,6 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
         }
       }}
     >
-      {isMobile && isActive && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleCardClose();
-          }}
-          className="absolute top-2 left-2 text-white bg-black bg-opacity-60 rounded-full w-8 h-8 flex items-center justify-center z-50 pointer-events-auto"
-        >
-          ×
-        </button>
-      )}
       <div className="relative h-[180px] w-80 overflow-visible">
         <img
           src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
