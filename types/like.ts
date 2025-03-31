@@ -11,4 +11,5 @@ export interface Like {
   created_at: string;
   updated_at: string;
   user_id: number;
+  youtube_id?: string;
 }

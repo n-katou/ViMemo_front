@@ -3,14 +3,7 @@ import Button from '@mui/material/Button';
 import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
-
-// 動画のLike型を定義
-interface Like {
-  id: number;
-  likeable_id: number;
-  youtube_id?: string;
-  title: string | null;
-}
+import { Like } from '../../../types/like';
 
 // プレイリストの1つのアイテムコンポーネント
 interface PlaylistItemProps {
