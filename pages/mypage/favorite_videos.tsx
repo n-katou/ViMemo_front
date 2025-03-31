@@ -42,7 +42,7 @@ const FavoriteVideosPage: React.FC = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className={`container mx-auto py-8 px-4 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
+      <div className={`w-full px-6 md:px-12 py-8 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
         <h1 className="text-3xl font-bold">いいねしたYoutube一覧</h1>
 
         <div className="flex justify-end mb-8">
@@ -72,7 +72,7 @@ const FavoriteVideosPage: React.FC = () => {
                 style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '2rem' }}
               />
             )}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {videos.map((video, index) => (
                 <VideoCard
                   key={video.id}

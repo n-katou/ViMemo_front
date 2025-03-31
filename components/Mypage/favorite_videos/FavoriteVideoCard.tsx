@@ -50,15 +50,15 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
   return (
     <div
       ref={dragDropRef}
-      className="mb-3 p-4 border border-gray-200 rounded-md shadow-sm flex items-start gap-4 bg-white transition-all"
+      className="relative mb-1 p-2 pl-6 border border-gray-200 rounded-md shadow-sm flex items-center gap-4 bg-white transition-all"
       style={{
         opacity: isDragging ? 0.5 : 1,
         backgroundColor: isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white',
       }}
     >
       {/* ドラッグハンドル */}
-      <div className="flex items-center justify-center w-8 h-full bg-gradient-rainbow rounded-md">
-        <MdDragIndicator className="text-white cursor-move" size={20} />
+      <div className="absolute left-0 top-0 bottom-0 w-5 bg-gradient-rainbow rounded-l-md flex items-center justify-center">
+        <MdDragIndicator className="text-white cursor-move" size={14} />
       </div>
       {/* サムネイル */}
       <img
@@ -70,32 +70,35 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
       {/* メイン情報 */}
       <div className="flex-1 min-w-0">
         {/* タイトル */}
-        <h2
-          className="text-blue-600 font-semibold text-sm cursor-pointer hover:underline truncate flex items-center gap-1"
-          onClick={() => router.push(`/youtube_videos/${video.id}`)}
-          title={video.title}
-        >
-          <span className="text-gray-500">{index + 1}.</span>
-          {video.title}
-        </h2>
-
-        {/* メタ情報 */}
-        <div className="text-xs text-gray-600 mt-1 flex flex-wrap gap-x-4 gap-y-1">
-          <span>公開日: {new Date(video.published_at).toLocaleDateString()}</span>
-          <span>動画時間: {formatDuration(video.duration)}</span>
-          <span className="flex items-center">
-            <FavoriteIcon className="text-red-500 mr-1" fontSize="small" />
-            {video.likes_count}
-          </span>
-          <span
-            className="flex items-center"
-            onMouseEnter={handlePopoverOpen}
-            onMouseLeave={handlePopoverClose}
+        <div className="flex justify-between items-center w-full">
+          <h2
+            className="text-blue-600 font-semibold text-sm cursor-pointer hover:underline truncate flex items-center gap-1"
+            onClick={() => router.push(`/youtube_videos/${video.id}`)}
+            title={video.title}
           >
-            <NoteIcon className="text-blue-500 mr-1" fontSize="small" />
-            {video.notes_count}
-            <SearchIcon className="ml-1" fontSize="small" />
-          </span>
+            <span className="text-gray-500">{index + 1}.</span>
+            {video.title}
+          </h2>
+        </div>
+        {/* メタ情報 */}
+        <div className="mt-2 text-xs text-gray-600 space-y-1">
+          <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
+          <p>動画時間: {formatDuration(video.duration)}</p>
+          <div className="flex items-center gap-2">
+            <FavoriteIcon className="text-red-500 mr-1" fontSize="small" /> {video.likes_count}
+            <span
+              className="flex items-center"
+              onMouseEnter={handlePopoverOpen}
+              onMouseLeave={handlePopoverClose}
+            >
+              <NoteIcon className="text-blue-500 mr-1" fontSize="small" />
+              {video.notes_count}
+              <SearchIcon className="ml-1" fontSize="small" />
+            </span>
+          </div>
+          <div className="mt-3">
+            <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
+          </div>
         </div>
 
         <VideoPopover
@@ -106,12 +109,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
           playerRef={playerRef}
         />
       </div>
-
-      {/* Likeボタン */}
-      <div className="pl-2 pt-1">
-        <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
-      </div>
-    </div>
+    </div >
   );
 };
 
