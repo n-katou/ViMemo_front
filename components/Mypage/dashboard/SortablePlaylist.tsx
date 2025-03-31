@@ -73,21 +73,7 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
         console.log('like:', like),
         <button
           onClick={handleClick}
-          style={{
-            display: 'inline-block',
-            maxWidth: '100%',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            background: 'none',
-            border: 'none',
-            textAlign: 'left',
-            padding: 0,
-            margin: 0,
-            color: '#2563eb', // 青系
-            fontWeight: 'bold',
-            cursor: 'pointer',
-          }}
+          className="text-blue-600 font-bold hover:underline hover:text-blue-800 transition duration-200 ease-in-out max-w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
         >
           {like.title}
         </button>
