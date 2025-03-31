@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { YoutubeVideo } from '../../../types/youtubeVideo';
 import { Note } from '../../../types/note';
@@ -11,6 +11,7 @@ import { formatDuration } from '../../YoutubeShow/youtubeShowUtils';
 import { MdDragIndicator } from 'react-icons/md';
 import LikeButton from './LikeButton';
 import VideoPopover from './VideoPopover';
+import ReactPlayer from 'react-player/youtube';
 
 interface VideoCardProps {
   video: YoutubeVideo;
@@ -39,6 +40,8 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
   const relatedNotes = notes.filter(note => note.youtube_video_id === video.id);
   const thumbnailUrl = `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
 
+  const [isPlaying, setIsPlaying] = useState(false);
+
   const handleLikeClick = async () => {
     if (video.liked && currentUser && video.likeId) {
       await handleUnlikeVideo(video.id, video.likeId);
@@ -64,11 +67,34 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
       <div className="flex flex-col md:flex-col items-start gap-2 md:items-start">
         <div className="flex flex-row md:flex-col items-start gap-2 w-full">
           {/* サムネイル */}
-          <img
-            src={thumbnailUrl}
-            alt={`thumbnail-${video.id}`}
-            className="w-24 h-16 md:w-40 md:h-28 rounded-md object-cover flex-shrink-0 md:mx-auto"
-          />
+          <div className="relative w-24 h-16 md:w-40 md:h-28 mx-auto">
+            {isPlaying ? (
+              <div className="relative w-full h-full">
+                <ReactPlayer
+                  url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
+                  playing
+                  controls
+                  width="100%"
+                  height="100%"
+                  onEnded={() => setIsPlaying(false)}
+                />
+                {/* 閉じるボタン（スマホでも押しやすく） */}
+                <button
+                  className="absolute top-1 right-1 bg-black bg-opacity-50 rounded-full p-1 z-10"
+                  onClick={() => setIsPlaying(false)}
+                >
+                  <span className="text-white text-sm">×</span>
+                </button>
+              </div>
+            ) : (
+              <img
+                src={thumbnailUrl}
+                alt={`thumbnail-${video.id}`}
+                className="w-full h-full rounded-md object-cover cursor-pointer"
+                onClick={() => setIsPlaying(true)}
+              />
+            )}
+          </div>
           {/* タイトル（サムネイルの右側） */}
           <div className="flex items-center gap-1 w-full overflow-hidden">
             <span className="text-gray-500 text-sm font-medium flex-shrink-0">{index + 1}.</span>
