@@ -41,6 +41,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
   const thumbnailUrl = `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   const handleLikeClick = async () => {
     if (video.liked && currentUser && video.likeId) {
@@ -67,23 +68,36 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
       <div className="flex flex-col md:flex-col items-start gap-2 md:items-start">
         <div className="flex flex-row md:flex-col items-start gap-2 w-full">
           {/* サムネイル */}
-          <div className="relative w-24 h-16 md:w-40 md:h-28 mx-auto">
+          <div className="relative w-32 h-24 md:w-40 md:h-28 mx-auto">
             {isPlaying ? (
               <div className="relative w-full h-full">
                 <ReactPlayer
                   url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
                   playing
-                  controls
+                  controls={false}
+                  muted={isMuted}
                   width="100%"
                   height="100%"
                   onEnded={() => setIsPlaying(false)}
                 />
+                <div
+                  className="absolute inset-0 z-10"
+                  onClick={() => setIsPlaying(false)}
+                ></div>
                 {/* 閉じるボタン（スマホでも押しやすく） */}
                 <button
                   className="absolute top-1 right-1 bg-black bg-opacity-50 rounded-full p-1 z-10"
                   onClick={() => setIsPlaying(false)}
                 >
                   <span className="text-white text-sm">×</span>
+                </button>
+                <button
+                  className="absolute bottom-1 right-1 bg-black bg-opacity-50 rounded-full p-1 z-10"
+                  onClick={() => setIsMuted(!isMuted)}
+                >
+                  <span className="text-white text-xs">
+                    {isMuted ? '🔇' : '🔊'}
+                  </span>
                 </button>
               </div>
             ) : (
