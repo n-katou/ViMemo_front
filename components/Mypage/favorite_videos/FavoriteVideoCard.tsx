@@ -70,8 +70,8 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
             className="w-24 h-16 rounded-md object-cover flex-shrink-0"
           />
           {/* タイトル（サムネイルの右側） */}
-          <div className="flex items-center gap-1">
-            <span className="text-gray-500 text-sm font-medium">{index + 1}.</span>
+          <div className="flex items-center gap-1 w-full overflow-hidden">
+            <span className="text-gray-500 text-sm font-medium flex-shrink-0">{index + 1}.</span>
             <h2
               className="text-blue-600 font-semibold text-sm cursor-pointer hover:underline truncate"
               onClick={() => router.push(`/youtube_videos/${video.id}`)}
