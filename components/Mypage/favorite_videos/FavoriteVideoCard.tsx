@@ -81,7 +81,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
           </h2>
         </div>
         {/* メタ情報 */}
-        <div className="mt-2 text-xs text-gray-600 space-y-1">
+        <div className="mt-2 text-xs text-gray-600 space-y-1 hidden md:block">
           <p>公開日: {new Date(video.published_at).toLocaleDateString()}</p>
           <p>動画時間: {formatDuration(video.duration)}</p>
           <div className="flex items-center gap-2">
@@ -96,9 +96,9 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
               <SearchIcon className="ml-1" fontSize="small" />
             </span>
           </div>
-          <div className="mt-3">
-            <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
-          </div>
+        </div>
+        <div className="mt-3">
+          <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
         </div>
 
         <VideoPopover
