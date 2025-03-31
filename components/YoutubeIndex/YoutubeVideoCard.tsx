@@ -97,7 +97,10 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
       exit={{ scale: 1, opacity: 0 }}
       transition={{ duration: 0.3 }}
       className="absolute bg-white rounded-xl shadow-xl overflow-hidden w-[320px] z-[9999]"
-      style={{ top: cardRect?.top, left: cardRect?.left, position: 'absolute' }}
+      style={{
+        top: cardRect?.top, left: cardRect?.left, position: 'absolute', transform: 'translateX(-10%)',
+        transformOrigin: 'center'
+      }}
     >
       {isMobile && (
         <button
@@ -112,7 +115,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
       )}
       <div className="w-full bg-white rounded-xl shadow-xl overflow-hidden">
         {/* 動画部分 */}
-        <div className="relative h-[180px] w-96">
+        <div className="relative h-[180px] w-[320px]">
           {isVisible ? (
             <ReactPlayer
               url={`https://www.youtube.com/watch?v=${video.youtube_id}`}
@@ -126,6 +129,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
                 top: 0,
                 left: 0,
                 pointerEvents: 'none',
+                zIndex: 20,
               }}
             />
           ) : (
