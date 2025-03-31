@@ -48,47 +48,57 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
     }
   };
 
+  const thumbnailUrl = `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
+
   return (
     <div
       ref={dragDropRef}
-      className="bg-white shadow-lg rounded-lg overflow-hidden youtube-video-card group"
+      className="mb-3"
       style={{
         opacity: isDragging ? 0.5 : 1,
         backgroundColor: isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white',
-        transition: 'background-color 0.2s, transform 0.2s',
-        transform: isDragging ? 'scale(1.02)' : 'scale(1)',
-        zIndex: isDragging ? 1000 : 'auto',
+        padding: '10px 14px',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+        cursor: 'pointer',
+        transition: 'background-color 0.3s ease',
       }}
     >
       <div className="drag-handle cursor-move bg-gradient-rainbow p-2 flex items-center justify-center">
-        <MdDragIndicator className="text-white mr-2" />
-        <p className="text-white text-sm">ドラッグして順番を変更</p>
+        <MdDragIndicator className="text-white-400" size={20} />
       </div>
-      <VideoContainer className="hidden md:block relative w-full h-0 pb-[56.25%]">
-        <img
-          src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
-          alt="YouTubeサムネイル"
-          className="absolute top-0 left-0 w-full h-full object-cover"
-        />
-      </VideoContainer>
-      <CardContentBox>
-        <div className="flex justify-between items-center">
-          <h2
-            className="text-xl font-bold text-blue-600 cursor-pointer hover:underline group-hover:text-blue-700 truncate"
-            onClick={() => router.push(`/youtube_videos/${video.id}`)}
-            style={{ maxWidth: '70%' }}
-            title={video.title}
-          >
-            {video.title}
-          </h2>
-        </div>
-        <div className="hidden md:block">
+      <span style={{ width: '20px', textAlign: 'right', fontWeight: 'bold' }}>{index + 1}.</span>
+      <img
+        src={thumbnailUrl}
+        alt={`thumbnail-${video.id}`}
+        style={{
+          width: '64px',
+          height: '36px',
+          borderRadius: '4px',
+          objectFit: 'cover',
+          flexShrink: 0,
+        }}
+      />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <h2
+          className="text-xl font-bold text-blue-600 cursor-pointer hover:underline group-hover:text-blue-700 truncate"
+          onClick={() => router.push(`/youtube_videos/${video.id}`)}
+          style={{ maxWidth: '70%' }}
+          title={video.title}
+        >
+          {video.title}
+        </h2>
+        <div className="flex items-center text-xs text-gray-600 gap-4 mt-1">
           <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
           <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
-          <div className="flex items-center">
+          <span className="flex items-center">
             <FavoriteIcon className="text-red-500 mr-1" />
             <p className="text-gray-600">{video.likes_count}</p>
-          </div>
+          </span>
           <div className="flex items-center" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
             <NoteIcon className="text-blue-500 mr-1" />
             <p className="text-gray-600 flex items-center">
@@ -102,11 +112,11 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
             relatedNotes={relatedNotes}
             playerRef={playerRef}
           />
+          <LikeButtonContainer className="block md:block mt-2">
+            <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
+          </LikeButtonContainer>
         </div>
-        <LikeButtonContainer className="block md:block mt-2">
-          <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
-        </LikeButtonContainer>
-      </CardContentBox>
+      </div>
     </div>
   );
 };
