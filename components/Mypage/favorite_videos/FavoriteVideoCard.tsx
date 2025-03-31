@@ -67,7 +67,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
           <img
             src={thumbnailUrl}
             alt={`thumbnail-${video.id}`}
-            className="w-24 h-16 rounded-md object-cover flex-shrink-0"
+            className="w-24 h-16 md:w-40 md:h-28 rounded-md object-cover flex-shrink-0 md:mx-auto"
           />
           {/* タイトル（サムネイルの右側） */}
           <div className="flex items-center gap-1 w-full overflow-hidden">
