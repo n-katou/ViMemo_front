@@ -11,6 +11,7 @@ import { VideoContainer, CardContentBox, LikeButtonContainer } from '../../../st
 import LikeButton from './LikeButton';
 import VideoPopover from './VideoPopover';
 import { formatDuration } from '../../YoutubeShow/youtubeShowUtils';
+import { MdDragIndicator } from 'react-icons/md';
 
 interface VideoCardProps {
   video: YoutubeVideo;
@@ -60,13 +61,14 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
       }}
     >
       <div className="drag-handle cursor-move bg-gradient-rainbow p-2 flex items-center justify-center">
+        <MdDragIndicator className="text-white mr-2" />
         <p className="text-white text-sm">ドラッグして順番を変更</p>
       </div>
-      <VideoContainer className="hidden md:block">
-        <iframe
-          src={`https://www.youtube.com/embed/${video.youtube_id}`}
-          allowFullScreen
-          ref={playerRef}
+      <VideoContainer className="hidden md:block relative w-full h-0 pb-[56.25%]">
+        <img
+          src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
+          alt="YouTubeサムネイル"
+          className="absolute top-0 left-0 w-full h-full object-cover"
         />
       </VideoContainer>
       <CardContentBox>
