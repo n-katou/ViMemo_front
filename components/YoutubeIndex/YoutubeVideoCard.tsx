@@ -195,6 +195,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
               <Popover
                 id="mouse-over-popover"
                 sx={{
+                  zIndex: 10000,
                   pointerEvents: 'none',
                   '.MuiPopover-paper': {
                     width: '600px',
