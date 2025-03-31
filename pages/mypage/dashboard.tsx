@@ -97,7 +97,15 @@ const Dashboard = () => {
           </div>
 
           {/* プレイリストエリア */}
-          <div className="w-full md:w-1/3 bg-white shadow-md rounded-lg p-6">
+          <div
+            className="w-full md:w-1/3 bg-white shadow-md rounded-lg p-6"
+            style={{
+              height: '550px', // ← プレイヤーに合わせて完全固定
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
             <SortablePlaylist youtubeVideoLikes={sortedVideoLikes} moveItem={handleMoveItem} />
           </div>
         </div>

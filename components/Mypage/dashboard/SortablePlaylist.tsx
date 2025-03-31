@@ -98,7 +98,13 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
         再生中のプレイリスト（ドラッグ&ドロップで並び替え可能）
       </h2>
 
-      <div style={{ position: 'relative', maxHeight: '390px', overflowY: 'scroll' }}>
+      <div
+        style={{
+          height: '390px',
+          overflowY: 'auto',
+          position: 'relative',
+        }}
+      >
         {youtubeVideoLikes
           .slice(0, isExpanded ? youtubeVideoLikes.length : maxVisibleItems)
           .map((like, index) => (
