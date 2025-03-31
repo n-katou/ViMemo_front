@@ -72,12 +72,12 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
         {/* タイトル */}
         <div className="flex justify-between items-center w-full">
           <h2
-            className="text-blue-600 font-semibold text-sm cursor-pointer hover:underline truncate flex items-center gap-1"
+            className="text-blue-600 font-semibold text-sm cursor-pointer hover:underline flex items-center gap-1 overflow-hidden min-w-0"
             onClick={() => router.push(`/youtube_videos/${video.id}`)}
             title={video.title}
           >
-            <span className="text-gray-500">{index + 1}.</span>
-            {video.title}
+            <span className="text-gray-500 flex-shrink-0">{index + 1}.</span>
+            <span className="truncate">{video.title}</span>
           </h2>
         </div>
         {/* メタ情報 */}
