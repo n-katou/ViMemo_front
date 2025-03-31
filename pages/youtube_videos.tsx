@@ -135,7 +135,7 @@ const YoutubeVideosPage: React.FC = () => {
           <div className="relative w-full pb-4 overflow-visible">
             <button
               onClick={() => scrollByBlock('left', scrollContainerRef)}
-              className="absolute z-50 -left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
+              className="absolute z-50 -left-4 top-[90px] bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full transition-transform duration-300 hover:scale-110"
             >
               ◀
             </button>
@@ -166,7 +166,7 @@ const YoutubeVideosPage: React.FC = () => {
             </div>
             <button
               onClick={() => scrollByBlock('right', scrollContainerRef)}
-              className="absolute z-50 -right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full z-20 transition-transform duration-300 hover:scale-110"
+              className="absolute z-50 -right-4 top-[90px] bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full transition-transform duration-300 hover:scale-110"
             >
               ▶
             </button>
