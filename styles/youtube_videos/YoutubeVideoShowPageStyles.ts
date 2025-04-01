@@ -23,27 +23,3 @@ export const useCustomToggleButtonStyles = () => {
 };
 
 export const CustomToggleButton = styled(ToggleButton)(useCustomToggleButtonStyles);
-
-export const useSnackbarStyles = () => ({
-  top: '20px',
-  width: '90%',
-  maxWidth: '600px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  p: 2, // パディングを追加
-  '@media (max-width: 600px)': {
-    width: '90%',
-    fontSize: '0.875rem',
-    padding: '8px', // モバイルでのパディングを追加
-  }
-});
-
-export const useAlertStyles = () => ({
-  width: '100%',
-  fontSize: '1rem',
-  fontWeight: 'bold',
-  boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-  '@media (max-width: 600px)': {
-    fontSize: '0.875rem' // モバイルでのフォントサイズを調整
-  }
-});

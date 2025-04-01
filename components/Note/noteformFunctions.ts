@@ -1,18 +1,24 @@
 import { useState } from 'react';
 
-export const useTimestamp = (player: any) => {
+export const useTimestamp = (getPlayer: () => any) => {
   const [timestampMinutes, setTimestampMinutes] = useState('');
   const [timestampSeconds, setTimestampSeconds] = useState('');
 
-  const setTimestamp = () => {
-    if (player && player.getCurrentTime) {
-      const currentTime = player.getCurrentTime();
-      const minutes = Math.floor(currentTime / 60);
-      const seconds = Math.floor(currentTime % 60);
-      setTimestampMinutes(minutes.toString());
-      setTimestampSeconds(seconds.toString());
-    } else {
-      console.log('Player or getCurrentTime is not available');
+  const setTimestamp = async () => {
+    const player = getPlayer(); // 毎回最新のplayerを取得
+
+    if (player?.getCurrentTime) {
+      try {
+        const time = await player.getCurrentTime();
+        if (typeof time === 'number' && !isNaN(time)) {
+          const minutes = Math.floor(time / 60);
+          const seconds = Math.floor(time % 60);
+          setTimestampMinutes(minutes.toString());
+          setTimestampSeconds(seconds.toString());
+        }
+      } catch {
+        // 無視（アラート不要）
+      }
     }
   };
 

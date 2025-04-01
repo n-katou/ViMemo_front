@@ -28,7 +28,7 @@ export const NoteForm: React.FC<NoteFormProps> = ({ addNote, player, onCancel })
     timestampSeconds,
     setTimestampSeconds,
     setTimestamp,
-  } = useTimestamp(player);
+  } = useTimestamp(() => player);
 
   // フォームの送信を処理する関数
   const handleSubmit = (e: React.FormEvent) => {
