@@ -93,8 +93,8 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
       </div>
       {/* フォームの送信とキャンセルボタン */}
       <div className="flex justify-end space-x-4">
-        <button type="submit" className="btn btn-primary">メモを更新</button>
         <button type="button" className="btn btn-secondary" onClick={() => setIsEditing(false)}>キャンセル</button>
+        <button type="submit" className="btn btn-primary">メモを更新</button>
       </div>
     </form>
   );

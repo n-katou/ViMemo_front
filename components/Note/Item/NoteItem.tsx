@@ -46,7 +46,6 @@ const NoteItem: React.FC<NoteItemProps> = ({
   const avatarUrl = note.user?.avatar ? note.user.avatar : defaultAvatarUrl;
   const ref = useRef<HTMLDivElement>(null);
 
-  // 背景色を設定
   const ownerBgColor = '#38bdf8';
   const otherUserBgColor = '#e879f9';
   const dragBgColor = '#22eec5';
@@ -56,7 +55,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
     if (note.likes) {
       setLiked(note.likes.some((like: Like) => like.user_id === Number(currentUser?.id)));
     }
-    setIsInitialized(true); // 初期化が完了したことを設定
+    setIsInitialized(true);
   }, [note, currentUser]);
 
   const handleDelete = () => {
@@ -110,7 +109,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   return (
     <motion.div
       ref={ref}
-      className="note-item fixed-card-size border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6"
+      className="note-item border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6 h-[400px]"
       style={{
         backgroundColor: isDragging ? dragBgColor : bgColor,
         opacity: isDragging ? 0.8 : 1,
@@ -122,31 +121,34 @@ const NoteItem: React.FC<NoteItemProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, type: 'spring', stiffness: 100 }}
     >
-      <motion.div className="p-6 text-black" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex text-white items-center">
-            {avatarUrl && <Avatar src={avatarUrl} alt="User Avatar" sx={{ width: 48, height: 48, mr: 2 }} />}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <p className="text-xl font-bold">{note.user?.name || 'Unknown User'}</p>
-              <button onClick={handleTimestampClick} className="text-blue-700 hover:underline">
-                タイムスタンプ:{padZero(newMinutes)}:{padZero(newSeconds)}
-              </button>
-              <p className="text-white text-sm">{new Date(note.created_at).toLocaleString()}</p>
-            </motion.div>
+      <motion.div className="p-6 text-black h-full flex flex-col justify-between" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex text-white items-center">
+              {avatarUrl && <Avatar src={avatarUrl} alt="User Avatar" sx={{ width: 48, height: 48, mr: 2 }} />}
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <p className="text-xl font-bold break-words max-w-[160px]">{note.user?.name || 'Unknown User'}</p>
+                <button onClick={handleTimestampClick} className="text-blue-700 hover:underline">
+                  タイムスタンプ:{padZero(newMinutes)}:{padZero(newSeconds)}
+                </button>
+                <p className="text-white text-sm whitespace-nowrap">{new Date(note.created_at).toLocaleString()}</p>
+              </motion.div>
+            </div>
+            {isOwner && (
+              <Tooltip title="ドラッグして並び替え">
+                <div className="text-white cursor-move">
+                  <DragIndicatorIcon />
+                </div>
+              </Tooltip>
+            )}
           </div>
-          {isOwner && (
-            <Tooltip title="ドラッグして並び替え">
-              <div className="text-white cursor-move">
-                <DragIndicatorIcon />
-              </div>
-            </Tooltip>
-          )}
+          <div className="overflow-y-auto mb-1 h-[160px] scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 rounded">
+            <NoteContent note={note} />
+          </div>
         </div>
-        <div className="h-40 overflow-y-auto mb-1">
-          <NoteContent note={note} />
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
+        {isOwner && !note.is_visible && <div className="text-yellow-400 text-sm mt-1">非表示中</div>}
+        <div className="flex items-end justify-between mt-2">
+          <div className="flex flex-col items-center">
             {isInitialized && (
               <Tooltip title={liked ? 'いいねを取り消す' : 'いいね'}>
                 <motion.div initial={{ scale: 1 }} animate={{ scale: 1 }} transition={{ duration: 0 }}>
@@ -158,7 +160,6 @@ const NoteItem: React.FC<NoteItemProps> = ({
                 </motion.div>
               </Tooltip>
             )}
-            {!note.is_visible && isOwner && <p className="text-yellow-400 ml-2">非表示中</p>}
           </div>
           {isOwner && (
             <NoteActions
@@ -173,8 +174,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
             />
           )}
         </div>
+        {likeError && <div className="p-4 text-red-500">{likeError}</div>}
       </motion.div>
-      {likeError && <div className="p-4 text-red-500">{likeError}</div>}
     </motion.div>
   );
 };
