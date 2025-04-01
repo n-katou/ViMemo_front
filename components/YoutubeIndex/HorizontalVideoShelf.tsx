@@ -13,6 +13,8 @@ export type HorizontalVideoShelfProps = {
   onLike: (id: number) => Promise<void>;
   onUnlike: (id: number, likeId: number) => Promise<void>;
   setVideos: React.Dispatch<React.SetStateAction<YoutubeVideo[]>>;
+  showLikeButton?: boolean;
+  showSearchIcon?: boolean;
 };
 
 const HorizontalVideoShelf: React.FC<HorizontalVideoShelfProps> = ({
@@ -24,6 +26,8 @@ const HorizontalVideoShelf: React.FC<HorizontalVideoShelfProps> = ({
   onClickTitle,
   onLike,
   onUnlike,
+  showLikeButton,
+  showSearchIcon
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -73,6 +77,8 @@ const HorizontalVideoShelf: React.FC<HorizontalVideoShelfProps> = ({
                   notes={video.notes}
                   jwtToken={jwtToken}
                   setNotes={setNotes}
+                  showLikeButton={showLikeButton}
+                  showSearchIcon={showSearchIcon}
                 />
               </div>
             ))}

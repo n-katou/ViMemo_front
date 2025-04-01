@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import NoteForm from '../../components/Note/NoteForm';
 import NoteList from '../../components/Note/List/NoteList';
@@ -11,6 +11,13 @@ import { useTheme } from 'next-themes';
 import { CustomToggleButton, useSnackbarStyles, useAlertStyles } from '../../styles/youtube_videos/YoutubeVideoShowPageStyles';
 import { handleLikeVideo, handleUnlikeVideo, handleDeleteNote, handleEditNote, addNote, videoTimestampToSeconds, playFromTimestamp } from '../../components/YoutubeShow/youtubeShowUtils';
 import useYoutubeVideoShowPage from '../../hooks/youtube_videos/useYoutubeVideoShowPage';
+import HorizontalVideoShelf from '../../components/YoutubeIndex/HorizontalVideoShelf';
+import {
+  handleLikeVideo as handleLikeVideoSimple,
+  handleUnlikeVideo as handleUnlikeVideoSimple
+} from '../../components/YoutubeIndex/youtubeIndexUtils';
+import { isMatch, tokenize } from '../../components/YoutubeShow/searchMatchUtils';
+import { fetchYoutubeVideos } from '../../components/YoutubeIndex/youtubeIndexUtils';
 
 const YoutubeVideoShowPage: React.FC = () => {
   const {
@@ -40,6 +47,35 @@ const YoutubeVideoShowPage: React.FC = () => {
   const { theme } = useTheme();
   const snackbarStyles = useSnackbarStyles();
   const alertStyles = useAlertStyles();
+  const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
+
+  const [relatedVideos, setRelatedVideos] = useState<YoutubeVideo[]>([]);
+
+  // 関連動画を取得する際の fetch 処理（sortなし・ページング外す）
+  useEffect(() => {
+    const fetch = async () => {
+      const result = await fetchYoutubeVideos('', 1, 1000, ''); // ← sortなし、全件取得
+      if (result) {
+        setYoutubeVideos(result.videos);
+      }
+    };
+    fetch();
+  }, []);
+
+  useEffect(() => {
+    if (!video) return;
+
+    const keywords = tokenize(video.title).slice(0, 2); // 最大2つまで
+    console.log('抽出されたキーワード:', keywords);
+
+    const filtered = youtubeVideos.filter((v) => {
+      if (v.id === video.id) return false;
+      return keywords.some((kw) => isMatch(v, kw));
+    });
+
+    setRelatedVideos(filtered);
+    console.log('候補:', filtered.map((v) => v.title));
+  }, [video, youtubeVideos]);
 
   if (loading || dataLoading) {
     return <LoadingSpinner loading={loading || dataLoading} />;
@@ -72,6 +108,28 @@ const YoutubeVideoShowPage: React.FC = () => {
             />
             {likeError && <div className="text-red-500 text-center mt-4">{likeError}</div>}
           </div>
+          <HorizontalVideoShelf
+            title="関連動画"
+            videos={relatedVideos}
+            notes={notes}
+            jwtToken={jwtToken}
+            setNotes={setNotes}
+            onClickTitle={(id) => router.push(`/youtube_videos/${id}`)}
+            onLike={(id) =>
+              jwtToken && currentUser
+                ? handleLikeVideoSimple(id, jwtToken, currentUser, () => { })
+                : Promise.resolve()
+            }
+            onUnlike={(id, likeId) =>
+              jwtToken && currentUser
+                ? handleUnlikeVideoSimple(id, likeId, jwtToken, currentUser, () => { })
+                : Promise.resolve()
+            }
+            setVideos={() => { }}
+            showLikeButton={false}
+            showSearchIcon={false}
+          />
+
           {currentUser && jwtToken && (
             <div className="mb-8">
               <button
