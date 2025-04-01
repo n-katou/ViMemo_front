@@ -15,4 +15,5 @@ export interface YoutubeVideo {
   formattedDuration?: string;
   liked?: boolean;
   likeId?: number;
+  description: string;
 }
