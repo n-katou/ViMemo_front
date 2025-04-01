@@ -109,7 +109,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   return (
     <motion.div
       ref={ref}
-      className="note-item border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6 h-[400px]"
+      className="note-item border border-gray-200 rounded-lg shadow-md overflow-hidden mb-6 h-[380px]"
       style={{
         backgroundColor: isDragging ? dragBgColor : bgColor,
         opacity: isDragging ? 0.8 : 1,
