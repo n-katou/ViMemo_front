@@ -260,7 +260,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   return (
     <div
       ref={cardRef}
-      className="relative w-80 h-[180px] cursor-pointer"
+      className="relative w-full h-[180px] cursor-pointer"
       onMouseEnter={() => {
         if (!isMobile) {
           hoverTimeoutRef.current = setTimeout(() => {
@@ -283,7 +283,7 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
         }
       }}
     >
-      <div className="relative h-[180px] w-80 overflow-visible">
+      <div className="relative h-[180px] w-full overflow-visible">
         <img
           src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
           alt={video.title}

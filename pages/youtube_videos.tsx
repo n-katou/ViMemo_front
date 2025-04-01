@@ -100,6 +100,8 @@ const YoutubeVideosPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [youtubeVideos, isMobile]);
 
+  const [displayMode, setDisplayMode] = useState<'horizontal' | 'grid'>('horizontal');
+
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
 
@@ -120,7 +122,7 @@ const YoutubeVideosPage: React.FC = () => {
       ) : (
         <div className="w-full px-4 mb-12 relative z-0">
           <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r bg-clip-text flex items-center gap-2">絞り込み・検索結果</h3>
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-between items-center mb-4">
             <select
               value={sortOption}
               onChange={(e) => handleSortChange(e.target.value)}
@@ -131,71 +133,109 @@ const YoutubeVideosPage: React.FC = () => {
               <option value="likes_desc">いいね数順</option>
               <option value="notes_desc">メモ数順</option>
             </select>
-          </div>
-          <div className="relative w-full pb-4 overflow-visible">
             <button
-              onClick={() => scrollByBlock('left', scrollContainerRef)}
-              className="absolute z-50 -left-4 top-[90px] bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full transition-transform duration-300 hover:scale-110"
+              onClick={() => setDisplayMode(displayMode === 'horizontal' ? 'grid' : 'horizontal')}
+              className="ml-4 px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
             >
-              ◀
+              {displayMode === 'horizontal' ? 'グリッド表示に切り替え' : '横スクロールに戻す'}
             </button>
-            <div className="relative w-full pb-4 overflow-visible z-10">
-              <div className="mx-8 overflow-visible">
-                <div
-                  ref={scrollContainerRef}
-                  className="flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide snap-x snap-mandatory overflow-visible relative z-10"
-                >
-                  {youtubeVideos.map((video: YoutubeVideo) => (
-                    <div
-                      key={video.id}
-                      className="relative flex-shrink-0 w-80 snap-start overflow-visible z-10"
-                    >
-                      <YoutubeVideoCard
-                        video={video}
-                        handleTitleClick={handleTitleClick}
-                        handleLikeVideo={handleLikeVideoWrapper}
-                        handleUnlikeVideo={handleUnlikeVideoWrapper}
-                        notes={notes.filter(note => note.youtube_video_id === video.id)}
-                        jwtToken={jwtToken}
-                        setNotes={setNotes}
-                      />
-                    </div>
-                  ))}
+          </div>
+          {displayMode === 'horizontal' ? (
+            <div className="relative w-full pb-4 overflow-visible">
+              <button
+                onClick={() => scrollByBlock('left', scrollContainerRef)}
+                className="absolute z-50 -left-4 top-[90px] bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full transition-transform duration-300 hover:scale-110"
+              >
+                ◀
+              </button>
+              <div className="relative w-full pb-4 overflow-visible z-10">
+                <div className="mx-8 overflow-visible">
+                  <div
+                    ref={scrollContainerRef}
+                    className="flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide snap-x snap-mandatory overflow-visible relative z-10"
+                  >
+                    {youtubeVideos.map((video: YoutubeVideo) => (
+                      <div
+                        key={video.id}
+                        className="relative flex-shrink-0 w-80 snap-start overflow-visible z-10"
+                      >
+                        <YoutubeVideoCard
+                          video={video}
+                          handleTitleClick={handleTitleClick}
+                          handleLikeVideo={handleLikeVideoWrapper}
+                          handleUnlikeVideo={handleUnlikeVideoWrapper}
+                          notes={notes.filter(note => note.youtube_video_id === video.id)}
+                          jwtToken={jwtToken}
+                          setNotes={setNotes}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+              <button
+                onClick={() => scrollByBlock('right', scrollContainerRef)}
+                className="absolute z-50 -right-4 top-[90px] bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full transition-transform duration-300 hover:scale-110"
+              >
+                ▶
+              </button>
+              <div className="mt-6 mb-3 flex justify-center">
+                <PaginationComponent
+                  count={pagination.total_pages}
+                  page={pagination.current_page}
+                  onChange={handlePageChange}
+                />
+              </div>
             </div>
-            <button
-              onClick={() => scrollByBlock('right', scrollContainerRef)}
-              className="absolute z-50 -right-4 top-[90px] bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full transition-transform duration-300 hover:scale-110"
-            >
-              ▶
-            </button>
-            <div className="mt-6 mb-3 flex justify-center">
-              <PaginationComponent
-                count={pagination.total_pages}
-                page={pagination.current_page}
-                onChange={handlePageChange}
-              />
+          ) : (
+            <div className="mx-auto max-w-screen-xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-6 py-12">
+              {youtubeVideos.map((video: YoutubeVideo) => (
+                <div
+                  key={video.id}
+                  className="w-full"
+                >
+                  <YoutubeVideoCard
+                    video={video}
+                    handleTitleClick={handleTitleClick}
+                    handleLikeVideo={handleLikeVideoWrapper}
+                    handleUnlikeVideo={handleUnlikeVideoWrapper}
+                    notes={notes.filter(note => note.youtube_video_id === video.id)}
+                    jwtToken={jwtToken}
+                    setNotes={setNotes}
+                  />
+                </div>
+              ))}
+              <div className="col-span-full mt-6 flex justify-center">
+                <PaginationComponent
+                  count={pagination.total_pages}
+                  page={pagination.current_page}
+                  onChange={handlePageChange}
+                />
+              </div>
             </div>
-          </div>
+          )}
+          {displayMode === 'horizontal' && (
+            <>
+              {/* ランキング */}
+              <HorizontalVideoShelf title="おすすめ動画" videos={topLikedVideos} setVideos={setTopLikedVideos} notes={notes} jwtToken={jwtToken} setNotes={setNotes} onClickTitle={handleTitleClick} onLike={async (id) => { if (!jwtToken || !currentUser) return; await handleLikeVideo(id, jwtToken, currentUser, setTopLikedVideos); }} onUnlike={async (id, likeId) => { if (!jwtToken || !currentUser) return; await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopLikedVideos); }} />
+              <HorizontalVideoShelf title="注目動画" videos={topNotedVideos} setVideos={setTopNotedVideos} notes={notes} jwtToken={jwtToken} setNotes={setNotes} onClickTitle={handleTitleClick} onLike={async (id) => { if (!jwtToken || !currentUser) return; await handleLikeVideo(id, jwtToken, currentUser, setTopNotedVideos); }} onUnlike={async (id, likeId) => { if (!jwtToken || !currentUser) return; await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopNotedVideos); }} />
+              <HorizontalVideoShelf title="新着動画" videos={topRecentVideos} setVideos={setTopRecentVideos} notes={notes} jwtToken={jwtToken} setNotes={setNotes} onClickTitle={handleTitleClick} onLike={async (id) => { if (!jwtToken || !currentUser) return; await handleLikeVideo(id, jwtToken, currentUser, setTopRecentVideos); }} onUnlike={async (id, likeId) => { if (!jwtToken || !currentUser) return; await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopRecentVideos); }} />
+            </>
+          )}
+
+          {/* スナックバー */}
+          {flashMessage && (
+            <Snackbar open={showSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+              <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                {flashMessage}
+              </Alert>
+            </Snackbar>
+          )}
         </div>
-      )}
-
-      {/* ランキング */}
-      <HorizontalVideoShelf title="おすすめ動画" videos={topLikedVideos} setVideos={setTopLikedVideos} notes={notes} jwtToken={jwtToken} setNotes={setNotes} onClickTitle={handleTitleClick} onLike={async (id) => { if (!jwtToken || !currentUser) return; await handleLikeVideo(id, jwtToken, currentUser, setTopLikedVideos); }} onUnlike={async (id, likeId) => { if (!jwtToken || !currentUser) return; await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopLikedVideos); }} />
-      <HorizontalVideoShelf title="注目動画" videos={topNotedVideos} setVideos={setTopNotedVideos} notes={notes} jwtToken={jwtToken} setNotes={setNotes} onClickTitle={handleTitleClick} onLike={async (id) => { if (!jwtToken || !currentUser) return; await handleLikeVideo(id, jwtToken, currentUser, setTopNotedVideos); }} onUnlike={async (id, likeId) => { if (!jwtToken || !currentUser) return; await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopNotedVideos); }} />
-      <HorizontalVideoShelf title="新着動画" videos={topRecentVideos} setVideos={setTopRecentVideos} notes={notes} jwtToken={jwtToken} setNotes={setNotes} onClickTitle={handleTitleClick} onLike={async (id) => { if (!jwtToken || !currentUser) return; await handleLikeVideo(id, jwtToken, currentUser, setTopRecentVideos); }} onUnlike={async (id, likeId) => { if (!jwtToken || !currentUser) return; await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopRecentVideos); }} />
-
-      {/* スナックバー */}
-      {flashMessage && (
-        <Snackbar open={showSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-            {flashMessage}
-          </Alert>
-        </Snackbar>
       )}
     </div>
   );
 };
+
 
 export default YoutubeVideosPage;
