@@ -9,9 +9,10 @@ import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 import YoutubeHeroSection from '../components/YoutubeIndex/YoutubeHeroSection';
 import { useRouter } from 'next/router';
 import PaginationComponent from '../components/Pagination';
-import { useMediaQuery, Button } from '@mui/material';
+import { useMediaQuery } from '@mui/material';
 import { fetchRandomYoutubeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
 import HorizontalVideoShelf from '../components/YoutubeIndex/HorizontalVideoShelf';
+import VideoHorizontalScroll from '../components/YoutubeIndex/VideoHorizontalScroll';
 import SearchHeader from '../components/YoutubeIndex/SearchHeader';
 import useYoutubeVideoRankings from '../components/YoutubeIndex/useYoutubeVideoRankings';
 import { handleLikeVideo, handleUnlikeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
@@ -150,52 +151,19 @@ const YoutubeVideosPage: React.FC = () => {
             theme={theme}
           />
           {displayMode === 'horizontal' ? (
-            <div className="relative w-full pb-4 overflow-visible">
-              <button
-                onClick={() => scrollByBlock('left', scrollContainerRef)}
-                className="absolute z-50 -left-4 top-[90px] bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full transition-transform duration-300 hover:scale-110"
-              >
-                ◀
-              </button>
-              <div className="relative w-full pb-4 overflow-visible z-10">
-                <div className="mx-8 overflow-visible">
-                  <div
-                    ref={scrollContainerRef}
-                    className="flex overflow-x-auto gap-4 scroll-smooth scrollbar-hide snap-x snap-mandatory overflow-visible relative z-10"
-                  >
-                    {youtubeVideos.map((video: YoutubeVideo) => (
-                      <div
-                        key={video.id}
-                        className="relative flex-shrink-0 w-80 snap-start overflow-visible z-10"
-                      >
-                        <YoutubeVideoCard
-                          video={video}
-                          handleTitleClick={handleTitleClick}
-                          handleLikeVideo={handleLikeVideoWrapper}
-                          handleUnlikeVideo={handleUnlikeVideoWrapper}
-                          notes={notes.filter(note => note.youtube_video_id === video.id)}
-                          jwtToken={jwtToken}
-                          setNotes={setNotes}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => scrollByBlock('right', scrollContainerRef)}
-                className="absolute z-50 -right-4 top-[90px] bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-3 rounded-full transition-transform duration-300 hover:scale-110"
-              >
-                ▶
-              </button>
-              <div className="mt-6 mb-3 flex justify-center">
-                <PaginationComponent
-                  count={pagination.total_pages}
-                  page={pagination.current_page}
-                  onChange={handlePageChange}
-                />
-              </div>
-            </div>
+            <VideoHorizontalScroll
+              youtubeVideos={youtubeVideos}
+              notes={notes}
+              jwtToken={jwtToken}
+              scrollContainerRef={scrollContainerRef}
+              scrollByBlock={scrollByBlock}
+              handleTitleClick={handleTitleClick}
+              handleLikeVideo={handleLikeVideoWrapper}
+              handleUnlikeVideo={handleUnlikeVideoWrapper}
+              setNotes={setNotes}
+              pagination={pagination}
+              handlePageChange={handlePageChange}
+            />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-4 py-12">
               {youtubeVideos.map((video: YoutubeVideo) => (
