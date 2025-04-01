@@ -12,7 +12,15 @@ export const normalize = (str: string) =>
   str.toLowerCase().replace(/[！!・「」『』【】#\[\]()（）\s\d、。！？…~]/g, '').trim();
 
 export const isMatch = (video: YoutubeVideo, query: string): boolean => {
-  const normalizedQuery = normalize(query); // 例: "不可幸力"
-  const target = normalize(video.title + ' ' + video.description);
-  return target.includes(normalizedQuery);
+  const queryTokens = tokenize(query); // クエリを分割
+
+  const titleTokens = tokenize(video.title);
+  const descriptionTokens = tokenize(video.description || '');
+
+  const combinedTokens = [...titleTokens, ...descriptionTokens];
+
+  // クエリのいずれかが、タイトルまたは説明文のどれかに部分一致するか
+  return queryTokens.some((token) =>
+    combinedTokens.some((word) => word.includes(token))
+  );
 };

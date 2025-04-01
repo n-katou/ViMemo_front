@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { YoutubeVideo } from '../../types/youtubeVideo';
-import { Note } from '../../types/note';
-import { useAuth } from '../../context/AuthContext';
-import { fetchYoutubeVideos, handleLikeVideo, handleUnlikeVideo } from '../../components/YoutubeIndex/youtubeIndexUtils';
+import { YoutubeVideo } from '../../../types/youtubeVideo';
+import { Note } from '../../../types/note';
+import { useAuth } from '../../../context/AuthContext';
+import { fetchYoutubeVideos, handleLikeVideo, handleUnlikeVideo } from '../../../components/YoutubeIndex/youtubeIndexUtils';
 
 const ITEMS_PER_PAGE = 20;
 
