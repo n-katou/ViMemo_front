@@ -52,7 +52,7 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+    <div className="bg-gray-50 shadow-md rounded-xl overflow-hidden mb-8 border border-gray-200">
       <div className="relative video-wrapper">
         <YouTube
           videoId={video.youtube_id}
@@ -74,9 +74,11 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
             <h2 className="text-2xl font-bold mr-4 text-gray-600">{video.title}</h2>
-            <IconButton onClick={() => setIsCollapsed(!isCollapsed)}> {/* 詳細情報の表示/非表示を切り替えるボタン */}
-              {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-            </IconButton>
+            <div className="absolute top-2 right-2 z-10">
+              <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+              </IconButton>
+            </div>
           </div>
           <div className="flex items-center">
             <IconButton
@@ -95,22 +97,22 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
             <p className="text-gray-600 mb-4">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
             <p className="text-gray-600 mb-4">動画時間: {video.formattedDuration}</p>
             {currentUser && ( // ログインしている場合にいいねボタンを表示
-              <div className="flex items-center cursor-pointer" onClick={liked ? handleUnlike : handleLike}>
+              <div className="flex items-center gap-2 mt-2">
                 <IconButton
-                  color={liked ? 'secondary' : 'default'}
+                  onClick={liked ? handleUnlike : handleLike}
                   aria-label={liked ? 'Unlike' : 'Like'}
                   sx={{
-                    borderRadius: '50%',
-                    backgroundColor: liked ? '#ffebee' : 'transparent',
+                    backgroundColor: liked ? '#ffe4e6' : '#f0f0f0',
                     '&:hover': {
-                      backgroundColor: liked ? '#ffcdd2' : '#f5f5f5',
+                      backgroundColor: liked ? '#fecaca' : '#e0e0e0',
                     },
+                    borderRadius: '12px',
                     transition: 'background-color 0.3s',
                   }}
                 >
-                  {liked ? <FavoriteIcon style={{ color: 'red' }} /> : <FavoriteBorderIcon />}
+                  {liked ? <FavoriteIcon className="text-red-500" /> : <FavoriteBorderIcon />}
                 </IconButton>
-                <span className="ml-2 text-lg font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700">
                   {liked ? 'いいね済み' : 'いいねする'}
                 </span>
               </div>
