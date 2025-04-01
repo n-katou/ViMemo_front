@@ -138,27 +138,34 @@ const YoutubeVideoShowPage: React.FC = () => {
             onEdit={currentUser && jwtToken ? (noteId, newContent, newMinutes, newSeconds, newIsVisible) => handleEditNote(noteId, newContent, newMinutes, newSeconds, newIsVisible, jwtToken, video, setNotes) : undefined}
             player={playerRef.current}
           />
-          <HorizontalVideoShelf
-            title="関連動画"
-            videos={relatedVideos}
-            notes={notes}
-            jwtToken={jwtToken}
-            setNotes={setNotes} //空の情報
-            onClickTitle={(id) => router.push(`/youtube_videos/${id}`)}
-            onLike={(id) =>
-              jwtToken && currentUser
-                ? handleLikeVideoSimple(id, jwtToken, currentUser, () => { })
-                : Promise.resolve()
-            } //空の情報
-            onUnlike={(id, likeId) =>
-              jwtToken && currentUser
-                ? handleUnlikeVideoSimple(id, likeId, jwtToken, currentUser, () => { })
-                : Promise.resolve()
-            } //空の情報
-            setVideos={() => { }}  //空の情報
-            showLikeButton={false}
-            showSearchIcon={false}
-          />
+          {filteredNotes.length === 0 && (
+            <div className="my-12" />
+          )}
+          {relatedVideos.length > 0 ? (
+            <HorizontalVideoShelf
+              title="関連動画"
+              videos={relatedVideos}
+              notes={notes}
+              jwtToken={jwtToken}
+              setNotes={setNotes}
+              onClickTitle={(id) => router.push(`/youtube_videos/${id}`)}
+              onLike={(id) =>
+                jwtToken && currentUser
+                  ? handleLikeVideoSimple(id, jwtToken, currentUser, () => { })
+                  : Promise.resolve()
+              }
+              onUnlike={(id, likeId) =>
+                jwtToken && currentUser
+                  ? handleUnlikeVideoSimple(id, likeId, jwtToken, currentUser, () => { })
+                  : Promise.resolve()
+              }
+              setVideos={() => { }}
+              showLikeButton={false}
+              showSearchIcon={false}
+            />
+          ) : (
+            <div className="text-center text-gray-400 mt-12">関連動画はありません</div>
+          )}
           <div className="text-left mt-8">
             <button
               className="btn btn-outline btn-lightperple border rounded-md"
