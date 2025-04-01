@@ -104,6 +104,23 @@ const YoutubeVideosPage: React.FC = () => {
 
   const queryKeyword = router.query.query as string | undefined;
 
+  const toggleDisplayMode = () => {
+    const newMode = displayMode === 'horizontal' ? 'grid' : 'horizontal';
+    setDisplayMode(newMode);
+    router.replace({
+      pathname: router.pathname,
+      query: { ...router.query, displayMode: newMode },
+    }, undefined, { shallow: true });
+  };
+
+  useEffect(() => {
+    if (router.query.displayMode === 'grid') {
+      setDisplayMode('grid');
+    } else {
+      setDisplayMode('horizontal');
+    }
+  }, [router.query.displayMode]);
+
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
 
@@ -141,7 +158,7 @@ const YoutubeVideosPage: React.FC = () => {
               <option value="notes_desc">メモ数順</option>
             </select>
             <Button
-              onClick={() => setDisplayMode(displayMode === 'horizontal' ? 'grid' : 'horizontal')}
+              onClick={toggleDisplayMode}
               variant="contained"
               sx={{
                 ml: 2,
