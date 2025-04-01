@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { YoutubeVideo } from '@/types/youtubeVideo';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 
 const useYoutubeVideoRankings = () => {
   const [topLikedVideos, setTopLikedVideos] = useState<YoutubeVideo[]>([]);

@@ -6,19 +6,18 @@ import { useMediaQuery } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
-import PaginationComponent from '../components/Pagination';
 import HorizontalVideoShelf from '../components/HorizontalVideoShelf';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 import YoutubeHeroSection from '../components/YoutubeIndex/YoutubeHeroSection';
 import VideoHorizontalScroll from '../components/YoutubeIndex/VideoHorizontalScroll';
 import SearchHeader from '../components/YoutubeIndex/SearchHeader';
 import VideoGrid from '../components/YoutubeIndex/VideoGrid';
 
-import useYoutubeVideosPage from '../hooks/youtube_videos/useYoutubeVideosPage';
+import useYoutubeVideosPage from '../hooks/youtube_videos/index/useYoutubeVideosPage';
+import useDisplayMode from '../hooks/youtube_videos/index/useDisplayMode';
+import useYoutubeVideoRankings from '../hooks/youtube_videos/index/useYoutubeVideoRankings';
 
-import useYoutubeVideoRankings from '../components/YoutubeIndex/useYoutubeVideoRankings';
 import { handleLikeVideo, handleUnlikeVideo, fetchRandomYoutubeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
 import { useAuth } from '../context/AuthContext';
 
@@ -51,6 +50,8 @@ const YoutubeVideosPage: React.FC = () => {
   const [isMuted, setIsMuted] = useState(true);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { displayMode, toggleDisplayMode, queryKeyword } = useDisplayMode();
+
 
   const {
     topLikedVideos,
@@ -105,27 +106,6 @@ const YoutubeVideosPage: React.FC = () => {
     const interval = setInterval(getRandomVideo, 12000);
     return () => clearInterval(interval);
   }, [youtubeVideos, isMobile]);
-
-  const [displayMode, setDisplayMode] = useState<'horizontal' | 'grid'>('horizontal');
-
-  const queryKeyword = router.query.query as string | undefined;
-
-  const toggleDisplayMode = () => {
-    const newMode = displayMode === 'horizontal' ? 'grid' : 'horizontal';
-    setDisplayMode(newMode);
-    router.replace({
-      pathname: router.pathname,
-      query: { ...router.query, displayMode: newMode },
-    }, undefined, { shallow: true });
-  };
-
-  useEffect(() => {
-    if (router.query.displayMode === 'grid') {
-      setDisplayMode('grid');
-    } else {
-      setDisplayMode('horizontal');
-    }
-  }, [router.query.displayMode]);
 
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;

@@ -10,7 +10,7 @@ import { ToggleButtonGroup } from '@mui/material';
 import { useTheme } from 'next-themes';
 import { CustomToggleButton } from '../../styles/youtube_videos/YoutubeVideoShowPageStyles';
 import { handleLikeVideo, handleUnlikeVideo, handleDeleteNote, handleEditNote, addNote, videoTimestampToSeconds, playFromTimestamp } from '../../components/YoutubeShow/youtubeShowUtils';
-import useYoutubeVideoShowPage from '../../hooks/youtube_videos/useYoutubeVideoShowPage';
+import useYoutubeVideoShowPage from '../../hooks/youtube_videos/show/useYoutubeVideoShowPage';
 import HorizontalVideoShelf from '../../components/HorizontalVideoShelf';
 import {
   handleLikeVideo as handleLikeVideoSimple,

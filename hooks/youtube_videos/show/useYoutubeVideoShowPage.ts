@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { YoutubeVideo } from '../../types/youtubeVideo';
-import { Note } from '../../types/note';
-import { useAuth } from '../../context/AuthContext';
-import { fetchYoutubeVideo } from '../../src/api';
-import { formatDuration } from '../../components/YoutubeShow/youtubeShowUtils';
+import { YoutubeVideo } from '../../../types/youtubeVideo';
+import { Note } from '../../../types/note';
+import { useAuth } from '../../../context/AuthContext';
+import { fetchYoutubeVideo } from '../../../src/api';
+import { formatDuration } from '../../../components/YoutubeShow/youtubeShowUtils';
 
 const useYoutubeVideoShowPage = () => {
   const [video, setVideo] = useState<YoutubeVideo & { formattedDuration?: string } | null>(null);
