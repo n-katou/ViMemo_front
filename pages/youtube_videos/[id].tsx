@@ -6,16 +6,16 @@ import YoutubeVideoDetails from '../../components/YoutubeShow/YoutubeVideoDetail
 import LoadingSpinner from '../../components/LoadingSpinner';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
-import { ToggleButtonGroup, Snackbar, Alert } from '@mui/material';
+import { ToggleButtonGroup } from '@mui/material';
 import { useTheme } from 'next-themes';
-import { CustomToggleButton, useSnackbarStyles, useAlertStyles } from '../../styles/youtube_videos/YoutubeVideoShowPageStyles';
+import { CustomToggleButton } from '../../styles/youtube_videos/YoutubeVideoShowPageStyles';
 import { handleLikeVideo, handleUnlikeVideo, handleDeleteNote, handleEditNote, addNote, videoTimestampToSeconds, playFromTimestamp } from '../../components/YoutubeShow/youtubeShowUtils';
 import useYoutubeVideoShowPage from '../../hooks/youtube_videos/useYoutubeVideoShowPage';
 import HorizontalVideoShelf from '../../components/YoutubeIndex/HorizontalVideoShelf';
 import {
   handleLikeVideo as handleLikeVideoSimple,
   handleUnlikeVideo as handleUnlikeVideoSimple
-} from '../../components/YoutubeIndex/youtubeIndexUtils';
+} from '../../components/YoutubeIndex/youtubeIndexUtils'; //空の情報
 import { isMatch, tokenize } from '../../components/YoutubeShow/searchMatchUtils';
 import { fetchYoutubeVideos } from '../../components/YoutubeIndex/youtubeIndexUtils';
 
@@ -27,7 +27,6 @@ const YoutubeVideoShowPage: React.FC = () => {
     liked,
     isNoteFormVisible,
     showMyNotes,
-    isSnackbarOpen,
     dataLoading,
     currentUser,
     jwtToken,
@@ -40,13 +39,10 @@ const YoutubeVideoShowPage: React.FC = () => {
     setLikeError,
     setIsNoteFormVisible,
     setShowMyNotes,
-    handleSnackbarClose,
     filteredNotes,
   } = useYoutubeVideoShowPage();
 
   const { theme } = useTheme();
-  const snackbarStyles = useSnackbarStyles();
-  const alertStyles = useAlertStyles();
   const [youtubeVideos, setYoutubeVideos] = useState<YoutubeVideo[]>([]);
 
   const [relatedVideos, setRelatedVideos] = useState<YoutubeVideo[]>([]);
@@ -83,17 +79,6 @@ const YoutubeVideoShowPage: React.FC = () => {
 
   return (
     <div className={`container mx-auto py-8 mt-2 ${theme === 'light' ? 'text-[#818cf8]' : 'text-white'}`}>
-      <Snackbar
-        open={isSnackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        sx={snackbarStyles}
-      >
-        <Alert onClose={handleSnackbarClose} severity="info" sx={alertStyles}>
-          動画を再生してからメモを作成、編集してください。
-        </Alert>
-      </Snackbar>
       {!video && <div className="text-center">Video not found</div>}
       {video && (
         <>
@@ -108,27 +93,6 @@ const YoutubeVideoShowPage: React.FC = () => {
             />
             {likeError && <div className="text-red-500 text-center mt-4">{likeError}</div>}
           </div>
-          <HorizontalVideoShelf
-            title="関連動画"
-            videos={relatedVideos}
-            notes={notes}
-            jwtToken={jwtToken}
-            setNotes={setNotes}
-            onClickTitle={(id) => router.push(`/youtube_videos/${id}`)}
-            onLike={(id) =>
-              jwtToken && currentUser
-                ? handleLikeVideoSimple(id, jwtToken, currentUser, () => { })
-                : Promise.resolve()
-            }
-            onUnlike={(id, likeId) =>
-              jwtToken && currentUser
-                ? handleUnlikeVideoSimple(id, likeId, jwtToken, currentUser, () => { })
-                : Promise.resolve()
-            }
-            setVideos={() => { }}
-            showLikeButton={false}
-            showSearchIcon={false}
-          />
 
           {currentUser && jwtToken && (
             <div className="mb-8">
@@ -173,6 +137,27 @@ const YoutubeVideoShowPage: React.FC = () => {
             onDelete={currentUser && jwtToken ? (noteId) => handleDeleteNote(noteId, jwtToken, video, setNotes) : undefined}
             onEdit={currentUser && jwtToken ? (noteId, newContent, newMinutes, newSeconds, newIsVisible) => handleEditNote(noteId, newContent, newMinutes, newSeconds, newIsVisible, jwtToken, video, setNotes) : undefined}
             player={playerRef.current}
+          />
+          <HorizontalVideoShelf
+            title="関連動画"
+            videos={relatedVideos}
+            notes={notes}
+            jwtToken={jwtToken}
+            setNotes={setNotes} //空の情報
+            onClickTitle={(id) => router.push(`/youtube_videos/${id}`)}
+            onLike={(id) =>
+              jwtToken && currentUser
+                ? handleLikeVideoSimple(id, jwtToken, currentUser, () => { })
+                : Promise.resolve()
+            } //空の情報
+            onUnlike={(id, likeId) =>
+              jwtToken && currentUser
+                ? handleUnlikeVideoSimple(id, likeId, jwtToken, currentUser, () => { })
+                : Promise.resolve()
+            } //空の情報
+            setVideos={() => { }}  //空の情報
+            showLikeButton={false}
+            showSearchIcon={false}
           />
           <div className="text-left mt-8">
             <button

@@ -28,23 +28,20 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
 
   // プレイヤーの状態が変わったときに呼ばれるハンドラ
   const handlePlayerStateChange = (event: any) => {
-    if (event.data === window.YT.PlayerState.PLAYING) {
-      const player = event.target;
-      setPlayer(player);
-      onPlayerReady(player);
-    }
   };
 
   // プレイヤーのインスタンスが設定されたときに現在の再生時間を定期的に更新
   useEffect(() => {
-    if (player) {
-      const interval = setInterval(() => {
-        const time = player.getCurrentTime();
-        setCurrentTime(formatTime(time));
-      }, 1000);
+    if (!player) return;
 
-      return () => clearInterval(interval);
-    }
+    const interval = setInterval(() => {
+      const time = player.getCurrentTime?.();
+      if (typeof time === 'number' && !isNaN(time)) {
+        setCurrentTime(formatTime(time));
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [player]);
 
   // 秒数を分と秒の形式にフォーマットする関数（時間軸上の表示タイマー用）
@@ -55,13 +52,17 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+    <div className="bg-gray-50 shadow-md rounded-xl overflow-hidden mb-8 border border-gray-200">
       <div className="relative video-wrapper">
         <YouTube
           videoId={video.youtube_id}
-          opts={{ playerVars: { playsinline: 1 } }} // プレイヤーのオプションを設定
-          onStateChange={handlePlayerStateChange} // プレイヤーの状態が変わったときにハンドラを呼び出す
-          className="w-full aspect-video" // プレイヤーのスタイルを設定
+          opts={{ playerVars: { playsinline: 1 } }}
+          onReady={(event) => {
+            setPlayer(event.target);         // プレイヤーを即セット
+            onPlayerReady(event.target);     // 親コンポーネントにも渡す
+          }}
+          onStateChange={handlePlayerStateChange}
+          className="w-full aspect-video"
         />
         {showTime && (
           <div className="absolute bottom-10 right-4 bg-black bg-opacity-50 text-white p-2 rounded">
@@ -73,9 +74,11 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
             <h2 className="text-2xl font-bold mr-4 text-gray-600">{video.title}</h2>
-            <IconButton onClick={() => setIsCollapsed(!isCollapsed)}> {/* 詳細情報の表示/非表示を切り替えるボタン */}
-              {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-            </IconButton>
+            <div className="absolute top-2 right-2 z-10">
+              <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+              </IconButton>
+            </div>
           </div>
           <div className="flex items-center">
             <IconButton
@@ -94,22 +97,22 @@ const YoutubeVideoDetails: React.FC<YoutubeVideoDetailsProps> = ({
             <p className="text-gray-600 mb-4">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
             <p className="text-gray-600 mb-4">動画時間: {video.formattedDuration}</p>
             {currentUser && ( // ログインしている場合にいいねボタンを表示
-              <div className="flex items-center cursor-pointer" onClick={liked ? handleUnlike : handleLike}>
+              <div className="flex items-center gap-2 mt-2">
                 <IconButton
-                  color={liked ? 'secondary' : 'default'}
+                  onClick={liked ? handleUnlike : handleLike}
                   aria-label={liked ? 'Unlike' : 'Like'}
                   sx={{
-                    borderRadius: '50%',
-                    backgroundColor: liked ? '#ffebee' : 'transparent',
+                    backgroundColor: liked ? '#ffe4e6' : '#f0f0f0',
                     '&:hover': {
-                      backgroundColor: liked ? '#ffcdd2' : '#f5f5f5',
+                      backgroundColor: liked ? '#fecaca' : '#e0e0e0',
                     },
+                    borderRadius: '12px',
                     transition: 'background-color 0.3s',
                   }}
                 >
-                  {liked ? <FavoriteIcon style={{ color: 'red' }} /> : <FavoriteBorderIcon />}
+                  {liked ? <FavoriteIcon className="text-red-500" /> : <FavoriteBorderIcon />}
                 </IconButton>
-                <span className="ml-2 text-lg font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700">
                   {liked ? 'いいね済み' : 'いいねする'}
                 </span>
               </div>
