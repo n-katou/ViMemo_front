@@ -17,6 +17,7 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 import { useMediaQuery } from '@mui/material';
 import useSuggestions from '../hooks/header/useSuggestions';
 import { motion, AnimatePresence } from 'framer-motion';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 
@@ -266,9 +267,73 @@ const Header: React.FC = () => {
                             width: '100%',
                           }}
                         />
+                        <IconButton
+                          size="small"
+                          onClick={toggleSearch}
+                          sx={{
+                            color: '#666',
+                            ml: 1,
+                            p: 0.5,
+                            '&:hover': {
+                              color: '#000',
+                            },
+                          }}
+                        >
+                          <CloseIcon fontSize="small" />
+                        </IconButton>
                       </div>
                     </form>
                   </motion.div>
+                )}
+                {/* ▼ サジェストリスト表示 */}
+                {query.length > 0 && (
+                  <ul
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      background: 'white',
+                      border: '1px solid #ddd',
+                      borderRadius: '8px',
+                      marginTop: '4px',
+                      width: '100%',
+                      zIndex: 1000,
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
+                      maxHeight: '200px',
+                      overflowY: 'auto',
+                      color: 'black',
+                      padding: '0.5rem 0',
+                    }}
+                  >
+                    {suggestions.length > 0 ? (
+                      suggestions.slice(0, 5).map((suggestion) => (
+                        <li
+                          key={suggestion.id}
+                          onClick={() => handleSuggestionClick(suggestion.id)}
+                          style={{
+                            padding: '10px',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s',
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = '#f0f0f0')}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
+                        >
+                          {suggestion.title}
+                        </li>
+                      ))
+                    ) : (
+                      <li
+                        style={{
+                          padding: '10px',
+                          textAlign: 'left',
+                          color: '#888',
+                          pointerEvents: 'none',
+                        }}
+                      >
+                        該当する動画はありません
+                      </li>
+                    )}
+                  </ul>
                 )}
               </AnimatePresence>
             </div>
