@@ -16,6 +16,8 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import { useMediaQuery } from '@mui/material';
 import useSuggestions from '../hooks/header/useSuggestions';
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 
 const Header: React.FC = () => {
@@ -174,90 +176,120 @@ const Header: React.FC = () => {
             </>
           ) : (
             <div style={{ position: 'relative' }}>
-              <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', marginRight: '1rem' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    background: '#f5f5f5',
-                    borderRadius: '8px',
-                    padding: '2px 10px',
-                    border: '1px solid rgba(0,0,0,0.2)',
-                    transition: 'all 0.3s ease-in-out',
-                  }}
-                >
-                  <SearchIcon sx={{ color: 'rgba(0,0,0,0.6)' }} />
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="動画検索"
-                    style={{
-                      border: 'none',
-                      outline: 'none',
-                      background: 'transparent',
-                      padding: '8px',
-                      fontSize: '0.9rem',
-                      width: '300px',
-                    }}
-                  />
-                </div>
-              </form>
+              <IconButton
+                onClick={toggleSearch}
+                sx={{
+                  color: '#818cf8',
+                  transition: 'color 0.3s ease, transform 0.3s ease',
+                  '&:hover': {
+                    color: '#FFD700',
+                    transform: 'scale(1.1) translateY(-2px)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.95)',
+                  },
+                  marginRight: '8px',
+                }}
+              >
+                <SearchIcon />
+              </IconButton>
 
-              {/* ▼ サジェストリスト表示 */}
-              {query.length > 0 && (
-                <ul
-                  style={{
-                    position: 'absolute',
-                    top: '100%',
-                    left: 0,
-                    background: 'white',
-                    border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    marginTop: '4px',
-                    width: '100%',
-                    zIndex: 1000,
-                    boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
-                    maxHeight: '200px',
-                    overflowY: 'auto',
-                    color: 'black',
-                    padding: '0.5rem 0',
-                  }}
-                >
-                  {suggestions.length > 0 ? (
-                    suggestions.slice(0, 5).map((suggestion) => (
+              <AnimatePresence>
+                {searchOpen && (
+                  <motion.div
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: 300, opacity: 1 }}
+                    exit={{ width: 0, opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                    style={{
+                      overflow: 'hidden',
+                      display: 'inline-block',
+                      verticalAlign: 'middle',
+                    }}
+                  >
+                    <form onSubmit={handleSearch}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          background: '#f5f5f5',
+                          borderRadius: '8px',
+                          padding: '2px 10px',
+                          border: '1px solid rgba(0,0,0,0.2)',
+                        }}
+                      >
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={query}
+                          onChange={(e) => setQuery(e.target.value)}
+                          placeholder="動画検索"
+                          style={{
+                            border: 'none',
+                            outline: 'none',
+                            background: 'transparent',
+                            padding: '8px',
+                            fontSize: '0.9rem',
+                            width: '100%',
+                          }}
+                        />
+                      </div>
+                    </form>
+                  </motion.div>
+                )}
+                {/* ▼ サジェストリスト表示 */}
+                {query.length > 0 && (
+                  <ul
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      background: 'white',
+                      border: '1px solid #ddd',
+                      borderRadius: '8px',
+                      marginTop: '4px',
+                      width: '100%',
+                      zIndex: 1000,
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
+                      maxHeight: '200px',
+                      overflowY: 'auto',
+                      color: 'black',
+                      padding: '0.5rem 0',
+                    }}
+                  >
+                    {suggestions.length > 0 ? (
+                      suggestions.slice(0, 5).map((suggestion) => (
+                        <li
+                          key={suggestion.id}
+                          onClick={() => handleSuggestionClick(suggestion.id)}
+                          style={{
+                            padding: '10px',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s',
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = '#f0f0f0')}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
+                        >
+                          {suggestion.title}
+                        </li>
+                      ))
+                    ) : (
                       <li
-                        key={suggestion.id}
-                        onClick={() => handleSuggestionClick(suggestion.id)}
                         style={{
                           padding: '10px',
-                          cursor: 'pointer',
-                          transition: 'background 0.2s',
+                          textAlign: 'left',
+                          color: '#888',
+                          pointerEvents: 'none',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = '#f0f0f0')}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
                       >
-                        {suggestion.title}
+                        該当する動画はありません
                       </li>
-                    ))
-                  ) : (
-                    <li
-                      style={{
-                        padding: '10px',
-                        textAlign: 'left',
-                        color: '#888',
-                        pointerEvents: 'none',
-                      }}
-                    >
-                      該当する動画はありません
-                    </li>
-                  )}
-                </ul>
-              )}
+                    )}
+                  </ul>
+                )}
+              </AnimatePresence>
             </div>
           )}
-
 
           <Button
             onClick={navigateToYoutubeVideos}
