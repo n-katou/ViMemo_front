@@ -9,7 +9,7 @@ import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 import YoutubeHeroSection from '../components/YoutubeIndex/YoutubeHeroSection';
 import { useRouter } from 'next/router';
 import PaginationComponent from '../components/Pagination';
-import { useMediaQuery } from '@mui/material';
+import { useMediaQuery, Button } from '@mui/material';
 import { fetchRandomYoutubeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
 import HorizontalVideoShelf from '../components/YoutubeIndex/HorizontalVideoShelf';
 import useYoutubeVideoRankings from '../components/YoutubeIndex/useYoutubeVideoRankings';
@@ -133,12 +133,27 @@ const YoutubeVideosPage: React.FC = () => {
               <option value="likes_desc">いいね数順</option>
               <option value="notes_desc">メモ数順</option>
             </select>
-            <button
+            <Button
               onClick={() => setDisplayMode(displayMode === 'horizontal' ? 'grid' : 'horizontal')}
-              className="ml-4 px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+              variant="contained"
+              sx={{
+                ml: 2,
+                backgroundColor: '#c084fc',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: '#a855f7',
+                },
+                fontWeight: 'bold',
+                textTransform: 'none',
+                borderRadius: '6px',
+                boxShadow: 2,
+                px: 2,
+                py: 1,
+                fontSize: '0.675rem',
+              }}
             >
               {displayMode === 'horizontal' ? 'グリッド表示に切り替え' : '横スクロールに戻す'}
-            </button>
+            </Button>
           </div>
           {displayMode === 'horizontal' ? (
             <div className="relative w-full pb-4 overflow-visible">
