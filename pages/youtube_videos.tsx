@@ -18,7 +18,7 @@ import useYoutubeVideosPage from '../hooks/youtube_videos/index/useYoutubeVideos
 import useDisplayMode from '../hooks/youtube_videos/index/useDisplayMode';
 import useYoutubeVideoRankings from '../hooks/youtube_videos/index/useYoutubeVideoRankings';
 
-import { handleLikeVideo, handleUnlikeVideo, fetchRandomYoutubeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
+import { handleLikeVideo, handleUnlikeVideo, fetchRandomYoutubeVideo, scrollByBlock } from '../components/YoutubeIndex/youtubeIndexUtils';
 import { useAuth } from '../context/AuthContext';
 
 const YoutubeVideosPage: React.FC = () => {
@@ -43,7 +43,7 @@ const YoutubeVideosPage: React.FC = () => {
 
   const { currentUser } = useAuth();
   const { theme } = useTheme();
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [currentVideoIndex] = useState(0);
   const router = useRouter();
   const [currentVideo, setCurrentVideo] = useState<YoutubeVideo | null>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -69,28 +69,6 @@ const YoutubeVideosPage: React.FC = () => {
 
   const toggleMute = () => setIsMuted(prev => !prev);
 
-  const scrollByBlock = (direction: 'left' | 'right', ref: React.RefObject<HTMLDivElement>) => {
-    const container = ref.current;
-    if (!container) return;
-
-    const cardWidth = 320;
-    const gap = 16;
-    const itemTotalWidth = cardWidth + gap;
-
-    const scrollStep = isMobile ? 1 : 3;
-
-    const currentScroll = container.scrollLeft;
-    const currentIndex = Math.round(currentScroll / itemTotalWidth);
-    const nextIndex = direction === 'left'
-      ? Math.max(0, currentIndex - scrollStep)
-      : Math.min(Math.ceil(container.scrollWidth / itemTotalWidth), currentIndex + scrollStep);
-
-    container.scrollTo({
-      left: nextIndex * itemTotalWidth,
-      behavior: 'smooth',
-    });
-  };
-
   useEffect(() => {
     if (!youtubeVideos || youtubeVideos.length === 0) return;
 
@@ -106,6 +84,13 @@ const YoutubeVideosPage: React.FC = () => {
     const interval = setInterval(getRandomVideo, 12000);
     return () => clearInterval(interval);
   }, [youtubeVideos, isMobile]);
+
+  const handleScrollByBlock = (
+    direction: 'left' | 'right',
+    ref: React.RefObject<HTMLDivElement>
+  ) => {
+    scrollByBlock(direction, ref, isMobile);
+  };
 
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
@@ -140,7 +125,7 @@ const YoutubeVideosPage: React.FC = () => {
               notes={notes}
               jwtToken={jwtToken}
               scrollContainerRef={scrollContainerRef}
-              scrollByBlock={scrollByBlock}
+              scrollByBlock={handleScrollByBlock}
               handleTitleClick={handleTitleClick}
               handleLikeVideo={handleLikeVideoWrapper}
               handleUnlikeVideo={handleUnlikeVideoWrapper}

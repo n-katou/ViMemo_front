@@ -131,3 +131,32 @@ export const fetchRandomYoutubeVideo = async (): Promise<YoutubeVideo | null> =>
   }
 };
 
+export const scrollByBlock = (
+  direction: 'left' | 'right',
+  ref: React.RefObject<HTMLElement>,
+  isMobile: boolean
+) => {
+  const container = ref.current;
+  if (!container) return;
+
+  const cardWidth = 320;
+  const gap = 16;
+  const itemTotalWidth = cardWidth + gap;
+  const scrollStep = isMobile ? 1 : 3;
+
+  const currentScroll = container.scrollLeft;
+  const currentIndex = Math.round(currentScroll / itemTotalWidth);
+
+  const nextIndex =
+    direction === 'left'
+      ? Math.max(0, currentIndex - scrollStep)
+      : Math.min(
+        Math.ceil(container.scrollWidth / itemTotalWidth),
+        currentIndex + scrollStep
+      );
+
+  container.scrollTo({
+    left: nextIndex * itemTotalWidth,
+    behavior: 'smooth',
+  });
+};
