@@ -126,6 +126,8 @@ const YoutubeVideoShowPage: React.FC = () => {
                 : Promise.resolve()
             }
             setVideos={() => { }}
+            showLikeButton={false}
+            showSearchIcon={false}
           />
 
           {currentUser && jwtToken && (

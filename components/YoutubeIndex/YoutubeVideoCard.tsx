@@ -29,10 +29,12 @@ interface YoutubeVideoCardProps {
   notes: Note[]; // Note型の配列
   setNotes: React.Dispatch<React.SetStateAction<Note[]>>; // Note配列の状態を設定する関数
   jwtToken: string | null; // JWTトークン
+  showLikeButton?: boolean; // 追加: いいねボタン表示制御
+  showSearchIcon?: boolean; // 追加: 虫眼鏡表示制御
 }
 
 // YoutubeVideoCardコンポーネントを定義
-const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleClick, handleLikeVideo, handleUnlikeVideo, notes, setNotes, jwtToken }) => {
+const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleClick, handleLikeVideo, handleUnlikeVideo, notes, setNotes, jwtToken, showLikeButton = true, showSearchIcon = true }) => {
   const { currentUser } = useAuth(); // 認証コンテキストから現在のユーザー情報を取得
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isMuted, setIsMuted] = useState(true);
@@ -176,46 +178,54 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
               </h2>
               <p className="text-gray-600">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
               <p className="text-gray-600">動画時間: {formatDuration(video.duration)}</p>
+
+              {/* ❤️ いいね数は常に表示 */}
               <div className="flex items-center">
                 <FavoriteIcon className="text-red-500 mr-1" />
                 <p className="text-gray-600">{video.likes_count}</p>
               </div>
+
+              {/* 📝 ノート数は常に表示、虫眼鏡はオプション */}
               <div
                 className="flex items-center"
-                onMouseEnter={handlePopoverOpen}
-                onMouseLeave={handlePopoverClose}
+                onMouseEnter={showSearchIcon ? handlePopoverOpen : undefined}
+                onMouseLeave={showSearchIcon ? handlePopoverClose : undefined}
               >
                 <NoteIcon className="text-blue-500 mr-1" />
                 <p className="text-gray-600 flex items-center">
-                  {video.notes_count} <SearchIcon className="ml-1" />
+                  {video.notes_count}
+                  {showSearchIcon && <SearchIcon className="ml-1" />}
                 </p>
               </div>
 
-              {/* ポップオーバーやいいね部分もそのままここに置いてOK */}
-              <Popover
-                id="mouse-over-popover"
-                sx={{
-                  zIndex: 10000,
-                  pointerEvents: 'none',
-                  '.MuiPopover-paper': {
-                    width: '600px',
-                    marginTop: '10px',
-                    padding: '20px',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                  },
-                }}
-                open={open}
-                anchorEl={anchorEl}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-                onClose={handlePopoverClose}
-                disableRestoreFocus
-              >
-                {renderNoteList()}
-              </Popover>
+              {/* 🔍 ポップオーバーはフラグで制御 */}
+              {showSearchIcon && (
+                <Popover
+                  id="mouse-over-popover"
+                  sx={{
+                    zIndex: 10000,
+                    pointerEvents: 'none',
+                    '.MuiPopover-paper': {
+                      width: '600px',
+                      marginTop: '10px',
+                      padding: '20px',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    },
+                  }}
+                  open={open}
+                  anchorEl={anchorEl}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+                  onClose={handlePopoverClose}
+                  disableRestoreFocus
+                >
+                  {renderNoteList()}
+                </Popover>
+              )}
 
-              {currentUser && (
+              {/* ❤️ いいねボタンは条件付き */}
+              {currentUser && showLikeButton && (
                 <div className="flex items-center mt-2">
                   {video.liked ? (
                     <Tooltip title="いいね解除">
@@ -292,7 +302,6 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
         {isVisible && cardRect && createPortal(CardContent, document.body)}
       </div>
     </div>
-
   );
 };
 
