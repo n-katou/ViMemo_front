@@ -1,21 +1,25 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useTheme } from 'next-themes';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { useRouter } from 'next/router';
+import { useMediaQuery } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import useYoutubeVideosPage from '../hooks/youtube_videos/useYoutubeVideosPage';
+
+import PaginationComponent from '../components/Pagination';
+import HorizontalVideoShelf from '../components/HorizontalVideoShelf';
+import LoadingSpinner from '../components/LoadingSpinner';
+
 import YoutubeVideoCard from '../components/YoutubeIndex/YoutubeVideoCard';
 import YoutubeHeroSection from '../components/YoutubeIndex/YoutubeHeroSection';
-import { useRouter } from 'next/router';
-import PaginationComponent from '../components/Pagination';
-import { useMediaQuery } from '@mui/material';
-import { fetchRandomYoutubeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
-import HorizontalVideoShelf from '../components/HorizontalVideoShelf';
 import VideoHorizontalScroll from '../components/YoutubeIndex/VideoHorizontalScroll';
 import SearchHeader from '../components/YoutubeIndex/SearchHeader';
+import VideoGrid from '../components/YoutubeIndex/VideoGrid';
+
+import useYoutubeVideosPage from '../hooks/youtube_videos/useYoutubeVideosPage';
+
 import useYoutubeVideoRankings from '../components/YoutubeIndex/useYoutubeVideoRankings';
-import { handleLikeVideo, handleUnlikeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
+import { handleLikeVideo, handleUnlikeVideo, fetchRandomYoutubeVideo } from '../components/YoutubeIndex/youtubeIndexUtils';
 import { useAuth } from '../context/AuthContext';
 
 const YoutubeVideosPage: React.FC = () => {
@@ -165,31 +169,17 @@ const YoutubeVideosPage: React.FC = () => {
               handlePageChange={handlePageChange}
             />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-4 py-12">
-              {youtubeVideos.map((video: YoutubeVideo) => (
-                <div
-                  key={video.id}
-                  className="w-full"
-                >
-                  <YoutubeVideoCard
-                    video={video}
-                    handleTitleClick={handleTitleClick}
-                    handleLikeVideo={handleLikeVideoWrapper}
-                    handleUnlikeVideo={handleUnlikeVideoWrapper}
-                    notes={notes.filter(note => note.youtube_video_id === video.id)}
-                    jwtToken={jwtToken}
-                    setNotes={setNotes}
-                  />
-                </div>
-              ))}
-              <div className="col-span-full mt-6 flex justify-center">
-                <PaginationComponent
-                  count={pagination.total_pages}
-                  page={pagination.current_page}
-                  onChange={handlePageChange}
-                />
-              </div>
-            </div>
+            <VideoGrid
+              youtubeVideos={youtubeVideos}
+              notes={notes}
+              jwtToken={jwtToken}
+              handleTitleClick={handleTitleClick}
+              handleLikeVideo={handleLikeVideoWrapper}
+              handleUnlikeVideo={handleUnlikeVideoWrapper}
+              setNotes={setNotes}
+              pagination={pagination}
+              handlePageChange={handlePageChange}
+            />
           )}
           {displayMode === 'horizontal' && (
             <>
