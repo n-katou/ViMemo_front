@@ -102,6 +102,8 @@ const YoutubeVideosPage: React.FC = () => {
 
   const [displayMode, setDisplayMode] = useState<'horizontal' | 'grid'>('horizontal');
 
+  const queryKeyword = router.query.query as string | undefined;
+
   if (loading) return <LoadingSpinner loading={loading} />;
   if (error) return <p>Error: {error}</p>;
 
@@ -130,6 +132,11 @@ const YoutubeVideosPage: React.FC = () => {
             </>
           )}
           <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r bg-clip-text flex items-center gap-2">絞り込み・検索結果</h3>
+          {queryKeyword && (
+            <p className="text-sm mb-4 text-gray-400">
+              現在の検索キーワード：<span className="font-semibold text-indigo-400">「{queryKeyword}」</span>
+            </p>
+          )}
           <div className="flex justify-between items-center mb-4">
             <select
               value={sortOption}
