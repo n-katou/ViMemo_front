@@ -93,27 +93,6 @@ const YoutubeVideoShowPage: React.FC = () => {
             />
             {likeError && <div className="text-red-500 text-center mt-4">{likeError}</div>}
           </div>
-          <HorizontalVideoShelf
-            title="関連動画"
-            videos={relatedVideos}
-            notes={notes}
-            jwtToken={jwtToken}
-            setNotes={setNotes} //空の情報
-            onClickTitle={(id) => router.push(`/youtube_videos/${id}`)}
-            onLike={(id) =>
-              jwtToken && currentUser
-                ? handleLikeVideoSimple(id, jwtToken, currentUser, () => { })
-                : Promise.resolve()
-            } //空の情報
-            onUnlike={(id, likeId) =>
-              jwtToken && currentUser
-                ? handleUnlikeVideoSimple(id, likeId, jwtToken, currentUser, () => { })
-                : Promise.resolve()
-            } //空の情報
-            setVideos={() => { }}  //空の情報
-            showLikeButton={false}
-            showSearchIcon={false}
-          />
 
           {currentUser && jwtToken && (
             <div className="mb-8">
@@ -158,6 +137,27 @@ const YoutubeVideoShowPage: React.FC = () => {
             onDelete={currentUser && jwtToken ? (noteId) => handleDeleteNote(noteId, jwtToken, video, setNotes) : undefined}
             onEdit={currentUser && jwtToken ? (noteId, newContent, newMinutes, newSeconds, newIsVisible) => handleEditNote(noteId, newContent, newMinutes, newSeconds, newIsVisible, jwtToken, video, setNotes) : undefined}
             player={playerRef.current}
+          />
+          <HorizontalVideoShelf
+            title="関連動画"
+            videos={relatedVideos}
+            notes={notes}
+            jwtToken={jwtToken}
+            setNotes={setNotes} //空の情報
+            onClickTitle={(id) => router.push(`/youtube_videos/${id}`)}
+            onLike={(id) =>
+              jwtToken && currentUser
+                ? handleLikeVideoSimple(id, jwtToken, currentUser, () => { })
+                : Promise.resolve()
+            } //空の情報
+            onUnlike={(id, likeId) =>
+              jwtToken && currentUser
+                ? handleUnlikeVideoSimple(id, likeId, jwtToken, currentUser, () => { })
+                : Promise.resolve()
+            } //空の情報
+            setVideos={() => { }}  //空の情報
+            showLikeButton={false}
+            showSearchIcon={false}
           />
           <div className="text-left mt-8">
             <button

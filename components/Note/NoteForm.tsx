@@ -106,11 +106,11 @@ export const NoteForm: React.FC<NoteFormProps> = ({ addNote, player, onCancel })
         </select>
       </div>
       <div className="form-control flex justify-end space-x-4">
-        <button type="submit" className="btn btn-outline btn-pink py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
-          メモを追加
-        </button>
         <button type="button" onClick={handleCancel} className="btn btn-secondary py-2 px-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition duration-200">
           キャンセル
+        </button>
+        <button type="submit" className="btn btn-outline btn-pink py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200">
+          メモを追加
         </button>
       </div>
     </form>
