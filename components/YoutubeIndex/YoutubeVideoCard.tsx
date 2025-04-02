@@ -1,8 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import ReactPlayer from 'react-player';
+
 import { YoutubeVideo } from '../../types/youtubeVideo';
 import { Like } from '../../types/like';
 import { Note } from '../../types/note'; // Note型のインポート
+
 import { useAuth } from '../../context/AuthContext'; // 認証コンテキストをインポート
+import { formatDuration } from '../YoutubeShow/youtubeShowUtils';
+
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import NoteIcon from '@mui/icons-material/Note';
@@ -10,14 +16,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
-import { formatDuration } from '../YoutubeShow/youtubeShowUtils';
-import RelatedNotesList from './RelatedNotesList'; // RelatedNotesListコンポーネントのインポート
-import ReactPlayer from 'react-player';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { useMediaQuery } from '@mui/material';
+
 import { motion, AnimatePresence } from 'framer-motion';
-import { createPortal } from 'react-dom';
+
+import RelatedNotesList from './RelatedNotesList'; // RelatedNotesListコンポーネントのインポート
 
 
 // YoutubeVideoCardコンポーネントのプロパティ型を定義
