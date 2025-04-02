@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+version: 2
+
+language: ja  # ← ここで日本語を指定！
+
+review:
+  enabled: true
+  mode: incremental  # incremental（差分）または full（全体）
+  types:
+    - code-quality
+    - readability
+    - performance
+    - best-practices
+    - security
+
+pull_request:
+  summary: true       # PR要約を有効化
+  inline_comments: true  # コード上にコメントを表示
+  summary_mode: smart    # PRの要約モード（smart / simple）
+
+# オプション: 特定のファイル/パスを除外する場合
+ignore:
+  paths:
+    - node_modules/
+    - dist/
+    - .next/
+    - coverage/
+
+# オプション: 特定のファイル種類だけを対象にする
+include:
+  extensions:
+    - .ts
+    - .tsx
+    - .js
+    - .jsx
+    - .py
+    - .rb
