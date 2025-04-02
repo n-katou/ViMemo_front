@@ -1,14 +1,17 @@
 import React from 'react';
-import { useAuth } from '../../context/AuthContext';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+
+import { useAuth } from '../../context/AuthContext';
+import { useDashboardData } from '../../hooks/mypage/dashboard/useDashboardData';
+
+import LoadingSpinner from '../../components/LoadingSpinner';
 import UserCard from '../../components/Mypage/dashboard/UserCard';
 import YoutubeLikesAccordion from '../../components/Mypage/dashboard/YoutubeLikesAccordion';
 import SearchForm from '../../components/Mypage/dashboard/SearchForm';
-import { useDashboardData } from '../../hooks/mypage/dashboard/useDashboardData';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import SortablePlaylist from '../../components/Mypage/dashboard/SortablePlaylist';
 import { updatePlaylistOrder } from '../../components/Mypage/dashboard/dashboardUtils';
 
