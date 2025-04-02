@@ -1,35 +1,40 @@
-# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+## 設定ドキュメント
+## https://docs.coderabbit.ai/getting-started/configure-coderabbit/
 
-code_rabbit:
-  language: ja
+## 対応するISO言語コードを使用して、レビューの言語を設定します。
+language: "ja"
 
-  review:
+## 早期アクセス機能を有効にする。
+early_access: false
+
+reviews:
+  ## レビュー用のプロフィールを設定します。積極的なプロフィールは、細かいことにこだわっていると思われるフィードバックをより多く生み出します。
+  profile: "chill"
+
+  ## CodeRabbitのコメントが解決されたら、レビューを承認します。
+  request_changes_workflow: true
+
+  ## PRの説明の変更の概要を生成します。
+  high_level_summary: true
+
+  ## 各レビューにレビューの詳細を投稿します。さらに、特定のケースでレビューがスキップされた場合は、レビューのステータスを投稿します。
+  review_status: true
+
+  ## マークダウンの折りたたみ可能なセクションでWalkthroughを生成します。
+  collapse_walkthrough: false
+
+
+  auto_review:
+    ## 自動レビュー | 自動コードレビュー
     enabled: true
-    mode: incremental
-    types:
-      - code-quality
-      - readability
-      - performance
-      - best-practices
-      - security
 
-  pull_request:
-    summary: true
-    inline_comments: true
-    summary_mode: smart
+    ## PRのタイトルにこれらのキーワードのいずれかが含まれている場合は、レビューを無視します (大文字と小文字は区別されません)。
+    ignore_title_keywords:
+      - "[ignore rabbit]"
 
-  ignore:
-    paths:
-      - node_modules/
-      - dist/
-      - .next/
-      - coverage/
+    ## Draft PRをレビューします。
+    drafts: true
 
-  include:
-    extensions:
-      - .ts
-      - .tsx
-      - .js
-      - .jsx
-      - .py
-      - .rb
+chat:
+  ## ユーザーがタグ付けしなくてもボットが自動的に返信できるようにします。
+  auto_reply: true
