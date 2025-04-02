@@ -1,23 +1,27 @@
 import { useEffect, useState } from 'react';
-import { YoutubeVideo } from '../../types/youtubeVideo';
-import NoteForm from '../../components/Note/NoteForm';
-import NoteList from '../../components/Note/List/NoteList';
-import YoutubeVideoDetails from '../../components/YoutubeShow/YoutubeVideoDetails';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { useTheme } from 'next-themes';
+
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { ToggleButtonGroup } from '@mui/material';
-import { useTheme } from 'next-themes';
+
+import { YoutubeVideo } from '../../types/youtubeVideo';
+
 import { CustomToggleButton } from '../../styles/youtube_videos/YoutubeVideoShowPageStyles';
-import { handleLikeVideo, handleUnlikeVideo, handleDeleteNote, handleEditNote, addNote, videoTimestampToSeconds, playFromTimestamp } from '../../components/YoutubeShow/youtubeShowUtils';
-import useYoutubeVideoShowPage from '../../hooks/youtube_videos/show/useYoutubeVideoShowPage';
+
+import LoadingSpinner from '../../components/LoadingSpinner';
 import HorizontalVideoShelf from '../../components/HorizontalVideoShelf';
+import YoutubeVideoDetails from '../../components/YoutubeShow/YoutubeVideoDetails';
+import NoteList from '../../components/Note/List/NoteList';
+import NoteForm from '../../components/Note/NoteForm';
+
+import useYoutubeVideoShowPage from '../../hooks/youtube_videos/show/useYoutubeVideoShowPage';
+
+import { handleLikeVideo, handleUnlikeVideo, handleDeleteNote, handleEditNote, addNote, videoTimestampToSeconds, playFromTimestamp } from '../../components/YoutubeShow/youtubeShowUtils';
 import {
-  handleLikeVideo as handleLikeVideoSimple,
-  handleUnlikeVideo as handleUnlikeVideoSimple
-} from '../../components/YoutubeIndex/youtubeIndexUtils'; //空の情報
+  handleLikeVideo as handleLikeVideoSimple, handleUnlikeVideo as handleUnlikeVideoSimple, fetchYoutubeVideos
+} from '../../components/YoutubeIndex/youtubeIndexUtils';
 import { isMatch, tokenize } from '../../components/YoutubeShow/searchMatchUtils';
-import { fetchYoutubeVideos } from '../../components/YoutubeIndex/youtubeIndexUtils';
 
 const YoutubeVideoShowPage: React.FC = () => {
   const {
