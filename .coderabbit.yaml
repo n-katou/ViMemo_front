@@ -2,11 +2,11 @@
 
 version: 2
 
-language: ja  # ← ここで日本語を指定！
+language: ja
 
 review:
   enabled: true
-  mode: incremental  # incremental（差分）または full（全体）
+  mode: incremental
   types:
     - code-quality
     - readability
@@ -15,11 +15,10 @@ review:
     - security
 
 pull_request:
-  summary: true       # PR要約を有効化
-  inline_comments: true  # コード上にコメントを表示
-  summary_mode: smart    # PRの要約モード（smart / simple）
+  summary: true
+  inline_comments: true
+  summary_mode: smart
 
-# オプション: 特定のファイル/パスを除外する場合
 ignore:
   paths:
     - node_modules/
@@ -27,7 +26,6 @@ ignore:
     - .next/
     - coverage/
 
-# オプション: 特定のファイル種類だけを対象にする
 include:
   extensions:
     - .ts
