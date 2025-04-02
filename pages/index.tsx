@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/router';
 
 import { Snackbar, Alert, Typography, Box, SelectChangeEvent } from '@mui/material';
 
 import { useAuth } from '../context/AuthContext';
-
-import GradientButton from '../styles/GradientButton';
 
 import LoginButton from '../components/LoginButton';
 import { WavyBackground } from '../components/Root/WavyBackground';
@@ -16,7 +13,6 @@ import FeatureNotice from '../components/Root/FeatureNotice';
 import ResponsiveTabs from '../components/Root/ResponsiveTabs';
 
 const RootPage = () => {
-  const router = useRouter();
   const { currentUser } = useAuth();
   const { theme, resolvedTheme } = useTheme();
   const isLightTheme = resolvedTheme === 'light';
