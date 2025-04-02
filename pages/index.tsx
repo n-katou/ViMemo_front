@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 
-import { Snackbar, Alert, Typography, Box, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Snackbar, Alert, Typography, Box, SelectChangeEvent } from '@mui/material';
 
 import { useAuth } from '../context/AuthContext';
 
@@ -14,7 +13,7 @@ import { WavyBackground } from '../components/Root/WavyBackground';
 import HeroImage from '../components/Root/HeroImage';
 import tab from '../components/Root/tab';
 import FeatureNotice from '../components/Root/FeatureNotice';
-import pinterestBoardPhoto from '../public/pinterest_board_photo.png'; // 画像のパスを指定
+import ResponsiveTabs from '../components/Root/ResponsiveTabs';
 
 const RootPage = () => {
   const router = useRouter();
@@ -96,38 +95,13 @@ const RootPage = () => {
           <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '50px' }}>
             <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? 'black' : 'white', boxShadow: 'none' }}>
               <FeatureNotice isLightTheme={isLightTheme} />
-              <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? 'black' : 'white' }}>
-                <Select
-                  value={activeTab}
-                  onChange={handleTabChange}
-                  fullWidth
-                  sx={{
-                    color: 'white',
-                    backgroundColor: isLightTheme ? '#c084fc' : 'inherit',
-                    '.MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'gray',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'gray',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'gray',
-                    },
-                    '.MuiSvgIcon-root': {
-                      color: 'white',
-                    },
-                  }}
-                >
-                  {tabs.map((tab) => (
-                    <MenuItem key={tab.value} value={tab.value} sx={{ color: 'black' }}>
-                      {tab.title}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <Box sx={{ marginTop: 2 }}>
-                  {activeTabContent}
-                </Box>
-              </Box>
+              <ResponsiveTabs
+                tabs={tabs}
+                activeTab={activeTab}
+                handleTabChange={handleTabChange}
+                isLightTheme={isLightTheme}
+                activeTabContent={activeTabContent}
+              />
               <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8, color: isLightTheme ? 'black' : 'white' }}>
                 <Tabs tabs={tabs} />
               </Box>
