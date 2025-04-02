@@ -1,36 +1,35 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 
-version: 2
+code_rabbit:
+  language: ja
 
-language: ja
+  review:
+    enabled: true
+    mode: incremental
+    types:
+      - code-quality
+      - readability
+      - performance
+      - best-practices
+      - security
 
-review:
-  enabled: true
-  mode: incremental
-  types:
-    - code-quality
-    - readability
-    - performance
-    - best-practices
-    - security
+  pull_request:
+    summary: true
+    inline_comments: true
+    summary_mode: smart
 
-pull_request:
-  summary: true
-  inline_comments: true
-  summary_mode: smart
+  ignore:
+    paths:
+      - node_modules/
+      - dist/
+      - .next/
+      - coverage/
 
-ignore:
-  paths:
-    - node_modules/
-    - dist/
-    - .next/
-    - coverage/
-
-include:
-  extensions:
-    - .ts
-    - .tsx
-    - .js
-    - .jsx
-    - .py
-    - .rb
+  include:
+    extensions:
+      - .ts
+      - .tsx
+      - .js
+      - .jsx
+      - .py
+      - .rb
