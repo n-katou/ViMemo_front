@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Snackbar, Alert, Typography, Box, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+
+import { Snackbar, Alert, Typography, Box, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+
 import { useAuth } from '../context/AuthContext';
+
+import GradientButton from '../styles/GradientButton';
+
 import { Tabs } from '../components/Root/Tabs';
 import { WavyBackground } from '../components/Root/WavyBackground';
-import { useTheme } from 'next-themes';
-import GradientButton from '../styles/GradientButton';
 import tab from '../components/Root/tab';
-import Image from 'next/image';
+import FeatureNotice from '../components/Root/FeatureNotice';
 import pinterestBoardPhoto from '../public/pinterest_board_photo.png'; // 画像のパスを指定
-import InfoIcon from '@mui/icons-material/Info';
 
 const RootPage = () => {
   const router = useRouter();
@@ -126,28 +130,7 @@ const RootPage = () => {
         >
           <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '50px' }}>
             <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? 'black' : 'white', boxShadow: 'none' }}>
-              <Box sx={{
-                backgroundColor: isLightTheme ? '#e3f2fd' : '#c084fc',
-                padding: '15px 25px',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                marginBottom: 4,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                maxWidth: '500px', // ここで幅を制限
-                margin: '0 auto', // 中央揃え
-              }}>
-                <InfoIcon sx={{ fontSize: '2rem', color: isLightTheme ? '#38bdf8' : 'white' }} />
-                <Box>
-                  <Typography variant="h5" sx={{ color: isLightTheme ? '#38bdf8' : 'white', fontWeight: 'bold' }}>
-                    機能説明
-                  </Typography>
-                  <Typography variant="body1" sx={{ color: isLightTheme ? '#38bdf8' : 'white' }}>
-                    下のタブをクリックしたら各機能の詳細を確認できます
-                  </Typography>
-                </Box>
-              </Box>
+              <FeatureNotice isLightTheme={isLightTheme} />
               <Box sx={{ display: { xs: 'block', sm: 'none' }, marginTop: 5, color: isLightTheme ? 'black' : 'white' }}>
                 <Select
                   value={activeTab}
