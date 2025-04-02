@@ -22,7 +22,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ searchOpen, toggleSearch })
   const router = useRouter();
   const [query, setQuery] = useState('');
   const suggestions = useSuggestions(query);
-  const maxSuggestions = useMaxSuggestions();
   const inputRef = useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
