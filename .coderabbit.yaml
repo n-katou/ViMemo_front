@@ -4,33 +4,37 @@
 ## 対応するISO言語コードを使用して、レビューの言語を設定します。
 language: "ja"
 
-review:
-  enabled: true
-  mode: incremental  # incremental（差分）または full（全体レビュー）
-  types:
-    - code-quality
-    - readability
-    - performance
-    - best-practices
-    - security
+## 早期アクセス機能を有効にする。
+early_access: false
 
-pull_request:
-  summary: true           # PR要約を表示
-  inline_comments: true   # 行単位でのコメント表示
-  summary_mode: smart     # 要約のモード（smart / simple）
+reviews:
+  ## レビュー用のプロフィールを設定します。積極的なプロフィールは、細かいことにこだわっていると思われるフィードバックをより多く生み出します。
+  profile: "chill"
 
-ignore:
-  paths:
-    - node_modules/
-    - dist/
-    - .next/
-    - coverage/
+  ## CodeRabbitのコメントが解決されたら、レビューを承認します。
+  request_changes_workflow: true
 
-include:
-  extensions:
-    - .ts
-    - .tsx
-    - .js
-    - .jsx
-    - .py
-    - .rb
+  ## PRの説明の変更の概要を生成します。
+  high_level_summary: true
+
+  ## 各レビューにレビューの詳細を投稿します。さらに、特定のケースでレビューがスキップされた場合は、レビューのステータスを投稿します。
+  review_status: true
+
+  ## マークダウンの折りたたみ可能なセクションでWalkthroughを生成します。
+  collapse_walkthrough: false
+
+
+  auto_review:
+    ## 自動レビュー | 自動コードレビュー
+    enabled: true
+
+    ## PRのタイトルにこれらのキーワードのいずれかが含まれている場合は、レビューを無視します (大文字と小文字は区別されません)。
+    ignore_title_keywords:
+      - "[ignore rabbit]"
+
+    ## Draft PRをレビューします。
+    drafts: true
+
+chat:
+  ## ユーザーがタグ付けしなくてもボットが自動的に返信できるようにします。
+  auto_reply: true
