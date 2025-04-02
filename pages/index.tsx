@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 
 import GradientButton from '../styles/GradientButton';
 
-import { Tabs } from '../components/Root/Tabs';
+import LoginButton from '../components/LoginButton';
 import { WavyBackground } from '../components/Root/WavyBackground';
 import HeroImage from '../components/Root/HeroImage';
 import tab from '../components/Root/tab';
@@ -92,7 +92,7 @@ const RootPage = () => {
             margin: 0,
           }}
         >
-          <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '50px' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px', paddingTop: '50px', marginBottom: '20px' }}>
             <div style={{ padding: 0, textAlign: 'left', width: '100%', maxWidth: '1500px', backgroundColor: 'transparent', color: isLightTheme ? 'black' : 'white', boxShadow: 'none' }}>
               <FeatureNotice isLightTheme={isLightTheme} />
               <ResponsiveTabs
@@ -102,29 +102,8 @@ const RootPage = () => {
                 isLightTheme={isLightTheme}
                 activeTabContent={activeTabContent}
               />
-              <Box sx={{ display: { xs: 'none', sm: 'block' }, marginTop: 8, color: isLightTheme ? 'black' : 'white' }}>
-                <Tabs tabs={tabs} />
-              </Box>
               {!currentUser && (
-                <Box display="flex" justifyContent="center">
-                  <GradientButton
-                    onClick={() => router.push('/login')}
-                    variant="contained"
-                    sx={{
-                      marginTop: 4,
-                      marginBottom: 4,
-                      backgroundColor: '#38bdf8',
-                      color: 'white',
-                      fontWeight: 'bold',
-                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                      '&:hover': {
-                        backgroundColor: '#1e88e5',
-                      }
-                    }}
-                  >
-                    ログインページへ
-                  </GradientButton>
-                </Box>
+                <LoginButton />
               )}
             </div>
           </div>
