@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Note } from '../../../types/note';
-import { Like } from '../../../types/like';
-import { useAuth } from '../../../context/AuthContext';
-import NoteContent from './NoteContent';
-import NoteActions from './NoteActions';
+import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import Badge from '@mui/material/Badge';
 import { Avatar, Tooltip, IconButton } from '@mui/material';
-import { handleLikeNote, handleUnlikeNote, padZero } from './noteItemFunctions';
 import { motion } from 'framer-motion';
-import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
+
+import { Note } from '../../../types/note';
+import { Like } from '../../../types/like';
+
+import { useAuth } from '../../../context/AuthContext';
+
+import NoteContent from './NoteContent';
+import NoteActions from './NoteActions';
+import { handleLikeNote, handleUnlikeNote, padZero } from './noteItemFunctions';
 
 interface NoteItemProps {
   note: Note;
