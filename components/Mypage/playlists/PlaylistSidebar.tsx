@@ -8,12 +8,12 @@ interface SidebarProps {
 }
 
 const PlaylistSidebar: React.FC<SidebarProps> = ({ playlists, selectedId, onSelect, onAddClick }) => (
-  <div className="w-1/4 bg-gray-50 p-4 border-r">
-    <h2 className="text-xl font-bold mb-4">プレイリスト</h2>
+  <div className="w-1/4 bg-gray-50 p-4 border-r pt-16 overflow-y-auto h-screen">
+    <h2 className="text-xl font-bold mb-4  text-gray-800">プレイリスト</h2>
     {playlists.map((playlist) => (
       <div
         key={playlist.id}
-        className={`cursor-pointer p-2 mb-2 rounded ${playlist.id === selectedId ? "bg-blue-200" : "hover:bg-gray-100"}`}
+        className={`cursor-pointer p-2 mb-2 rounded ${playlist.id === selectedId ? "bg-blue-200" : "hover:bg-gray-100"} text-gray-800`}
         onClick={() => onSelect(playlist.id)}
       >
         {playlist.name}
