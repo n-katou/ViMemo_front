@@ -7,6 +7,7 @@ interface SidebarProps {
   onAddClick: () => void;
   onDelete: (id: number) => void;
   onRename: (id: number, newName: string) => void;
+  onCloseSidebar?: () => void;
 }
 
 const PlaylistSidebar: React.FC<SidebarProps> = ({

@@ -19,10 +19,10 @@ const PlaylistPage = () => {
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<number | null>(null);
   const [playlistItems, setPlaylistItems] = useState<any[]>([]);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true); // ← 開閉用の状態を追加
 
   if (!jwtToken) return <div className="p-6 text-gray-500">読み込み中...</div>;
 
-  // プレイリスト取得
   useEffect(() => {
     const loadPlaylists = async () => {
       try {
@@ -35,10 +35,8 @@ const PlaylistPage = () => {
     loadPlaylists();
   }, [jwtToken]);
 
-  // プレイリストの中身取得
   useEffect(() => {
     if (!selectedPlaylistId) return;
-
     fetchPlaylistItems(selectedPlaylistId, jwtToken).then((items) =>
       setPlaylistItems(items)
     );
@@ -50,13 +48,10 @@ const PlaylistPage = () => {
     try {
       await deletePlaylist(playlistId, jwtToken);
       setPlaylists((prev) => prev.filter((p) => p.id !== playlistId));
-
       if (selectedPlaylistId === playlistId) {
-        setSelectedPlaylistId(null); // 選択解除
-        setPlaylistItems([]);       // アイテムも初期化
+        setSelectedPlaylistId(null);
+        setPlaylistItems([]);
       }
-
-      console.log("プレイリストを削除しました");
     } catch (err) {
       console.error("削除失敗:", err);
       alert("削除に失敗しました");
@@ -67,43 +62,58 @@ const PlaylistPage = () => {
     try {
       await renamePlaylist(id, newName, jwtToken);
       setPlaylists((prev) =>
-        prev.map((pl) =>
-          pl.id === id ? { ...pl, name: newName } : pl
-        )
+        prev.map((pl) => (pl.id === id ? { ...pl, name: newName } : pl))
       );
-    } catch (e) {
+    } catch {
       alert("プレイリスト名の変更に失敗しました");
     }
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex w-full h-screen overflow-hidden">
-        <PlaylistSidebar
-          playlists={playlists}
-          selectedId={selectedPlaylistId}
-          onSelect={setSelectedPlaylistId}
-          onAddClick={() => setEditDrawerOpen(true)}
-          onDelete={handleDeletePlaylist}
-          onRename={handleRenamePlaylist}
-        />
-
-        <div className="flex-1 overflow-y-auto pt-16 pb-28 px-6">
-          {selectedPlaylistId === null ? (
-            <div className="h-full flex items-center justify-center text-gray-500 text-lg">
-              プレイリストを選択してください
-            </div>
-          ) : (
-            <PlaylistVideos
-              playlistItems={playlistItems}
-              setPlaylistItems={setPlaylistItems}
-              jwtToken={jwtToken}
-              playlistId={selectedPlaylistId}
-            />
-          )}
+      <main className="relative h-screen w-full">
+        {/* 開閉ボタン */}
+        <div className="absolute top-4 left-4 z-50">
+          <button
+            className="px-4 py-2 bg-blue-500 text-white text-sm rounded"
+            onClick={() => setShowSidebar(!showSidebar)}
+          >
+            {showSidebar ? "サイドバーを閉じる" : "サイドバーを開く"}
+          </button>
         </div>
 
-        {/* プレイリスト作成 Drawer */}
+        <div className="flex h-full overflow-hidden">
+          {/* サイドバー表示を制御 */}
+          {showSidebar && (
+            <PlaylistSidebar
+              playlists={playlists}
+              selectedId={selectedPlaylistId}
+              onSelect={setSelectedPlaylistId}
+              onAddClick={() => setEditDrawerOpen(true)}
+              onDelete={handleDeletePlaylist}
+              onRename={handleRenamePlaylist}
+              onCloseSidebar={() => setShowSidebar(false)}
+            />
+          )}
+
+          {/* メイン */}
+          <div className="flex-1 overflow-y-auto pt-16 pb-28 px-6">
+            {selectedPlaylistId === null ? (
+              <div className="h-full flex items-center justify-center text-gray-500 text-lg">
+                プレイリストを選択してください
+              </div>
+            ) : (
+              <PlaylistVideos
+                playlistItems={playlistItems}
+                setPlaylistItems={setPlaylistItems}
+                jwtToken={jwtToken}
+                playlistId={selectedPlaylistId}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Drawer */}
         {currentUser && (
           <PlaylistEditDrawer
             open={editDrawerOpen}
@@ -114,14 +124,13 @@ const PlaylistPage = () => {
               email: currentUser.email,
             }}
             onPlaylistCreated={(newPlaylist) => {
-              // ✅ リロードせずに状態追加＋選択
               setPlaylists((prev) => [...prev, newPlaylist]);
               setSelectedPlaylistId(newPlaylist.id);
               setEditDrawerOpen(false);
             }}
           />
         )}
-      </div>
+      </main>
     </DndProvider>
   );
 };
