@@ -25,6 +25,8 @@ const PlaylistPage = () => {
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true); // ← 開閉用の状態を追加
   const [showEditDrawer, setShowEditDrawer] = useState(false);
+  const isLoading = !jwtToken;
+
 
   const handleDeletePlaylist = async (playlistId: number) => {
     if (!window.confirm("このプレイリストを削除しますか？")) return;
@@ -54,6 +56,8 @@ const PlaylistPage = () => {
   };
 
   useEffect(() => {
+    if (isLoading) return;
+
     const loadPlaylists = async () => {
       try {
         const res = await fetchPlaylists(jwtToken);
@@ -63,16 +67,19 @@ const PlaylistPage = () => {
       }
     };
     loadPlaylists();
-  }, [jwtToken]);
+  }, [jwtToken, isLoading]);
 
   useEffect(() => {
-    if (!selectedPlaylistId) return;
+    if (isLoading || !selectedPlaylistId) return;
+
     fetchPlaylistItems(selectedPlaylistId, jwtToken).then((items) =>
       setPlaylistItems(items)
     );
-  }, [selectedPlaylistId, jwtToken]);
+  }, [selectedPlaylistId, jwtToken, isLoading]);
 
-  if (!jwtToken) return <div className="p-6 text-gray-500">読み込み中...</div>;
+  if (isLoading) {
+    return <div className="p-6 text-gray-500">読み込み中...</div>;
+  }
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -88,7 +95,6 @@ const PlaylistPage = () => {
               onAddClick={() => setEditDrawerOpen(true)}
               onDelete={handleDeletePlaylist}
               onRename={handleRenamePlaylist}
-              onCloseSidebar={() => setShowSidebar(false)}
               showSidebar={showSidebar}
             />
           )}
