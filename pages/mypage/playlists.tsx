@@ -12,6 +12,8 @@ import PlaylistVideos from "@/components/Mypage/playlists/PlaylistVideos";
 import PlaylistEditDrawer from "@/components/Mypage/playlists/PlaylistEditDrawer";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 const PlaylistPage = () => {
   const { currentUser, jwtToken } = useAuth();
@@ -73,15 +75,14 @@ const PlaylistPage = () => {
     <DndProvider backend={HTML5Backend}>
       <main className="relative h-screen w-full">
         {/* 開閉ボタン */}
-        <div className="absolute top-4 left-4 z-50">
+        <div className="fixed top-4 right-4 z-50 md:left-64 top-[100px] ">
           <button
-            className="px-4 py-2 bg-blue-500 text-white text-sm rounded"
+            className="p-2 rounded-full bg-blue-600 text-white shadow-md hover:bg-blue-700 transition"
             onClick={() => setShowSidebar(!showSidebar)}
           >
-            {showSidebar ? "サイドバーを閉じる" : "サイドバーを開く"}
+            {showSidebar ? <ChevronLeftIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
           </button>
         </div>
-
         <div className="flex h-full overflow-hidden">
           {/* サイドバー表示を制御 */}
           {showSidebar && (
