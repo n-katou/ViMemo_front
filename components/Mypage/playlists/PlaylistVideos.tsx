@@ -55,11 +55,6 @@ const PlaylistVideos: React.FC<Props> = ({
     }
   };
 
-  const handleEditPlaylist = () => {
-    // 必要に応じて親から openEditDrawer を渡してもOK
-    alert("編集モーダルを開く処理をここに実装！");
-  };
-
   return (
     <div className="w-full px-6 py-8 pt-16 pb-24">
       {/* Tooltip */}
