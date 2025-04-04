@@ -61,18 +61,21 @@ const PlaylistVideos: React.FC<Props> = ({
           並び順を保存する
         </button>
       )}
-      {playlistItems.map((item, index) => (
-        <FavoriteVideoCard
-          key={item.id}
-          index={index}
-          video={item.youtube_video}
-          notes={item.youtube_video.notes}
-          currentUser={null}
-          handleLikeVideo={() => { }}
-          handleUnlikeVideo={() => { }}
-          moveVideo={moveVideo}
-        />
-      ))}
+      <div className="flex flex-wrap gap-4 justify-start">
+        {playlistItems.map((item, index) => (
+          <FavoriteVideoCard
+            key={item.id}
+            index={index}
+            video={item.youtube_video}
+            notes={item.youtube_video.notes}
+            currentUser={null}
+            handleLikeVideo={() => { }}
+            handleUnlikeVideo={() => { }}
+            moveVideo={moveVideo}
+            className="w-[250px] scale-90"
+          />
+        ))}
+      </div>
     </div>
   );
 };
