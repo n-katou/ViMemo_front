@@ -49,10 +49,10 @@ const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveI
       {onRemove && (
         <button
           onClick={(e) => {
-            e.stopPropagation(); // 親のクリックを防止
+            e.stopPropagation();
             onRemove(item.id);
           }}
-          className="ml-auto text-sm text-red-500 hover:text-red-700"
+          className="ml-auto flex items-center gap-1 text-sm text-red-500 border border-red-500 rounded px-2 py-1 transition duration-200 ease-in-out hover:bg-red-500 hover:text-white"
           title="プレイリストから削除"
         >
           削除
@@ -111,6 +111,9 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setP
   };
 
   const handleRemove = async (itemId: number) => {
+    const confirm = window.confirm('この動画をプレイリストから削除しますか？');
+    if (!confirm) return;
+
     const success = await handleRemoveItem(playlistId, itemId, jwtToken);
     if (success) {
       const updated = playlistItems.filter((item) => item.id !== itemId);
