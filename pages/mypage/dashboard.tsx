@@ -8,7 +8,6 @@ import Alert from '@mui/material/Alert';
 import { useAuth } from '../../context/AuthContext';
 import { useDashboardData } from '../../hooks/mypage/dashboard/useDashboardData';
 import { fetchPlaylists, fetchPlaylistItems } from "@/components/Mypage/playlists/playlistUtils";
-import { updatePlaylistOrder } from '../../components/Mypage/dashboard/dashboardUtils';
 
 import LoadingSpinner from '../../components/LoadingSpinner';
 import UserCard from '../../components/Mypage/dashboard/UserCard';
@@ -101,6 +100,20 @@ const Dashboard = () => {
       console.error("プレイリストの順序保存に失敗しました", err);
     }
   };
+
+  useEffect(() => {
+    const stored = localStorage.getItem('lastSelectedPlaylistId');
+    if (stored && playlists.length > 0) {
+      const parsedId = Number(stored);
+      const exists = playlists.some(p => p.id === parsedId);
+      if (exists) {
+        setSelectedPlaylistId(parsedId);
+      } else {
+        localStorage.removeItem('lastSelectedPlaylistId');
+        setSelectedPlaylistId(playlists[0]?.id ?? null);
+      }
+    }
+  }, [playlists]);
 
   return (
     <DndProvider backend={HTML5Backend}>

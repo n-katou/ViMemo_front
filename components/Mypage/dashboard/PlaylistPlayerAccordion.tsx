@@ -68,53 +68,56 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
       </AccordionSummary>
       <AccordionDetails>
         {videoIds.length > 0 ? (
-          <iframe
-            src={playlistUrl}
-            allowFullScreen
-            className="w-full aspect-video large-video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            title="YouTube playlist"
-          />
+          <>
+            <iframe
+              src={playlistUrl}
+              allowFullScreen
+              className="w-full aspect-video large-video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              title="YouTube playlist"
+            />
+
+            <Box textAlign="center" mt={7} mb={4}>
+              <Button
+                variant="contained"
+                startIcon={<ShuffleIcon />}
+                onClick={handleShuffle}
+                disabled={isShuffling}
+                sx={{
+                  backgroundColor: isShuffling ? '#ccc' : '#22eec5',
+                  color: isShuffling ? 'gray' : 'white',
+                  marginRight: '16px',
+                  '&:hover': {
+                    backgroundColor: '#1bb89a',
+                  },
+                }}
+              >
+                {isShuffling ? 'シャッフル中...' : 'プレイリストをシャッフル'}
+              </Button>
+
+              <Button
+                variant="contained"
+                onClick={handleConfirmOrder}
+                disabled={isSaving}
+                sx={{
+                  backgroundColor: isSaving ? '#ccc' : '#38bdf8',
+                  color: isSaving ? 'gray' : 'white',
+                  '&:hover': {
+                    backgroundColor: '#1e90ff',
+                  },
+                }}
+              >
+                {isSaving ? '保存中...' : '並び替え確定'}
+              </Button>
+            </Box>
+
+            {isShuffling && <CustomSpinner size={120} bgColor="rgba(0, 0, 0, 0.6)" />}
+          </>
         ) : (
           <Typography>プレイリストに動画がありません。</Typography>
         )}
-
-        <Box textAlign="center" mt={7} mb={4}>
-          <Button
-            variant="contained"
-            startIcon={<ShuffleIcon />}
-            onClick={handleShuffle}
-            disabled={isShuffling}
-            sx={{
-              backgroundColor: isShuffling ? '#ccc' : '#22eec5',
-              color: isShuffling ? 'gray' : 'white',
-              marginRight: '16px',
-              '&:hover': {
-                backgroundColor: '#1bb89a',
-              },
-            }}
-          >
-            {isShuffling ? 'シャッフル中...' : 'プレイリストをシャッフル'}
-          </Button>
-
-          <Button
-            variant="contained"
-            onClick={handleConfirmOrder}
-            disabled={isSaving}
-            sx={{
-              backgroundColor: isSaving ? '#ccc' : '#38bdf8',
-              color: isSaving ? 'gray' : 'white',
-              '&:hover': {
-                backgroundColor: '#1e90ff',
-              },
-            }}
-          >
-            {isSaving ? '保存中...' : '並び替え確定'}
-          </Button>
-        </Box>
-
-        {isShuffling && <CustomSpinner size={120} bgColor="rgba(0, 0, 0, 0.6)" />}
       </AccordionDetails>
+
     </Accordion>
   );
 };
