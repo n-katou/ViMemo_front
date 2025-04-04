@@ -101,10 +101,20 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
 
       {/* 下部ボタン固定 */}
       <div className="mt-4 flex justify-between">
-        <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
+        <button
+          onClick={() => {
+            setName("");
+            setSelected([]);
+            onClose();
+          }}
+          className="px-4 py-2 bg-gray-300 rounded"
+        >
           キャンセル
         </button>
-        <button onClick={handleSubmit} className="px-4 py-2 bg-blue-500 text-white rounded">
+        <button
+          onClick={handleSubmit}
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+        >
           作成
         </button>
       </div>
