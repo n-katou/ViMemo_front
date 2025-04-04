@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { List, ListItemIcon, ListItemText, ListItemButton } from '@mui/material';
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 import { Home as HomeIcon, Person as PersonIcon, Favorite as FavoriteIcon, Note as NoteIcon, Edit as EditIcon, ExitToApp as ExitToAppIcon, Login as LoginIcon } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import ThemeToggleButton from '../ThemeToggleButton';
@@ -21,6 +22,7 @@ const UserDrawerListItems: React.FC<UserDrawerListItemsProps> = ({ currentUser, 
       { text: 'ホーム', href: '/', icon: <HomeIcon /> },
       { text: 'マイページ', href: '/mypage/dashboard', icon: <PersonIcon /> },
       { text: 'いいねした動画', href: '/mypage/favorite_videos', icon: <FavoriteIcon /> },
+      { text: 'プレイリストの作成', href: '/mypage/playlists', icon: <PlaylistPlayIcon /> },
       { text: 'いいねしたメモ', href: '/mypage/favorite_notes', icon: <NoteIcon /> },
       { text: 'MYメモ', href: '/mypage/my_notes', icon: <EditIcon /> },
     ]
