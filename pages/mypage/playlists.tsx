@@ -19,16 +19,30 @@ const PlaylistPage = () => {
   const [playlistItems, setPlaylistItems] = useState<any[]>([]);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
 
+  if (!jwtToken) return <div className="p-4">読み込み中...</div>;
+
   useEffect(() => {
     if (!jwtToken) return;
-    fetchPlaylists(jwtToken).then((res) => {
-      setPlaylists(res);
-      if (res.length > 0) setSelectedPlaylistId(res[0].id);
-    });
+
+    const loadPlaylists = async () => {
+      try {
+        const res = await fetchPlaylists(jwtToken);
+        setPlaylists(res);
+
+        // 初回ロード時だけ自動選択（すでに選択済みならスキップ）
+        if (!selectedPlaylistId && res.length > 0) {
+          setSelectedPlaylistId(res[0].id);
+        }
+      } catch (err) {
+        console.error("プレイリスト取得失敗:", err);
+      }
+    };
+
+    loadPlaylists();
   }, [jwtToken]);
 
   useEffect(() => {
-    if (!jwtToken || !selectedPlaylistId) return;
+    if (!selectedPlaylistId) return;
     fetchPlaylistItems(selectedPlaylistId, jwtToken).then((items) =>
       setPlaylistItems(items)
     );
@@ -43,8 +57,15 @@ const PlaylistPage = () => {
           onSelect={setSelectedPlaylistId}
           onAddClick={() => setEditDrawerOpen(true)}
         />
-        <PlaylistVideos playlistItems={playlistItems} />
-        {jwtToken && currentUser && (
+        {selectedPlaylistId !== null && (
+          <PlaylistVideos
+            playlistItems={playlistItems}
+            setPlaylistItems={setPlaylistItems}
+            jwtToken={jwtToken}
+            playlistId={selectedPlaylistId}
+          />
+        )}
+        {currentUser && (
           <PlaylistEditDrawer
             open={editDrawerOpen}
             onClose={() => setEditDrawerOpen(false)}
@@ -64,5 +85,6 @@ const PlaylistPage = () => {
     </DndProvider>
   );
 };
+
 
 export default PlaylistPage;
