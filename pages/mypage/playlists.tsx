@@ -15,7 +15,6 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import EditPlaylistDrawer from "@/components/Mypage/playlists/EditPlaylistDrawer";
-import GradientButton from '../../styles/GradientButton';
 
 const PlaylistPage = () => {
   const { currentUser, jwtToken } = useAuth();
@@ -54,6 +53,8 @@ const PlaylistPage = () => {
       alert("プレイリスト名の変更に失敗しました");
     }
   };
+
+  const selectedPlaylist = playlists.find((p) => p.id === selectedPlaylistId);
 
   useEffect(() => {
     if (isLoading) return;
@@ -96,6 +97,7 @@ const PlaylistPage = () => {
               onDelete={handleDeletePlaylist}
               onRename={handleRenamePlaylist}
               showSidebar={showSidebar}
+              onCloseSidebar={() => setShowSidebar(false)}
             />
           )}
 
@@ -106,25 +108,26 @@ const PlaylistPage = () => {
               ${showSidebar ? 'left-[80vw] sm:left-[32vw] md:left-[25vw]' : 'left-2'}
             `}
           >
-            <GradientButton
+            <button
               onClick={() => setShowSidebar(!showSidebar)}
-              disableRipple
-              disableElevation
-              style={{
-                width: '40px',
-                height: '40px',
-                minWidth: '40px',
-                padding: 0,
-                borderRadius: '50%',
-              }}
+              className={`
+                absolute top-1/2 transform -translate-y-1/2
+                ${showSidebar ? 'right-0' : 'left-2'} 
+                bg-gradient-to-br from-purple-400 via-indigo-500 to-blue-500
+                text-white w-10 h-10 rounded-full shadow-lg z-50
+                flex items-center justify-center
+                transition-all duration-300
+                hover:brightness-110 hover:scale-110 active:scale-95
+              `}
             >
               {showSidebar ? (
                 <ChevronLeftIcon fontSize="small" />
               ) : (
                 <ChevronRightIcon fontSize="small" />
               )}
-            </GradientButton>
+            </button>
           </div>
+
 
           {/* メイン */}
           <div className="flex-1 overflow-y-auto pt-16 pb-28 px-6">
@@ -138,6 +141,7 @@ const PlaylistPage = () => {
                 setPlaylistItems={setPlaylistItems}
                 jwtToken={jwtToken}
                 playlistId={selectedPlaylistId}
+                playlistName={selectedPlaylist?.name}
                 onEditClick={() => setShowEditDrawer(true)}
               />
             )}

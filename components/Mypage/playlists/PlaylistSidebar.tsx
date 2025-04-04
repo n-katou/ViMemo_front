@@ -14,6 +14,7 @@ interface SidebarProps {
   onDelete: (id: number) => void;
   onRename: (id: number, newName: string) => void;
   showSidebar?: boolean;
+  onCloseSidebar: () => void;
 }
 
 const PlaylistSidebar: React.FC<SidebarProps> = ({
@@ -75,7 +76,10 @@ const PlaylistSidebar: React.FC<SidebarProps> = ({
                 <>
                   <div className="flex gap-2 ml-2 whitespace-nowrap">
                     <button
-                      className="flex justify-center items-center gap-1 px-2 py-1 w-[64px] text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
+                      className="flex justify-center items-center gap-1 px-2 py-1 w-[64px] text-sm text-white rounded transition"
+                      style={{ backgroundColor: '#38bdf8' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0ea5e9')}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#38bdf8')}
                       onClick={(e) => {
                         e.stopPropagation();
                         if (newName.trim()) onRename(playlist.id, newName.trim());
@@ -99,7 +103,10 @@ const PlaylistSidebar: React.FC<SidebarProps> = ({
               ) : (
                 <>
                   <button
-                    className="flex justify-center items-center gap-1 px-2 py-1 w-[64px] text-sm text-blue-600 bg-blue-50 border border-blue-100 rounded hover:bg-blue-100 transition"
+                    className="flex justify-center items-center gap-1 px-2 py-1 w-[64px] text-sm text-white border rounded transition"
+                    style={{ backgroundColor: '#818cf8' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#6366f1')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#818cf8')}
                     onClick={(e) => {
                       e.stopPropagation();
                       setEditingId(playlist.id);
@@ -126,7 +133,7 @@ const PlaylistSidebar: React.FC<SidebarProps> = ({
       ))}
       <button
         onClick={onAddClick}
-        className="mt-4 px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full"
+        className="mt-4 px-3 py-2 text-white rounded w-full transition-colors bg-teal-400 hover:bg-teal-500"
       >
         + 新規作成
       </button>

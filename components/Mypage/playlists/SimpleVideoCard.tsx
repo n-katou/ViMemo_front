@@ -82,8 +82,7 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className }
       <img
         src={thumbnailUrl}
         alt={video.title}
-        className="w-full h-40 object-cover cursor-pointer"
-        onClick={() => router.push(`/youtube_videos/${video.id}`)}
+        className="w-full h-40 object-cover"
       />
 
       <div className="p-2">

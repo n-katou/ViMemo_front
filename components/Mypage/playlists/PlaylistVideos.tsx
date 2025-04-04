@@ -13,6 +13,7 @@ type Props = {
   setPlaylistItems: React.Dispatch<React.SetStateAction<PlaylistItem[]>>;
   jwtToken: string;
   playlistId: number;
+  playlistName?: string;
   onEditClick?: () => void;
 };
 
@@ -21,6 +22,7 @@ const PlaylistVideos: React.FC<Props> = ({
   setPlaylistItems,
   jwtToken,
   playlistId,
+  playlistName,
   onEditClick,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -78,19 +80,29 @@ const PlaylistVideos: React.FC<Props> = ({
         </div>
       )}
 
+      {/* プレイリスト名 */}
+      {playlistName && (
+        <h2 className="text-xl font-bold mb-6" style={{ color: '#818cf8' }}>
+          「{playlistName}」の動画一覧
+        </h2>
+      )}
+
       {/* アクションボタン */}
       {playlistId && (
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={handleSaveOrder}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md"
+            className="px-4 py-2 text-white rounded-md transition-colors"
+            style={{ backgroundColor: '#c084fc' }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#a855f7')} // 少し濃いめ
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#c084fc')}
           >
             並び順を保存する
           </button>
           {onEditClick && (
             <button
               onClick={onEditClick}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200 active:scale-95"
             >
               編集
             </button>

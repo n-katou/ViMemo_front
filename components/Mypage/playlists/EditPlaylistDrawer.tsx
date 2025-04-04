@@ -88,13 +88,16 @@ const EditPlaylistDrawer: React.FC<EditPlaylistDrawerProps> = ({
       <div className="mt-4 flex justify-between">
         <button
           onClick={onClose}
-          className="px-4 py-2 bg-gray-300 rounded"
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition-colors duration-200 active:scale-95"
         >
           キャンセル
         </button>
         <button
           onClick={handleSave}
           className="px-4 py-2 bg-blue-500 text-white rounded"
+          style={{ backgroundColor: '#38bdf8' }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0ea5e9')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#38bdf8')}
         >
           保存
         </button>
