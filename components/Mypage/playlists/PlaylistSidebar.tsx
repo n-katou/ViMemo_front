@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 
+
+interface Playlist {
+  id: number;
+  name: string;
+}
+
 interface SidebarProps {
-  playlists: any[];
+  playlists: Playlist[];
   selectedId: number | null;
   onSelect: (id: number) => void;
   onAddClick: () => void;
   onDelete: (id: number) => void;
   onRename: (id: number, newName: string) => void;
-  onCloseSidebar?: () => void;
   showSidebar?: boolean;
 }
 
