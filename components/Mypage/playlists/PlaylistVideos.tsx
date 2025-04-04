@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import FavoriteVideoCard from "../favorite_videos/FavoriteVideoCard";
-import { YoutubeVideo } from "../../../types/youtubeVideo"; // ← これに合わせて定義
+import SimpleVideoCard from "./SimpleVideoCard";
+import { YoutubeVideo } from "../../../types/youtubeVideo";
 
 // 各PlaylistItemの型（動画データ込み）
 type PlaylistItem = {
@@ -79,14 +79,10 @@ const PlaylistVideos: React.FC<Props> = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         {playlistItems.map((item, index) => (
-          <FavoriteVideoCard
+          <SimpleVideoCard
             key={item.id}
             index={index}
             video={item.youtube_video}
-            notes={item.youtube_video.notes}
-            currentUser={null}
-            handleLikeVideo={() => { }}
-            handleUnlikeVideo={() => { }}
             moveVideo={moveVideo}
             className="w-full"
           />
