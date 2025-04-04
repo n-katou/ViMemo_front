@@ -79,7 +79,7 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
           <Typography>プレイリストに動画がありません。</Typography>
         )}
 
-        <Box textAlign="center" mt={2}>
+        <Box textAlign="center" mt={7} mb={4}>
           <Button
             variant="contained"
             startIcon={<ShuffleIcon />}
