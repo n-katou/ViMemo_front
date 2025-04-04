@@ -164,7 +164,8 @@ const Dashboard = () => {
                 </label>
                 <select
                   id="playlistSelect"
-                  className="block w-full p-2 border rounded"
+                  className="text-white w-full p-2 border rounded"
+                  style={{ backgroundColor: '#818cf8' }}
                   value={selectedPlaylistId ?? ''}
                   onChange={(e) => setSelectedPlaylistId(Number(e.target.value))}
                 >

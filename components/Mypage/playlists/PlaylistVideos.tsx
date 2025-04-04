@@ -83,14 +83,17 @@ const PlaylistVideos: React.FC<Props> = ({
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={handleSaveOrder}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md"
+            className="px-4 py-2 text-white rounded-md transition-colors"
+            style={{ backgroundColor: '#c084fc' }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#a855f7')} // 少し濃いめ
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#c084fc')}
           >
             並び順を保存する
           </button>
           {onEditClick && (
             <button
               onClick={onEditClick}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200 active:scale-95"
             >
               編集
             </button>

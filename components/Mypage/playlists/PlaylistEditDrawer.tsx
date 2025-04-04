@@ -106,13 +106,16 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
             setSelected([]);
             onClose();
           }}
-          className="px-4 py-2 bg-gray-300 rounded"
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition-colors duration-200 active:scale-95"
         >
           キャンセル
         </button>
         <button
           onClick={handleSubmit}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="px-4 py-2 text-white rounded"
+          style={{ backgroundColor: '#38bdf8' }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0ea5e9')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#38bdf8')}
         >
           作成
         </button>
