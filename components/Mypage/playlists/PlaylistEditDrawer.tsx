@@ -74,9 +74,8 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed right-0 top-0 w-full max-w-lg h-full bg-white shadow-lg z-50 flex flex-col pt-16 pb-28 px-6">
+    <div className="fixed right-0 top-0 w-full max-w-5xl h-full bg-white shadow-lg z-50 flex flex-col pt-16 pb-28 px-6">
       <h2 className="text-xl font-bold mb-4">新しいプレイリストを作成</h2>
-
       <input
         type="text"
         placeholder="プレイリスト名"
@@ -87,7 +86,7 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
 
       {/* 中央スクロール領域 */}
       <div className="flex-1 overflow-y-auto pr-1">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           {videos.map((video) => (
             <SelectableVideoCard
               key={video.id}
