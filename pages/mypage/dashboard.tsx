@@ -8,13 +8,14 @@ import Alert from '@mui/material/Alert';
 import { useAuth } from '../../context/AuthContext';
 import { useDashboardData } from '../../hooks/mypage/dashboard/useDashboardData';
 import { fetchPlaylists, fetchPlaylistItems } from "@/components/Mypage/playlists/playlistUtils";
+import { updatePlaylistOrder } from '../../components/Mypage/dashboard/dashboardUtils';
 
 import LoadingSpinner from '../../components/LoadingSpinner';
 import UserCard from '../../components/Mypage/dashboard/UserCard';
 import YoutubeLikesAccordion from '../../components/Mypage/dashboard/YoutubeLikesAccordion';
 import SearchForm from '../../components/Mypage/dashboard/SearchForm';
 import SortablePlaylist from '../../components/Mypage/dashboard/SortablePlaylist';
-import { updatePlaylistOrder } from '../../components/Mypage/dashboard/dashboardUtils';
+import PlaylistPlayerAccordion from '../../components/Mypage/dashboard/PlaylistPlayerAccordion';
 
 const Dashboard = () => {
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
@@ -129,14 +130,7 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row w-full mt-8 gap-8">
           {/* プレイヤーエリア */}
           <div className="w-full md:w-2/3">
-            <YoutubeLikesAccordion
-              youtubeVideoLikes={sortedVideoLikes}
-              youtubePlaylistUrl={youtubePlaylistUrl}
-              shufflePlaylist={shufflePlaylist}
-              setYoutubeVideoLikes={setYoutubeVideoLikes}
-              updatePlaylistOrder={updatePlaylistOrder}
-              jwtToken={jwtToken ?? ''}
-            />
+            <PlaylistPlayerAccordion playlistItems={playlistItems} />
           </div>
 
           {/* プレイリストエリア */}
@@ -168,7 +162,10 @@ const Dashboard = () => {
                 </select>
               </div>
             )}
-            <SortablePlaylist playlistItems={playlistItems} moveItem={handleMoveItem} />
+            <SortablePlaylist
+              playlistItems={playlistItems}
+              setPlaylistItems={setPlaylistItems}
+            />
           </div>
         </div>
 

@@ -3,15 +3,8 @@ import Button from '@mui/material/Button';
 import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
-import { YoutubeVideo } from '../../../types/youtubeVideo';
+import { PlaylistItem } from '../../../types/playlistItem';
 
-interface PlaylistItem {
-  id: number;
-  position: number;
-  youtube_video: YoutubeVideo;
-}
-
-// プレイリストの1つのアイテムコンポーネント
 interface PlaylistItemProps {
   item: PlaylistItem;
   index: number;
@@ -20,6 +13,7 @@ interface PlaylistItemProps {
 
 const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveItem }) => {
   const { dragDropRef, isDragging, isOver } = useDragDropVideoCard(index, moveItem);
+  const router = useRouter();
 
   const backgroundColor = isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white';
   const opacity = isDragging ? 0.5 : 1;
@@ -27,13 +21,6 @@ const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveI
   const thumbnailUrl = item.youtube_video.youtube_id
     ? `https://img.youtube.com/vi/${item.youtube_video.youtube_id}/hqdefault.jpg`
     : '/default-thumbnail.jpg';
-
-  const router = useRouter();
-
-  const handleClick = () => {
-    router.push(`/youtube_videos/${item.youtube_video.id}`);
-  };
-
 
   return (
     <div
@@ -71,7 +58,7 @@ const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveI
       />
       {item.youtube_video.title ? (
         <button
-          onClick={handleClick}
+          onClick={() => router.push(`/youtube_videos/${item.youtube_video.id}`)}
           className="text-blue-600 font-bold hover:underline hover:text-blue-800 transition duration-200 ease-in-out max-w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
         >
           {item.youtube_video.title}
@@ -83,19 +70,27 @@ const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveI
   );
 };
 
-// 並び替え可能なプレイリスト
+// ✅ props 修正
 interface SortablePlaylistProps {
   playlistItems: PlaylistItem[];
-  moveItem: (fromIndex: number, toIndex: number) => void;
+  setPlaylistItems: (items: PlaylistItem[]) => void;
 }
 
-const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, moveItem }) => {
+const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setPlaylistItems }) => {
   const { theme } = useTheme();
-  const [isExpanded, setIsExpanded] = useState(false); // 展開状態管理
-  const maxVisibleItems = 5; // 最初に表示するアイテム数
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxVisibleItems = 5;
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  // ✅ 自前の moveItem 実装
+  const handleMoveItem = (fromIndex: number, toIndex: number) => {
+    const updated = [...playlistItems];
+    const [movedItem] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, movedItem);
+    setPlaylistItems(updated);
   };
 
   return (
@@ -112,7 +107,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, move
               key={item.id}
               item={item}
               index={index}
-              moveItem={moveItem}
+              moveItem={handleMoveItem}
             />
           ))}
       </div>
@@ -122,6 +117,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, move
           下にスクロールできます
         </p>
       )}
+
       {playlistItems.length > maxVisibleItems && (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Button
@@ -132,7 +128,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, move
               color: 'white',
               width: '35%',
               '&:hover': {
-                backgroundColor: '#1bb89a', // ホバー時の色を少し濃くする
+                backgroundColor: '#1bb89a',
               },
             }}
           >
