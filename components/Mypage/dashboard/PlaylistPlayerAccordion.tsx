@@ -81,7 +81,9 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        {videoIds.length > 0 ? (
+        {playlistItems.length === 0 || videoIds.length === 0 ? (
+          <Typography>プレイリストに動画がありません。</Typography>
+        ) : (
           <>
             <iframe
               src={playlistUrl}
@@ -139,8 +141,6 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
 
             {isShuffling && <CustomSpinner size={120} bgColor="rgba(0, 0, 0, 0.6)" />}
           </>
-        ) : (
-          <Typography>プレイリストに動画がありません。</Typography>
         )}
       </AccordionDetails>
 
