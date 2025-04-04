@@ -35,7 +35,7 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
     .map(item => item.youtube_video.youtube_id)
     .filter(id => typeof id === 'string' && id.trim().length > 0);
 
-  const playlistUrl = `https://www.youtube.com/embed/videoseries?playlist=${videoIds.join(',')}&autoplay=0&rel=0`;
+  const playlistUrl = `https://www.youtube.com/embed/videoseries?playlist=${videoIds.join(',')}&autoplay=0&rel=0&loop=1`;
 
   const handleShuffle = () => {
     setIsShuffling(true);
