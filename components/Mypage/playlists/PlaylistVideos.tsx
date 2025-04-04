@@ -61,7 +61,7 @@ const PlaylistVideos: React.FC<Props> = ({
           並び順を保存する
         </button>
       )}
-      <div className="flex flex-wrap gap-4 justify-start">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         {playlistItems.map((item, index) => (
           <FavoriteVideoCard
             key={item.id}
@@ -72,7 +72,7 @@ const PlaylistVideos: React.FC<Props> = ({
             handleLikeVideo={() => { }}
             handleUnlikeVideo={() => { }}
             moveVideo={moveVideo}
-            className="w-[250px] scale-90"
+            className="w-full"
           />
         ))}
       </div>
