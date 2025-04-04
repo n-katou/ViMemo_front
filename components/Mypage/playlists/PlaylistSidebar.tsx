@@ -56,28 +56,57 @@ const PlaylistSidebar: React.FC<SidebarProps> = ({
             ) : (
               <span className="truncate" title={playlist.name}>{playlist.name}</span>
             )}
-
-            <div className="flex items-center gap-1 ml-2">
-              <button
-                className="text-blue-500 text-xs hover:underline"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setEditingId(playlist.id);
-                  setNewName(playlist.name);
-                }}
-              >
-                編集
-              </button>
-              <button
-                className="text-red-500 text-xs hover:underline"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(playlist.id);
-                }}
-              >
-                削除
-              </button>
+            <div className="flex items-center gap-2 ml-2">
+              {editingId === playlist.id ? (
+                <>
+                  <div className="flex gap-2 ml-2 whitespace-nowrap">
+                    <button
+                      className="flex justify-center items-center gap-1 px-2 py-1 w-[64px] text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (newName.trim()) onRename(playlist.id, newName.trim());
+                        setEditingId(null);
+                      }}
+                    >
+                      保存
+                    </button>
+                    <button
+                      className="flex justify-center items-center gap-1 px-2 py-1 w-[64px] text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingId(null);
+                        setNewName("");
+                      }}
+                    >
+                      キャンセル
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="flex justify-center items-center gap-1 px-2 py-1 w-[64px] text-sm text-blue-600 bg-blue-50 border border-blue-100 rounded hover:bg-blue-100 transition"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingId(playlist.id);
+                      setNewName(playlist.name);
+                    }}
+                  >
+                    編集
+                  </button>
+                  <button
+                    className="flex justify-center items-center gap-1 px-2 py-1 w-[64px] text-sm text-red-600 bg-red-50 border border-red-100 rounded hover:bg-red-100 transition"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(playlist.id);
+                    }}
+                  >
+                    削除
+                  </button>
+                </>
+              )}
             </div>
+
           </div>
         </div>
       ))}
