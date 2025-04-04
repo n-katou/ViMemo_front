@@ -29,10 +29,8 @@ const PlaylistPage = () => {
         const res = await fetchPlaylists(jwtToken);
         setPlaylists(res);
 
-        // 初回ロード時だけ自動選択（すでに選択済みならスキップ）
-        if (!selectedPlaylistId && res.length > 0) {
-          setSelectedPlaylistId(res[0].id);
-        }
+        // 初回ロード時でもプレイリストは選択しない（デフォルト: 未選択状態）
+        // setSelectedPlaylistId は呼ばない
       } catch (err) {
         console.error("プレイリスト取得失敗:", err);
       }
@@ -57,7 +55,11 @@ const PlaylistPage = () => {
           onSelect={setSelectedPlaylistId}
           onAddClick={() => setEditDrawerOpen(true)}
         />
-        {selectedPlaylistId !== null && (
+        {selectedPlaylistId === null ? (
+          <div className="flex-1 flex items-center justify-center text-gray-500 text-lg">
+            プレイリストを選択してください
+          </div>
+        ) : (
           <PlaylistVideos
             playlistItems={playlistItems}
             setPlaylistItems={setPlaylistItems}

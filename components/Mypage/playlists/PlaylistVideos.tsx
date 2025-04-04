@@ -53,19 +53,21 @@ const PlaylistVideos: React.FC<Props> = ({
 
   return (
     <div className="w-full px-6 py-8">
-      <button
-        onClick={handleSaveOrder}
-        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md"
-      >
-        並び順を保存する
-      </button>
+      {playlistId && (
+        <button
+          onClick={handleSaveOrder}
+          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md"
+        >
+          並び順を保存する
+        </button>
+      )}
       {playlistItems.map((item, index) => (
         <FavoriteVideoCard
           key={item.id}
           index={index}
           video={item.youtube_video}
           notes={item.youtube_video.notes}
-          currentUser={null} // プレイリストではいいね操作しないならnullでOK
+          currentUser={null}
           handleLikeVideo={() => { }}
           handleUnlikeVideo={() => { }}
           moveVideo={moveVideo}
