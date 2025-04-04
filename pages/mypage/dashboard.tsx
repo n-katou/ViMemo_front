@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -7,6 +7,7 @@ import Alert from '@mui/material/Alert';
 
 import { useAuth } from '../../context/AuthContext';
 import { useDashboardData } from '../../hooks/mypage/dashboard/useDashboardData';
+import { fetchPlaylists, fetchPlaylistItems } from "@/components/Mypage/playlists/playlistUtils";
 
 import LoadingSpinner from '../../components/LoadingSpinner';
 import UserCard from '../../components/Mypage/dashboard/UserCard';
@@ -68,6 +69,45 @@ const Dashboard = () => {
     await updatePlaylistOrder(jwtToken, updatedItems, setYoutubeVideoLikes);
   };
 
+  const [playlists, setPlaylists] = useState<any[]>([]);
+  const [selectedPlaylistId, setSelectedPlaylistId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!jwtToken) return;
+
+    const loadPlaylists = async () => {
+      try {
+        const res = await fetchPlaylists(jwtToken);
+        setPlaylists(res); // プレイリスト一覧を保存
+        if (res.length > 0) {
+          setSelectedPlaylistId(res[0].id); // 最初のプレイリストをデフォルト選択
+        }
+      } catch (err) {
+        console.error("プレイリストの取得に失敗しました", err);
+      }
+    };
+
+    loadPlaylists();
+  }, [jwtToken]);
+
+  const [playlistItems, setPlaylistItems] = useState<any[]>([]); // ← プレイリスト動画
+
+  useEffect(() => {
+    if (!selectedPlaylistId) return;
+
+    const loadPlaylistVideos = async () => {
+      try {
+        const items = await fetchPlaylistItems(selectedPlaylistId, jwtToken);
+        setPlaylistItems(items);
+      } catch (err) {
+        console.error("プレイリスト内の動画取得に失敗しました:", err);
+        setPlaylistItems([]);
+      }
+    };
+
+    loadPlaylistVideos();
+  }, [selectedPlaylistId, jwtToken]);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="w-full px-6 py-8 mt-4">
@@ -103,13 +143,32 @@ const Dashboard = () => {
           <div
             className="w-full md:w-1/3 bg-white shadow-md rounded-lg p-6"
             style={{
-              height: '550px', // ← プレイヤーに合わせて完全固定
+              height: '620px', // ← プレイヤーに合わせて完全固定
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
             }}
           >
-            <SortablePlaylist youtubeVideoLikes={sortedVideoLikes} moveItem={handleMoveItem} />
+            {playlists.length > 0 && (
+              <div className="mb-4">
+                <label htmlFor="playlistSelect" className="block text-sm font-medium text-gray-700 mb-1">
+                  プレイリストを選択:
+                </label>
+                <select
+                  id="playlistSelect"
+                  className="block w-full p-2 border rounded"
+                  value={selectedPlaylistId ?? ''}
+                  onChange={(e) => setSelectedPlaylistId(Number(e.target.value))}
+                >
+                  {playlists.map((playlist) => (
+                    <option key={playlist.id} value={playlist.id}>
+                      {playlist.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            <SortablePlaylist playlistItems={playlistItems} moveItem={handleMoveItem} />
           </div>
         </div>
 
