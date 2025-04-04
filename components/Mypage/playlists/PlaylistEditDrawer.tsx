@@ -10,7 +10,6 @@ interface PlaylistEditDrawerProps {
   currentUser: {
     id: number;
     email: string;
-    // 他に使うフィールドがあれば追加
   };
   onPlaylistCreated: (playlist: { id: number; name: string }) => void;
 }
@@ -32,12 +31,7 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
     const load = async () => {
       try {
         const res = await fetchFavorites(1, "like", jwtToken, currentUser, 1000);
-        if (res?.videos) {
-          setVideos(res.videos);
-        } else {
-          console.warn("No videos returned");
-          setVideos([]);
-        }
+        setVideos(res?.videos || []);
       } catch (e) {
         console.error("お気に入り動画の取得に失敗しました", e);
         setVideos([]);
@@ -49,9 +43,7 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
 
   const toggleSelection = (videoId: number) => {
     setSelected((prev) =>
-      prev.includes(videoId)
-        ? prev.filter((id) => id !== videoId)
-        : [...prev, videoId]
+      prev.includes(videoId) ? prev.filter((id) => id !== videoId) : [...prev, videoId]
     );
   };
 
@@ -66,7 +58,13 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
       await Promise.all(
         selected.map((id) => addVideoToPlaylist(playlist.id, id, jwtToken))
       );
+
+      // ✅ 通知＆親に反映
       onPlaylistCreated(playlist);
+
+      // 入力クリア（リセットして再度開いたときのため）
+      setName("");
+      setSelected([]);
     } catch (err) {
       console.error("プレイリスト作成に失敗:", err);
       alert("プレイリストの作成に失敗しました。");
@@ -76,8 +74,9 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed right-0 top-0 w-full max-w-lg h-full bg-white shadow-lg z-50 p-6 overflow-y-auto">
+    <div className="fixed right-0 top-0 w-full max-w-lg h-full bg-white shadow-lg z-50 flex flex-col pt-16 pb-28 px-6">
       <h2 className="text-xl font-bold mb-4">新しいプレイリストを作成</h2>
+
       <input
         type="text"
         placeholder="プレイリスト名"
@@ -85,16 +84,22 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      <div className="grid grid-cols-2 gap-4">
-        {videos.map((video) => (
-          <SelectableVideoCard
-            key={video.id}
-            video={video}
-            selected={selected.includes(video.id)}
-            onToggle={() => toggleSelection(video.id)}
-          />
-        ))}
+
+      {/* 中央スクロール領域 */}
+      <div className="flex-1 overflow-y-auto pr-1">
+        <div className="grid grid-cols-2 gap-4">
+          {videos.map((video) => (
+            <SelectableVideoCard
+              key={video.id}
+              video={video}
+              selected={selected.includes(video.id)}
+              onToggle={() => toggleSelection(video.id)}
+            />
+          ))}
+        </div>
       </div>
+
+      {/* 下部ボタン固定 */}
       <div className="mt-4 flex justify-between">
         <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
           キャンセル

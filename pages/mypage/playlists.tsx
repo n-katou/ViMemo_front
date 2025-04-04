@@ -8,7 +8,6 @@ import {
 import PlaylistSidebar from "@/components/Mypage/playlists/PlaylistSidebar";
 import PlaylistVideos from "@/components/Mypage/playlists/PlaylistVideos";
 import PlaylistEditDrawer from "@/components/Mypage/playlists/PlaylistEditDrawer";
-
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -19,23 +18,22 @@ const PlaylistPage = () => {
   const [playlistItems, setPlaylistItems] = useState<any[]>([]);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
 
-  // 認証が未取得の間は読み込み表示
   if (!jwtToken) return <div className="p-6 text-gray-500">読み込み中...</div>;
 
+  // プレイリスト取得
   useEffect(() => {
     const loadPlaylists = async () => {
       try {
         const res = await fetchPlaylists(jwtToken);
         setPlaylists(res);
-        // デフォルトで何も選ばない
       } catch (err) {
         console.error("プレイリスト取得失敗:", err);
       }
     };
-
     loadPlaylists();
   }, [jwtToken]);
 
+  // プレイリストの中身取得
   useEffect(() => {
     if (!selectedPlaylistId) return;
 
@@ -69,6 +67,7 @@ const PlaylistPage = () => {
           )}
         </div>
 
+        {/* プレイリスト作成 Drawer */}
         {currentUser && (
           <PlaylistEditDrawer
             open={editDrawerOpen}
@@ -79,6 +78,7 @@ const PlaylistPage = () => {
               email: currentUser.email,
             }}
             onPlaylistCreated={(newPlaylist) => {
+              // ✅ リロードせずに状態追加＋選択
               setPlaylists((prev) => [...prev, newPlaylist]);
               setSelectedPlaylistId(newPlaylist.id);
               setEditDrawerOpen(false);
