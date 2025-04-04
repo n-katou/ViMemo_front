@@ -81,26 +81,21 @@ export const addVideoToPlaylist = async (
 };
 
 // 並び順更新（positionの配列を送る）
-export const updatePlaylistOrder = async (
+export const updatePlaylistItems = async (
   playlistId,
-  sortedVideoIds,
+  videoIds,
   jwtToken
 ) => {
-  try {
-    const res = await axios.patch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/playlists/${playlistId}/items/sort`,
-      { ordered_video_ids: sortedVideoIds },
-      {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      }
-    );
-    return res.data;
-  } catch (error) {
-    console.error('Error updating order:', error);
-    throw new Error('プレイリストの並び替えに失敗しました。');
-  }
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/playlists/${playlistId}/items`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwtToken}`,
+    },
+    body: JSON.stringify({ video_ids: videoIds }),
+  });
+
+  if (!res.ok) throw new Error("更新に失敗しました");
 };
 
 // プレイリスト削除

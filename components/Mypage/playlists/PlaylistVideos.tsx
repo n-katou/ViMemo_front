@@ -2,19 +2,18 @@ import React, { useState } from "react";
 import SimpleVideoCard from "./SimpleVideoCard";
 import { YoutubeVideo } from "../../../types/youtubeVideo";
 
-// 各PlaylistItemの型（動画データ込み）
 type PlaylistItem = {
   id: number;
   position: number;
   youtube_video: YoutubeVideo;
 };
 
-// propsの型
 type Props = {
   playlistItems: PlaylistItem[];
   setPlaylistItems: React.Dispatch<React.SetStateAction<PlaylistItem[]>>;
   jwtToken: string;
   playlistId: number;
+  onEditClick?: () => void;
 };
 
 const PlaylistVideos: React.FC<Props> = ({
@@ -22,6 +21,7 @@ const PlaylistVideos: React.FC<Props> = ({
   setPlaylistItems,
   jwtToken,
   playlistId,
+  onEditClick,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -55,28 +55,41 @@ const PlaylistVideos: React.FC<Props> = ({
     }
   };
 
+  const handleEditPlaylist = () => {
+    // 必要に応じて親から openEditDrawer を渡してもOK
+    alert("編集モーダルを開く処理をここに実装！");
+  };
+
   return (
     <div className="w-full px-6 py-8 pt-16 pb-24">
-      {/* Tooltip表示 */}
+      {/* Tooltip */}
       {showTooltip && (
         <div className="fixed top-20 sm:top-24 md:top-28 left-1/2 -translate-x-1/2 z-50 px-3 py-2 bg-green-500 text-white text-sm rounded shadow-md animate-fadeIn">
           保存しました。
         </div>
       )}
-      {playlistId && (
-        <>
-          <div className="relative inline-block mb-4">
-            <button
-              onClick={handleSaveOrder}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md"
-            >
-              並び順を保存する
-            </button>
 
-          </div>
-        </>
+      {/* アクションボタン */}
+      {playlistId && (
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={handleSaveOrder}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md"
+          >
+            並び順を保存する
+          </button>
+          {onEditClick && (
+            <button
+              onClick={onEditClick}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+            >
+              編集
+            </button>
+          )}
+        </div>
       )}
 
+      {/* 動画一覧 */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         {playlistItems.map((item, index) => (
           <SimpleVideoCard

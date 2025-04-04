@@ -14,6 +14,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import EditPlaylistDrawer from "@/components/Mypage/playlists/EditPlaylistDrawer";
 
 const PlaylistPage = () => {
   const { currentUser, jwtToken } = useAuth();
@@ -22,6 +23,7 @@ const PlaylistPage = () => {
   const [playlistItems, setPlaylistItems] = useState<any[]>([]);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true); // ← 開閉用の状態を追加
+  const [showEditDrawer, setShowEditDrawer] = useState(false);
 
   if (!jwtToken) return <div className="p-6 text-gray-500">読み込み中...</div>;
 
@@ -117,6 +119,7 @@ const PlaylistPage = () => {
                 setPlaylistItems={setPlaylistItems}
                 jwtToken={jwtToken}
                 playlistId={selectedPlaylistId}
+                onEditClick={() => setShowEditDrawer(true)}
               />
             )}
           </div>
@@ -136,6 +139,23 @@ const PlaylistPage = () => {
               setPlaylists((prev) => [...prev, newPlaylist]);
               setSelectedPlaylistId(newPlaylist.id);
               setEditDrawerOpen(false);
+            }}
+          />
+        )}
+
+        {currentUser && selectedPlaylistId !== null && (
+          <EditPlaylistDrawer
+            open={showEditDrawer}
+            onClose={() => setShowEditDrawer(false)}
+            jwtToken={jwtToken}
+            playlistId={selectedPlaylistId}
+            currentVideos={playlistItems.map(item => item.youtube_video.id)}
+            onUpdated={(updatedIds) => {
+              // 編集後に再取得してステートを更新
+              fetchPlaylistItems(selectedPlaylistId, jwtToken).then((items) => {
+                setPlaylistItems(items);
+                setShowEditDrawer(false); // Drawerを閉じる
+              });
             }}
           />
         )}
