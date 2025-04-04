@@ -26,27 +26,6 @@ const PlaylistPage = () => {
   const [showSidebar, setShowSidebar] = useState(true); // ← 開閉用の状態を追加
   const [showEditDrawer, setShowEditDrawer] = useState(false);
 
-  if (!jwtToken) return <div className="p-6 text-gray-500">読み込み中...</div>;
-
-  useEffect(() => {
-    const loadPlaylists = async () => {
-      try {
-        const res = await fetchPlaylists(jwtToken);
-        setPlaylists(res);
-      } catch (err) {
-        console.error("プレイリスト取得失敗:", err);
-      }
-    };
-    loadPlaylists();
-  }, [jwtToken]);
-
-  useEffect(() => {
-    if (!selectedPlaylistId) return;
-    fetchPlaylistItems(selectedPlaylistId, jwtToken).then((items) =>
-      setPlaylistItems(items)
-    );
-  }, [selectedPlaylistId, jwtToken]);
-
   const handleDeletePlaylist = async (playlistId: number) => {
     if (!window.confirm("このプレイリストを削除しますか？")) return;
 
@@ -73,6 +52,27 @@ const PlaylistPage = () => {
       alert("プレイリスト名の変更に失敗しました");
     }
   };
+
+  useEffect(() => {
+    const loadPlaylists = async () => {
+      try {
+        const res = await fetchPlaylists(jwtToken);
+        setPlaylists(res);
+      } catch (err) {
+        console.error("プレイリスト取得失敗:", err);
+      }
+    };
+    loadPlaylists();
+  }, [jwtToken]);
+
+  useEffect(() => {
+    if (!selectedPlaylistId) return;
+    fetchPlaylistItems(selectedPlaylistId, jwtToken).then((items) =>
+      setPlaylistItems(items)
+    );
+  }, [selectedPlaylistId, jwtToken]);
+
+  if (!jwtToken) return <div className="p-6 text-gray-500">読み込み中...</div>;
 
   return (
     <DndProvider backend={HTML5Backend}>
