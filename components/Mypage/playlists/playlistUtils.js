@@ -89,16 +89,15 @@ export const updatePlaylistOrder = async (
 
 // プレイリスト削除
 export const deletePlaylist = async (playlistId, jwtToken) => {
-  try {
-    await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/playlists/${playlistId}`, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
-  } catch (error) {
-    console.error('Error deleting playlist:', error);
-    throw new Error('プレイリストの削除に失敗しました。');
-  }
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/playlists/${playlistId}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) throw new Error("プレイリストの削除に失敗しました");
 };
 
 // プレイリスト一覧を取得

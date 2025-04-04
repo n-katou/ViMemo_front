@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   fetchPlaylists,
   fetchPlaylistItems,
+  deletePlaylist,
 } from "@/components/Mypage/playlists/playlistUtils";
 import PlaylistSidebar from "@/components/Mypage/playlists/PlaylistSidebar";
 import PlaylistVideos from "@/components/Mypage/playlists/PlaylistVideos";
@@ -42,6 +43,25 @@ const PlaylistPage = () => {
     );
   }, [selectedPlaylistId, jwtToken]);
 
+  const handleDeletePlaylist = async (playlistId: number) => {
+    if (!window.confirm("このプレイリストを削除しますか？")) return;
+
+    try {
+      await deletePlaylist(playlistId, jwtToken);
+      setPlaylists((prev) => prev.filter((p) => p.id !== playlistId));
+
+      if (selectedPlaylistId === playlistId) {
+        setSelectedPlaylistId(null); // 選択解除
+        setPlaylistItems([]);       // アイテムも初期化
+      }
+
+      console.log("プレイリストを削除しました");
+    } catch (err) {
+      console.error("削除失敗:", err);
+      alert("削除に失敗しました");
+    }
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex w-full h-screen overflow-hidden">
@@ -50,6 +70,7 @@ const PlaylistPage = () => {
           selectedId={selectedPlaylistId}
           onSelect={setSelectedPlaylistId}
           onAddClick={() => setEditDrawerOpen(true)}
+          onDelete={handleDeletePlaylist}
         />
 
         <div className="flex-1 overflow-y-auto pt-16 pb-28 px-6">
