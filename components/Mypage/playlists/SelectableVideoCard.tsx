@@ -29,7 +29,9 @@ const SelectableVideoCard: React.FC<SelectableVideoCardProps> = ({
         height={90}
         className="rounded"
       />
-      <h3 className="text-sm font-semibold mt-2">{video.title}</h3>
+      <h3 className="text-sm font-semibold mt-2 text-gray-800">
+        {video.title}
+      </h3>
     </div>
   );
 };
