@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -7,20 +7,17 @@ import Alert from '@mui/material/Alert';
 
 import { useAuth } from '../../context/AuthContext';
 import { useDashboardData } from '../../hooks/mypage/dashboard/useDashboardData';
+import { fetchPlaylists, fetchPlaylistItems } from "@/components/Mypage/playlists/playlistUtils";
 
 import LoadingSpinner from '../../components/LoadingSpinner';
 import UserCard from '../../components/Mypage/dashboard/UserCard';
-import YoutubeLikesAccordion from '../../components/Mypage/dashboard/YoutubeLikesAccordion';
 import SearchForm from '../../components/Mypage/dashboard/SearchForm';
 import SortablePlaylist from '../../components/Mypage/dashboard/SortablePlaylist';
-import { updatePlaylistOrder } from '../../components/Mypage/dashboard/dashboardUtils';
+import PlaylistPlayerAccordion from '../../components/Mypage/dashboard/PlaylistPlayerAccordion';
 
 const Dashboard = () => {
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
   const {
-    youtubeVideoLikes,
-    setYoutubeVideoLikes,
-    youtubePlaylistUrl,
     searchQuery,
     setSearchQuery,
     suggestions,
@@ -28,9 +25,88 @@ const Dashboard = () => {
     showSnackbar,
     handleSearch,
     handleCloseSnackbar,
-    shufflePlaylist,
   } = useDashboardData({ jwtToken, currentUser, setAuthState });
 
+  const isAdmin = currentUser?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
+  // ✅ Hook は return より上で定義！
+  const [playlists, setPlaylists] = useState<any[]>([]);
+  const [selectedPlaylistId, setSelectedPlaylistId] = useState<number | null>(null);
+  const [playlistItems, setPlaylistItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!jwtToken) return;
+
+    const loadPlaylists = async () => {
+      try {
+        const res = await fetchPlaylists(jwtToken);
+        setPlaylists(res);
+
+        const lastSelectedId = localStorage.getItem('lastSelectedPlaylistId');
+        const idToUse = lastSelectedId ? Number(lastSelectedId) : res[0]?.id;
+
+        if (idToUse) {
+          setSelectedPlaylistId(idToUse);
+        }
+      } catch (err) {
+        console.error("プレイリストの取得に失敗しました", err);
+      }
+    };
+
+    loadPlaylists();
+  }, [jwtToken]);
+
+  useEffect(() => {
+    if (!selectedPlaylistId || !jwtToken) return;
+
+    const loadPlaylistVideos = async () => {
+      try {
+        const items = await fetchPlaylistItems(selectedPlaylistId, jwtToken);
+        setPlaylistItems(items);
+      } catch (err) {
+        console.error("プレイリスト内の動画取得に失敗しました:", err);
+        setPlaylistItems([]);
+      }
+    };
+
+    loadPlaylistVideos();
+  }, [selectedPlaylistId, jwtToken]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('lastSelectedPlaylistId');
+    if (stored && playlists.length > 0) {
+      const parsedId = Number(stored);
+      const exists = playlists.some(p => p.id === parsedId);
+      if (exists) {
+        setSelectedPlaylistId(parsedId);
+      } else {
+        localStorage.removeItem('lastSelectedPlaylistId');
+        setSelectedPlaylistId(playlists[0]?.id ?? null);
+      }
+    }
+  }, [playlists]);
+
+  const updatePlaylistOrderForPlaylist = async (
+    playlistId: number,
+    jwtToken: string,
+    items: any[]
+  ) => {
+    const videoIds = items.map((item) => item.youtube_video.id);
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/playlists/${playlistId}/playlist_items/update_multiple`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({ video_ids: videoIds }),
+      });
+    } catch (err) {
+      console.error("プレイリストの順序保存に失敗しました", err);
+    }
+  };
+
+  // ✅ useStateなどは return より上にあるのでOK！
   if (loading) {
     return <LoadingSpinner loading={loading} />;
   }
@@ -38,35 +114,6 @@ const Dashboard = () => {
   if (!currentUser) {
     return <div className="flex justify-center items-center h-screen"><p className="text-xl">ログインして下さい。</p></div>;
   }
-
-  const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-
-  // youtubeVideoLikes を sort_order に基づいてソート
-  const sortedVideoLikes = youtubeVideoLikes
-    ? [...youtubeVideoLikes].sort((a, b) => a.sort_order - b.sort_order)
-    : [];
-
-  // プレイリストの順序を変更し、バックエンドに保存
-  const handleMoveItem = async (fromIndex: number, toIndex: number) => {
-    const updatedItems = [...youtubeVideoLikes];
-    const [movedItem] = updatedItems.splice(fromIndex, 1);
-    updatedItems.splice(toIndex, 0, movedItem);
-
-    setYoutubeVideoLikes(updatedItems);  // まずクライアント側で並び替えを即座に反映
-
-    const updatedOrder = updatedItems.map((item, index) => ({
-      id: item.id || item.likeable_id,  // video.id または likeable_id を確認
-      order: index + 1
-    }));
-
-    console.log("Updated order to send:", updatedOrder);  // 送信するデータを確認
-
-    const videoIds = updatedOrder.map(item => item.id);
-    console.log('Sending video IDs:', videoIds);  // サーバーに送信するIDを確認
-
-    // プレイリスト順序をバックエンドに保存し、クライアント側の状態も更新
-    await updatePlaylistOrder(jwtToken, updatedItems, setYoutubeVideoLikes);
-  };
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -89,27 +136,50 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row w-full mt-8 gap-8">
           {/* プレイヤーエリア */}
           <div className="w-full md:w-2/3">
-            <YoutubeLikesAccordion
-              youtubeVideoLikes={sortedVideoLikes}
-              youtubePlaylistUrl={youtubePlaylistUrl}
-              shufflePlaylist={shufflePlaylist}
-              setYoutubeVideoLikes={setYoutubeVideoLikes}
-              updatePlaylistOrder={updatePlaylistOrder}
-              jwtToken={jwtToken ?? ''}
-            />
+            {selectedPlaylistId && jwtToken && (
+              <PlaylistPlayerAccordion
+                playlistItems={playlistItems}
+                setPlaylistItems={setPlaylistItems}
+                updatePlaylistOrder={updatePlaylistOrderForPlaylist}
+                playlistId={selectedPlaylistId}
+                jwtToken={jwtToken}
+              />
+            )}
           </div>
 
           {/* プレイリストエリア */}
           <div
             className="w-full md:w-1/3 bg-white shadow-md rounded-lg p-6"
             style={{
-              height: '550px', // ← プレイヤーに合わせて完全固定
+              height: '620px', // ← プレイヤーに合わせて完全固定
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
             }}
           >
-            <SortablePlaylist youtubeVideoLikes={sortedVideoLikes} moveItem={handleMoveItem} />
+            {playlists.length > 0 && (
+              <div className="mb-4">
+                <label htmlFor="playlistSelect" className="block text-sm font-medium text-gray-700 mb-1">
+                  プレイリストを選択:
+                </label>
+                <select
+                  id="playlistSelect"
+                  className="block w-full p-2 border rounded"
+                  value={selectedPlaylistId ?? ''}
+                  onChange={(e) => setSelectedPlaylistId(Number(e.target.value))}
+                >
+                  {playlists.map((playlist) => (
+                    <option key={playlist.id} value={playlist.id}>
+                      {playlist.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            <SortablePlaylist
+              playlistItems={playlistItems}
+              setPlaylistItems={setPlaylistItems}
+            />
           </div>
         </div>
 

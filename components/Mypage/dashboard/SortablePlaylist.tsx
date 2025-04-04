@@ -3,30 +3,24 @@ import Button from '@mui/material/Button';
 import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragDropVideoCard';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
-import { Like } from '../../../types/like';
+import { PlaylistItem } from '../../../types/playlistItem';
 
-// プレイリストの1つのアイテムコンポーネント
 interface PlaylistItemProps {
-  like: Like;
+  item: PlaylistItem;
   index: number;
   moveItem: (fromIndex: number, toIndex: number) => void;
 }
 
-const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) => {
+const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveItem }) => {
   const { dragDropRef, isDragging, isOver } = useDragDropVideoCard(index, moveItem);
+  const router = useRouter();
 
   const backgroundColor = isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white';
   const opacity = isDragging ? 0.5 : 1;
 
-  const thumbnailUrl = like.youtube_id
-    ? `https://img.youtube.com/vi/${like.youtube_id}/hqdefault.jpg`
+  const thumbnailUrl = item.youtube_video.youtube_id
+    ? `https://img.youtube.com/vi/${item.youtube_video.youtube_id}/hqdefault.jpg`
     : '/default-thumbnail.jpg';
-
-  const router = useRouter();
-  const handleClick = () => {
-    router.push(`/youtube_videos/${like.id}`);
-  };
-
 
   return (
     <div
@@ -53,7 +47,7 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
       <span style={{ fontWeight: 'bold' }}>{index + 1}.</span>
       <img
         src={thumbnailUrl}
-        alt={`thumbnail-${like.likeable_id}`}
+        alt={`thumbnail-${item.youtube_video.id}`}
         style={{
           width: '64px',
           height: '36px',
@@ -62,67 +56,70 @@ const PlaylistItem: React.FC<PlaylistItemProps> = ({ like, index, moveItem }) =>
           flexShrink: 0,
         }}
       />
-      {like.title ? (
-        console.log('like:', like),
+      {item.youtube_video.title ? (
         <button
-          onClick={handleClick}
+          onClick={() => router.push(`/youtube_videos/${item.youtube_video.id}`)}
           className="text-blue-600 font-bold hover:underline hover:text-blue-800 transition duration-200 ease-in-out max-w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
         >
-          {like.title}
+          {item.youtube_video.title}
         </button>
       ) : (
-        <span>不明な動画 (ID: {like.likeable_id})</span>
+        <span>不明な動画 (ID: {item.youtube_video.id})</span>
       )}
     </div>
   );
 };
 
-// 並び替え可能なプレイリスト
+// ✅ props 修正
 interface SortablePlaylistProps {
-  youtubeVideoLikes: Like[];
-  moveItem: (fromIndex: number, toIndex: number) => void;
+  playlistItems: PlaylistItem[];
+  setPlaylistItems: (items: PlaylistItem[]) => void;
 }
 
-const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, moveItem }) => {
+const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setPlaylistItems }) => {
   const { theme } = useTheme();
-  const [isExpanded, setIsExpanded] = useState(false); // 展開状態管理
-  const maxVisibleItems = 5; // 最初に表示するアイテム数
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxVisibleItems = 5;
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
+  // ✅ 自前の moveItem 実装
+  const handleMoveItem = (fromIndex: number, toIndex: number) => {
+    const updated = [...playlistItems];
+    const [movedItem] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, movedItem);
+    setPlaylistItems(updated);
+  };
+
   return (
     <div>
       <h2 style={{ color: theme === 'light' ? '#818cf8' : '#000', marginBottom: '12px' }}>
-        再生中のプレイリスト（ドラッグ&ドロップで並び替え可能）
+        作成したプレイリスト（並び替え可能）
       </h2>
 
-      <div
-        style={{
-          height: '390px',
-          overflowY: 'auto',
-          position: 'relative',
-        }}
-      >
-        {youtubeVideoLikes
-          .slice(0, isExpanded ? youtubeVideoLikes.length : maxVisibleItems)
-          .map((like, index) => (
-            <PlaylistItem
-              key={like.likeable_id}
-              like={like}
+      <div style={{ height: '390px', overflowY: 'auto', position: 'relative' }}>
+        {playlistItems
+          .slice(0, isExpanded ? playlistItems.length : maxVisibleItems)
+          .map((item, index) => (
+            <PlaylistItemComponent
+              key={item.id}
+              item={item}
               index={index}
-              moveItem={moveItem}
+              moveItem={handleMoveItem}
             />
           ))}
       </div>
+
       {isExpanded && (
         <p style={{ fontSize: '12px', textAlign: 'center', color: '#888', marginTop: '4px' }}>
           下にスクロールできます
         </p>
       )}
-      {youtubeVideoLikes.length > maxVisibleItems && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+
+      {playlistItems.length > maxVisibleItems && (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Button
             variant="contained"
             onClick={handleToggleExpand}
@@ -131,7 +128,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ youtubeVideoLikes, 
               color: 'white',
               width: '35%',
               '&:hover': {
-                backgroundColor: '#1bb89a', // ホバー時の色を少し濃くする
+                backgroundColor: '#1bb89a',
               },
             }}
           >

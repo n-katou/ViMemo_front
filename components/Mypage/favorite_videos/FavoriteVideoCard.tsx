@@ -21,6 +21,7 @@ interface VideoCardProps {
   notes?: Note[];
   index: number;
   moveVideo: (dragIndex: number, hoverIndex: number) => void;
+  className?: string;
 }
 
 const FavoriteVideoCard: React.FC<VideoCardProps> = ({
@@ -31,6 +32,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
   notes = [],
   index,
   moveVideo,
+  className,
 }) => {
   const router = useRouter();
   const playerRef = useRef<HTMLIFrameElement | null>(null);
@@ -54,7 +56,7 @@ const FavoriteVideoCard: React.FC<VideoCardProps> = ({
   return (
     <div
       ref={dragDropRef}
-      className="relative mb-1 pb-2 pt-0 px-0 border border-gray-200 rounded-md shadow-sm bg-white overflow-hidden"
+      className={`relative mb-1 pb-2 pt-0 px-0 border border-gray-200 rounded-md shadow-sm bg-white overflow-hidden ${className}`}
       style={{
         opacity: isDragging ? 0.5 : 1,
         backgroundColor: isDragging ? '#38bdf8' : isOver ? '#22eec5' : 'white',
