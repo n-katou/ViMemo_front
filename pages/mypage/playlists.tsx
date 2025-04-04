@@ -15,7 +15,6 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import EditPlaylistDrawer from "@/components/Mypage/playlists/EditPlaylistDrawer";
-import GradientButton from '../../styles/GradientButton';
 
 const PlaylistPage = () => {
   const { currentUser, jwtToken } = useAuth();
@@ -96,6 +95,7 @@ const PlaylistPage = () => {
               onDelete={handleDeletePlaylist}
               onRename={handleRenamePlaylist}
               showSidebar={showSidebar}
+              onCloseSidebar={() => setShowSidebar(false)}
             />
           )}
 
@@ -109,14 +109,14 @@ const PlaylistPage = () => {
             <button
               onClick={() => setShowSidebar(!showSidebar)}
               className={`
-                bg-gradient-to-br from-purple-400 via-indigo-500 to-blue-500
-                text-white
-                w-12 h-12 rounded-full shadow-lg
-                flex items-center justify-center
-                transition-all duration-300
-                hover:brightness-110 hover:scale-110 active:scale-95
-              `}
-              aria-label="サイドバー切り替え"
+    absolute top-1/2 transform -translate-y-1/2
+    ${showSidebar ? 'right-0' : 'left-2'} 
+    bg-gradient-to-br from-purple-400 via-indigo-500 to-blue-500
+    text-white w-10 h-10 rounded-full shadow-lg z-50
+    flex items-center justify-center
+    transition-all duration-300
+    hover:brightness-110 hover:scale-110 active:scale-95
+  `}
             >
               {showSidebar ? (
                 <ChevronLeftIcon fontSize="small" />
