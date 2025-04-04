@@ -13,6 +13,7 @@ type Props = {
   setPlaylistItems: React.Dispatch<React.SetStateAction<PlaylistItem[]>>;
   jwtToken: string;
   playlistId: number;
+  playlistName?: string;
   onEditClick?: () => void;
 };
 
@@ -21,6 +22,7 @@ const PlaylistVideos: React.FC<Props> = ({
   setPlaylistItems,
   jwtToken,
   playlistId,
+  playlistName,
   onEditClick,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -76,6 +78,13 @@ const PlaylistVideos: React.FC<Props> = ({
         <div className="fixed top-20 sm:top-24 md:top-28 left-1/2 -translate-x-1/2 z-50 px-3 py-2 bg-red-500 text-white text-sm rounded shadow-md animate-fadeIn">
           {error}
         </div>
+      )}
+
+      {/* プレイリスト名 */}
+      {playlistName && (
+        <h2 className="text-xl font-bold mb-6" style={{ color: '#818cf8' }}>
+          「{playlistName}」の動画一覧
+        </h2>
       )}
 
       {/* アクションボタン */}

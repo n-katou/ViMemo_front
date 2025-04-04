@@ -54,6 +54,8 @@ const PlaylistPage = () => {
     }
   };
 
+  const selectedPlaylist = playlists.find((p) => p.id === selectedPlaylistId);
+
   useEffect(() => {
     if (isLoading) return;
 
@@ -109,14 +111,14 @@ const PlaylistPage = () => {
             <button
               onClick={() => setShowSidebar(!showSidebar)}
               className={`
-    absolute top-1/2 transform -translate-y-1/2
-    ${showSidebar ? 'right-0' : 'left-2'} 
-    bg-gradient-to-br from-purple-400 via-indigo-500 to-blue-500
-    text-white w-10 h-10 rounded-full shadow-lg z-50
-    flex items-center justify-center
-    transition-all duration-300
-    hover:brightness-110 hover:scale-110 active:scale-95
-  `}
+                absolute top-1/2 transform -translate-y-1/2
+                ${showSidebar ? 'right-0' : 'left-2'} 
+                bg-gradient-to-br from-purple-400 via-indigo-500 to-blue-500
+                text-white w-10 h-10 rounded-full shadow-lg z-50
+                flex items-center justify-center
+                transition-all duration-300
+                hover:brightness-110 hover:scale-110 active:scale-95
+              `}
             >
               {showSidebar ? (
                 <ChevronLeftIcon fontSize="small" />
@@ -139,6 +141,7 @@ const PlaylistPage = () => {
                 setPlaylistItems={setPlaylistItems}
                 jwtToken={jwtToken}
                 playlistId={selectedPlaylistId}
+                playlistName={selectedPlaylist?.name}
                 onEditClick={() => setShowEditDrawer(true)}
               />
             )}
