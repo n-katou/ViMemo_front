@@ -106,25 +106,26 @@ const PlaylistPage = () => {
               ${showSidebar ? 'left-[80vw] sm:left-[32vw] md:left-[25vw]' : 'left-2'}
             `}
           >
-            <GradientButton
+            <button
               onClick={() => setShowSidebar(!showSidebar)}
-              disableRipple
-              disableElevation
-              style={{
-                width: '40px',
-                height: '40px',
-                minWidth: '40px',
-                padding: 0,
-                borderRadius: '50%',
-              }}
+              className={`
+                bg-gradient-to-br from-purple-400 via-indigo-500 to-blue-500
+                text-white
+                w-12 h-12 rounded-full shadow-lg
+                flex items-center justify-center
+                transition-all duration-300
+                hover:brightness-110 hover:scale-110 active:scale-95
+              `}
+              aria-label="サイドバー切り替え"
             >
               {showSidebar ? (
                 <ChevronLeftIcon fontSize="small" />
               ) : (
                 <ChevronRightIcon fontSize="small" />
               )}
-            </GradientButton>
+            </button>
           </div>
+
 
           {/* メイン */}
           <div className="flex-1 overflow-y-auto pt-16 pb-28 px-6">
