@@ -15,6 +15,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import EditPlaylistDrawer from "@/components/Mypage/playlists/EditPlaylistDrawer";
+import GradientButton from '../../styles/GradientButton';
 
 const PlaylistPage = () => {
   const { currentUser, jwtToken } = useAuth();
@@ -95,16 +96,28 @@ const PlaylistPage = () => {
           {/* ←/→ 開閉ボタン */}
           <div
             className={`
-      fixed top-1/2 -translate-y-1/2 z-50 transition-all duration-300
-      ${showSidebar ? 'left-[80vw] sm:left-[32vw] md:left-[25vw]' : 'left-2'}
-    `}
+              fixed top-1/2 -translate-y-1/2 z-50 transition-all duration-300
+              ${showSidebar ? 'left-[80vw] sm:left-[32vw] md:left-[25vw]' : 'left-2'}
+            `}
           >
-            <button
-              className="p-2 rounded-full bg-blue-600 text-white shadow-md hover:bg-blue-700 transition"
+            <GradientButton
               onClick={() => setShowSidebar(!showSidebar)}
+              disableRipple
+              disableElevation
+              style={{
+                width: '40px',
+                height: '40px',
+                minWidth: '40px',
+                padding: 0,
+                borderRadius: '50%',
+              }}
             >
-              {showSidebar ? <ChevronLeftIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
-            </button>
+              {showSidebar ? (
+                <ChevronLeftIcon fontSize="small" />
+              ) : (
+                <ChevronRightIcon fontSize="small" />
+              )}
+            </GradientButton>
           </div>
 
           {/* メイン */}
