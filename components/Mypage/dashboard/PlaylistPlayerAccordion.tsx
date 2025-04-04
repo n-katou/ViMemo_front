@@ -19,9 +19,8 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({ playlistItems }) => {
     .map(item => item.youtube_video.youtube_id)
     .filter(id => typeof id === 'string' && id.trim().length > 0);
 
-  const playlistUrl = videoIds.length > 0
-    ? `https://www.youtube.com/embed/videoseries?playlist=${videoIds.join(',')}&autoplay=1&rel=0`
-    : '';
+  const playlistUrl = `https://www.youtube.com/embed/videoseries?playlist=${videoIds.join(',')}&autoplay=0&rel=0`;
+
 
   return (
     <Accordion defaultExpanded>
