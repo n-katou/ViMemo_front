@@ -24,6 +24,7 @@ const PlaylistVideos: React.FC<Props> = ({
   onEditClick,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const moveVideo = (dragIndex: number, hoverIndex: number) => {
     const updated = [...playlistItems];
@@ -46,12 +47,18 @@ const PlaylistVideos: React.FC<Props> = ({
           body: JSON.stringify({ ordered_video_ids: orderedIds }),
         }
       );
-      if (!res.ok) throw new Error("Failed to save order");
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.message || "並び順の保存に失敗しました");
+      }
+
 
       setShowTooltip(true);
       setTimeout(() => setShowTooltip(false), 2000);
     } catch (err) {
       console.error("並び順保存に失敗:", err);
+      setError(err instanceof Error ? err.message : "並び順の保存中にエラーが発生しました");
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -61,6 +68,13 @@ const PlaylistVideos: React.FC<Props> = ({
       {showTooltip && (
         <div className="fixed top-20 sm:top-24 md:top-28 left-1/2 -translate-x-1/2 z-50 px-3 py-2 bg-green-500 text-white text-sm rounded shadow-md animate-fadeIn">
           保存しました。
+        </div>
+      )}
+
+      {/* エラーメッセージ */}
+      {error && (
+        <div className="fixed top-20 sm:top-24 md:top-28 left-1/2 -translate-x-1/2 z-50 px-3 py-2 bg-red-500 text-white text-sm rounded shadow-md animate-fadeIn">
+          {error}
         </div>
       )}
 
