@@ -12,7 +12,6 @@ import { updatePlaylistOrder } from '../../components/Mypage/dashboard/dashboard
 
 import LoadingSpinner from '../../components/LoadingSpinner';
 import UserCard from '../../components/Mypage/dashboard/UserCard';
-import YoutubeLikesAccordion from '../../components/Mypage/dashboard/YoutubeLikesAccordion';
 import SearchForm from '../../components/Mypage/dashboard/SearchForm';
 import SortablePlaylist from '../../components/Mypage/dashboard/SortablePlaylist';
 import PlaylistPlayerAccordion from '../../components/Mypage/dashboard/PlaylistPlayerAccordion';
@@ -22,7 +21,6 @@ const Dashboard = () => {
   const {
     youtubeVideoLikes,
     setYoutubeVideoLikes,
-    youtubePlaylistUrl,
     searchQuery,
     setSearchQuery,
     suggestions,
@@ -30,7 +28,6 @@ const Dashboard = () => {
     showSnackbar,
     handleSearch,
     handleCloseSnackbar,
-    shufflePlaylist,
   } = useDashboardData({ jwtToken, currentUser, setAuthState });
 
   if (loading) {
@@ -109,6 +106,27 @@ const Dashboard = () => {
     loadPlaylistVideos();
   }, [selectedPlaylistId, jwtToken]);
 
+  const updatePlaylistOrderForPlaylist = async (
+    playlistId: number,
+    jwtToken: string,
+    items: any[] // PlaylistItem[]
+  ) => {
+    const videoIds = items.map((item) => item.youtube_video.id);
+
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/playlists/${playlistId}/playlist_items/update_multiple`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({ video_ids: videoIds }),
+      });
+    } catch (err) {
+      console.error("プレイリストの順序保存に失敗しました", err);
+    }
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="w-full px-6 py-8 mt-4">
@@ -130,7 +148,15 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row w-full mt-8 gap-8">
           {/* プレイヤーエリア */}
           <div className="w-full md:w-2/3">
-            <PlaylistPlayerAccordion playlistItems={playlistItems} />
+            {selectedPlaylistId && jwtToken && (
+              <PlaylistPlayerAccordion
+                playlistItems={playlistItems}
+                setPlaylistItems={setPlaylistItems}
+                updatePlaylistOrder={updatePlaylistOrderForPlaylist}
+                playlistId={selectedPlaylistId}
+                jwtToken={jwtToken}
+              />
+            )}
           </div>
 
           {/* プレイリストエリア */}
