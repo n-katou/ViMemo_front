@@ -74,23 +74,24 @@ const PlaylistPage = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <main className="relative h-screen w-full">
-        {/* 開閉ボタン */}
-        <div
-          className={`fixed top-[100px] z-50 transition-all duration-300 ${showSidebar ? "right-4 md:left-64" : "left-4"
-            }`}
-        >
-          <button
-            className="p-2 rounded-full bg-blue-600 text-white shadow-md hover:bg-blue-700 transition"
-            onClick={() => setShowSidebar(!showSidebar)}
-          >
-            {showSidebar ? (
-              <ChevronLeftIcon fontSize="small" />
-            ) : (
-              <ChevronRightIcon fontSize="small" />
-            )}
-          </button>
-        </div>
         <div className="flex h-full overflow-hidden">
+          {/* 開閉ボタン */}
+          <div
+            className={`
+              fixed top-1/2 -translate-y-1/2 left-4 z-50
+            `}
+          >
+            <button
+              className="p-2 rounded-full bg-blue-600 text-white shadow-md hover:bg-blue-700 transition"
+              onClick={() => setShowSidebar(!showSidebar)}
+            >
+              {showSidebar ? (
+                <ChevronLeftIcon fontSize="small" />
+              ) : (
+                <ChevronRightIcon fontSize="small" />
+              )}
+            </button>
+          </div>
           {/* サイドバー表示を制御 */}
           {showSidebar && (
             <PlaylistSidebar

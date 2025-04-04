@@ -22,7 +22,16 @@ const PlaylistSidebar: React.FC<SidebarProps> = ({
   const [newName, setNewName] = useState("");
 
   return (
-    <div className="w-1/4 bg-gray-50 p-4 border-r pt-16 overflow-y-auto h-screen">
+    <div
+      className={`
+    fixed md:static top-0 left-0 z-40
+    bg-gray-50 h-screen
+    w-full md:w-1/4
+    p-4 pt-16 border-r
+    overflow-y-auto
+    transition-transform duration-300
+  `}
+    >
       <h2 className="text-xl font-bold mb-4 text-gray-800">プレイリスト</h2>
       {playlists.map((playlist) => (
         <div
