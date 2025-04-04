@@ -8,6 +8,7 @@ interface SidebarProps {
   onDelete: (id: number) => void;
   onRename: (id: number, newName: string) => void;
   onCloseSidebar?: () => void;
+  showSidebar?: boolean;
 }
 
 const PlaylistSidebar: React.FC<SidebarProps> = ({
@@ -17,6 +18,7 @@ const PlaylistSidebar: React.FC<SidebarProps> = ({
   onAddClick,
   onDelete,
   onRename,
+  showSidebar
 }) => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newName, setNewName] = useState("");
@@ -24,12 +26,9 @@ const PlaylistSidebar: React.FC<SidebarProps> = ({
   return (
     <div
       className={`
-    fixed md:static top-0 left-0 z-40
-    bg-gray-50 h-screen
-    w-full md:w-1/4
-    p-4 pt-16 border-r
-    overflow-y-auto
-    transition-transform duration-300
+    fixed top-0 left-0 h-full w-4/5 sm:w-1/3 md:w-1/4 bg-gray-50 p-4 pt-16 border-r z-40
+    transform transition-transform duration-300 ease-in-out
+    ${showSidebar ? "translate-x-0" : "-translate-x-full"}
   `}
     >
       <h2 className="text-xl font-bold mb-4 text-gray-800">プレイリスト</h2>

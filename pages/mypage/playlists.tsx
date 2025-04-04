@@ -74,25 +74,9 @@ const PlaylistPage = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <main className="relative h-screen w-full">
+        {/* 開閉ボタン */}
         <div className="flex h-full overflow-hidden">
-          {/* 開閉ボタン */}
-          <div
-            className={`
-              fixed top-1/2 -translate-y-1/2 left-4 z-50
-            `}
-          >
-            <button
-              className="p-2 rounded-full bg-blue-600 text-white shadow-md hover:bg-blue-700 transition"
-              onClick={() => setShowSidebar(!showSidebar)}
-            >
-              {showSidebar ? (
-                <ChevronLeftIcon fontSize="small" />
-              ) : (
-                <ChevronRightIcon fontSize="small" />
-              )}
-            </button>
-          </div>
-          {/* サイドバー表示を制御 */}
+          {/* サイドバー */}
           {showSidebar && (
             <PlaylistSidebar
               playlists={playlists}
@@ -102,8 +86,24 @@ const PlaylistPage = () => {
               onDelete={handleDeletePlaylist}
               onRename={handleRenamePlaylist}
               onCloseSidebar={() => setShowSidebar(false)}
+              showSidebar={showSidebar}
             />
           )}
+
+          {/* ←/→ 開閉ボタン */}
+          <div
+            className={`
+      fixed top-1/2 -translate-y-1/2 z-50 transition-all duration-300
+      ${showSidebar ? 'left-[80vw] sm:left-[32vw] md:left-[25vw]' : 'left-2'}
+    `}
+          >
+            <button
+              className="p-2 rounded-full bg-blue-600 text-white shadow-md hover:bg-blue-700 transition"
+              onClick={() => setShowSidebar(!showSidebar)}
+            >
+              {showSidebar ? <ChevronLeftIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
+            </button>
+          </div>
 
           {/* メイン */}
           <div className="flex-1 overflow-y-auto pt-16 pb-28 px-6">
