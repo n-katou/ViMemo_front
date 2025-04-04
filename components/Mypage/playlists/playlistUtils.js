@@ -134,3 +134,26 @@ export const renamePlaylist = async (
     throw new Error('プレイリスト名の変更に失敗しました。');
   }
 };
+
+
+export const handleRemoveItem = async (playlistId, itemId, jwtToken) => {
+  if (!playlistId || !jwtToken) return;
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/playlists/${playlistId}/playlist_items/${itemId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("削除に失敗しました");
+    }
+
+    return true; // 成功
+  } catch (err) {
+    console.error("削除失敗:", err);
+    return false;
+  }
+};

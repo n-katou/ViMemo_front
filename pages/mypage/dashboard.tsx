@@ -177,10 +177,14 @@ const Dashboard = () => {
                 </select>
               </div>
             )}
-            <SortablePlaylist
-              playlistItems={playlistItems}
-              setPlaylistItems={setPlaylistItems}
-            />
+            {selectedPlaylistId !== null && jwtToken && (
+              <SortablePlaylist
+                playlistItems={playlistItems}
+                setPlaylistItems={setPlaylistItems}
+                playlistId={selectedPlaylistId}
+                jwtToken={jwtToken}
+              />
+            )}
           </div>
         </div>
 

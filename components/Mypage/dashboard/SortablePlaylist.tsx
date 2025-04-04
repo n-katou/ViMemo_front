@@ -4,14 +4,16 @@ import useDragDropVideoCard from '../../../hooks/mypage/favorite_videos/useDragD
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
 import { PlaylistItem } from '../../../types/playlistItem';
+import { handleRemoveItem } from "@/components/Mypage/playlists/playlistUtils";
 
 interface PlaylistItemProps {
   item: PlaylistItem;
   index: number;
   moveItem: (fromIndex: number, toIndex: number) => void;
+  onRemove?: (id: number) => void;
 }
 
-const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveItem }) => {
+const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveItem, onRemove }) => {
   const { dragDropRef, isDragging, isOver } = useDragDropVideoCard(index, moveItem);
   const router = useRouter();
 
@@ -44,6 +46,19 @@ const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveI
         gap: '12px',
       }}
     >
+      {onRemove && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove(item.id);
+          }}
+          className="ml-auto flex items-center gap-1 text-sm text-red-500 border border-red-500 rounded px-2 py-1 transition duration-200 ease-in-out hover:bg-red-500 hover:text-white"
+          title="プレイリストから削除"
+        >
+          削除
+        </button>
+      )}
+
       <span style={{ fontWeight: 'bold' }}>{index + 1}.</span>
       <img
         src={thumbnailUrl}
@@ -74,9 +89,11 @@ const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveI
 interface SortablePlaylistProps {
   playlistItems: PlaylistItem[];
   setPlaylistItems: (items: PlaylistItem[]) => void;
+  playlistId: number;
+  jwtToken: string;
 }
 
-const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setPlaylistItems }) => {
+const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setPlaylistItems, playlistId, jwtToken, }) => {
   const { theme } = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
   const maxVisibleItems = 5;
@@ -91,6 +108,19 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setP
     const [movedItem] = updated.splice(fromIndex, 1);
     updated.splice(toIndex, 0, movedItem);
     setPlaylistItems(updated);
+  };
+
+  const handleRemove = async (itemId: number) => {
+    const confirm = window.confirm('この動画をプレイリストから削除しますか？');
+    if (!confirm) return;
+
+    const success = await handleRemoveItem(playlistId, itemId, jwtToken);
+    if (success) {
+      const updated = playlistItems.filter((item) => item.id !== itemId);
+      setPlaylistItems(updated);
+    } else {
+      alert('プレイリストからの削除に失敗しました');
+    }
   };
 
   return (
@@ -108,6 +138,7 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setP
               item={item}
               index={index}
               moveItem={handleMoveItem}
+              onRemove={handleRemove}
             />
           ))}
       </div>
