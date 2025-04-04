@@ -19,8 +19,6 @@ import PlaylistPlayerAccordion from '../../components/Mypage/dashboard/PlaylistP
 const Dashboard = () => {
   const { currentUser, jwtToken, loading, setAuthState } = useAuth();
   const {
-    youtubeVideoLikes,
-    setYoutubeVideoLikes,
     searchQuery,
     setSearchQuery,
     suggestions,
@@ -40,33 +38,6 @@ const Dashboard = () => {
 
   const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
-  // youtubeVideoLikes を sort_order に基づいてソート
-  const sortedVideoLikes = youtubeVideoLikes
-    ? [...youtubeVideoLikes].sort((a, b) => a.sort_order - b.sort_order)
-    : [];
-
-  // プレイリストの順序を変更し、バックエンドに保存
-  const handleMoveItem = async (fromIndex: number, toIndex: number) => {
-    const updatedItems = [...youtubeVideoLikes];
-    const [movedItem] = updatedItems.splice(fromIndex, 1);
-    updatedItems.splice(toIndex, 0, movedItem);
-
-    setYoutubeVideoLikes(updatedItems);  // まずクライアント側で並び替えを即座に反映
-
-    const updatedOrder = updatedItems.map((item, index) => ({
-      id: item.id || item.likeable_id,  // video.id または likeable_id を確認
-      order: index + 1
-    }));
-
-    console.log("Updated order to send:", updatedOrder);  // 送信するデータを確認
-
-    const videoIds = updatedOrder.map(item => item.id);
-    console.log('Sending video IDs:', videoIds);  // サーバーに送信するIDを確認
-
-    // プレイリスト順序をバックエンドに保存し、クライアント側の状態も更新
-    await updatePlaylistOrder(jwtToken, updatedItems, setYoutubeVideoLikes);
-  };
-
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<number | null>(null);
 
@@ -76,9 +47,13 @@ const Dashboard = () => {
     const loadPlaylists = async () => {
       try {
         const res = await fetchPlaylists(jwtToken);
-        setPlaylists(res); // プレイリスト一覧を保存
-        if (res.length > 0) {
-          setSelectedPlaylistId(res[0].id); // 最初のプレイリストをデフォルト選択
+        setPlaylists(res);
+
+        const lastSelectedId = localStorage.getItem('lastSelectedPlaylistId');
+        const idToUse = lastSelectedId ? Number(lastSelectedId) : res[0]?.id;
+
+        if (idToUse) {
+          setSelectedPlaylistId(idToUse);
         }
       } catch (err) {
         console.error("プレイリストの取得に失敗しました", err);

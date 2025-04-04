@@ -51,10 +51,13 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
 
   const handleConfirmOrder = async () => {
     setIsSaving(true);
+    // 🔽 保存前に選択中のIDをlocalStorageに記録
+    localStorage.setItem('lastSelectedPlaylistId', String(playlistId));
     await updatePlaylistOrder(playlistId, jwtToken, playlistItems);
     setIsSaving(false);
-    window.location.reload(); // 任意で再読み込み
+    window.location.reload(); // ← 再読み込みで選択状態が失われるため、保持する
   };
+
 
   return (
     <Accordion defaultExpanded>
