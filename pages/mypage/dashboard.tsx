@@ -27,18 +27,12 @@ const Dashboard = () => {
     handleCloseSnackbar,
   } = useDashboardData({ jwtToken, currentUser, setAuthState });
 
-  if (loading) {
-    return <LoadingSpinner loading={loading} />;
-  }
+  const isAdmin = currentUser?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
-  if (!currentUser) {
-    return <div className="flex justify-center items-center h-screen"><p className="text-xl">ログインして下さい。</p></div>;
-  }
-
-  const isAdmin = currentUser.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-
+  // ✅ Hook は return より上で定義！
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<number | null>(null);
+  const [playlistItems, setPlaylistItems] = useState<any[]>([]);
 
   useEffect(() => {
     if (!jwtToken) return;
@@ -62,10 +56,8 @@ const Dashboard = () => {
     loadPlaylists();
   }, [jwtToken]);
 
-  const [playlistItems, setPlaylistItems] = useState<any[]>([]); // ← プレイリスト動画
-
   useEffect(() => {
-    if (!selectedPlaylistId) return;
+    if (!selectedPlaylistId || !jwtToken) return;
 
     const loadPlaylistVideos = async () => {
       try {
@@ -80,13 +72,26 @@ const Dashboard = () => {
     loadPlaylistVideos();
   }, [selectedPlaylistId, jwtToken]);
 
+  useEffect(() => {
+    const stored = localStorage.getItem('lastSelectedPlaylistId');
+    if (stored && playlists.length > 0) {
+      const parsedId = Number(stored);
+      const exists = playlists.some(p => p.id === parsedId);
+      if (exists) {
+        setSelectedPlaylistId(parsedId);
+      } else {
+        localStorage.removeItem('lastSelectedPlaylistId');
+        setSelectedPlaylistId(playlists[0]?.id ?? null);
+      }
+    }
+  }, [playlists]);
+
   const updatePlaylistOrderForPlaylist = async (
     playlistId: number,
     jwtToken: string,
-    items: any[] // PlaylistItem[]
+    items: any[]
   ) => {
     const videoIds = items.map((item) => item.youtube_video.id);
-
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/playlists/${playlistId}/playlist_items/update_multiple`, {
         method: 'POST',
@@ -101,19 +106,14 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    const stored = localStorage.getItem('lastSelectedPlaylistId');
-    if (stored && playlists.length > 0) {
-      const parsedId = Number(stored);
-      const exists = playlists.some(p => p.id === parsedId);
-      if (exists) {
-        setSelectedPlaylistId(parsedId);
-      } else {
-        localStorage.removeItem('lastSelectedPlaylistId');
-        setSelectedPlaylistId(playlists[0]?.id ?? null);
-      }
-    }
-  }, [playlists]);
+  // ✅ useStateなどは return より上にあるのでOK！
+  if (loading) {
+    return <LoadingSpinner loading={loading} />;
+  }
+
+  if (!currentUser) {
+    return <div className="flex justify-center items-center h-screen"><p className="text-xl">ログインして下さい。</p></div>;
+  }
 
   return (
     <DndProvider backend={HTML5Backend}>
