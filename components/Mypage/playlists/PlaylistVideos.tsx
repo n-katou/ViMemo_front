@@ -52,7 +52,7 @@ const PlaylistVideos: React.FC<Props> = ({
   };
 
   return (
-    <div className="w-full px-6 py-8">
+    <div className="w-full px-6 py-8 pt-16 pb-24">
       {playlistId && (
         <button
           onClick={handleSaveOrder}
