@@ -54,8 +54,22 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
     // 🔽 保存前に選択中のIDをlocalStorageに記録
     localStorage.setItem('lastSelectedPlaylistId', String(playlistId));
     await updatePlaylistOrder(playlistId, jwtToken, playlistItems);
+    // 成功メッセージを表示
+    const savedMessage = document.createElement('div');
+    savedMessage.textContent = '並び順を保存しました';
+    savedMessage.className = `
+      fixed 
+      top-20 sm:top-28 md:top-32 lg:top-36
+      left-1/2 
+      transform -translate-x-1/2 
+      bg-green-500 text-white 
+      px-4 py-2 
+      rounded 
+      z-50
+    `;
+    document.body.appendChild(savedMessage);
+    setTimeout(() => document.body.removeChild(savedMessage), 2000);
     setIsSaving(false);
-    window.location.reload(); // ← 再読み込みで選択状態が失われるため、保持する
   };
 
 
@@ -77,7 +91,18 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
               title="YouTube playlist"
             />
 
-            <Box textAlign="center" mt={7} mb={4}>
+            <Box
+              textAlign="center"
+              mt={7}
+              mb={4}
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' }, // スマホでは縦並び、sm以上は横並び
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 2, // ボタン間のスペース
+              }}
+            >
               <Button
                 variant="contained"
                 startIcon={<ShuffleIcon />}
@@ -86,10 +111,10 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
                 sx={{
                   backgroundColor: isShuffling ? '#ccc' : '#22eec5',
                   color: isShuffling ? 'gray' : 'white',
-                  marginRight: '16px',
                   '&:hover': {
                     backgroundColor: '#1bb89a',
                   },
+                  width: { xs: '100%', sm: 'auto' },
                 }}
               >
                 {isShuffling ? 'シャッフル中...' : 'プレイリストをシャッフル'}
@@ -105,6 +130,7 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
                   '&:hover': {
                     backgroundColor: '#1e90ff',
                   },
+                  width: { xs: '100%', sm: 'auto' },
                 }}
               >
                 {isSaving ? '保存中...' : '並び替え確定'}
