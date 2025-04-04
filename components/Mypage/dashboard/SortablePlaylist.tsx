@@ -42,46 +42,53 @@ const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveI
         minHeight: '60px',
         maxWidth: '100%',
         display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
+        flexDirection: 'column', // ← 上下方向に配置
+        gap: '6px',
       }}
     >
-      {onRemove && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove(item.id);
+      <div className="flex items-center gap-3 w-full">
+        <span style={{ fontWeight: 'bold' }}>{index + 1}.</span>
+        <img
+          src={thumbnailUrl}
+          alt={`thumbnail-${item.youtube_video.id}`}
+          style={{
+            width: '64px',
+            height: '36px',
+            borderRadius: '4px',
+            objectFit: 'cover',
+            flexShrink: 0,
           }}
-          className="ml-auto flex items-center gap-1 text-sm text-red-500 border border-red-500 rounded px-2 py-1 transition duration-200 ease-in-out hover:bg-red-500 hover:text-white"
-          title="プレイリストから削除"
-        >
-          削除
-        </button>
-      )}
+        />
+        {item.youtube_video.title ? (
+          <button
+            onClick={() => router.push(`/youtube_videos/${item.youtube_video.id}`)}
+            className="text-blue-600 font-bold hover:underline hover:text-blue-800 transition duration-200 ease-in-out text-left flex-1 truncate"
+            title={item.youtube_video.title}
+          >
+            {item.youtube_video.title}
+          </button>
+        ) : (
+          <span>不明な動画 (ID: {item.youtube_video.id})</span>
+        )}
+      </div>
 
-      <span style={{ fontWeight: 'bold' }}>{index + 1}.</span>
-      <img
-        src={thumbnailUrl}
-        alt={`thumbnail-${item.youtube_video.id}`}
-        style={{
-          width: '64px',
-          height: '36px',
-          borderRadius: '4px',
-          objectFit: 'cover',
-          flexShrink: 0,
-        }}
-      />
-      {item.youtube_video.title ? (
-        <button
-          onClick={() => router.push(`/youtube_videos/${item.youtube_video.id}`)}
-          className="text-blue-600 font-bold hover:underline hover:text-blue-800 transition duration-200 ease-in-out max-w-full text-left whitespace-nowrap overflow-hidden text-ellipsis"
-        >
-          {item.youtube_video.title}
-        </button>
-      ) : (
-        <span>不明な動画 (ID: {item.youtube_video.id})</span>
+      {/* 削除ボタンを独立して下に配置 */}
+      {onRemove && (
+        <div className="flex justify-end w-full">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove(item.id);
+            }}
+            className="text-sm text-red-500 border border-red-500 rounded px-3 py-1 transition duration-200 ease-in-out hover:bg-red-500 hover:text-white"
+            title="プレイリストから削除"
+          >
+            削除
+          </button>
+        </div>
       )}
     </div>
+
   );
 };
 
