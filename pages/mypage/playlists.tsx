@@ -5,6 +5,7 @@ import {
   fetchPlaylists,
   fetchPlaylistItems,
   deletePlaylist,
+  renamePlaylist
 } from "@/components/Mypage/playlists/playlistUtils";
 import PlaylistSidebar from "@/components/Mypage/playlists/PlaylistSidebar";
 import PlaylistVideos from "@/components/Mypage/playlists/PlaylistVideos";
@@ -62,6 +63,19 @@ const PlaylistPage = () => {
     }
   };
 
+  const handleRenamePlaylist = async (id: number, newName: string) => {
+    try {
+      await renamePlaylist(id, newName, jwtToken);
+      setPlaylists((prev) =>
+        prev.map((pl) =>
+          pl.id === id ? { ...pl, name: newName } : pl
+        )
+      );
+    } catch (e) {
+      alert("プレイリスト名の変更に失敗しました");
+    }
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex w-full h-screen overflow-hidden">
@@ -71,6 +85,7 @@ const PlaylistPage = () => {
           onSelect={setSelectedPlaylistId}
           onAddClick={() => setEditDrawerOpen(true)}
           onDelete={handleDeletePlaylist}
+          onRename={handleRenamePlaylist}
         />
 
         <div className="flex-1 overflow-y-auto pt-16 pb-28 px-6">
