@@ -51,10 +51,10 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
 
   const handleConfirmOrder = async () => {
     setIsSaving(true);
-    // 🔽 保存前に選択中のIDをlocalStorageに記録
     localStorage.setItem('lastSelectedPlaylistId', String(playlistId));
+
     await updatePlaylistOrder(playlistId, jwtToken, playlistItems);
-    // 成功メッセージを表示
+
     const savedMessage = document.createElement('div');
     savedMessage.textContent = '並び順を保存しました';
     savedMessage.className = `
@@ -68,9 +68,13 @@ const PlaylistPlayerAccordion: React.FC<Props> = ({
       z-50
     `;
     document.body.appendChild(savedMessage);
-    setTimeout(() => document.body.removeChild(savedMessage), 2000);
-    setIsSaving(false);
+    setTimeout(() => {
+      document.body.removeChild(savedMessage);
+      setIsSaving(false);
+      window.location.reload(); // ← ✅ 画面リロードを追加
+    }, 2000);
   };
+
 
 
   return (
