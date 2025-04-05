@@ -86,7 +86,7 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
 
       {/* 中央スクロール領域 */}
       <div className="flex-1 overflow-y-auto pr-1">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
           {videos.map((video) => (
             <SelectableVideoCard
               key={video.id}
@@ -97,7 +97,6 @@ const PlaylistEditDrawer: React.FC<PlaylistEditDrawerProps> = ({
           ))}
         </div>
       </div>
-
       {/* 下部ボタン固定 */}
       <div className="mt-4 flex justify-between">
         <button
