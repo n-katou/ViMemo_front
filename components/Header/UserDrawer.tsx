@@ -132,8 +132,8 @@ const UserDrawer: React.FC<UserDrawerProps> = ({ drawerOpen, toggleDrawer, curre
                 <DialogContentText sx={{ color: "black" }}>本当にログアウトしますか？</DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleLogoutDialogClose} color="primary">いいえ</Button>
                 <Button onClick={handleLogoutConfirm} color="primary" autoFocus>はい</Button>
+                <Button onClick={handleLogoutDialogClose} color="primary">いいえ</Button>
               </DialogActions>
             </Dialog>
           </motion.div>
