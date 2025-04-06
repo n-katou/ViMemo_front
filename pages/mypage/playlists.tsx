@@ -104,7 +104,10 @@ const PlaylistPage = () => {
           <div
             className={`
               fixed top-1/2 -translate-y-1/2 z-50 transition-all duration-300
-              ${showSidebar ? 'left-[80vw] sm:left-[32vw] md:left-[25vw]' : 'left-2'}
+              ${showSidebar
+                ? 'left-[80vw] sm:left-[32vw] md:left-[25vw]'
+                : 'left-2'}
+              sm:right-auto right-2
             `}
           >
             <button
@@ -129,7 +132,7 @@ const PlaylistPage = () => {
 
 
           {/* メイン */}
-          <div className="flex-1 overflow-y-auto pt-16 pb-28 px-6">
+          <div className="flex-1 overflow-y-auto px-8">
             {selectedPlaylistId === null ? (
               <div className="h-full flex items-center justify-center text-gray-500 text-lg">
                 プレイリストを選択してください
