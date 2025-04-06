@@ -21,7 +21,7 @@ interface AuthenticatedAppProps {
   appRouter: AppProps['router'];
 }
 
-const protectedRoutes = ['/mypage/dashboard', '/mypage/edit', '/mypage/favorite_videos', '/mypage/favorite_notes', '/mypage/my_notes'];
+const protectedRoutes = ['/mypage/dashboard', '/mypage/edit', '/mypage/favorite_videos', '/mypage/favorite_notes', '/mypage/my_notes', '/mypage/playlists'];
 
 export const metadata: Metadata = {
   title: "ViMemo",
