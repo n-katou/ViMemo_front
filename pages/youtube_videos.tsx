@@ -97,6 +97,15 @@ const YoutubeVideosPage: React.FC = () => {
 
   return (
     <div className={`w-full min-h-screen ${theme === 'light' ? 'bg-white text-gray-800' : 'bg-black text-white'}`}>
+      {/* スナックバー */}
+      {flashMessage && (
+        <Snackbar open={showSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+            {flashMessage}
+          </Alert>
+        </Snackbar>
+      )}
+
       {currentVideo && (
         <YoutubeHeroSection
           video={currentVideo}
@@ -155,15 +164,6 @@ const YoutubeVideosPage: React.FC = () => {
 
               <HorizontalVideoShelf title="新着動画" videos={topRecentVideos} setVideos={setTopRecentVideos} notes={notes} jwtToken={jwtToken} setNotes={setNotes} onClickTitle={handleTitleClick} onLike={async (id) => { if (!jwtToken || !currentUser) return; await handleLikeVideo(id, jwtToken, currentUser, setTopRecentVideos); }} onUnlike={async (id, likeId) => { if (!jwtToken || !currentUser) return; await handleUnlikeVideo(id, likeId, jwtToken, currentUser, setTopRecentVideos); }} />
             </>
-          )}
-
-          {/* スナックバー */}
-          {flashMessage && (
-            <Snackbar open={showSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-              <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-                {flashMessage}
-              </Alert>
-            </Snackbar>
           )}
         </div>
       )}

@@ -27,9 +27,17 @@ export const playFromTimestamp = (seconds: number, playerRef: React.MutableRefOb
 
 // 秒数を「分：秒」の形式にフォーマットする関数
 export const formatDuration = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}分${remainingSeconds}秒`; // 秒数を「分：秒」の形式にフォーマットして返す
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+
+  if (h > 0) {
+    return `${h}時間${m}分${s}秒`;
+  } else if (m > 0) {
+    return `${m}分${s}秒`;
+  } else {
+    return `${s}秒`;
+  }
 };
 
 // 動画IDとトークンを使用してノートを取得する関数

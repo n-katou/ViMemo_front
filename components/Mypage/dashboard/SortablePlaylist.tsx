@@ -5,6 +5,7 @@ import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
 import { PlaylistItem } from '../../../types/playlistItem';
 import { handleRemoveItem } from "@/components/Mypage/playlists/playlistUtils";
+import { formatDuration } from '../../../components/YoutubeShow/youtubeShowUtils';
 
 interface PlaylistItemProps {
   item: PlaylistItem;
@@ -130,11 +131,17 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setP
     }
   };
 
+  const totalSeconds = playlistItems.reduce((sum, item) => sum + (item.youtube_video.duration || 0), 0);
+
   return (
     <div>
       <h2 style={{ color: theme === 'light' ? '#818cf8' : '#000', marginBottom: '12px' }}>
         作成したプレイリスト（並び替え可能）
       </h2>
+
+      <p className="text-sm text-gray-500 mb-3">
+        動画数: {playlistItems.length}本 / 合計時間: {formatDuration(totalSeconds)}
+      </p>
 
       <div style={{ height: '390px', overflowY: 'auto', position: 'relative' }}>
         {playlistItems

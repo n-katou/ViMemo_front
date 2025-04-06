@@ -273,32 +273,33 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
   );
 
   return (
-    <div
-      ref={cardRef}
-      className="relative w-full h-[180px] cursor-pointer"
-      onMouseEnter={() => {
-        if (!isMobile) {
-          hoverTimeoutRef.current = setTimeout(() => {
-            setIsHovered(true);
+    <div className="w-full">
+      {/* 🟥 ホバー対象エリア：サムネイルとその hover */}
+      <div
+        ref={cardRef}
+        className="relative h-[180px] w-full overflow-visible"
+        onMouseEnter={() => {
+          if (!isMobile) {
+            hoverTimeoutRef.current = setTimeout(() => {
+              setIsHovered(true);
+              setIsActive(true);
+            }, 400);
+          }
+        }}
+        onMouseLeave={() => {
+          if (!isMobile) {
+            if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+            setIsHovered(false);
+            setIsActive(false);
+          }
+        }}
+        onClick={() => {
+          if (isMobile) {
             setIsActive(true);
-          }, 400);
-        }
-      }}
-      onMouseLeave={() => {
-        if (!isMobile) {
-          if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-          setIsHovered(false);
-          setIsActive(false);
-        }
-      }}
-      onClick={() => {
-        if (isMobile) {
-          setIsActive(true);
-          setIsHovered(true);
-        }
-      }}
-    >
-      <div className="relative h-[180px] w-full overflow-visible">
+            setIsHovered(true);
+          }
+        }}
+      >
         <img
           src={`https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`}
           alt={video.title}
@@ -306,7 +307,21 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
         />
         {isVisible && cardRect && createPortal(CardContent, document.body)}
       </div>
+
+      {/* 🟩 タイトル部分（hover 判定外） */}
+      <div className="mt-2 px-1">
+        <p
+          className="text-sm font-medium text-white truncate cursor-pointer hover:text-[#c084fc]"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleTitleClick(video.id);
+          }}
+        >
+          {video.title}
+        </p>
+      </div>
     </div>
+
   );
 };
 
