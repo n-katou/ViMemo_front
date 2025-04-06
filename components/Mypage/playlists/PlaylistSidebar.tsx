@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-
 interface Playlist {
   id: number;
   name: string;
@@ -116,10 +115,10 @@ const PlaylistSidebar: React.FC<SidebarProps> = ({
                     編集
                   </button>
                   <button
-                    className="flex justify-center items-center gap-1 px-2 py-1 w-[64px] text-sm text-red-600 bg-red-50 border border-red-100 rounded hover:bg-red-100 transition"
+                    className="px-2 py-1 w-[64px] text-sm text-red-600 bg-red-50 rounded"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onDelete(playlist.id);
+                      onDelete(playlist.id); // ここだけでOK！
                     }}
                   >
                     削除
