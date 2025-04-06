@@ -311,9 +311,9 @@ const YoutubeVideoCard: React.FC<YoutubeVideoCardProps> = ({ video, handleTitleC
       {/* 🟩 タイトル部分（hover 判定外） */}
       <div className="mt-2 px-1">
         <p
-          className="text-sm font-medium text-white truncate cursor-pointer"
+          className="text-sm font-medium text-white truncate cursor-pointer hover:text-[#c084fc]"
           onClick={(e) => {
-            e.stopPropagation(); // 念のため
+            e.stopPropagation();
             handleTitleClick(video.id);
           }}
         >
