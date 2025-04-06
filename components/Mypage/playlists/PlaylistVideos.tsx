@@ -64,6 +64,29 @@ const PlaylistVideos: React.FC<Props> = ({
     }
   };
 
+  const handleRemoveItem = async (itemId: number) => {
+    const confirmDelete = window.confirm('この動画をプレイリストから削除しますか？');
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/playlists/${playlistId}/playlist_items/${itemId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+
+      if (!res.ok) throw new Error('削除に失敗しました');
+
+      // ステートから削除
+      setPlaylistItems((prev) => prev.filter((item) => item.id !== itemId));
+    } catch (err) {
+      console.error('削除エラー:', err);
+      setError('動画の削除に失敗しました');
+      setTimeout(() => setError(null), 3000);
+    }
+  };
+
   return (
     <div className="w-full px-6 py-8 pt-16 pb-24">
       {/* Tooltip */}
@@ -113,13 +136,18 @@ const PlaylistVideos: React.FC<Props> = ({
       {/* 動画一覧 */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         {playlistItems.map((item, index) => (
-          <SimpleVideoCard
+          <div
             key={item.id}
-            index={index}
-            video={item.youtube_video}
-            moveVideo={moveVideo}
-            className="w-full"
-          />
+            className="w-full flex flex-col justify-between min-h-[100px] bg-white rounded shadow-md"
+          >
+            <SimpleVideoCard
+              index={index}
+              video={item.youtube_video}
+              moveVideo={moveVideo}
+              className="w-full"
+              onRemove={() => handleRemoveItem(item.id)}
+            />
+          </div>
         ))}
       </div>
     </div>
