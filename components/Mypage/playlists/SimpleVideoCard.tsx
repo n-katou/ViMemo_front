@@ -14,9 +14,10 @@ interface Props {
   index: number;
   moveVideo: (dragIndex: number, hoverIndex: number) => void;
   className?: string;
+  onRemove?: (id: number) => void;
 }
 
-const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className }) => {
+const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, onRemove }) => {
   const router = useRouter();
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -62,9 +63,9 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className }
   const cardStyle = {
     opacity: isDragging ? 0.5 : 1,
     backgroundColor: isDragging
-      ? '#38bdf8' // 水色
+      ? '#38bdf8'
       : isOver
-        ? '#22eec5' // 緑
+        ? '#22eec5'
         : 'white',
   };
 
@@ -72,8 +73,8 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className }
     <div
       ref={ref}
       data-handler-id={handlerId ?? undefined}
-      className={`relative border border-gray-200 rounded-md shadow-sm bg-white cursor-move ${className}`}
-      style={cardStyle}
+      className={`relative border border-gray-200 rounded-md shadow-sm bg-white cursor-move flex flex-col justify-between ${className}`}
+      style={{ ...cardStyle, minHeight: '200px' }}
     >
       <div className="w-full h-5 bg-gradient-rainbow flex items-center justify-center">
         <MdDragIndicator className="text-white" size={14} />
@@ -85,7 +86,7 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className }
         className="w-full h-40 object-cover"
       />
 
-      <div className="p-2">
+      <div className="p-2 flex-1 flex flex-col justify-between">
         <h2
           className="text-sm font-semibold text-blue-600 hover:underline cursor-pointer truncate"
           onClick={() => router.push(`/youtube_videos/${video.id}`)}
@@ -93,6 +94,18 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className }
         >
           {video.title}
         </h2>
+
+        {/* 削除ボタン */}
+        {onRemove && (
+          <div className="text-right mt-2">
+            <button
+              onClick={() => onRemove(video.id)}
+              className="text-xs text-red-500 hover:underline"
+            >
+              削除
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
