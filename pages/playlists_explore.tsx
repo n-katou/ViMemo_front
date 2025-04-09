@@ -127,7 +127,7 @@ const PlaylistsExplorePage: React.FC = () => {
             <p className="text-xs text-gray-400 mb-2">
               <a
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                  `#ViMemo で公開されたプレイリスト「${pl.name}」をチェック！\n\n🔗 https://vimemo.vercel.app/playlists/${pl.id}`
+                  `#ViMemo で公開されたプレイリスト「${pl.name}」をチェック！\n\n https://vimemo.vercel.app/playlists/${pl.id}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
