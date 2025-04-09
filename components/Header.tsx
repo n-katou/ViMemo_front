@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import SearchIcon from '@mui/icons-material/Search';
+import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 
 import { useAuth } from '../context/AuthContext';
 import { useFlashMessage } from '../context/FlashMessageContext';
@@ -195,14 +196,15 @@ const Header: React.FC = () => {
             />
           )}
 
-
+          {/* --- Youtube ボタン --- */}
           <Button
             onClick={navigateToYoutubeVideos}
             startIcon={<YouTubeIcon className="youtube-icon" />}
             sx={{
+              display: { xs: 'none', sm: 'flex' }, // スマホ非表示
               color: '#818cf8',
               fontWeight: 'bold',
-              mr: 2, // ← ここを追加！（または数値調整）
+              mr: 1,
               transition: 'color 0.3s ease, transform 0.3s ease',
               '&:hover': {
                 color: '#FF0000',
@@ -215,6 +217,48 @@ const Header: React.FC = () => {
           >
             Youtube
           </Button>
+
+          <IconButton
+            onClick={navigateToYoutubeVideos}
+            sx={{
+              display: { xs: 'inline-flex', sm: 'none' }, // スマホのみ表示
+              color: '#FF0000',
+              mr: 1,
+            }}
+          >
+            <YouTubeIcon />
+          </IconButton>
+
+          {/* --- プレイリスト一覧ボタン --- */}
+          <Button
+            onClick={() => router.push('/playlists_explore')}
+            startIcon={<QueueMusicIcon />}
+            sx={{
+              display: { xs: 'none', sm: 'flex' },
+              color: '#818cf8',
+              fontWeight: 'bold',
+              textTransform: 'none',
+              mr: 1,
+              transition: 'color 0.3s ease, transform 0.3s ease',
+              '&:hover': {
+                color: '#38bdf8',
+                transform: 'scale(1.05)',
+              },
+            }}
+          >
+            プレイリスト一覧
+          </Button>
+
+          <IconButton
+            onClick={() => router.push('/playlists_explore')}
+            sx={{
+              display: { xs: 'inline-flex', sm: 'none' },
+              color: '#38bdf8',
+              mr: 1,
+            }}
+          >
+            <QueueMusicIcon />
+          </IconButton>
 
 
           {/* アカウントアイコン（PCはホバーで開く、スマホはクリック） */}
