@@ -1,18 +1,24 @@
 import React from 'react';
-import Drawer from '@mui/material/Drawer';
-import PlaylistVideos from "@/components/Mypage/playlists/PlaylistVideos";
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
 import { PlaylistItem } from '../../../types/playlistItem';
+import PlaylistVideos from '@/components/Mypage/playlists/PlaylistVideos';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   playlistItems: PlaylistItem[];
-  setPlaylistItems: React.Dispatch<React.SetStateAction<PlaylistItem[]>>; // ← ここを修正！
+  setPlaylistItems: React.Dispatch<React.SetStateAction<PlaylistItem[]>>;
   playlistId: number;
   jwtToken: string;
 }
 
-const EditPlaylistDrawer: React.FC<Props> = ({
+const EditPlaylistDialog: React.FC<Props> = ({
   open,
   onClose,
   playlistItems,
@@ -20,22 +26,61 @@ const EditPlaylistDrawer: React.FC<Props> = ({
   playlistId,
   jwtToken
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+
   return (
-    <Drawer anchor="right" open={open} onClose={onClose}>
-      <div style={{ width: '400px', padding: '16px' }}>
-        <h2 className="text-lg font-bold mb-4">プレイリストを編集</h2>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth={false} // 固定幅をオフに
+      fullScreen={isMobile}
+      PaperProps={{
+        sx: {
+          width: isMobile ? '100%' : isTablet ? '80%' : '60%',
+          maxWidth: '900px',
+          borderRadius: 3,
+          background: 'rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(20px)',
+          boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.3)',
+        }
+      }}
+    >
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontWeight: 'bold',
+          color: 'white',
+          textShadow: '0px 2px 10px rgba(255, 255, 255, 0.5)',
+        }}
+      >
+        プレイリストを編集
+        <IconButton
+          edge="end"
+          onClick={onClose}
+          aria-label="close"
+          sx={{
+            color: 'white',
+            transition: '0.3s',
+            '&:hover': { color: 'red' },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
         <PlaylistVideos
           playlistItems={playlistItems}
           setPlaylistItems={setPlaylistItems}
           jwtToken={jwtToken}
           playlistId={playlistId}
         />
-        <button onClick={onClose} className="mt-4 text-sm text-blue-600 underline">
-          閉じる
-        </button>
-      </div>
-    </Drawer>
+      </DialogContent>
+    </Dialog>
   );
 };
 
-export default EditPlaylistDrawer;
+export default EditPlaylistDialog;
