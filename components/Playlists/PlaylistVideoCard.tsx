@@ -44,7 +44,7 @@ const PlaylistVideoCard: React.FC<VideoCardProps> = ({
       {/* 本体：サムネイル & 情報 */}
       <div className="flex items-start gap-3">
         {/* サムネイル or プレイヤー */}
-        <div className="relative w-32 h-32">
+        <div className="relative w-48 h-48">
           {isPlaying ? (
             <div className="relative w-full h-full">
               <ReactPlayer
@@ -84,7 +84,7 @@ const PlaylistVideoCard: React.FC<VideoCardProps> = ({
           <div className="flex items-center gap-1">
             <span className="text-gray-500 font-medium">{index + 1}.</span>
             <h2
-              className="text-blue-600 font-semibold cursor-pointer hover:underline truncate"
+              className="text-blue-600 font-semibold cursor-pointer hover:underline truncate max-w-[160px] sm:max-w-[200px] md:max-w-[280px] lg:max-w-[340px] whitespace-nowrap overflow-hidden"
               onClick={() => router.push(`/youtube_videos/${video.id}`)}
               title={video.title}
             >
@@ -93,11 +93,18 @@ const PlaylistVideoCard: React.FC<VideoCardProps> = ({
           </div>
           <p className="text-xs text-gray-500">公開日: {new Date(video.published_at).toLocaleDateString()}</p>
           <p className="text-xs text-gray-500">動画時間: {formatDuration(video.duration)}</p>
+          {/* いいね数・ノート数表示 */}
           <div className="flex items-center gap-2 text-xs text-gray-600">
-            <FavoriteIcon className="text-red-500" fontSize="small" /> {video.likes_count}
-            <NoteIcon className="text-blue-500" fontSize="small" /> {video.notes_count}
+            <FavoriteIcon className="text-red-500" fontSize="small" />
+            {video.likes_count}
+            <NoteIcon className="text-blue-500" fontSize="small" />
+            {video.notes_count}
           </div>
-          <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
+
+          {/* いいねボタンとツールチップ */}
+          <div className="relative group inline-block mt-1">
+            <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
+          </div>
         </div>
       </div>
     </div>
