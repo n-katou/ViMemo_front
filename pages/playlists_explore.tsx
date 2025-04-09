@@ -35,7 +35,7 @@ const PlaylistsExplorePage: React.FC = () => {
   const { currentUser, jwtToken } = useAuth();
   const [playlists, setPlaylists] = useState<PublicPlaylist[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedIds, setExpandedIds] = useState<number[]>([]);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!jwtToken) return;
@@ -75,9 +75,11 @@ const PlaylistsExplorePage: React.FC = () => {
   }, [jwtToken]);
 
   const toggleExpand = (id: number) => {
-    setExpandedIds((prev) =>
-      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
-    );
+    setExpandedId((prev) => {
+      const next = prev === id ? null : id;
+      console.log("Expanded ID set to:", next);
+      return next;
+    });
   };
 
   // 動画の状態を更新
@@ -102,7 +104,7 @@ const PlaylistsExplorePage: React.FC = () => {
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">みんなのプレイリスト一覧</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="flex flex-col gap-6">
         {playlists.map((pl: PublicPlaylist) => (
           <div key={pl.id} className="bg-white shadow rounded p-4">
             <h2 className="text-gray-600 text-lg font-semibold mb-1">{pl.name}</h2>
@@ -120,12 +122,12 @@ const PlaylistsExplorePage: React.FC = () => {
               onClick={() => toggleExpand(pl.id)}
               className="mt-2 text-indigo-600 hover:underline text-sm"
             >
-              {expandedIds.includes(pl.id) ? "▲ 閉じる" : "▼ 中身を表示"}
+              {expandedId === pl.id ? "▲ 閉じる" : "▼ 中身を表示"}
             </button>
 
-            {expandedIds.includes(pl.id) && (
+            {expandedId === pl.id && (
               <div className="mt-3 space-y-4">
-                {pl.playlist_items.map((item: PlaylistItem, idx: number) => (
+                {pl.playlist_items.map((item, idx) => (
                   <PlaylistVideoCard
                     key={item.id}
                     video={item.youtube_video}
@@ -141,7 +143,6 @@ const PlaylistsExplorePage: React.FC = () => {
                           updateVideoState(id, updateFn)
                       )
                     }
-
                     handleUnlikeVideo={(id, likeId) =>
                       likeId &&
                       favoriteVideoHandleUnlike(
