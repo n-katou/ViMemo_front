@@ -7,6 +7,8 @@ import { PlaylistItem } from '../../../types/playlistItem';
 import { handleRemoveItem } from "@/components/Mypage/playlists/playlistUtils";
 import { formatDuration } from '../../../components/YoutubeShow/youtubeShowUtils';
 import EditPlaylistDrawer from './EditPlaylistDrawer';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 interface PlaylistItemProps {
   item: PlaylistItem;
@@ -167,14 +169,17 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setP
             />
           ))}
       </div>
-      <EditPlaylistDrawer
-        open={isDrawerOpen}
-        onClose={closeDrawer}
-        playlistItems={playlistItems}
-        setPlaylistItems={setPlaylistItems}
-        playlistId={playlistId}
-        jwtToken={jwtToken}
-      />
+
+      <DndProvider backend={HTML5Backend}>
+        <EditPlaylistDrawer
+          open={isDrawerOpen}
+          onClose={closeDrawer}
+          playlistItems={playlistItems}
+          setPlaylistItems={setPlaylistItems}
+          playlistId={playlistId}
+          jwtToken={jwtToken}
+        />
+      </DndProvider>
 
       {isExpanded && (
         <p style={{ fontSize: '12px', textAlign: 'center', color: '#888', marginTop: '4px' }}>

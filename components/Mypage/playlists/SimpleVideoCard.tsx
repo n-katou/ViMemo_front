@@ -35,10 +35,22 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, 
       const hoverIndex = index;
       if (dragIndex === hoverIndex) return;
 
-      // ✅ マウスの位置チェックを省略し、重なった時点で入れ替え
+      const hoverBoundingRect = ref.current.getBoundingClientRect();
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      if (!clientOffset) return;
+
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+      const margin = sensitivityMargin ?? 12;
+
+      // 👇 修正点ここ！「すでにある程度重なってたら」強制発火
+      const isNearEnough = Math.abs(hoverClientY - hoverMiddleY) < hoverMiddleY * 0.9;
+
+      if (!isNearEnough) return;
+
       moveVideo(dragIndex, hoverIndex);
       item.index = hoverIndex;
-    },
+    }
   });
 
   const [{ isDragging }, drag] = useDrag<DragItem, void, { isDragging: boolean }>({

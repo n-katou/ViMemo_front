@@ -137,7 +137,7 @@ const PlaylistVideos: React.FC<Props> = ({
       )}
 
       {/* 動画一覧 */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-6 gap-x-4">
         {playlistItems.map((item, index) => (
           <div
             key={item.id}
@@ -149,6 +149,7 @@ const PlaylistVideos: React.FC<Props> = ({
               moveVideo={moveVideo}
               className="w-full"
               onRemove={() => handleRemoveItem(item.id)}
+              sensitivityMargin={12}
             />
           </div>
         ))}
