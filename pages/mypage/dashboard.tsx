@@ -151,7 +151,7 @@ const Dashboard = () => {
           <div
             className="w-full md:w-1/3 bg-white shadow-md rounded-lg p-6"
             style={{
-              height: '640px', // ← プレイヤーに合わせて完全固定
+              height: '675px', // ← プレイヤーに合わせて完全固定
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',

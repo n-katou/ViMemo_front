@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { PlaylistItem } from '../../../types/playlistItem';
 import { handleRemoveItem } from "@/components/Mypage/playlists/playlistUtils";
 import { formatDuration } from '../../../components/YoutubeShow/youtubeShowUtils';
+import EditPlaylistDrawer from './EditPlaylistDrawer';
 
 interface PlaylistItemProps {
   item: PlaylistItem;
@@ -96,7 +97,7 @@ const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({ item, index, moveI
 // ✅ props 修正
 interface SortablePlaylistProps {
   playlistItems: PlaylistItem[];
-  setPlaylistItems: (items: PlaylistItem[]) => void;
+  setPlaylistItems: React.Dispatch<React.SetStateAction<PlaylistItem[]>>;
   playlistId: number;
   jwtToken: string;
 }
@@ -105,6 +106,9 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setP
   const { theme } = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
   const maxVisibleItems = 5;
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const openDrawer = () => setIsDrawerOpen(true);
+  const closeDrawer = () => setIsDrawerOpen(false);
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -142,6 +146,13 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setP
       <p className="text-sm text-gray-500 mb-3">
         動画数: {playlistItems.length}本 / 合計時間: {formatDuration(totalSeconds)}
       </p>
+      <Button
+        variant="outlined"
+        onClick={openDrawer}
+        sx={{ borderColor: '#818cf8', color: '#818cf8', fontSize: '0.8rem', mb: 1, }}
+      >
+        編集
+      </Button>
 
       <div style={{ height: '390px', overflowY: 'auto', position: 'relative' }}>
         {playlistItems
@@ -156,6 +167,14 @@ const SortablePlaylist: React.FC<SortablePlaylistProps> = ({ playlistItems, setP
             />
           ))}
       </div>
+      <EditPlaylistDrawer
+        open={isDrawerOpen}
+        onClose={closeDrawer}
+        playlistItems={playlistItems}
+        setPlaylistItems={setPlaylistItems}
+        playlistId={playlistId}
+        jwtToken={jwtToken}
+      />
 
       {isExpanded && (
         <p style={{ fontSize: '12px', textAlign: 'center', color: '#888', marginTop: '4px' }}>
