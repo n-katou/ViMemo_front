@@ -7,6 +7,8 @@ import PlaylistVideoCard from "@/components/Playlists/PlaylistVideoCard";
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { BsTwitterX } from "react-icons/bs";
+import { useRouter } from 'next/router';
 
 interface PlaylistItem {
   id: number;
@@ -43,6 +45,7 @@ const PlaylistsExplorePage: React.FC = () => {
   const [playlists, setPlaylists] = useState<PublicPlaylist[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,14 +89,6 @@ const PlaylistsExplorePage: React.FC = () => {
     fetchData();
   }, [jwtToken]);
 
-  const toggleExpand = (id: number) => {
-    setExpandedId((prev) => {
-      const next = prev === id ? null : id;
-      console.log("Expanded ID set to:", next);
-      return next;
-    });
-  };
-
   // 動画の状態を更新
   const updateVideoState = (
     videoId: number,
@@ -129,12 +124,24 @@ const PlaylistsExplorePage: React.FC = () => {
             <p className="text-xs text-gray-400 mb-2">
               作成日: {new Date(pl.created_at).toLocaleDateString()}
             </p>
-
+            <p className="text-xs text-gray-400 mb-2">
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                  `🎵 ViMemoで公開されたプレイリスト「${pl.name}」をチェック！\n作成者: ${pl.user.name}\n\n#ViMemo #プレイリスト\n\n👇 見る：https://vimemo.app/playlists_explore#playlist-${pl.id}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 mt-2 text-black hover:text-blue-500 transition-all text-sm"
+              >
+                <BsTwitterX size={18} />
+                <span className="hidden sm:inline">シェア</span>
+              </a>
+            </p>
             <button
-              onClick={() => toggleExpand(pl.id)}
+              onClick={() => router.push(`/playlists/${pl.id}`)}
               className="mt-2 text-indigo-600 hover:underline text-sm"
             >
-              {expandedId === pl.id ? "▲ 閉じる" : "▼ 中身を表示"}
+              ▶ プレイリストを見る
             </button>
 
             {expandedId === pl.id && (
