@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fetchPublicPlaylists, fetchUserLikeStatus, favoriteVideoHandleLike, favoriteVideoHandleUnlike } from "@/components/Playlists/playlistUtils";
+import { fetchPublicPlaylists, fetchUserLikeStatus, favoriteVideoHandleLike, favoriteVideoHandleUnlike, updatePlaylistVisibility } from "@/components/Playlists/playlistUtils";
 import { fetchVideoLikes } from '../src/api';
 import PlaylistVideoCard from "@/components/Playlists/PlaylistVideoCard";
 import { YoutubeVideo } from '../types/youtubeVideo';
@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { BsTwitterX } from "react-icons/bs";
 import { useRouter } from 'next/router';
+import { CustomUser } from '../types/user';
 
 interface PlaylistItem {
   id: number;
@@ -22,6 +23,7 @@ interface PublicPlaylist {
     id: number;
     name: string;
   };
+  is_public: boolean;
   items_count: number;
   total_duration: number;
   created_at: string;
@@ -41,7 +43,7 @@ const formatDuration = (seconds: number): string => {
 };
 
 const PlaylistsExplorePage: React.FC = () => {
-  const { currentUser, jwtToken } = useAuth();
+  const { currentUser, jwtToken }: { currentUser: CustomUser | null; jwtToken: string | null } = useAuth();
   const [playlists, setPlaylists] = useState<PublicPlaylist[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<number | null>(null);
@@ -142,6 +144,31 @@ const PlaylistsExplorePage: React.FC = () => {
                 </span>
               </a>
             </p>
+            {Number(currentUser?.id) === pl.user.id && (
+              <div className="mb-2">
+                <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={pl.is_public}
+                    onChange={async (e) => {
+                      const newStatus = e.target.checked;
+                      try {
+                        const success = await updatePlaylistVisibility(pl.id, newStatus, jwtToken!);
+                        if (success) {
+                          setPlaylists((prev) =>
+                            prev.map((p) => (p.id === pl.id ? { ...p, is_public: newStatus } : p))
+                          );
+                        }
+                      } catch (err) {
+                        console.error('公開設定切り替え中にエラー:', err);
+                      }
+                    }}
+                  />
+                  {pl.is_public ? '公開中' : '非公開'}
+                </label>
+              </div>
+            )}
+
             <button
               onClick={() => router.push(`/playlists/${pl.id}`)}
               className="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-full shadow-md transition hover:bg-indigo-700 hover:scale-105 active:scale-95"

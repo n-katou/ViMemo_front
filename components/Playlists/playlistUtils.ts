@@ -144,3 +144,31 @@ export const favoriteVideoHandleUnlike = async (
     console.error('Unlike exception:', error);
   }
 };
+
+export const updatePlaylistVisibility = async (
+  playlistId: number,
+  isPublic: boolean,
+  jwtToken: string
+): Promise<boolean> => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/playlists/${playlistId}/visibility`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({ is_public: isPublic }),
+    });
+
+    if (!res.ok) {
+      console.error('公開設定の更新に失敗:', res.statusText);
+      return false;
+    }
+
+    const data = await res.json();
+    return data.success === true;
+  } catch (err) {
+    console.error('公開設定の更新エラー:', err);
+    return false;
+  }
+};
