@@ -26,9 +26,15 @@ interface PublicPlaylist {
 }
 
 const formatDuration = (seconds: number): string => {
-  const min = Math.floor(seconds / 60);
-  const sec = seconds % 60;
-  return `${min}分${sec}秒`;
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+
+  const hDisplay = h > 0 ? `${h}時間` : '';
+  const mDisplay = m > 0 ? `${m}分` : '';
+  const sDisplay = `${s}秒`;
+
+  return `${hDisplay}${mDisplay}${sDisplay}`;
 };
 
 const PlaylistsExplorePage: React.FC = () => {
