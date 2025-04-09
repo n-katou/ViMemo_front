@@ -34,7 +34,7 @@ const EditPlaylistDialog: React.FC<Props> = ({
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth={false} // 固定幅をオフに
+      maxWidth={false}
       fullScreen={isMobile}
       PaperProps={{
         sx: {

@@ -15,9 +15,10 @@ interface Props {
   moveVideo: (dragIndex: number, hoverIndex: number) => void;
   className?: string;
   onRemove?: (id: number) => void;
+  sensitivityMargin?: number;
 }
 
-const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, onRemove }) => {
+const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, onRemove, sensitivityMargin }) => {
   const router = useRouter();
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -29,6 +30,7 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, 
     }),
     hover(item, monitor) {
       if (!ref.current) return;
+      const margin = sensitivityMargin ?? 5;
 
       const dragIndex = item.index;
       const hoverIndex = index;
@@ -40,12 +42,14 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, 
       if (!clientOffset) return;
 
       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY - margin) return;
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY + margin) return;
 
       moveVideo(dragIndex, hoverIndex);
       item.index = hoverIndex;
     },
+
   });
 
   const [{ isDragging }, drag] = useDrag<DragItem, void, { isDragging: boolean }>({
@@ -95,7 +99,6 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, 
           {video.title}
         </h2>
 
-        {/* 削除ボタン */}
         {onRemove && (
           <div className="text-right mt-2">
             <button
