@@ -127,14 +127,19 @@ const PlaylistsExplorePage: React.FC = () => {
             <p className="text-xs text-gray-400 mb-2">
               <a
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                  `🎵 ViMemoで公開されたプレイリスト「${pl.name}」をチェック！\n作成者: ${pl.user.name}\n\n#ViMemo #プレイリスト\n\n👇 見る：https://vimemo.vercel.app/playlists/${pl.id}`
+                  `#ViMemo で公開されたプレイリスト「${pl.name}」をチェック！\n\n🔗 https://vimemo.vercel.app/playlists/${pl.id}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center px-3 py-1.5 bg-black text-white rounded-full text-xs sm:text-sm font-medium hover:bg-gray-800 transition-colors duration-200 shadow-sm"
+                className="inline-flex items-center group px-3 py-1.5 bg-black text-white rounded-full text-xs sm:text-sm font-medium hover:bg-gray-800 transition-all duration-200 shadow-sm"
               >
-                <BsTwitterX size={16} className="mr-1" />
-                <span className="hidden sm:inline">シェア</span>
+                <BsTwitterX
+                  size={16}
+                  className="mr-1 group-hover:scale-110 group-hover:text-gray-400 transition-transform duration-200"
+                />
+                <span className="hidden sm:inline group-hover:scale-110 group-hover:text-gray-400 transition-transform duration-200">
+                  シェア
+                </span>
               </a>
             </p>
             <button
