@@ -15,9 +15,10 @@ interface Props {
   moveVideo: (dragIndex: number, hoverIndex: number) => void;
   className?: string;
   onRemove?: (id: number) => void;
+  sensitivityMargin?: number;
 }
 
-const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, onRemove }) => {
+const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, onRemove, sensitivityMargin }) => {
   const router = useRouter();
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -40,12 +41,16 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, 
       if (!clientOffset) return;
 
       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
+      const margin = sensitivityMargin ?? 12;
+
+      // 👇 修正点ここ！「すでにある程度重なってたら」強制発火
+      const isNearEnough = Math.abs(hoverClientY - hoverMiddleY) < hoverMiddleY * 0.9;
+
+      if (!isNearEnough) return;
 
       moveVideo(dragIndex, hoverIndex);
       item.index = hoverIndex;
-    },
+    }
   });
 
   const [{ isDragging }, drag] = useDrag<DragItem, void, { isDragging: boolean }>({
@@ -95,7 +100,6 @@ const SimpleVideoCard: React.FC<Props> = ({ video, index, moveVideo, className, 
           {video.title}
         </h2>
 
-        {/* 削除ボタン */}
         {onRemove && (
           <div className="text-right mt-2">
             <button
