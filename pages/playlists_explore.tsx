@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { fetchPublicPlaylists, fetchUserLikeStatus, favoriteVideoHandleLike, favoriteVideoHandleUnlike } from "@/components/Playlists/playlistUtils";
+import { fetchVideoLikes } from '../src/api';
 import PlaylistVideoCard from "@/components/Playlists/PlaylistVideoCard";
 import { YoutubeVideo } from '../types/youtubeVideo';
 import { useAuth } from '../context/AuthContext';
-import { fetchVideoLikes } from '../src/api';
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface PlaylistItem {
   id: number;
@@ -110,7 +111,7 @@ const PlaylistsExplorePage: React.FC = () => {
     );
   };
 
-  if (loading) return <div className="p-6 text-gray-500">読み込み中...</div>;
+  if (loading) return <LoadingSpinner loading={loading} />;
 
   return (
     <div className="p-6 max-w-5xl mx-auto">

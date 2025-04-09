@@ -10,13 +10,13 @@ interface LoadingSpinnerProps {
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   loading,
-  size = 100,
-  bgColor = 'rgba(0, 0, 0, 0.8)', // 少し透けた背景に
+  size = 80,
+  bgColor = 'rgba(0, 0, 0, 0.6)',
 }) => {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
 
-  const spinnerImage = isDarkMode ? '/black_spinner.gif' : '/white_spinner.gif';
+  const spinnerColor = isDarkMode ? '#fff' : '#333';
 
   return (
     <AnimatePresence>
@@ -33,24 +33,30 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           }}
         >
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="text-center"
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="flex flex-col items-center gap-4"
           >
-            <img
-              src={spinnerImage}
-              alt="Loading..."
+            {/* スタイリッシュなアニメーションリング */}
+            <div
+              className="rounded-full animate-spin"
               style={{
                 width: size,
                 height: size,
-                maxWidth: '100%',
-                maxHeight: '100%',
+                border: `4px solid ${spinnerColor}`,
+                borderTop: `4px solid transparent`,
+                borderRadius: '50%',
               }}
             />
-            <p className="mt-6 text-white text-xl md:text-2xl font-semibold drop-shadow-lg">
-              Loading...
-            </p>
+            {/* テキストアニメーション */}
+            <motion.p
+              className="text-white text-lg md:text-xl font-medium tracking-wide"
+              animate={{ opacity: [0.2, 1, 0.2] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+            >
+              読み込み中...
+            </motion.p>
           </motion.div>
         </motion.div>
       )}
