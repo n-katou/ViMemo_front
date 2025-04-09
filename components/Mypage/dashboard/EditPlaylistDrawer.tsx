@@ -34,17 +34,15 @@ const EditPlaylistDialog: React.FC<Props> = ({
     <Dialog
       open={open}
       onClose={onClose}
+      fullScreen // ← 全デバイスで全画面表示
       maxWidth={false}
-      fullScreen={isMobile}
       PaperProps={{
         sx: {
-          width: isMobile ? '100%' : isTablet ? '80%' : '60%',
-          maxWidth: '900px',
-          borderRadius: 3,
+          borderRadius: 0, // ← 全画面用に角丸をなくす
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(20px)',
-          boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.3)',
-        }
+          boxShadow: 'none', // ← 全画面なら影は不要かも
+        },
       }}
     >
       <DialogTitle
