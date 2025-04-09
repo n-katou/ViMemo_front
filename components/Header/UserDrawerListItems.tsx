@@ -21,8 +21,8 @@ const UserDrawerListItems: React.FC<UserDrawerListItemsProps> = ({ currentUser, 
     ? [
       { text: 'ホーム', href: '/', icon: <HomeIcon /> },
       { text: 'マイページ', href: '/mypage/dashboard', icon: <PersonIcon /> },
+      { text: 'プレイリストの作成・編集', href: '/mypage/playlists', icon: <PlaylistPlayIcon /> },
       { text: 'いいねした動画', href: '/mypage/favorite_videos', icon: <FavoriteIcon /> },
-      { text: 'プレイリストの作成', href: '/mypage/playlists', icon: <PlaylistPlayIcon /> },
       { text: 'いいねしたメモ', href: '/mypage/favorite_notes', icon: <NoteIcon /> },
       { text: 'MYメモ', href: '/mypage/my_notes', icon: <EditIcon /> },
     ]
