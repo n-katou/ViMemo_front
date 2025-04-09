@@ -6,8 +6,8 @@ import { PlaylistItem } from '../../../types/playlistItem';
 import PlaylistVideos from '@/components/Mypage/playlists/PlaylistVideos';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import { useRouter } from 'next/router';
 
 interface Props {
   open: boolean;
@@ -27,8 +27,11 @@ const EditPlaylistDialog: React.FC<Props> = ({
   jwtToken
 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const router = useRouter();
+
+  const handleSaveComplete = () => {
+    router.reload(); // ← 保存後にリロード
+  };
 
   return (
     <Dialog
@@ -75,6 +78,7 @@ const EditPlaylistDialog: React.FC<Props> = ({
           setPlaylistItems={setPlaylistItems}
           jwtToken={jwtToken}
           playlistId={playlistId}
+          onSaveComplete={handleSaveComplete}
         />
       </DialogContent>
     </Dialog>

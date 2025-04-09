@@ -15,6 +15,7 @@ type Props = {
   playlistId: number;
   playlistName?: string;
   onEditClick?: () => void;
+  onSaveComplete?: () => void;
 };
 
 const PlaylistVideos: React.FC<Props> = ({
@@ -24,6 +25,7 @@ const PlaylistVideos: React.FC<Props> = ({
   playlistId,
   playlistName,
   onEditClick,
+  onSaveComplete,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,9 +56,10 @@ const PlaylistVideos: React.FC<Props> = ({
         throw new Error(data?.message || "並び順の保存に失敗しました");
       }
 
-
       setShowTooltip(true);
       setTimeout(() => setShowTooltip(false), 2000);
+
+      onSaveComplete?.(); // ✅ 保存成功時に親からのコールバックを呼ぶ
     } catch (err) {
       console.error("並び順保存に失敗:", err);
       setError(err instanceof Error ? err.message : "並び順の保存中にエラーが発生しました");
