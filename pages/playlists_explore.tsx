@@ -127,21 +127,22 @@ const PlaylistsExplorePage: React.FC = () => {
             <p className="text-xs text-gray-400 mb-2">
               <a
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                  `🎵 ViMemoで公開されたプレイリスト「${pl.name}」をチェック！\n作成者: ${pl.user.name}\n\n#ViMemo #プレイリスト\n\n👇 見る：https://vimemo.app/playlists_explore#playlist-${pl.id}`
+                  `🎵 ViMemoで公開されたプレイリスト「${pl.name}」をチェック！\n作成者: ${pl.user.name}\n\n#ViMemo #プレイリスト\n\n👇 見る：https://vimemo.vercel.app/playlists/${pl.id}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 mt-2 text-black hover:text-blue-500 transition-all text-sm"
+                className="inline-flex items-center px-3 py-1.5 bg-black text-white rounded-full text-xs sm:text-sm font-medium hover:bg-gray-800 transition-colors duration-200 shadow-sm"
               >
-                <BsTwitterX size={18} />
+                <BsTwitterX size={16} className="mr-1" />
                 <span className="hidden sm:inline">シェア</span>
               </a>
             </p>
             <button
               onClick={() => router.push(`/playlists/${pl.id}`)}
-              className="mt-2 text-indigo-600 hover:underline text-sm"
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-full shadow-md transition hover:bg-indigo-700 hover:scale-105 active:scale-95"
             >
-              ▶ プレイリストを見る
+              <span className="text-lg">▶</span>
+              プレイリストを見る
             </button>
 
             {expandedId === pl.id && (
