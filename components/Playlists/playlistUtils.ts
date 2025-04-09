@@ -3,16 +3,26 @@
 import axios from 'axios';
 import { YoutubeVideo } from '@/types/youtubeVideo';
 
-export const fetchPublicPlaylists = async () => {
+export const fetchPublicPlaylists = async (jwtToken?: string) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/public_playlists`);
+    const headers: HeadersInit = {};
+    if (jwtToken) {
+      headers['Authorization'] = `Bearer ${jwtToken}`;
+    }
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/public_playlists`, {
+      headers,
+    });
+
     if (!res.ok) throw new Error("レスポンスエラー");
+
     return await res.json();
   } catch (error) {
     console.error("fetchPublicPlaylists エラー:", error);
     return [];
   }
 };
+
 
 export const fetchUserLikeStatus = async (videoId: number, jwtToken: string) => {
   try {

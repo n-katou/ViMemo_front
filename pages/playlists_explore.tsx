@@ -38,17 +38,18 @@ const PlaylistsExplorePage: React.FC = () => {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!jwtToken) return;
-
     const fetchData = async () => {
       try {
-        const res: PublicPlaylist[] = await fetchPublicPlaylists();
+        const token: string | undefined = jwtToken ?? undefined;
+        const res: PublicPlaylist[] = await fetchPublicPlaylists(token);
 
         const withLikes: PublicPlaylist[] = await Promise.all(
           res.map(async (playlist: PublicPlaylist): Promise<PublicPlaylist> => {
             const playlistItemsWithLikes: PlaylistItem[] = await Promise.all(
               playlist.playlist_items.map(async (item: PlaylistItem): Promise<PlaylistItem> => {
-                const userLike = await fetchUserLikeStatus(item.youtube_video.id, jwtToken);
+                if (!token) return item;
+
+                const userLike = await fetchUserLikeStatus(item.youtube_video.id, token);
                 return {
                   ...item,
                   youtube_video: {
@@ -59,7 +60,11 @@ const PlaylistsExplorePage: React.FC = () => {
                 };
               })
             );
-            return { ...playlist, playlist_items: playlistItemsWithLikes };
+
+            return {
+              ...playlist,
+              playlist_items: playlistItemsWithLikes,
+            };
           })
         );
 

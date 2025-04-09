@@ -102,9 +102,11 @@ const PlaylistVideoCard: React.FC<VideoCardProps> = ({
           </div>
 
           {/* いいねボタンとツールチップ */}
-          <div className="relative group inline-block mt-1">
-            <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
-          </div>
+          {currentUser && (
+            <div className="relative group inline-block mt-1">
+              <LikeButton liked={video.liked ?? false} onLikeClick={handleLikeClick} />
+            </div>
+          )}
         </div>
       </div>
     </div>
