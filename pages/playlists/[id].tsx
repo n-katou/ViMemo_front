@@ -9,6 +9,7 @@ import { fetchVideoLikes } from '../../src/api';
 import PlaylistVideoCard from '@/components/Playlists/PlaylistVideoCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '../../context/AuthContext';
+import ReactPlayer from 'react-player';
 
 interface PlaylistItem {
   id: number;
@@ -43,6 +44,8 @@ const PlaylistDetailPage: React.FC = () => {
   const [playlist, setPlaylist] = useState<PublicPlaylist | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+
   useEffect(() => {
     if (!id) return;
     const fetchData = async () => {
@@ -76,6 +79,13 @@ const PlaylistDetailPage: React.FC = () => {
     fetchData();
   }, [id, jwtToken]);
 
+  const handleVideoEnd = () => {
+    if (!playlist) return;
+    setCurrentVideoIndex((prevIndex) =>
+      prevIndex + 1 < playlist.playlist_items.length ? prevIndex + 1 : 0 // ループ再生
+    );
+  };
+
   const updateVideoState = (videoId: number, updateFn: (v: YoutubeVideo) => YoutubeVideo) => {
     if (!playlist) return;
     setPlaylist({
@@ -98,6 +108,38 @@ const PlaylistDetailPage: React.FC = () => {
       <p className="text-xs text-gray-400 mb-4">
         作成日: {new Date(playlist.created_at).toLocaleDateString()}
       </p>
+
+      {playlist.playlist_items[currentVideoIndex] && (
+        <>
+          <ReactPlayer
+            url={`https://www.youtube.com/watch?v=${playlist.playlist_items[currentVideoIndex].youtube_video.youtube_id}`}
+            playing
+            muted
+            controls
+            onEnded={handleVideoEnd}
+            width="100%"
+            height="480px"
+            style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '1rem' }}
+          />
+
+          <div className="flex justify-between mb-8">
+            <button
+              onClick={() =>
+                setCurrentVideoIndex((prev) => (prev > 0 ? prev - 1 : playlist.playlist_items.length - 1)) // 先頭なら末尾にループ
+              }
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded transition text-sm"
+            >
+              ◀ 前へ
+            </button>
+            <button
+              onClick={handleVideoEnd}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition text-sm"
+            >
+              次へ ▶
+            </button>
+          </div>
+        </>
+      )}
 
       <div className="space-y-4">
         {playlist.playlist_items.map((item, idx) => (
