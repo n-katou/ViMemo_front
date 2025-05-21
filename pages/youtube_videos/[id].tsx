@@ -54,7 +54,7 @@ const YoutubeVideoShowPage: React.FC = () => {
   // 関連動画を取得する際の fetch 処理（sortなし・ページング外す）
   useEffect(() => {
     const fetch = async () => {
-      const result = await fetchYoutubeVideos('', 1, 10, ''); // ← sortなし、全件取得
+      const result = await fetchYoutubeVideos('', 1, 1000, ''); // ← sortなし、全件取得
       if (result) {
         setYoutubeVideos(result.videos);
       }
