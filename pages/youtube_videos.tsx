@@ -69,21 +69,41 @@ const YoutubeVideosPage: React.FC = () => {
 
   const toggleMute = () => setIsMuted(prev => !prev);
 
-  useEffect(() => {
-    if (router.pathname !== '/youtube_videos') return; // /youtube_videos 以外は処理しない
-    if (!youtubeVideos || youtubeVideos.length === 0) return;
+  const hasInitializedRef = useRef(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const getRandomVideo = async () => {
-      const randomVideo = await fetchRandomYoutubeVideo();
-      if (randomVideo) {
-        setCurrentVideo(randomVideo);
-        if (isMobile) setIsMuted(true);
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      if (url === '/youtube_videos') {
+        hasInitializedRef.current = false; // 再入時にフラグリセット
       }
     };
 
-    getRandomVideo();
-    const interval = setInterval(getRandomVideo, 12000);
-    return () => clearInterval(interval);
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events]);
+
+  useEffect(() => {
+    if (router.pathname !== '/youtube_videos') return;
+    if (!youtubeVideos || youtubeVideos.length === 0) return;
+    if (hasInitializedRef.current) return;
+
+    const pickRandomVideo = () => {
+      const random = youtubeVideos[Math.floor(Math.random() * youtubeVideos.length)];
+      setCurrentVideo(random);
+      if (isMobile) setIsMuted(true);
+    };
+
+    pickRandomVideo();
+    intervalRef.current = setInterval(pickRandomVideo, 12000);
+
+    hasInitializedRef.current = true;
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [router.pathname, youtubeVideos, isMobile]);
 
   const handleScrollByBlock = (
