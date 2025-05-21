@@ -18,7 +18,7 @@ import useYoutubeVideosPage from '../hooks/youtube_videos/index/useYoutubeVideos
 import useDisplayMode from '../hooks/youtube_videos/index/useDisplayMode';
 import useYoutubeVideoRankings from '../hooks/youtube_videos/index/useYoutubeVideoRankings';
 
-import { handleLikeVideo, handleUnlikeVideo, fetchRandomYoutubeVideo, scrollByBlock } from '../components/YoutubeIndex/youtubeIndexUtils';
+import { handleLikeVideo, handleUnlikeVideo, scrollByBlock } from '../components/YoutubeIndex/youtubeIndexUtils';
 import { useAuth } from '../context/AuthContext';
 
 const YoutubeVideosPage: React.FC = () => {
@@ -69,22 +69,52 @@ const YoutubeVideosPage: React.FC = () => {
 
   const toggleMute = () => setIsMuted(prev => !prev);
 
-  useEffect(() => {
-    if (router.pathname !== '/youtube_videos') return; // /youtube_videos 以外は処理しない
-    if (!youtubeVideos || youtubeVideos.length === 0) return;
+  const hasInitializedRef = useRef(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const getRandomVideo = async () => {
-      const randomVideo = await fetchRandomYoutubeVideo();
-      if (randomVideo) {
-        setCurrentVideo(randomVideo);
-        if (isMobile) setIsMuted(true);
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      if (url === '/youtube_videos') {
+        hasInitializedRef.current = false; // 再入時にフラグリセット
       }
     };
 
-    getRandomVideo();
-    const interval = setInterval(getRandomVideo, 12000);
-    return () => clearInterval(interval);
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events]);
+
+  // ページネーションが変更されてもヒーローセクションの動画を切り替えないようにする
+  useEffect(() => {
+    if (router.pathname !== '/youtube_videos') return;
+    if (!youtubeVideos || youtubeVideos.length === 0) return;
+    if (hasInitializedRef.current) return;
+
+    // ここでランダムな動画を選択して表示
+    const pickRandomVideo = () => {
+      const random = youtubeVideos[Math.floor(Math.random() * youtubeVideos.length)];
+      setCurrentVideo(random);
+      if (isMobile) setIsMuted(true);
+    };
+
+    pickRandomVideo();
+    intervalRef.current = setInterval(pickRandomVideo, 12000);
+
+    hasInitializedRef.current = true;
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [router.pathname, youtubeVideos, isMobile]);
+
+  // ヒーローセクションの動画をページネーション変更時にリセットしないように変更
+  useEffect(() => {
+    if (youtubeVideos.length > 0) {
+      // 現在の動画を選択
+      setCurrentVideo(youtubeVideos[currentVideoIndex]);
+    }
+  }, [currentVideoIndex, youtubeVideos]);
 
   const handleScrollByBlock = (
     direction: 'left' | 'right',
