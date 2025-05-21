@@ -108,7 +108,7 @@ export const handleUnlikeVideo = async (youtubeVideoId: number, likeId: number, 
 
 export const fetchRandomYoutubeVideo = async (): Promise<YoutubeVideo | null> => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos?page=1&per_page=20`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/youtube_videos?page=1&per_page=1000`, {
       headers: {
         Accept: 'application/json',
         Authorization: `Bearer ${localStorage.getItem('authToken') || ''}`,

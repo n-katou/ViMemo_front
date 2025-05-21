@@ -29,7 +29,7 @@ const useYoutubeVideosPage = () => {
   const [flashMessage, setFlashMessage] = useState<string | null>(null);
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
 
-  const query = (router.query.query as string) || '';
+  const query = router.query.query as string || '';
 
   const fetchData = async (page: number, sort: string) => {
     setLoading(true);
@@ -42,7 +42,7 @@ const useYoutubeVideosPage = () => {
         likeId: video.likes?.find((like: any) => like.user_id === Number(currentUser?.id))?.id || undefined,
       }));
       setYoutubeVideos(updatedVideos);
-      setNotes(result.notes || []);
+      setNotes(result.notes || []); // メモを状態に設定、undefinedの場合は空配列を設定
       setPagination(result.pagination);
       setError(null);
     } else {
@@ -52,15 +52,13 @@ const useYoutubeVideosPage = () => {
   };
 
   useEffect(() => {
-    if (router.pathname !== '/youtube_videos') return; // ✅ 他ページでは実行しない
-
     const currentPage = parseInt(router.query.page as string, 10) || 1;
     const currentSortOption = router.query.sort as string || 'created_at_desc';
 
     setPagination(prev => ({ ...prev, current_page: currentPage }));
     setSortOption(currentSortOption);
     fetchData(currentPage, currentSortOption);
-  }, [router.query.page, router.query.sort, query, router.pathname]); // ✅ pathname を依存に追加
+  }, [router.query.page, router.query.sort, query]);
 
   useEffect(() => {
     if (router.query.flashMessage) {
