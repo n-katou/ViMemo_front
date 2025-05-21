@@ -52,7 +52,6 @@ const YoutubeVideosPage: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { displayMode, toggleDisplayMode, queryKeyword } = useDisplayMode();
 
-
   const {
     topLikedVideos,
     topNotedVideos,
@@ -63,55 +62,36 @@ const YoutubeVideosPage: React.FC = () => {
     setTopRecentVideos,
   } = useYoutubeVideoRankings();
 
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     if (isMobile) setIsMuted(true);
   }, [currentVideoIndex, isMobile]);
 
   const toggleMute = () => setIsMuted(prev => !prev);
 
-  const hasInitializedRef = useRef(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
+  // Pick random video every 12 seconds and reset on video change
   useEffect(() => {
-    const handleRouteChange = (url: string) => {
-      if (url === '/youtube_videos') {
-        hasInitializedRef.current = false; // 再入時にフラグリセット
-      }
-    };
-
-    router.events.on('routeChangeStart', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange);
-    };
-  }, [router.events]);
-
-  // ページネーションが変更されてもヒーローセクションの動画を切り替えないようにする
-  useEffect(() => {
-    if (router.pathname !== '/youtube_videos') return;
-    if (!youtubeVideos || youtubeVideos.length === 0) return;
-    if (hasInitializedRef.current) return;
-
-    // ここでランダムな動画を選択して表示
     const pickRandomVideo = () => {
+      if (!youtubeVideos || youtubeVideos.length === 0) return;
       const random = youtubeVideos[Math.floor(Math.random() * youtubeVideos.length)];
       setCurrentVideo(random);
       if (isMobile) setIsMuted(true);
     };
 
-    pickRandomVideo();
-    intervalRef.current = setInterval(pickRandomVideo, 12000);
+    // Start the interval when the component mounts or when youtubeVideos changes
+    pickRandomVideo(); // immediately pick a random video when first loaded
+    intervalRef.current = setInterval(pickRandomVideo, 9000);
 
-    hasInitializedRef.current = true;
-
+    // Cleanup interval on component unmount or when the videos change
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [router.pathname, youtubeVideos, isMobile]);
+  }, [youtubeVideos, isMobile]); // This will ensure it updates when the video list changes
 
-  // ヒーローセクションの動画をページネーション変更時にリセットしないように変更
+  // Reset the current video when the page changes
   useEffect(() => {
     if (youtubeVideos.length > 0) {
-      // 現在の動画を選択
       setCurrentVideo(youtubeVideos[currentVideoIndex]);
     }
   }, [currentVideoIndex, youtubeVideos]);
