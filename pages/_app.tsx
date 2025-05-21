@@ -44,30 +44,26 @@ export const metadata: Metadata = {
 function AuthenticatedApp({ Component, pageProps, appRouter }: AuthenticatedAppProps) {
   const { currentUser, loading } = useAuth();
   const { setFlashMessage } = useFlashMessage();
+  const [showLoginMessage, setShowLoginMessage] = useState(false);
   const router = useRouter();
 
-  const publicRoutes = ['/login', '/signup', '/oauth/return'];
-  const isPublicRoute = publicRoutes.includes(appRouter.pathname);
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const isProtectedRoute = protectedRoutes.includes(appRouter.pathname);
 
   useEffect(() => {
-    if (!loading) {
-      const isUnauthorized = !currentUser || currentUser.email !== adminEmail;
-
-      // 管理者以外はログインページとサインアップページ以外にアクセスできない
-      if (!isPublicRoute && isUnauthorized) {
-        setFlashMessage('アクセス権限がありません', 'error');
-        router.push('/login');
-      }
+    if (!loading && !currentUser && isProtectedRoute) {
+      setFlashMessage('ログインしてください', 'warning');
+      setShowLoginMessage(true);
+      router.push('/login');
+    } else {
+      setShowLoginMessage(false);
     }
-  }, [currentUser, loading, appRouter.pathname, isPublicRoute, setFlashMessage, router, adminEmail]);
+  }, [currentUser, loading, appRouter.pathname, isProtectedRoute, setFlashMessage, router]);
 
   if (loading) {
     return <LoadingSpinner loading={loading} />;
   }
 
-  const isUnauthorized = !currentUser || currentUser.email !== adminEmail;
-  if (!isPublicRoute && isUnauthorized) {
+  if (isProtectedRoute && !currentUser) {
     return null;
   }
 
