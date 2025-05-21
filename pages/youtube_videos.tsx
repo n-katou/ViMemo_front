@@ -70,6 +70,7 @@ const YoutubeVideosPage: React.FC = () => {
   const toggleMute = () => setIsMuted(prev => !prev);
 
   useEffect(() => {
+    if (router.pathname !== '/youtube_videos') return; // /youtube_videos 以外は処理しない
     if (!youtubeVideos || youtubeVideos.length === 0) return;
 
     const getRandomVideo = async () => {
@@ -83,7 +84,7 @@ const YoutubeVideosPage: React.FC = () => {
     getRandomVideo();
     const interval = setInterval(getRandomVideo, 12000);
     return () => clearInterval(interval);
-  }, [youtubeVideos, isMobile]);
+  }, [router.pathname, youtubeVideos, isMobile]);
 
   const handleScrollByBlock = (
     direction: 'left' | 'right',
