@@ -18,7 +18,7 @@ import useYoutubeVideosPage from '../hooks/youtube_videos/index/useYoutubeVideos
 import useDisplayMode from '../hooks/youtube_videos/index/useDisplayMode';
 import useYoutubeVideoRankings from '../hooks/youtube_videos/index/useYoutubeVideoRankings';
 
-import { handleLikeVideo, handleUnlikeVideo, scrollByBlock } from '../components/YoutubeIndex/youtubeIndexUtils';
+import { handleLikeVideo, handleUnlikeVideo, fetchRandomYoutubeVideo, scrollByBlock } from '../components/YoutubeIndex/youtubeIndexUtils';
 import { useAuth } from '../context/AuthContext';
 
 const YoutubeVideosPage: React.FC = () => {
@@ -52,6 +52,7 @@ const YoutubeVideosPage: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { displayMode, toggleDisplayMode, queryKeyword } = useDisplayMode();
 
+
   const {
     topLikedVideos,
     topNotedVideos,
@@ -62,39 +63,27 @@ const YoutubeVideosPage: React.FC = () => {
     setTopRecentVideos,
   } = useYoutubeVideoRankings();
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
   useEffect(() => {
     if (isMobile) setIsMuted(true);
   }, [currentVideoIndex, isMobile]);
 
   const toggleMute = () => setIsMuted(prev => !prev);
 
-  // Pick random video every 12 seconds and reset on video change
   useEffect(() => {
-    const pickRandomVideo = () => {
-      if (!youtubeVideos || youtubeVideos.length === 0) return;
-      const random = youtubeVideos[Math.floor(Math.random() * youtubeVideos.length)];
-      setCurrentVideo(random);
-      if (isMobile) setIsMuted(true);
+    if (!youtubeVideos || youtubeVideos.length === 0) return;
+
+    const getRandomVideo = async () => {
+      const randomVideo = await fetchRandomYoutubeVideo();
+      if (randomVideo) {
+        setCurrentVideo(randomVideo);
+        if (isMobile) setIsMuted(true);
+      }
     };
 
-    // Start the interval when the component mounts or when youtubeVideos changes
-    pickRandomVideo(); // immediately pick a random video when first loaded
-    intervalRef.current = setInterval(pickRandomVideo, 9000);
-
-    // Cleanup interval on component unmount or when the videos change
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [youtubeVideos, isMobile]); // This will ensure it updates when the video list changes
-
-  // Reset the current video when the page changes
-  useEffect(() => {
-    if (youtubeVideos.length > 0) {
-      setCurrentVideo(youtubeVideos[currentVideoIndex]);
-    }
-  }, [currentVideoIndex, youtubeVideos]);
+    getRandomVideo();
+    const interval = setInterval(getRandomVideo, 12000);
+    return () => clearInterval(interval);
+  }, [youtubeVideos, isMobile]);
 
   const handleScrollByBlock = (
     direction: 'left' | 'right',
