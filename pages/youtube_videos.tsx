@@ -18,7 +18,7 @@ import useYoutubeVideosPage from '../hooks/youtube_videos/index/useYoutubeVideos
 import useDisplayMode from '../hooks/youtube_videos/index/useDisplayMode';
 import useYoutubeVideoRankings from '../hooks/youtube_videos/index/useYoutubeVideoRankings';
 
-import { handleLikeVideo, handleUnlikeVideo, fetchRandomYoutubeVideo, scrollByBlock } from '../components/YoutubeIndex/youtubeIndexUtils';
+import { handleLikeVideo, handleUnlikeVideo, scrollByBlock } from '../components/YoutubeIndex/youtubeIndexUtils';
 import { useAuth } from '../context/AuthContext';
 
 const YoutubeVideosPage: React.FC = () => {
@@ -85,11 +85,13 @@ const YoutubeVideosPage: React.FC = () => {
     };
   }, [router.events]);
 
+  // ページネーションが変更されてもヒーローセクションの動画を切り替えないようにする
   useEffect(() => {
     if (router.pathname !== '/youtube_videos') return;
     if (!youtubeVideos || youtubeVideos.length === 0) return;
     if (hasInitializedRef.current) return;
 
+    // ここでランダムな動画を選択して表示
     const pickRandomVideo = () => {
       const random = youtubeVideos[Math.floor(Math.random() * youtubeVideos.length)];
       setCurrentVideo(random);
@@ -105,6 +107,14 @@ const YoutubeVideosPage: React.FC = () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [router.pathname, youtubeVideos, isMobile]);
+
+  // ヒーローセクションの動画をページネーション変更時にリセットしないように変更
+  useEffect(() => {
+    if (youtubeVideos.length > 0) {
+      // 現在の動画を選択
+      setCurrentVideo(youtubeVideos[currentVideoIndex]);
+    }
+  }, [currentVideoIndex, youtubeVideos]);
 
   const handleScrollByBlock = (
     direction: 'left' | 'right',
